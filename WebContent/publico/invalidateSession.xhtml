@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title><ui:insert name="titulo">Clinica Médica</ui:insert></title>
+
+	<h:outputScript name="scripty.js" library="javascript"
+		id="jsScriptSistemaInvalidate" />
+
+	
+</h:head>
+
+
+<h:form prependId="false" id="formularioInvalidadeSession">
+	<script type="text/javascript" charset="UTF-8">
+		/* $.noConflit(); //Evita conflito entre as bibliotecas */
+	</script>
+
+
+
+	<h:body>
+		<div id="msgError" class="espacoMensagem">
+
+			<p:growl id="msg" showDetail="false" sticky="true" redisplay="true"
+				 life="500" > <p:autoUpdate /></p:growl>
+		</div>
+	
+
+		<p:dialog header="Encerrar Sessão" widgetVar="dlg" resizable="false"
+			modal="true" closable="false">
+
+
+			<h:panelGrid columns="2" cellpadding="5">
+				<h:outputLabel for="username" value="Login:" />
+				<p:inputText id="username" required="true" label="username"
+					requiredMessage="Informe o Login."
+					value="#{loginInvalidarBean.username}" />
+
+				<h:outputLabel for="password" value="Senha:" />
+				<p:password id="password" required="true" label="passsword"
+					requiredMessage="Informe a senha."
+					value="#{loginInvalidarBean.password}" />
+
+				<f:facet name="footer">
+					<p:commandButton value="Encerrar"
+						
+						actionListener="#{loginInvalidarBean.invalidar}" update="formularioInvalidadeSession:msg"
+						ajax="true" oncomplete="handleLoginRequest(xhr, status, args)" />
+				</f:facet>
+
+			</h:panelGrid>
+
+
+		</p:dialog>
+
+	</h:body>
+
+<script>
+	$(function() {
+		PF('dlg').show();
+	});
+	
+	function handleLoginRequest(xhr, status, args) {
+		
+		if (!args.loggedIn){
+			PF('dlg').jq.effect("shake"), {times:5}, 100;
+		}else {
+			PF('dlg').hide();
+			document.location = '#{request.contextPath}' + "/j_spring_security_logout"
+		}
+	}
+		
+</script>
+</h:form>
+
+</html>

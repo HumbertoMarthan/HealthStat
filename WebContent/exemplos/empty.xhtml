@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Empty Page</ui:define>
+
+	<ui:define name="head">
+		<style type="text/css">
+.ui-panelgrid.form-elements .ui-grc-2 {
+	padding-left: 80px;
+}
+
+@media ( max-width :1024px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 20px;
+	}
+}
+
+@media ( max-width :640px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 6px;
+	}
+}
+</style>
+	</ui:define>
+
+
+	<ui:define name="content">
+		<h:form>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<p:wizard flowListener="#{atendenteBeanView.onFlowProcess}"
+								backLabel="Voltar" nextLabel="Proximo">
+								<p:tab id="pessoa" title="Pessoa">
+									<p:panel header="Detalhe da Pessoa">
+										<!-- <p:messages /> -->
+
+										<h:panelGrid columns="4" columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4" layout="grid" 
+                              			  styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+											<h:outputLabel id="labelNomeAtendente" for="atendenteNome"
+												value="Nome" />
+
+											<p:inputText id="atendenteNome" style="width: 230px"
+												required="true" maxlength="100"
+												value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaNome}"
+												requiredMessage="Informe o Nome do Atendente" />
+
+
+											<!-- Label Nascimento do Atendente -->
+											<h:outputLabel id="labelDataNascimentoAtendente"
+												for="atendenteDataNascimento" value="Nascimento * :" />
+
+											<!-- Input Nascimento do Atendente -->
+											<p:calendar id="atendenteDataNascimento" size="10"
+												styleClass="estiloInputNome" required="true" maxlength="10"
+												pattern="dd/MM/yyyy" mask="true" maxdate="today"
+												navigator="true" mindate="1/1/1930" pagedate="1/1/1980"
+												autocomplete="true"
+												value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaDataNascimento}"
+												requiredMessage="Informe o Data de Nascimento do Atendente" />
+
+											<!-- Label Sexo do Atendente -->
+											<h:outputLabel id="labelSexoAtendente" for="atendenteSexo"
+												value="Sexo * :" />
+
+											<!-- Input Sexo do Atendente -->
+											<p:selectOneMenu id="atendenteSexo"
+												value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaSexo}"
+												required="true" requiredMessage="Selecione um Gênero"
+												style="width:200px; padding:center">
+												<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+												<f:selectItem itemLabel=" Masculino" itemValue="M" />
+												<f:selectItem itemLabel=" Feminino" itemValue="F" />
+											</p:selectOneMenu>
+
+
+											<!-- Label Cidade do Paciente -->
+											<h:outputLabel id="labelCidadePaciente" for="atendenteCidade"
+												value="Cidade * :" />
+
+											<p:selectOneMenu id="atendenteCidade" style="width:150px;"
+												required="true"
+												requiredMessage="Informe a Cidade do Paciente"
+												value="#{atendenteBeanView.objetoSelecionado.pessoa.cidade}">
+												<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+												<f:selectItems value="#{cidadeBeanView.cidades}" />
+
+											</p:selectOneMenu>
+
+
+											<h:outputText value="Skip to last: " />
+											<h:selectBooleanCheckbox value="#{atendenteBeanView.skip}" />
+										</h:panelGrid>
+
+									</p:panel>
+								</p:tab>
+
+								<p:tab id="confirm" title="Confirmation">
+									<p:panel header="Confirmation">
+										<h:panelGrid id="confirmation" columns="3"
+											columnClasses="grid,grid,grid">
+											<h:panelGrid columns="2" columnClasses="label, value">
+												<h:outputText value="Firstname: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaNome}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Data de Nascimento " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaDataNascimento}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Sexo " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaSexo}"
+													styleClass="outputLabel" />
+											</h:panelGrid>
+
+											<h:panelGrid columns="2" columnClasses="label, value">
+												<h:outputText value="Street: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaNome}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Postal: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaNome}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="City: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaNome}"
+													styleClass="outputLabel" />
+											</h:panelGrid>
+
+											<h:panelGrid columns="2" columnClasses="label, value">
+												<h:outputText value="Email: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaEmail}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Phone 2 " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaTelefonePrimario}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Phone 2 " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaTelefoneSecundario}"
+													styleClass="outputLabel" />
+
+												<h:outputText value="Informações adicionais: " />
+												<h:outputText
+													value="#{atendenteBeanView.objetoSelecionado.pessoa.pessoaObservacao}"
+													styleClass="outputLabel" />
+
+												<h:outputText />
+												<h:outputText />
+											</h:panelGrid>
+										</h:panelGrid>
+
+										<!-- <p:commandButton value="Salvar" action="#{atendenteBeanView.saveNotReturn}" update="growl" process="@this"/> -->
+										<!-- Chama Botões | tabela de resultados-->
+
+									</p:panel>
+								</p:tab>
+
+								<p:commandButton value="Salvar"
+									action="#{atendenteBeanView.saveNotReturn}" process="@this" />
+
+
+							</p:wizard>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Cadastro de Paciente</ui:define>
+
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: medium;
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+	text-align: center;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+.subtitulo {
+	font-weight: bold;
+	font-size: 20px !important;
+	color: black !important;
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-panel .ui-panel-title {
+	
+}
+</style>
+}
+	</ui:define>
+
+
+	<ui:define name="content">
+
+
+
+		<h:form id="form">
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<br />
+							<p:panel>
+								<br />
+								<div align="center">
+									<p:outputLabel value="Cadastro de Paciente" styleClass="titulo" />
+								</div>
+								<br />
+
+								<div align="center">
+									<util:botoesCrud managedBeanView="#{pacienteBean}"
+										camposReload=":formTemplate:msg, form"
+										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoSalvar="false"
+										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+												 and pacienteBean.pacienteModel.idPaciente != null}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoExcluir="false">
+									</util:botoesCrud>
+
+									<!-- Botão Salvar -->
+									<p:commandButton value="Salvar"
+										style="height:40px;
+										width:130px; 
+										background-color: green; 
+										background: green; 
+										color:white !important;
+										font-size:large;"
+										rendered="#{pacienteBean.pacienteModel.idPaciente == null}"
+										actionListener="#{pacienteBean.saveNotReturn}" ajax="true"
+										partialSubmit="true" process="@this, @form" id="buttonSalvar"
+										immediate="false" update="@form" icon="fa fa-floppy-o fa"
+										iconPos="rigth">
+									</p:commandButton>
+
+
+									<p:commandButton value="Limpar"
+										style="height:40px;width:130px;
+										background-color: brown; 
+										background: brown; 
+										color:white !important;
+										font-size:large; "
+										ajax="true" immediate="true" id="buttonLimpar"
+										icon="fa fa-eraser" iconPos="right">
+										<p:ajax event="click" listener="#{pacienteBean.limpa}"
+											update="nome,nascimento,sexo,email,rg,cpf,obs,telefonePrimario,telefoneSecundario
+													logradouro,bairro,uf,complemento,localidade" />
+										<p:ajax update="form" resetValues="true" />
+									</p:commandButton>
+								</div>
+
+								<br />
+								<p:outputLabel value="Campos Obrigatórios()"
+									styleClass="obrigatorio" />
+								<p:separator />
+
+								<br />
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-4">
+
+										<h:outputLabel id="labelNomeEstoquista" for="nome"
+											value="Paciente: *" />
+
+										<p:inputText id="nome" required="true" maxlength="150"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaNome}"
+											requiredMessage="Informe o Nome do Estoquista" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel id="labelDataNascimentoEstoquista"
+											for="nascimento" value="Nascimento:*" />
+
+										<p:calendar id="nascimento" required="true" maxlength="10"
+											yearRange="c-100:c+100" autocomplete="true"
+											pattern="dd/MM/yyyy" mask="true" navigator="true"
+											maxdate="today" mindate="01/01/1930" pagedate="1/1/80"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaDataNascimento}"
+											requiredMessage="Informe o Data de Nascimento" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel id="labelSexoEstoquista" for="sexo"
+											value="Sexo: *" />
+
+										<p:selectOneMenu id="sexo"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaSexo}"
+											required="true" requiredMessage="Selecione um Gênero"
+											style="width:100%; padding:center;">
+											<f:selectItem itemLabel=" Masculino" itemValue="M" />
+											<f:selectItem itemLabel=" Feminino" itemValue="F" />
+										</p:selectOneMenu>
+									</div>
+									<div class="ui-g-12 ui-lg-4">
+										<h:outputLabel id="labelEmailEstoquista" for="email"
+											value="Email: *" />
+
+										<p:inputText id="email" required="true" maxlength="100"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaEmail}"
+											requiredMessage="Informe o Email" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel id="labelRgEstoquista" for="rg" value="RG: *" />
+										<p:inputMask id="rg"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaRG}"
+											mask="99.999.999-9" required="true"
+											requiredMessage="Informe o RG" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel id="labelCPFEstoquista" for="cpf"
+											value="CPF: *" />
+										<p:inputMask id="cpf"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaCPF}"
+											mask="999.999.999-99" required="true"
+											requiredMessage="Informe o Cpf" />
+									</div>
+									<div class="ui-g-12 ui-lg-2 ">
+										<h:outputLabel id="labelTelefonePrimarioEstoquista"
+											for="telefonePrimario" value="Celular:*" />
+										<p:inputMask id="telefonePrimario"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaTelefonePrimario}"
+											mask="(999)9999-9999" required="true"
+											requiredMessage="Informe o Telefone de Contato" />
+
+									</div>
+									<div class="ui-g-12  ui-lg-2">
+										<h:outputLabel id="telefoneSecundarioLabel"
+											for="telefoneSecundario" value="Fixo:" />
+										<p:inputMask id="telefoneSecundario"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaTelefoneSecundario}"
+											mask="(999)9 9999-9999" maxlength="12" />
+									</div>
+									<div class="ui-g-12  ui-lg-4">
+										<h:outputLabel value="Convênio" />
+										<p:autoComplete id="convenio"
+											completeMethod="#{auxController.completeConvenio}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.nomeConvenio}" itemValue="#{a}"
+											value="#{pacienteBean.pacienteModel.convenio}"
+											minQueryLength="1" dropdown="true" maxResults="30"
+											required="true" requiredMessage="Informe um convenio">
+											<p:column id="p">
+												<h:outputText value="#{a.nomeConvenio}" />
+											</p:column>
+										</p:autoComplete>
+
+									</div>
+
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-12">
+										<h:outputLabel value="Observação:" />
+										<p:inputTextarea id="obs" rows="1" cols="30" maxlength="315"
+											autoResize="true"
+											value="#{pacienteBean.pacienteModel.pessoa.pessoaObservacao}" />
+									</div>
+								</div>
+
+								<p:separator />
+								<br />
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-2">
+
+										<h:outputLabel id="labelCEP" value="CEP:*" />
+										<p:inputText id="campoCep" autocomplete="true"
+											value="#{pacienteBean.pacienteModel.pessoa.cep}"
+											title="O endereço será pesquisado na base de dados do correio ao sair do campo cep"
+											required="true" requiredMessage="Informe o Cep Válido"
+											maxlength="8">
+
+											<p:ajax event="blur" execute="@this"
+												listener="#{pacienteBean.pesquisarCep}"
+												update="logradouro,bairro,uf,complemento,localidade" />
+											<p:tooltip id="toolTipFocus" for="campoCep" showEvent="focus"
+												hideEvent="blur" />
+										</p:inputText>
+									</div>
+									<div class="ui-g-12 ui-lg-3">
+										<h:outputLabel id="labelCidadeEstoquista" for="localidade"
+											value="Cidade: *" />
+										<p:inputText id="localidade"
+											ondblclick="javascript:this.value=''"
+											value="#{pacienteBean.pacienteModel.pessoa.localidade}"
+											required="true" requiredMessage="Informe a Cidade">
+										</p:inputText>
+									</div>
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel id="labelUf" value="UF:*" />
+										<p:inputText id="uf" ondblclick="javascript:this.value=''"
+											value="#{pacienteBean.pacienteModel.pessoa.uf}">
+										</p:inputText>
+									</div>
+
+									<div class="ui-g-12 ui-lg-6">
+										<h:outputLabel id="labelComplemento" value="Detalhes:" />
+										<p:inputText id="complemento"
+											ondblclick="javascript:this.value=''"
+											value="#{pacienteBean.pacienteModel.pessoa.complemento}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-6">
+										<h:outputLabel id="labelLogradouro" value="Endereço:*" />
+										<p:inputText id="logradouro"
+											value="#{pacienteBean.pacienteModel.pessoa.logradouro}"
+											ondblclick="javascript:this.value=''" required="true"
+											requiredMessage="Informe o Endereço" />
+									</div>
+									<div class="ui-g-12 ui-lg-6">
+										<h:outputLabel id="labelBairro" value="Bairro:*" />
+										<p:inputText ondblclick="javascript:this.value=''"
+											value="#{pacienteBean.pacienteModel.pessoa.bairro}"
+											id="bairro" required="true"
+											requiredMessage="Informe o Bairro">
+										</p:inputText>
+									</div>
+								</div>
+								<p:separator />
+
+								<p:panel id="panel" header="Acompanhante" rendered="true"
+									style="margin-bottom:20px">
+									<div class="ui-g-12 ui-lg-4">
+										<h:outputLabel value="Nome : *" />
+										<p:inputText id="campo"
+											value="#{pacienteBean.acompaModel.pessoa.pessoaNome}"
+											required="false" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Telefone : *" />
+										<p:inputMask id="telefone" mask="(99)9 9999-9999"
+											value="#{pacienteBean.acompaModel.pessoa.pessoaTelefonePrimario	}"
+											required="false" />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Parentesco : *" />
+										<p:selectOneMenu id="parentescos"
+											value="#{pacienteBean.acompaModel.parentescos}"
+											required="false">
+											<f:selectItem itemLabel="Selecione" itemValue=""
+												noSelectionOption="true" />
+											<f:selectItem itemLabel="Pai" itemValue="P" />
+											<f:selectItem itemLabel="Mãe" itemValue="M" />
+											<f:selectItem itemLabel="Filho" itemValue="F" />
+											<f:selectItem itemLabel="Tio(a)" itemValue="T" />
+											<f:selectItem itemLabel="Sobrinho(a)" itemValue="S" />
+										</p:selectOneMenu>
+									</div>
+									<div class="ui-g-12 ui-lg-4">
+										<h:outputLabel value="Observação:" />
+										<p:inputTextarea rows="1" cols="30" maxlength="315"
+											autoResize="true"
+											value="#{pacienteBean.acompaModel.pessoa.pessoaObservacao}" />
+									</div>
+
+
+									<div align="center">
+										<p:commandButton id="btn_reset" value="Reset" type="reset"
+											style="height:40px;width:130px;
+										background-color: brown; 
+										background: brown; 
+										color:white !important;
+										font-size:large; " />
+										<p:commandButton id="btn_add" value="Adicionar"
+											update="table,campo, telefone,parentescos"
+											action="#{pacienteBean.salvarAcompanhante}"
+											style="height:40px;
+										width:130px; 
+										background-color: green; 
+										background: green; 
+										color:white !important;
+										font-size:large;" />
+
+									</div>
+									<br />
+									<br />
+
+									<p:dataTable value="#{pacienteBean.lstAcompanhante}" var="a"
+										id="table">
+
+										<p:column headerText="Acompanhante">
+											<h:outputText value="#{a.pessoa.pessoaNome}" />
+										</p:column>
+
+										<p:column headerText="Telefone">
+											<h:outputText value="#{a.pessoa.pessoaTelefonePrimario}" />
+										</p:column>
+
+										<p:column>
+											<p:commandLink value="Edita" update="@form" process="@this"
+												id="edita" ajax="true" immediate="true">
+												<i class="fa fa-trash" />
+												<f:setPropertyActionListener value="#{a}"
+													target="#{pacienteBean.acompaModel}" />
+											</p:commandLink>
+										</p:column>
+
+										<p:column>
+											<p:commandLink
+												action="#{pacienteBean.excluirAcompanhante(pacienteBean.acompaModel.idAcompanhante)}"
+												update="table" id="excluirMaterial" ajax="true"
+												immediate="true">
+												<i class="fa fa-trash" />
+												<f:setPropertyActionListener value="#{a}"
+													target="#{pacienteBean.acompaModel}" />
+											</p:commandLink>
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+
+							</p:panel>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

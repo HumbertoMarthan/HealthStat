@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface name="botoesCrud">
+	<composite:attribute name="managedBeanView" required="true" />
+	<composite:attribute name="botaoNovo" required="false" default="true" />
+	<composite:attribute name="botaoAtualizar" required="false"
+		default="true" />
+	<composite:attribute name="botaoSalvar" required="false" default="true" />
+	<composite:attribute name="botaoExcluir" required="false"
+		default="true" />
+	<composite:attribute name="botaoRedirecionar" required="false"
+		default="true" />
+	<composite:attribute name="camposReload" required="false" />
+</composite:interface>
+
+<composite:implementation>
+
+	<!-- Botão Redirecionar -->
+	<p:commandButton value="Consultar"
+		style="height:40px;
+		width:140px;
+		background-color: blue; 
+		background: blue; 
+		color:white !important;
+		font-size:large;"
+		rendered="#{cc.attrs.botaoRedirecionar}"
+		action="#{cc.attrs.managedBeanView.redirecionarFindEntidade}"
+		ajax="true" immediate="true" id="buttonRedirecionar"
+		update="#{cc.attrs.camposReload}" icon="fa fa-list-alt"
+		iconPos="right">
+	</p:commandButton>
+
+	<!-- Botão Novo -->
+	<p:commandButton value="Novo" styleClass="botaoNovoCadastro"
+		style="	height: 40px !important;
+		width: 130px !important;
+		background-color: gray !important;
+		background: gray !important;
+		color: white !important;
+		font-size: large !important;"
+		rendered="#{cc.attrs.botaoNovo}"
+		action="#{cc.attrs.managedBeanView.novo}" ajax="true" immediate="true"
+		id="buttonNovo" update="#{cc.attrs.camposReload}" icon="fa fa-plus"
+		iconPos="right">
+
+		<p:confirm
+			message="Ao Clicar em sim um novo formulário de cadastro será criado, as informações atuais serão perdidas, senão salvas!"
+			icon="ui-icon-mail-closed" />
+
+	</p:commandButton>
+
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+		<div align="center">
+			<p:commandButton value="Sim" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+			<p:commandButton value="Não" type="button"
+				styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+		</div>
+	</p:confirmDialog>
+
+	<!-- Botão Salvar -->
+	<p:commandButton value="Salvar"
+		style="height:40px;
+		width:130px; 
+		background-color: green; 
+		background: green; 
+		color:white !important;
+		font-size:large;"
+		rendered="#{cc.attrs.botaoSalvar}"
+		actionListener="#{cc.attrs.managedBeanView.saveNotReturn}" ajax="true"
+		partialSubmit="true" process="@this, @form" id="buttonSalvar"
+		immediate="false" update="#{cc.attrs.camposReload}"
+		icon="fa fa-floppy-o fa" iconPos="rigth">
+	</p:commandButton>
+
+	<!-- Botão Atualizar -->
+	<p:commandButton value="Atualizar" 
+		style="height:40px;
+		width:140px; 
+		background-color: greenyellow; 
+		background: greenyellow; 
+		color:white !important;
+		font-size:large;"
+		rendered="#{cc.attrs.botaoAtualizar}"
+		actionListener="#{cc.attrs.managedBeanView.saveEdit}" ajax="true"
+		partialSubmit="true" process="@this, @form" id="buttonAtualizar"
+		immediate="false" update="#{cc.attrs.camposReload}"
+		icon="fa fa-circle-o-notch" iconPos="rigth">
+	</p:commandButton>
+
+	<!-- Botão Excluir-->
+	<p:commandButton value="Excluir"
+		style="height:40px;width:130px; background-color: red; background: red; color:white !important"
+		rendered="#{cc.attrs.botaoExcluir}"
+		actionListener="#{cc.attrs.managedBeanView.excluir}" ajax="false"
+		id="buttonExcluir" immediate="true" update="#{cc.attrs.camposReload}"
+		onclick="if(!confirm('Deseja excluir esse registro?')) return false;"
+		icon="fa fa-minus" iconPos="rigth">
+	</p:commandButton>
+
+</composite:implementation>
+
+</html>

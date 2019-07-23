@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<composite:interface>
+		<composite:attribute name="bean" required="true"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		
+				<p:commandLink  immediate="true" ajax="false">
+		<f:setPropertyActionListener value="1" target="#{cc.attrs.bean.tipoRelatorio}"/>
+			<p:fileDownload value="#{cc.attrs.bean.arquivoReport}"/>
+			<h:graphicImage library="img" name="pdf.png"/>
+		</p:commandLink>
+	<!-- 	
+		<h:commandLink  immediate="true">
+		<f:setPropertyActionListener value="2" target="#{cc.attrs.bean.tipoRelatorio}"/>
+			<p:fileDownload value="#{cc.attrs.bean.arquivoReport}"/>
+			<h:graphicImage library="img" name="excel.png"/>
+		</h:commandLink> -->
+		
+		<!-- <h:commandLink  immediate="true">
+		<f:setPropertyActionListener value="3" target="#{cc.attrs.bean.tipoRelatorio}"/>
+			<p:fileDownload value="#{cc.attrs.bean.arquivoReport}"/>
+			<h:graphicImage library="img" name="html.png"/>
+		</h:commandLink> -->
+		<!-- 
+		<h:commandLink  immediate="true">
+		<f:setPropertyActionListener value="4" target="#{cc.attrs.bean.tipoRelatorio}"/>
+			<p:fileDownload value="#{cc.attrs.bean.arquivoReport}"/>
+			<h:graphicImage library="img" name="ods.png"/>
+		</h:commandLink>
+		 -->
+		
+	</composite:implementation>
+	
+</html>

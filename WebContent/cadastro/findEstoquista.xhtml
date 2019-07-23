@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Busca Estoquista</ui:define>
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: large;
+	color: black;
+	font-weight: bold
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-panel .ui-panel-title {
+	font-size: medium;
+}
+</style>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<div class="ui-fluid">
+				<p:panel header="Pesquisa de Estoquista" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botoes">
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton value="Incluir"
+										style="height:40px; background: greenyellow !important  ;   
+										background-color: greenyellow; 
+										color:white !important;
+										font-size:large; "
+										action="#{estoquistaBean.novo}" rendered="true"
+										immediate="true" icon="fa fa-plus" iconPos="right" />
+								</div>
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoEditar" value="Editar"
+										style="height:40px; background: lightskyblue !important  ;
+										   background-color: lightskyblue ;
+										   color:white !important;
+										   font-size:large;" immediate="true"
+										   action="#{estoquistaBean.edita}"
+										update="table, @form"
+										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }"
+										icon=" fa fa-pencil" iconPos="right" >
+										
+										<f:setPropertyActionListener value="#{d}" 
+								target="#{estoquistaBean.estoquistaModel}"/>
+										</p:commandButton>
+								</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-4">
+								<p:inputText value="#{estoquistaBean.campoBuscaNome}"
+									placeholder="Buscar pelo Nome" id="inputNome"
+									style="height:40px; ">
+
+								</p:inputText>
+							</div>
+
+							<div class="ui-g-12 ui-lg-2">
+								<p:inputText value="#{estoquistaBean.campoBuscaCPF}"
+									placeholder="Buscar pelo CPF" id="inputCPF"
+									style="height:40px; ">
+
+								</p:inputText>
+							</div>
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandButton style="height:40px;width:130px; "
+									styleClass="btn btn-blue" icon="ui-icon-search"
+									id="btnBuscatxt" actionListener="#{estoquistaBean.busca}"
+									update=" inputNome,inputCPF, table" />
+								<p:defaultCommand target="btnBuscatxt" />
+							</div>
+						</div>
+					</div>
+				</p:panel>
+				<p:panel>
+					<div class="ui-g">
+					<br/>
+						<p:dataTable value="#{estoquistaBean.lstEstoquista}" var="d"
+							styleClass="table.gridtable" rowKey="#{d.idEstoquista}"
+							selectionMode="single" id="table" 
+							selection="#{estoquistaBean.estoquistaModel}">
+
+							<p:ajax event="rowSelect"
+								listener="#{estoquistaBean.onRowSelect}"
+								update="table,:form:botoes" />
+
+							<p:column headerText="Matricula" priority="1"
+								style="overflow: hidden;text-align: center; font-size: medium; width: 90px">
+								<a>#{d.idEstoquista} <br />
+								</a>
+							</p:column>
+
+							<p:column headerText="Estoquista" priority="1"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								<a>#{d.pessoa.pessoaNome} <br/> CPF -
+									#{d.pessoa.pessoaCPF} 
+								</a>
+							</p:column>
+
+							<p:column headerText="Endereço" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								<a>#{d.pessoa.logradouro} <br />
+								</a>
+							</p:column>
+							<p:column headerText="Telefone" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								<a>#{d.pessoa.pessoaTelefonePrimario} <br />
+								</a>
+							</p:column>
+							<p:column style="width:50px" priority="4">
+								<center>
+									<f:facet name="header">Excluir</f:facet>
+									<p:commandLink action="#{estoquistaBean.excluir}"
+										update="table" id="excluir" ajax="true"
+										immediate="true">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+										<f:setPropertyActionListener value="#{d}"
+											target="#{estoquistaBean.estoquistaModel}" />
+									</p:commandLink>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+

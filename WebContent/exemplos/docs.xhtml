@@ -1,0 +1,396 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Documentation</ui:define>
+    
+    <ui:define name="head">
+        <style type="text/css">
+            .docs h1 {
+                margin-top: 30px;
+            }
+            
+            .docs p,
+            .docs li {
+                line-height: 1.5;
+            }
+            
+            .docs pre {
+                font-family: monospace;
+                background-color: #dee4e9;
+                color: #757575;
+                padding: 1em;
+                font-size: 14px;
+                border-radius: 3px;
+                overflow: auto;
+            }
+            
+            .video-container {
+                position: relative;
+                width: 100%;
+                height: 0;
+                padding-bottom: 56.25%;
+            }
+            .video-container iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card docs"> 
+                    <h1>Getting Started</h1>
+                    <p>First of all, you'd need SASS to compile CSS, proceed to <a href="https://sass-lang.com/install">SASS Installation</a> before beginning if you do not have SASS available in your command line.</p>
+                    <p>Demo project has an integrated jetty plugin so running the sample is easy as building the css first followed by the mvn jetty:run command.</p>
+<pre>
+sass --update src/main/webapp/resources/ --sourcemap=none
+mvn jetty:run
+</pre> 
+                    <p>Navigate to http://localhost:8080/paradise to view the demos which is exactly same as the live version.</p>                 
+                    
+                    <h1>Layout</h1>
+                    <p>Paradise utilizes <a href="http://docs.oracle.com/javaee/6/tutorial/doc/giqxp.html">JSF templating APIs</a> and provides a main template.xhtml along with additional <i>topbar</i>, <i>menu</i>, <i>footer</i> fragments for the base layout. 
+                        These xhtml files must be placed under WEB-INF folder and client pages should reference the template.xhtml as their template. 
+                        Provided empty.xhtml is a sample content page using the main template.xhtml that defines "content" as the main ui:define placeholder. By default template defines 3 placeholders 
+                        (page title, header content and actual content)to insert content and you can add more as per your requirements.</p>
+                        
+                    <p>Sample page below uses the main template from Paradise.</p>
+<pre>
+&lt;ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"&gt;
+                
+    &lt;ui:define name="title"&gt;Test Page&lt;/ui:define&gt;
+
+    &lt;ui:define name="content"&gt;
+        Content goes here
+    &lt;/ui:define&gt;
+&lt;/ui:composition&gt;
+</pre>
+                    
+                    <p>Other required resources are the css, js and images that are located inside resources/paradise-layout folder, simply copy the paradise-layout folder to your %WEB-APP-FOLDER%/resources folder 
+                        so that final path would be %WEB-APP-FOLDER%/resources/paradise-layout/. Please refer to demo app or maven project of the demo app as the reference.</p>
+                    
+                    <h1>GuestPreferences Bean</h1>
+                    <p>GuestPreferences is a simple session scoped bean to keep the user customizations of the layout, template xhtml files
+                    refer to this bean to dynamically change their behavior such as menu mode or theme. This bean is not necessary to run the Paradise
+                    and only used for demo purposes. For example template.xhtml includes layout color depending on a user preference using an EL expression.</p>
+<pre>
+&lt;h:outputStylesheet name="css/layout-\#{guestPreferences.layout}.css" library="paradise-layout" /&gt;   
+</pre>               
+                    <p>In your application, you may also need a similar bean to make the template dynamic or choose a static color with;</p>  
+                    
+<pre>
+&lt;h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" /&gt;   
+</pre>   
+                    <p>Source code of GuestPreferences.</p>
+<pre>
+public class GuestPreferences implements Serializable {
+        
+    private String theme = "blue";
+    
+    private String layout = "default";
+            
+    private boolean overlayMenu = false;
+    
+    private boolean slimMenu = false;
+    
+    private boolean darkMenu = false;
+                
+	public String getTheme() {		
+		return theme;
+	}
+    
+    public String getLayout() {		
+        return layout;
+    }
+    
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+    
+    public void setLayout(String layout) {
+		this.layout = layout;
+	}
+        
+    public boolean isOverlayMenu() {
+        return this.overlayMenu;
+    }
+    
+    public void setOverlayMenu(boolean value) {
+        this.overlayMenu = value;
+        this.slimMenu = false;
+    }
+    
+    public boolean isSlimMenu() {
+        return this.slimMenu;
+    }
+    
+    public void setSlimMenu(boolean value) {
+        this.slimMenu = value;
+    }
+    
+    public boolean isDarkMenu() {
+        return this.darkMenu;
+    }
+    
+    public void setDarkMenu(boolean value) {
+        this.darkMenu = value;
+    }
+}
+</pre>
+                    
+                    <h1>Theme</h1>
+                    <p>Paradise provides 7 PrimeFaces themes out of the box, setup of a theme simple as including the theme jar in your classpath and defining primefaces.THEME context parameter in web.xml such as "primefaces-paradise-green". Full list of 
+                    available themes are;</p>
+                    
+                    <ul>
+                        <li>primefaces-paradise-blue</li>
+                        <li>primefaces-paradise-deeppurple</li>
+                        <li>primefaces-paradise-green</li>
+                        <li>primefaces-paradise-orange</li>
+                        <li>primefaces-paradise-purple</li>
+                        <li>primefaces-paradise-turquoise</li>
+                        <li>primefaces-paradise-lime</li>
+                    </ul>
+                    
+                    <p>A custom theme can be developed by the following steps.</p>
+                    <ul>
+                        <li>Create a custom theme folder such as primefaces-paradise-myown under webapp/resources and place an empty theme.scss inside.</li>
+                        <li>Copy the sass folder from the distribution to webapp/resources.</li>
+                        <li>Define the variables listed below and import the <i>/sass/theme/_theme.scss</i> file.</li>
+                        <li>Build the scss to generate css.</li>
+                        <li>Set primefaces.THEME context parameter as <i>paradise-myown</i></li>
+                        <li>Either bundle the css in a jar file or serve from webapp/resources/primefaces-paradise-myown folder</li>
+                    </ul>
+                    
+                    <p>Here are the variables required to create a theme.</p>
+                        
+<pre>
+$primaryColor:#3984b8;
+$primaryTextColor:#ffffff;
+
+@import '../sass/theme/_theme';
+</pre> 
+                        
+                    <p> An example sass command to compile the css would be;</p>
+                        
+<pre>
+sass src/main/webapp/resources/primefaces-paradise-myown/theme.scss src/main/webapp/resources/primefaces-paradise-myown/theme.css  --sourcemap=none
+</pre> 
+
+                    <p>Watch mode is handy to avoid compiling everytime when a change is made, instead use the following command
+                    so that sass generates the file whenever you make a customization. This builds all css files whenever a change is made to any scss file.</p>
+<pre>
+sass -w src/main/webapp/resources/ --sourcemap=none
+</pre> 
+
+                    <p>Same can also be applied to layout itself;</p>
+                    <ul>
+                        <li>Choose a layout name such as layout-myown.</li>
+                        <li>Create an empty file named layout-myown.scss inside resources/paradise-layout/css folder.</li>
+                        <li>Copy the sass folder from the distribution to webapp/resources.</li>
+                        <li>Define the variables listed below and import the <i>/sass/layout/_layout.scss</i> file.</li>
+                        <li>Build the scss to generate css</li>
+                        <li>Serve the css by importing it using a link tag or h:outputStylesheet.</li>
+                    </ul>
+
+                    <p>Here are the variables required to create a layout</p>
+                        
+<pre>
+$primaryColor:#1976d2;
+$primaryLightColor:#2196F3;
+$primaryTextColor:#BBDEFB;
+$primaryTextHoverColor:#E3F2FD;
+$accentColor:#FFC107;
+$accentLightColor:#FFECB3;
+$accentTextColor:#000000;
+$activeMenuItemTextColor:#1976d2;
+$darkActiveMenuItemTextColor:#2196F3;
+$darkMenuItemTextColor:#dee0e3;
+$darkMenuItemInactiveTextColor:#757575;
+$darkMenuItemHoverBgColor:#545454;
+$darkSidemenuBgColor:#343434;
+$darkMenuBgColor:#424242;
+
+@import '../../sass/layout/_layout';
+</pre> 
+
+                    <p>In case you'd like to customize common variables not theme colors, the _variables.scss is where the structural variables (e.g. font size, paddings) for the layout are defined.</p>
+<pre>
+/******************************/
+/*           Common           */
+/******************************/
+$fontFamily:"Roboto","Helvetica Neue",sans-serif;
+$fontSize:13px;
+$textColor:#757575;
+$textSecondaryColor:lighten($textColor,25%);
+$borderRadius:2px;
+$dividerColor:#dee4e9;
+
+/******************************/
+/*           Layout           */
+/******************************/
+$darkMenuTextColor:#ffffff;
+
+/******************************/
+/*           THEME            */
+/******************************/
+/* Icons */
+$iconFontSize:13px;
+$iconWidth:16px;
+
+/* Error */
+$errorColor:#e17576;
+
+/* Headers */
+$headerPadding:6px 12px;
+$headerBgColor:#ffffff;
+$headerTextColor:#757575;
+$headerHoverBgColor:#dee4e9;
+$headerBorderColor:#c7cdd1;
+$headerIconColor:#757575;
+$headerIconHoverColor:$primaryColor;
+
+/* Contents */
+$contentPadding:6px 12px;
+$contentBorderColor:#c7cdd1;
+$contentBgColor:#ffffff;
+
+/* Forms */
+$inputBgColor:#ffffff;
+$inputPadding:5px;
+$inputBorderColor:#bdc3c9;
+$inputHoverBorderColor:#979ca0;
+
+/* Buttons */
+$buttonTextColor:#ffffff;
+$toggleButtonBgColor:#c6cbcf;
+
+/* List Items */
+$listItemPadding:6px 12px;
+$listItemHoverBgColor:#dee4e9;
+$listItemHoverTextColor:#757575;
+
+/* Messages */
+$infoMessageBgColor:#a8c9e0;
+$infoMessageTextColor:#393b3e;
+$warnMessageBgColor:#f8eab9;
+$warnMessageTextColor:#393b3e;
+$errorMessageBgColor:#fac7c8;
+$errorMessageTextColor:#393b3e;
+$fatalMessageBgColor:#bdc3c9;
+$fatalMessageTextColor:#393b3e;
+
+/* Data */
+$paginatorBgColor:#ffffff;
+$paginatorHoverBgColor:#dee4e9;
+$datableEvenRowBgColor:#f6f8f9;
+$datatableHoverBgColor:#dee4e9;
+
+/* Predefined Colors */
+$blue:#3984b8;
+$orange:#f6ac2b;
+$purple:#7e8dcd;
+$pink:#e175a0;
+$turquoise:#39b8b6;
+$green:#3eb839;
+$red:#e17576;
+</pre>        
+
+                    <h1>Menu</h1>    
+                    <p>Menu is a regular JSF component that supports PrimeFaces MenuModel API allowing both declarative and programmatic approaches.</p>
+<pre>
+xmlns:pv="http://primefaces.org/paradise"
+
+&lt;pv:menu&gt;
+&lt;/pv:menu&gt;
+</pre>  
+                    <p>Menu has 3 modes; static, overlay and slim. Layout wrapper element in template.xhtml is used to define which mode to use by adding specific classes. List
+                    below indicates the style classes for each mode.</p>
+                    <ul>
+                        <li>Static: "layout-menu-static"</li>
+                        <li>Overlay: "layout-menu-overlay"</li>
+                        <li>Slim: "layout-menu-slim"</li>
+                    </ul>
+                    
+                    <p>For example to create a static menu, the div element should be in following form;</p>
+<pre>
+&lt;div class="layout-wrapper layout-menu-static"&gt;
+    ...
+&lt;/div&gt;
+</pre>            
+
+                    <p>Layout mode can be dynamic using an EL expression as well using an example bean called userPreferences.</p>
+<pre>
+&lt;div class="layout-wrapper \#{userPreferences.slimMenu ? 'layout-menu-slim' : (userPreferences.overlayMenu ? 'layout-menu-overlay' : 'layout-menu-static')}"&gt;
+...
+&lt;/div&gt;
+</pre>
+
+                    <h1>Icons</h1>
+                    <p>Paradise Layout uses font awesome icons for layout so enable font awesome support in PrimeFaces by setting primefaces.FONT_AWESOME context parameter in web.xml as true. If your PrimeFaces version 
+                    does not have the font awesome integration, include the font-awesome manually in your application.</p>
+
+                    <h1>Card</h1>
+                    <p>Card is a section to group content and layout provides a built-in css for it. Apply .card style class to your container to use it. If the
+                    card has a title defined with h1 tag, add card-w-title to adjust paddings.</p>
+<pre>
+&lt;div class="card"&gt;
+    Content here
+&lt;/div&gt;
+
+&lt;div class="card card-w-title"&gt;
+    &lt;h1&gt;Card with Title&lt;h1&gt;
+    Content here
+&lt;/div&gt;
+</pre>  
+
+                    <h1>Grid CSS</h1>
+                    <p>Paradise uses new PrimeFaces Grid CSS (ui-g-*) throughout the samples, we strongly suggest using Grid CSS as your layout framework as it is well tested and supported by PrimeFaces. Grid CSS 
+                    is automatically included on newer versions however if your PrimeFaces version is older than 5.3.14, add the provided grid.css file under /paradise-layout/css/ folder to your template manually.</p> 
+                    
+                    <h1>Tips</h1>
+                    <ul>
+                        <li>Familiarity with <a href="http://sass-lang.com/">SASS</a> is required to make customizations to the layout and theme.</li>
+                        <li>Demo application war and the maven project tag are included in distribution however you don't necessarily need them to install Paradise, the actual artifacts required are the layout zip file and the theme jar.</li>
+                        <li>Sample demo application war includes the JSF libraries so it is suggested to remove them from the war file when you deploy to an appserver.</li>
+                        <li>When running the maven project, you need to build the sass with (sass --update src/main/webapp/resources/ --sourcemap=none) command.</li>
+                    </ul>
+                    
+                    <h1>Migration Guide</h1>
+                    <p>1.0.3 to 1.0.4</p>
+                    <ul>
+                        <li>Update layout.js, layout css and ParadiseMenu*.java files</li>
+                        <li>Replace theme jar with new jar</li>
+                    </ul>
+                    <p>1.0.2 to 1.0.3</p>
+                    <ul>
+                        <li>Update layout.js and layout css files</li>
+                        <li>Replace theme jar with new jar</li>
+                    </ul>
+                    <p>1.0 to 1.0.1</p>
+                    <ul>
+                        <li>Update layout css files</li>
+                        <li>Replace theme jar with new jar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

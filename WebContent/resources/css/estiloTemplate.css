@@ -1,0 +1,101 @@
+/*PLACEHOLDER DOS INPUTS*/
+:-webkit-input-placeholder {
+	color: gray !important;
+	font-weight: bold;
+	
+}
+
+:-moz-placeholder { /* Firefox 18- */
+	color: !important;
+	font-weight: bold;
+}
+
+:-moz-placeholder { /* Firefox 19+ */
+	color: gray !important;
+	font-weight: bold;
+}
+
+:-ms-input-placeholder {
+	color: gray !important;
+	font-weight: bold;
+}
+
+/*RESPONSIVIDADE COMEÇO */
+.ui-panelgrid.form-elements .ui-grc-2 {
+	padding-left: 80px;
+}
+
+@media ( max-width :1024px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 20px;
+	}
+}
+
+@media ( max-width :640px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 6px;
+	}
+}
+
+/* RESPONSIVIDADE FIM*/
+
+/*COR DOS BOTOES INICIO*/
+
+
+/*COR DOS BOTOES FIM*/
+/*ESTILO DO MESSAGES NO ERROS DE VALIDAÇÃO DOS CADASTROS INICIO*/
+.validacaoCadastroMessages {
+	font-weight: bold !important;
+    width: 550px !important;
+}
+/*ESTILO DO MESSAGES NO ERROS DE VALIDAÇÃO DOS CADASTROS FIM*/
+
+/*NOME LABEL IDENTIFICAÇÃO DAS TELAS DE CADASTRO */
+.titulo {
+	font-weiht: bold;
+	font-size: 30px !important;
+	text-align: center;
+	color: #2e6e9e !important;
+}
+
+/*NOME LABEL IDENTIFICAÇÃO DAS TELAS DE CADASTRO */
+
+/**/
+.invalidarSessao {
+	background: #c5dbec;
+	background-color: Transparent;
+	background-repeat: no-repeat;
+	border: none;
+	cursor: pointer;
+	overflow: hidden;
+	outline: none;
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: #1d5987;
+	width: 200px;
+	heigth: 50px;
+	padding: .3em 1em;
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 5px;
+}
+
+.labelInvalidarSessao {
+	font-weigth: bold;
+	font-size: 15px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 250px
+}
+/**/
+
+/**/
+.emp1 .fc-event-skin {
+    background: red;
+}
+.emp2 .fc-event-skin {
+   background: green;
+ }
+/**/

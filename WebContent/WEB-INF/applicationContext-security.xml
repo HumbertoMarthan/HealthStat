@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<b:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+ http://www.springframework.org/schema/security 
+ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+	<global-method-security
+		secured-annotations="enabled" />
+
+	<http auto-config="true"
+		access-denied-page="/error/acessoNegado.jsf" use-expressions="true">
+
+		<intercept-url pattern="/resources/**"
+			access="isAuthenticated() and 
+			hasAnyRole('ADMIN') or
+			hasAnyRole('ATE') or 
+			hasAnyRole('MED') or 
+			hasAnyRole('EST')" />
+
+		<intercept-url pattern="/restrito/**"
+			access="isAuthenticated() and 
+			hasAnyRole('ADMIN') or
+			hasAnyRole('ATE') or 
+			hasAnyRole('MED') or 
+			hasAnyRole('EST')" />
+
+		<intercept-url pattern="/error/**"
+			access="isAnonymous() or isAuthenticated() or !isAuthenticated()" />
+
+		<intercept-url pattern="/cadastro/**"
+			access="isAuthenticated() and 
+			hasAnyRole('ADMIN') or
+			hasAnyRole('ATE') or 
+			hasAnyRole('MED') or 
+			hasAnyRole('EST')" />
+			
+		<intercept-url pattern="/resources/componentes/**"
+			access="isAuthenticated() and 
+			hasAnyRole('ADMIN') or
+			hasAnyRole('ATE') or 
+			hasAnyRole('MED') or 
+			hasAnyRole('EST')" />
+			
+		
+			
+		<intercept-url pattern="/prontuario/**"
+			access="isAuthenticated() and 
+			hasAnyRole('ADMIN') or
+			hasAnyRole('MED')"/>
+		
+
+		<intercept-url pattern="/publico/**" access="permitAll" />
+
+		<form-login login-page="/publico/login.jsf"
+			always-use-default-target="true"
+			default-target-url="/restrito/dashboard.xhtml"
+			authentication-failure-url="/publico/login.jsf?login_error=1" />
+
+		<logout invalidate-session="true"
+			logout-success-url="/publico/login.jsf"
+			logout-url="/j_spring_security_logout" delete-cookies="JSESSIONID" />
+
+		<remember-me token-validity-seconds="1209600" />
+
+		<session-management
+			invalid-session-url="/publico/login.jsf"
+			session-fixation-protection="migrateSession">
+			<concurrency-control max-sessions="1"
+				expired-url="/publico/login.jsf" error-if-maximum-exceeded="true" />
+
+		</session-management>
+
+	</http>
+
+	<authentication-manager>
+		<authentication-provider>
+			<password-encoder hash="plaintext" />
+			<jdbc-user-service
+				data-source-ref="springDataSource"
+
+				users-by-username-query="select login as username,
+										senha as password,
+										'true' as enable
+										from login 
+										where inativo = false
+										and upper(login) = upper(?)"
+
+				authorities-by-username-query="select  login as username,
+												p.perfilSigla as authority
+												from login u
+												join perfil p
+												on u.idPerfil = p.idPerfil
+												where u.inativo = false
+												and upper(login) = upper(?)"  />
+		</authentication-provider>
+	</authentication-manager>
+
+
+</b:beans>

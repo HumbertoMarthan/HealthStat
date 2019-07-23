@@ -1,0 +1,371 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Pagina Inicial</ui:define>
+
+	<ui:define name="head">
+		<h:outputScript name="scripty.js" library="javascript"
+			id="jsScriptSistema" />
+
+
+		<style type="text/css">
+.emp1 {
+	background: yellow !important;
+	border-color: #932c39 !important;
+}
+
+.consulta {
+    background-color: blue !important;
+}
+.retorno {
+    background-color: green !important;
+}
+
+.main-content {
+	padding: 0;
+}
+
+.inputAgenda {
+	width: 380px;
+}
+
+value {
+	width: 600px;
+}
+/*Tamanho do Filtro dentro do ComboBox*/
+.ui-selectonemenu-panel .ui-selectonemenu-filter {
+	width: 100%;
+	padding-right: 35px;
+}
+/*Posição da Lupa do Filtro*/
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+	position: absolute;
+	top: 10px;
+	right: 1px;
+	left: 225px;
+}
+
+.fc-time-grid .fc-slats .ui-widget-content {
+	/*background-color: cornsilk !important;*/
+	
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight,
+	.ui-widget-header .ui-state-highlight {
+	border: 1px solid #fad42e;
+	/* background: #fbec88 url(/paradise-theme-clinica/javax.faces.resource/images/ui-bg_flat_55_fbec88_40x100.png.xhtml?ln=primefaces-redmond) 50% 50% repeat-x; */
+	color: #363636;
+}
+
+.ui-tabmenu  .ui-tabmenu-nav .ui-tabmenuitem {
+	list-style: none;
+	float: left;
+	position: sticky;
+	margin: 0 .2em 1px 0;
+	padding: 0;
+	white-space: nowrap;
+	display: block;
+	border-bottom: 0;
+	top: 1px;
+	width: 100%;
+}
+
+.
+esti {
+	background-color: green !important;
+}
+</style>
+		<script type="text/javascript">
+			function handleLoginRequest(xhr, status, args) {
+				if (args.validationFailed || !args.loggedIn) {
+
+				} else {
+					PF('eventDialog').hide();
+					$('#loginLink').fadeOut();
+				}
+			}
+		</script>
+
+
+	</ui:define>
+
+	<ui:define name="content">
+		<!-- <h:outputStylesheet library="css" name="schedule.css"/>
+        <h:outputScript library="js" name="schedule.js"/> -->
+		<p:growl id="avisosGrowl" />
+		<!-- <h:form>
+			<div align="right">
+				<p:tabMenu activeIndex="#{param.i}"
+					styleClass="esti,ui-g-2 ui-md-2 ui-lg-2">
+
+					<p:menuitem value="Schedule" outcome="/restrito/dashboard.xhtml"
+						icon="ui-icon-calendar" iconPos="left">
+						<f:param name="i" value="2" />
+					</p:menuitem>
+					<p:menuitem value="Lista" outcome="/cadastro/listaAgedamento.xhtml"
+						icon="ui-icon-note">
+						<f:param name="i" value="2" />
+					</p:menuitem>
+				</p:tabMenu>
+			</div>
+		</h:form>
+ -->
+		<h:form>
+
+
+		</h:form>
+
+		<h:form id="formAgendamento">
+
+
+			<!-- <div align="center">
+				<p:panelGrid columns="5" styleClass="ui-panelgrid-blank">
+					<p:outputLabel value="Inicio:  " />
+					<p:calendar value="#{scheduleBean.evento.dataInicioRelatorio}" autocomplete="false"
+						pattern="dd/MM/yyyy HH:mm" />
+					<p:outputLabel value="Fim:  " />
+					<p:calendar value="#{scheduleBean.evento.dataFimRelatorio}" autocomplete="false" 
+						pattern="dd/MM/yyyy HH:mm" />
+
+					<p:commandButton value="Gerar Relatório" type="submit" ajax="false"
+						icon="fa fa-file-pdf-o" iconPos="rigth">
+						<f:setPropertyActionListener value="1"
+							target="#{scheduleBean.tipoRelatorio}" />
+						<p:fileDownload value="#{scheduleBean.arquivoReport}" />
+					</p:commandButton>
+				</p:panelGrid>
+			</div> -->
+
+			<div align="center">
+				<div align="center" style="width: 1200px">
+					<p:panel header="Agendamento de Consultas" 
+						rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
+						<p:schedule value="#{scheduleBean.model}"
+							showWeekends="false"
+							initialDate="#{scheduleBean.dataAtualSchedule}"
+							widgetVar="scheduleAgendamento" id="scheduleAgendamento"
+							allDaySlot="false" centerHeaderTemplate="true" timeZone="GMT-3"
+							locale="pt_BR" scrollTime="18:00" tooltip="true"
+							timeFormat="HH:mm" axisFormat="HH:mm" view="agendaDay"
+							minTime="8:00" maxTime="20:00" aspectRatio="2.0">
+
+							<!-- DATA SELECIONADA -->
+							<p:ajax event="dateSelect"
+								listener="#{scheduleBean.onDateSelect}"
+								update="#{p:component('formScheduleDialog')}"
+								oncomplete="PF('eventDialog').show();" />
+
+							<!-- EVENTO SELECIONADO DO AGENDAMENTO -->
+							<p:ajax event="eventSelect"
+								listener="#{scheduleBean.onEventSelect}"
+								update="#{p:component('formScheduleDialog')}"
+								oncomplete="PF('eventDialog').show();" />
+
+						</p:schedule>
+					</p:panel>
+				</div>
+			</div>
+
+		</h:form>
+
+		<h:form id="formScheduleDialog">
+			<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
+				dynamic="true" resizable="false" closable="true" showEffect="true"
+				modal="true" style="width: 1000px !important" minimizable="true">
+				<p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+				</p:panelGrid>
+				<p:separator />
+				<p:panelGrid columns="3" id="panelGridEvento"
+					styleClass="ui-panelgrid-blank">
+
+
+					<p:outputLabel value="Confirmar: " />
+					<p:selectOneButton value="#{scheduleBean.evento.confirmaConsulta}" 
+						styleClass="inputAgenda" style="width:100% !important"
+						>
+						<f:selectItem itemValue="" itemLabel="Não Selecionado"
+							noSelectionOption="true" />
+						<f:selectItem itemValue="P" itemLabel="Presente" />
+						<f:selectItem itemValue="A" itemLabel="Ausente" />
+					</p:selectOneButton>
+					<p:outputLabel />
+
+					<p:outputLabel value="Agendamento:" />
+					<p:selectOneButton value="#{scheduleBean.evento.tipoEvento}"
+						styleClass="inputAgenda"
+						required="true" requiredMessage="Informe um tipo de agendamento" >
+						<f:selectItem noSelectionOption="true" itemLabel="Não Selecionado" />
+						<f:selectItems value="#{scheduleBean.tiposEventos}"
+							var="tipoEvento" itemLabel="#{tipoEvento.descricao}"
+							itemValue="#{tipoEvento}" />
+					</p:selectOneButton>
+					<p:outputLabel />
+
+					<p:outputLabel value="Titulo:" rendered="false" />
+					<p:inputText id="titulo" value="#{scheduleBean.evento.titulo}"
+						rendered="false" requiredMessage="Informar Titulo do Agendamento"
+						placeholder="Titulo do Agendamento" size="30" />
+
+					<p:outputLabel value="Paciente" />
+					
+					<p:autoComplete id="paciente" 
+							completeMethod="#{auxController.completePaciente}"
+							forceSelection="true" converter="entityConverter" var="a"
+							itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
+							value="#{scheduleBean.evento.paciente}"
+							minQueryLength="2" dropdown="true" size="36" maxResults="30"
+							required="true" requiredMessage="Informe um paciente">
+							<p:column id="p">
+								<h:outputText value="#{a.pessoa.pessoaNome}" />
+							</p:column>
+							<p:ajax event="change" listener="#{scheduleBean.pacienteEtiqueta}"
+							update="titulo" />
+							<p:ajax event="itemSelect" listener="#{scheduleBean.pacienteEtiqueta}"
+							update="titulo" />
+						</p:autoComplete>	
+					
+					
+				<!-- 	<p:selectOneMenu id="paciente"
+						value="#{scheduleBean.evento.paciente}" filter="true"
+						filterPlaceholder="Lista de Pacientes" autoWidth="true"
+						required="true"
+						requiredMessage="Informe um Paciente para o Agendamento"
+						styleClass="inputAgenda" converter="entityConverter">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{scheduleBean.pacientes}" />
+						<p:ajax event="change" listener="#{scheduleBean.pacienteEtiqueta}"
+							update="titulo" />
+					</p:selectOneMenu> -->
+					
+
+					<!-- Cadastra Paciente -->
+					<p:commandButton icon="ui-icon-plus" immediate="true"
+						action="#{pacienteBeanView.redirecionarFindEntidade}">
+						<p:confirm
+							message="Você será redirecionado para tela de cadastro de paciente, deseja continuar?"
+							icon="ui-icon-mail-closed" />
+
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							<div align="center">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+							</div>
+
+						</p:confirmDialog>
+
+					</p:commandButton>
+
+					<p:outputLabel value="Medico" />
+					
+					<p:autoComplete id="medico"
+							completeMethod="#{auxController.completeMedico}"
+							forceSelection="true" converter="entityConverter" var="a"
+							itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
+							value="#{scheduleBean.evento.medico}"
+							minQueryLength="1" dropdown="true" size="36" maxResults="30"
+							required="true" requiredMessage="Informe um médico">
+							<p:column>
+								<h:outputText value="#{a.pessoa.pessoaNome}" />
+							</p:column>
+							<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
+							update="descricao" />
+							<p:ajax event="itemSelect" listener="#{scheduleBean.medicoEtiqueta}"
+							update="descricao" />
+						</p:autoComplete>	
+					
+					<!-- <p:selectOneMenu id="medico" value="#{scheduleBean.evento.medico}"
+						required="true" filter="true" filterPlaceholder="Lista de Médicos"
+						autoWidth="true"
+						requiredMessage="Informe um Médico para o Agendamento"
+						styleClass="inputAgenda" converter="entityConverter">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{scheduleBean.medicos}" />
+
+						<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
+							update="descricao" />
+					</p:selectOneMenu>
+					<p:outputLabel /> -->
+
+
+
+					<p:outputLabel value="Descrição" rendered="false" />
+					<p:inputTextarea id="descricao" rows="2" autoResize="true"
+						rendered="false" value="#{scheduleBean.evento.descricao}"
+						style="width: 242px" />
+				</p:panelGrid>
+				<p:separator />
+				<div align="center">
+					<p:panelGrid columns="4" styleClass="ui-panelgrid-blank">
+						<p:outputLabel value="Hora Inicio:" />
+
+						<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
+							popupIconOnly="true" alt="Agendamento Inicio"
+							mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
+							required="true" requiredMessage="Informe uma data Inicio para o Agendamento" 
+							autocomplete="true" showButtonPanel="true"
+							maxHour="17" timeZone="GMT-3" minHour="8" showTodayButton="false"
+							value="#{scheduleBean.evento.dataInicio}" size="15">
+							<p:ajax event="blur"
+								listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+							<p:ajax event="change"
+								listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+						</p:calendar>
+
+
+						<p:outputLabel value="Hora Fim:" />
+						<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
+							locale="pt_BR" autocomplete="true" popupIconOnly="true"
+							required="true" requiredMessage="Informe uma data Fim para o Agendamento" 
+							showButtonPanel="true" showTodayButton="false"
+							maxHour="17" timeZone="GMT-3" minHour="8" size="15"
+							pattern="dd/MM/yyyy HH:mm">
+						</p:calendar>
+
+
+					</p:panelGrid>
+				</div>
+
+				<f:facet name="footer">
+					<div align="center">
+						<p:commandButton value="Fechar"
+							onclick="PF('eventDialog').hide(); return false;" />
+
+						<p:commandButton value="Salvar"
+							update="avisosGrowl,formAgendamento:scheduleAgendamento,paciente, medico,dti, dtf"
+							oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
+							actionListener="#{scheduleBean.salvar()}">
+						</p:commandButton>
+
+						<p:commandButton value="Remover" action="#{scheduleBean.remover}"
+							rendered="#{scheduleBean.evento.id != null}"
+							update="avisosGrowl,@form,formAgendamento:scheduleAgendamento">
+							<p:confirm
+								message="Confirmar Remoção do Agendamento Selecionado?"
+								icon="ui-icon-mail-closed" />
+						</p:commandButton>
+
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							<div align="center">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+							</div>
+						</p:confirmDialog>
+					</div>
+				</f:facet>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

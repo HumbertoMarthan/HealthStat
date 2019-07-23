@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:pa="http://primefaces.org/paradise">
+
+	<style type="text/css">
+a:link {
+	text-decoration: none;
+}
+
+a:visited {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+</style>
+
+	<div class="topbar">
+		<h:link outcome="/restrito/dashboard" styleClass="topbar-logo">
+			<!-- 	<p:graphicImage name="images/#{guestPreferences.layout == 'default' ? 'logo-black.png' : 'logo-white.png'}" style="border: 0px;" library="paradise-layout" />
+	        -->
+			<p:graphicImage
+				name="images/#{guestPreferences.layout == 'default' ? 'topBarHealthStatIgual.png' : 'topBarHealthStatIgual.png'}"
+				style="border: 0px; " library="paradise-layout" />
+		</h:link>
+
+		<a href="#" id="menu-button"> <i class="fa fa-bars"></i>
+		</a> <a href="#" id="user-display"> <span class="username"
+			style="text-decoration: none;"> <p:outputLabel
+					style="font-weight:bold;">Usuário: #{loginBean.usuarioLogadoSecurity}
+		</p:outputLabel>
+		</span> <p:graphicImage name="images/avatar.png" library="paradise-layout"
+				style="border: 0px;" /> <i class="fa fa-angle-down"></i>
+		</a> <label for="topbar-search"> <!-- <i
+			class="fa fa-search topbar-search-icon"></i> -->
+		</label>
+		<!-- <input type="text" class="topbar-search"
+			placeholder="" id="topbar-search" />
+ -->
+		<ul id="topbar-menu" class="fadeInDown animated">
+
+
+			<li><a href="#"> <i class="topbar-icon fa fa-fw fa-user"></i>
+					<span class="topbar-item-name" style="font-size: 15px;">Ajustes</span>
+			</a>
+				<ul>
+
+					<li role="menuitem"><a
+						href="#{facesContext.externalContext.requestContextPath}/cadastro/alterarSenha.xhtml.jsf?faces-redirect=true">
+							<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Alterar
+								Senha</span>
+					</a></li>
+
+					<sec:ifAnyGranted roles="ATE,ADMIN">
+						<li role="menuitem"><a
+							href="#{facesContext.externalContext.requestContextPath}/cadastro/findUsuario.jsf?faces-redirect=true">
+								<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Cadastrar
+									Usuário</span>
+						</a></li>
+					</sec:ifAnyGranted>
+
+
+				</ul></li>
+			<li><a href="#"
+				onclick="javascript:logout('#{request.contextPath}')"> <i
+					class="fa fa-fw fa-sign-out"></i> <span class="topbar-item-name"
+					style="font-size: 15px; font-weight: bold; font-size: 15px;">Logout</span>
+					<!--  <span class="topbar-badge animated rubberBand">2</span> -->
+			</a></li>
+
+			<li><a href="#"> <span class="topbar-item-name"
+					style="font-weight: bold; font-size: 15px; margin-left: auto; margin-right: auto; text-align: center;">Ultimo
+						Acesso do Usuário: <h:outputText
+							value="#{loginBean.loginModel.ultimoAcesso}" id="ultimoAcesso">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"
+								dateStyle="full" timeStyle="full" timeZone="GMT-03:00" />
+						</h:outputText>
+				</span> <!--     <span class="topbar-badge animated rubberBand">4</span> -->
+			</a></li>
+		</ul>
+
+	</div>
+
+</ui:composition>

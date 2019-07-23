@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Cadastro de Usuário</ui:define>
+
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: medium;
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+	text-align: center;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100%;
+	height: 35px;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+.subtitulo {
+	font-weight: bold;
+	font-size: 20px !important;
+	color: black !important;
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-panel .ui-panel-title {
+	
+}
+</style>
+}
+	</ui:define>
+
+
+	<ui:define name="content">
+
+
+
+		<h:form id="form">
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<br />
+							<p:panel>
+								<br />
+								<div align="center">
+									<p:outputLabel value="Cadastro de Usuário" styleClass="titulo" />
+								</div>
+								<br />
+
+								<div align="center">
+									<util:botoesCrud managedBeanView="#{loginBean}"
+										camposReload=":formTemplate:msg, form"
+										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
+												 and loginBean.loginModel.idLogin == null}"
+										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+												 and loginBean.loginModel.idLogin != null}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoExcluir="false">
+									</util:botoesCrud>
+								</div>
+
+								<br />
+								<p:outputLabel value="Campos Obrigatórios()"
+									styleClass="obrigatorio" />
+								<p:separator />
+								<br />
+								<div align="center">
+									<h:panelGrid columns="1">
+
+										<div class="ui-g-12 ui-lg-2">
+											<h:outputLabel value="Usuario:*" />
+											<p:inputText required="true"
+												value="#{loginBean.loginModel.login}"
+												requiredMessage="Informe o Nome do Usuário" />
+										</div>
+
+										<div class="ui-g-12 ui-lg-2">
+											<h:outputLabel value="Senha:*" />
+											<p:password style="text-align: center; height: 35px"
+												autocomplete="false" feedback="true"
+												weakLabel="Senha Fraca!" goodLabel="Senha Boa!"
+												strongLabel="Senha Forte!" promptLabel="Insira sua Senha!"
+												required="true" value="#{loginBean.loginModel.senha}"
+												requiredMessage="Informe o Senha do usuário" />
+										</div>
+
+										<div class="ui-g-12 ui-lg-2">
+											<p:outputLabel value="Acessos" />
+											<p:selectOneMenu value="#{loginBean.selecionado}">
+												<f:selectItem itemLabel="ADMIN" itemValue="1" />
+												<f:selectItem itemLabel="ATENDENTE" itemValue="2" />
+												<f:selectItem itemLabel="ESTOQUISTA" itemValue="3" />
+												<f:selectItem itemLabel="MEDICO" itemValue="4" />
+											</p:selectOneMenu>
+										</div>
+									</h:panelGrid>
+								</div>
+							</p:panel>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

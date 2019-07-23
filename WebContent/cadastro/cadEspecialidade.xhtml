@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="title">Cadastro de Especialidade</ui:define>
+
+	<ui:define name="head">
+		<style type="text/css">
+.ui-panelgrid.form-elements .ui-grc-2 {
+	padding-left: 80px;
+}
+
+@media ( max-width :1024px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 20px;
+	}
+}
+
+@media ( max-width :640px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 6px;
+	}
+}
+
+.ui-lg-1 {
+	padding-top: 10px !important;
+	text-align: justify;
+}
+
+.ui-lg-2 {
+	width: 150px;
+}
+
+.ui-lg-3 {
+	position: left;
+}
+
+.ui-lg-1 label {
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.label {
+	font-weight: bold !important;
+	width: 20%;
+	padding: 4px;
+}
+
+.value {
+	width: 60%;
+	padding: 4px;
+}
+
+.estilo100 {
+	width: 100% !important;
+}
+</style>
+	</ui:define>
+
+
+	<ui:define name="content">
+
+		<h:form id="formEspecialidade" prependId="false">
+		<div align="center">
+				<br />
+				<p:outputLabel value="Cadastro de Especialidade"
+					styleClass="estiloLabelCadastroIdentificacao" />
+				<br /> <br />
+			</div>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<p:tabView orientation="top">
+								<p:tab title="Unidade De Medida">
+									<p:messages />
+									<p:panelGrid id="gridEspecialidade" columns="2" 
+									styleClass="ui-panelgrid-blank form-group form-elements" layout="grid"
+									 style="border:0px none; background-color:transparent;"
+									columnClasses="ui-g-12 ui-md-6 ui-lg-2,
+												   ui-g-12 ui-md-6 ui-lg-3,
+												   ui-g-12 ui-md-6 ui-lg-2,
+												   ui-g-12 ui-md-6 ui-lg-3">
+
+										<!-- Label Nome da Especialidade -->
+										<h:outputLabel 
+											 value="Especialidade:*" />
+
+										<!-- Input Nome da Especialidade -->
+										<p:inputText id="especialidadeNome"
+											styleClass="estiloInputNome" required="true" maxlength="100"
+											value="#{especialidadeBeanView.objetoSelecionado.nomeEspecialidade}"
+											requiredMessage="Informe a Especialidade" >
+											
+										<p:ajax event="change" listener="#{medicoBeanView.getEspecialidadesUpdate}" update="especialidadeNome" /> 	
+										</p:inputText>
+
+										<!-- Label OBSERVAÇÃO -->
+										<h:outputLabel id="labelObservacaoEspecialidade"
+											for="observacaoEspecialidade" value="Obs:" />
+
+										<!-- Input OBSERVAÇÃO -->
+										<p:inputText id="observacaoEspecialidade"
+											styleClass="estiloInputNome"
+											value="#{especialidadeBeanView.objetoSelecionado.observacao}" />
+
+									</p:panelGrid>
+
+									<div class="espacoBranco" align="center">
+
+										<!-- Chama Botões  Recarrega Template growl messages e tabela de resultados-->
+										<util:botoesCrud managedBeanView="#{especialidadeBeanView}"
+											camposReload=":formTemplate:msg, formEspecialidade"
+											botaoNovo="#{contextoBean.possuiAcesso('ESPECIALIDADE_NOVO', 'ADMIN')}"
+											botaoSalvar="#{contextoBean.possuiAcesso('ESPECIALIDADE_NOVO', 'ADMIN')
+					 							and especialidadeBeanView.objetoSelecionado.idEspecialidade == null}"
+											botaoAtualizar="#{contextoBean.possuiAcesso('ESPECIALIDADE_EDITAR', 'ADMIN') 
+												 and especialidadeBeanView.objetoSelecionado.idEspecialidade != null}"
+											botaoRedirecionar="#{contextoBean.possuiAcesso('ACESSO_REDIRECIONAR', 'ADMIN')}"
+											botaoExcluir="false">
+										</util:botoesCrud>
+
+									</div>
+								</p:tab>
+							</p:tabView>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+		<!-- JavaScript de Foco no Nome da especialidade  Configuração do Enter  -->
+		<script type="text/javascript" charset="UTF-8">
+			addFocoCampo("nomeEspecialidade");
+			gerenciaTeclaEnter();
+		</script>
+
+	</ui:define>
+</ui:composition>
+

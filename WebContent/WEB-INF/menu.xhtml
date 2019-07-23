@@ -1,0 +1,237 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:pv="http://primefaces.org/paradise">
+
+	<!-- <div class="layout-menu-wrapper #{guestPreferences.darkMenu ? 'layout-menu-dark' : null}"> -->
+
+	<div class="layout-menu-wrapper layout-menu-dark">
+		<div class="nano">
+			<div class="nano-content sidebar-scroll-content">
+				<div class="layout-menu-container">
+					<h:form id="menuform">
+						<div class="mobile-search">
+							<i class="fa fa-fw fa-search topbar-search-icon"></i> <input
+								type="text" class="topbar-search"
+								placeholder="Type your search here" />
+						</div>
+
+						<pv:menu>
+							<p:menuitem id="pm_dashboard" value="Pagina Inicial"
+								icon="fa fa-home" outcome="/restrito/dashboard" />
+
+							<sec:ifAnyGranted roles="ATE,ADMIN">
+								<p:submenu id="pm_hierarchy_cadastros" label="Cadastros"
+									icon="fa fa-plus-circle">
+									<p:submenu id="submenu_colaboradores" label="Colaboradores"
+										icon="fa fa-group">
+
+										<sec:ifAnyGranted roles="ATE, ADMIN">
+											<p:menuitem value="Atendente"
+												action="#{atendenteBean.redirecionarFindEntidade}"
+												icon="fa fa-user-o" immediate="true" ajax="false" />
+										</sec:ifAnyGranted>
+
+										<sec:ifAnyGranted roles="ATE, ADMIN">
+											<p:menuitem id="item_menu_estoquista" value="Estoquista"
+												icon="fa fa-user-o"
+												action="#{estoquistaBean.redirecionarFindEntidade}" />
+										</sec:ifAnyGranted>
+
+										<sec:ifAnyGranted roles="ATE, ADMIN">
+											<p:menuitem id="item_menu_medico" value="Médico"
+												icon="fa fa-user-o"
+												action="#{medicoBean.redirecionarFindEntidade}" />
+										</sec:ifAnyGranted>
+									</p:submenu>
+
+									<sec:ifAnyGranted roles="ATE, ADMIN">
+										<p:menuitem id="item_menu_paciente" value="Paciente"
+											icon="fa fa-user-o"
+											action="#{pacienteBean.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+
+									<sec:ifAnyGranted roles="ATE, ADMIN">
+										<p:menuitem id="item_menu_convenio" value="Convênio"
+											icon="fa fa-medkit"
+											action="#{convenioBean.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+
+									<sec:ifAnyGranted roles="MED, ADMIN">
+										<p:menuitem id="item_menu_doencas" value="Doença"
+											icon="fa fa-stethoscope"
+											action="#{doencaBeanView.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+
+									<sec:ifAnyGranted roles="EST, ATE, ADMIN">
+										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"
+											icon="fa fa-building"
+											action="#{fornecedorBean.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+
+									<sec:ifAnyGranted roles="EST, ADMIN">
+										<p:menuitem id="item_menu_material" value="Material"
+											icon="fa fa-glass"
+											action="#{materialBean.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+								</p:submenu>
+							</sec:ifAnyGranted>
+
+							<p:submenu id="pm_hierarchy_movimentação" label="Movimentação"
+								icon="fa fa-refresh">
+								<p:submenu id="submenu_estoque" label="Estoque"
+									icon="fa fa-archive">
+									<sec:ifAnyGranted roles="ADMIN">
+										<p:menuitem id="item_menu_estoque" value="Gerencia"
+											icon="fa fa-refresh" />
+										<!-- 	action="#{materialBeanView.redirecionarFindEntidade}"  -->
+
+									</sec:ifAnyGranted>
+								</p:submenu>
+							</p:submenu>
+
+							<sec:ifAnyGranted roles="MED, ADMIN">
+								<p:submenu id="pm_hierarchy_medico" label="Movimentação"
+									icon="fa fa-medkit">
+									<p:menuitem id="item_menu_prontuario" value="Prontuário"
+										action="#{prontuarioBean.redirecionarFindEntidade}"
+										icon="fa fa-heartbeat" />
+								</p:submenu>
+							</sec:ifAnyGranted>
+
+							<sec:ifAnyGranted roles="ATE ,ADMIN">
+								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"
+									icon="fa fa-money">
+									<p:submenu id="submenu_financeiro_pagar" label="Contas a Pagar"
+										icon="fa fa-group">
+										<sec:ifAnyGranted roles="ATE ,ADMIN">
+											<p:menuitem id="item_menu_financeiro" value="Gerencia"
+												icon="fa fa-glass" />
+											<!-- 	action="#{materialBeanView.redirecionarFindEntidade}"  -->
+										</sec:ifAnyGranted>
+									</p:submenu>
+									<p:submenu id="submenu_financeiro_receber"
+										label="Contas a Receber" icon="fa fa-group">
+										<p:menuitem id="item_menu_receber_consultas"
+											value="Receber Consultas" icon="fa fa-glass" />
+									</p:submenu>
+								</p:submenu>
+							</sec:ifAnyGranted>
+
+							<p:submenu id="pm_hierarchy_temas" label="Alterar Tema"
+								icon="fa fa-dashboard">
+
+
+								<p:menuitem id="pm_layout_default" value="Default"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('default')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_blue" value="Blue"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('blue')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_green" value="Green"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('green')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_turquoise" value="Turquoise"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('turquoise')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_purple" value="Purple"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('purple')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_orange" value="Orange"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('orange')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_deeppurple" value="Deep Purple"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('deeppurple')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_lime" value="Lime"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('lime')}"
+									ajax="false" />
+
+
+								<p:menuitem id="pm_layout_horizon" value="Horizon"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('horizon')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_bliss" value="Bliss"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('bliss')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_crimson" value="Crimson"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('crimson')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_disco" value="Disco"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('disco')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_sunset" value="Sunset"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('sunset')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_deepsea" value="Deep Sea"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('deepsea')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_opa" value="Opa"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('opa')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_cheer" value="Cheer"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('cheer')}"
+									ajax="false" />
+								<p:menuitem id="pm_layout_smoke" value="Smoke"
+									icon="fa fa-paint-brush"
+									actionListener="#{guestPreferences.setLayout('smoke')}"
+									ajax="false" />
+
+							</p:submenu>
+
+
+
+							<!-- <p:submenu id="pm_components" label="Components"
+								icon="fa fa-sitemap">
+								<p:menuitem id="pm_sample" value="Sample Page"
+									icon="fa fa-columns" outcome="/sample" />
+								<p:menuitem id="pm_forms" value="Forms" icon="fa fa-code"
+									outcome="/forms" />
+								<p:menuitem id="pm_data" value="Data" icon="fa fa-table"
+									outcome="/data" />
+								<p:menuitem id="pm_panels" value="Panels" icon="fa fa-list-alt"
+									outcome="/panel" />
+								<p:menuitem id="pm_overlays" value="Overlays"
+									icon="fa fa-square" outcome="/overlay" />
+								<p:menuitem id="pm_menus" value="Menus"
+									icon="fa fa-minus-square-o" outcome="/menu" />
+								<p:menuitem id="pm_messages" value="Messages"
+									icon="fa fa-circle-o-notch" outcome="/messages" />
+								<p:menuitem id="pm_charts" value="Charts"
+									icon="fa fa-area-chart" outcome="/charts" />
+								<p:menuitem id="pm_file" value="File"
+									icon="fa fa-arrow-circle-o-up" outcome="/file" />
+								<p:menuitem id="pm_misc" value="Misc" icon="fa fa-user-secret"
+									outcome="/misc" />
+							</p:submenu> -->
+
+							<!-- 
+							<p:menuitem id="pm_doc" value="Documentation" icon="fa fa-book"
+								outcome="/docs" /> -->
+						</pv:menu>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</ui:composition>

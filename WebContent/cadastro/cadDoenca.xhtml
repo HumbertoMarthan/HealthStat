@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Cadastro de Doença</ui:define>
+
+	<ui:define name="head">
+		<style type="text/css">
+.ui-panelgrid.form-elements .ui-grc-2 {
+	padding-left: 80px;
+}
+
+@media ( max-width :1024px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 20px;
+	}
+}
+
+@media ( max-width :640px) {
+	.ui-panelgrid.form-elements .ui-grc-2 {
+		padding-left: 6px;
+	}
+}
+
+.ui-lg-1 {
+	padding-top: 10px !important;
+	text-align: justify;
+}
+
+.ui-lg-2 {
+	width: 150px;
+}
+
+.ui-lg-3 {
+	position: left;
+	color: #2e6e9e;
+}
+
+.ui-lg-1 label {
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.label {
+	font-weight: bold !important;
+	width: 20%;
+	padding: 4px;
+}
+
+.value {
+	width: 60%;
+	padding: 4px;
+}
+
+.estilo100 {
+	width: 100% !important;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+
+
+		<h:form id="formDoenca" prependId="false">
+			<div align="center">
+				<br />
+				<p:outputLabel value="Cadastro de Doenças"
+					styleClass="estiloLabelCadastroIdentificacao" />
+				<br /> <br />
+			</div>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<p:tabView orientation="top">
+								<p:tab title="Cadastro de Doenças">
+									<p:messages />
+
+									<p:panelGrid id="gridDoenca" columns="6" layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;"
+										columnClasses="ui-g-12 ui-md-6 ui-lg-1,
+												   ui-g-12 ui-md-6 ui-lg-4,
+												   
+												   ui-g-12 ui-md-6 ui-lg-1,
+												   ui-g-12 ui-md-6 ui-lg-2,
+												   
+												   ui-g-12 ui-md-6 ui-lg-2,
+												   ui-g-12 ui-md-6 ui-lg-2">
+
+										<!-- Label Nome  da  Doenca -->
+										<h:outputLabel id="labelNomeConsultaDoenca" for="doencaNome"
+											value="Nome:*" />
+
+										<!-- Input Nome da Doença -->
+										<p:inputText id="doencaNome" styleClass="estilo100"
+											required="true" maxlength="100" autocomplete="true"
+											value="#{doencaBeanView.objetoSelecionado.nomeDoenca}"
+											requiredMessage="Informe o nome da Doença" />
+
+
+										<!-- Label CID -->
+										<h:outputLabel id="labelCidDoenca" for="cidDoenca"
+											value="CID:*" />
+
+										<!-- Input CID da Doença -->
+										<p:inputText id="cidDoenca" styleClass="estilo100"
+											required="true" maxlength="100"
+											value="#{doencaBeanView.objetoSelecionado.cid}"
+											requiredMessage="Informe o CID" />
+
+
+									</p:panelGrid>
+									<h6 style="color: red; font-weight: bold; font-style: italic;">
+										Campos marcados com * são Obrigatorios</h6>
+
+									<div align="center">
+										<!-- Chama Botões  Recarrega Template growl messages e tabela de resultados-->
+										<util:botoesCrud managedBeanView="#{doencaBeanView}"
+											camposReload=":formTemplate:msg, formDoenca"
+											botaoNovo="#{contextoBean.possuiAcesso('DOENCA_NOVO', 'ADMIN')}"
+											botaoSalvar="#{contextoBean.possuiAcesso('DOENCA_NOVO', 'ADMIN')
+												 and doencaBeanView.objetoSelecionado.idDoenca == null}"
+											botaoAtualizar="#{contextoBean.possuiAcesso('DOENCA_EDITAR', 'ADMIN') 
+												 and doencaBeanView.objetoSelecionado.idDoenca != null}"
+											botaoRedirecionar="#{contextoBean.possuiAcesso('ACESSO_REDIRECIONAR', 'ADMIN')}"
+											botaoExcluir="false">
+										</util:botoesCrud>
+									</div>
+								</p:tab>
+
+							</p:tabView>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+	</ui:define>
+	<!-- JavaScript de Foco no Nome da DOENÇA Configuração do Enter  -->
+	<script type="text/javascript" charset="UTF-8">
+		addFocoCampo("nomeDoenca");
+		gerenciaTeclaEnter();
+	</script>
+
+
+</ui:composition>
+

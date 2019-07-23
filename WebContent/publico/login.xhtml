@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <h:outputScript name="scripty.js" library="javascript" />
+            <h:outputScript name="jquery.js" library="primefaces/jquery" />
+        </f:facet>
+        <title>Login HealthStat</title>
+    </h:head>
+
+    <h:body styleClass="login-body" >
+        <form id="formulario" method="post" name="formulario"
+			onsubmit="return validarSenhaLogin();"
+			action="#{request.contextPath}/j_spring_security_check"> 
+			
+			
+			<h:outputStylesheet name="estiloTemplate.css"  library="css" id="estiloTemplate" />
+			
+			
+            <div class="login-panel ui-fluid">
+            <!-- DIV ERRO LABEL DE ERRO -->
+             <div align="center">
+              <br/>
+               <h:panelGroup rendered="#{SPRING_SECURITY_LAST_EXCEPTION.message == 'Bad credentials'}">
+               <p:panel  rendered="#{!empty param.login_error}" style=" width:500px" >
+					<p:outputLabel  
+							value="Permissão Negada, Seu login ou senha incorretos. "  
+							style="font-weigth: bold;    
+						    font-size: 20px"  
+					     	rendered="#{SPRING_SECURITY_LAST_EXCEPTION.message == 'Bad credentials'}">
+						<p:effect event="load" type="pulsate"/>
+					</p:outputLabel>
+					</p:panel>
+               </h:panelGroup>
+             </div>
+            
+             
+                <div class="ui-g">
+                    <div class="ui-g-12 logo-container" align="center">
+                        <p:graphicImage name="images/loginHealthStat.png" library="paradise-layout" styleClass="logo" />
+                        <!-- <p:graphicImage name="images/login/icon-login.png" library="paradise-layout" styleClass="login-icon" /> -->
+                        <h2>Clinica Médica</h2>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:outputLabel for="j_username" value="Usuario" />
+                        <div class="input-wrapper">
+                            <p:inputText id="j_username" placeholder="Username" />
+                            <i class="fa fa-user" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:outputLabel for="j_password" value="Senha" />
+                        <div class="input-wrapper">
+                            <p:password id="j_password"  placeholder="Password" feedback="false" />
+                            <i class="fa fa-lock" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12 chkbox-container" align="center">
+                        <div class="ui-g-12 ui-md-12"  align="center" >
+                            <h:outputLink value="#">
+                                Forgot password?
+                            </h:outputLink>
+                        </div>
+                      <!--   <div class="ui-g-6 rememberme-container">
+                            <p:outputLabel for="remember-me" value="Remember Me"/>
+                            <p:selectBooleanCheckbox id="remember-me" />
+                        </div> -->
+                        
+                    </div>
+                    <div class="ui-g-12 button-container">
+                        <button type="submit" 
+                        style="background: #c5dbec; 
+                        background-color: Transparent;
+					    background-repeat:no-repeat;
+					    border: none;
+					    cursor:pointer;
+					    overflow: hidden;
+					    outline:none; 
+					    border: 2px solid #c5dbec;    
+					     font-weight: bold;
+					    color: #1d5987; 
+					    width: 200px; 
+					    heigth: 50px; 
+					    padding: .3em 1em;
+					    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+					    font-size: 20px;
+					    margin-left: auto; 
+					    margin-right: auto;
+					    border-radius: 5px">Entrar</button>
+                    </div>
+                    
+                    <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+                    
+                   
+                </div>
+            </div>
+        </form>
+	
+        
+         <div class="login-panel ui-fluid" >
+			<div class="ui-g">
+				<h:panelGroup rendered="#{!empty param.login_error}" style=" margin-left: auto; margin-right: auto;">
+					<h:outputLabel style="font-weigth: bold;  font-size: 15px; margin-left: auto; margin-right: auto; width: 250px"
+						rendered="#{SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of 1 for this principal exceeded'}">
+						<span class="estiloSpan">Você está logado em outra sessão.
+						</span>
+						
+						
+						<h:commandButton value="Encerrar Sessão" immediate="true" 
+						styleClass="invalidarSessao"
+						onclick="invalidateSession('#{request.contextPath}', '/publico/invalidateSession');" />
+
+					</h:outputLabel>
+
+				</h:panelGroup>
+			</div>
+		</div>
+        
+    </h:body>
+
+</html>
