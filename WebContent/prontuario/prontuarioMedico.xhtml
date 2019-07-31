@@ -11,12 +11,11 @@
 	<ui:define name="head">
 
 		<style type="text/css">
-		
 .ui-datatable thead th, .ui-datatable tfoot td {
-    text-align: center;
-    font-size: large;
-}		
-		
+	text-align: center;
+	font-size: large;
+}
+
 .ui-lg-12.centralizar {
 	margin: 0 auto !important;
 	height: auto;
@@ -46,8 +45,12 @@
 .subtitulo {
 	font-weight: bold;
 	font-size: 20px !important;
-	color: black !important; . ui-fluid .ui-autocomplete, .ui-fluid
-	.ui-autocomplete-input { width : 100%;
+	color: black !important;
+}
+
+.
+ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100%;
 	height: 35px;
 	font-size: large;
 	text-align: center;
@@ -64,20 +67,23 @@
 	outline: medium none;
 	padding: 4px;
 	font-weight: bold;
-	height: 35px !important;
+	height: 35px;
 	font-size: medium !important;
+}
+
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+    padding-right: 2.4em;
+    width: 430px;
 }
 </style>
 
 	</ui:define>
-
-
 	<ui:define name="content">
-
 		<h:form>
 			<p:outputPanel>
 				<div align="center">
 					<p:panel>
+						<!-- Botão Atestado -->
 						<p:commandButton value="Atestado"
 							rendered="#{prontuarioBean.estado ne 'A'}"
 							style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important"
@@ -99,13 +105,13 @@
 							</div>
 						</p:confirmDialog>
 
+						<!-- Botão Guia de Consulta -->
 						<p:commandButton value="Guia Consulta"
 							rendered="#{prontuarioBean.estado ne 'C'}"
 							style="height:40px;width:170px; background-color: darkcyan; background: darkcyan; color:white !important"
 							ajax="true" immediate="true" id="buttonGuiaConsulta"
 							icon="fa fa-info-circle" iconPos="right"
-							action="#{prontuarioBean.mudaEstadoGuiaConsulta}"
-							update="@form">
+							action="#{prontuarioBean.mudaEstadoGuiaConsulta}" update="@form">
 
 							<p:confirm
 								message="Deseja ir para a Guia de Consulta? A tela atual será perdida, senão salva!"
@@ -120,6 +126,7 @@
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
 						</p:confirmDialog>
+						<!-- Botão Nova -->
 						<p:commandButton value="Novo"
 							style="height:40px;width:130px; background-color: gray; background: gray; color:white !important"
 							rendered="#{prontuarioBean.estado eq 'C'}"
@@ -129,7 +136,6 @@
 							<p:confirm
 								message="Ao Clicar em sim um novo formulário de cadastro será criado, as informações atuais serão perdidas, senão salvas!"
 								icon="ui-icon-mail-closed" />
-
 						</p:commandButton>
 
 						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -158,7 +164,8 @@
 							botaoAtualizar="prontuarioBean.prontuarioModel.idProntuario != null}"
 							botaoRedirecionar="false" botaoExcluir="false">
 						</util:botoesCrud>
-						
+
+						<!-- Botão Historico -->
 						<p:commandButton value="Histórico"
 							rendered="#{prontuarioBean.estado ne 'H'}"
 							style="height:40px;width:130px; background-color: silver; background: silver; color:white !important"
@@ -180,12 +187,14 @@
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
 						</p:confirmDialog>
-
+						<!-- Botão Limpar -->
 						<p:commandButton value="Limpar"
 							style="height:40px;width:130px; background-color: saddlebrown; background: saddlebrown; color:white !important"
 							ajax="true" immediate="false" id="buttonLimpar"
 							icon="fa fa-info-circle" iconPos="right">
 						</p:commandButton>
+
+						<!-- Botão Encaminhamento -->
 						<p:commandButton value="Encaminhamento"
 							rendered="#{prontuarioBean.estado ne 'E'}"
 							style="height:40px;width:170px; background-color: darkblue; background: darkblue; color:white !important"
@@ -193,7 +202,6 @@
 							icon="fa fa-location-arrow" iconPos="right"
 							action="#{prontuarioBean.mudaEstadoEncaminhamento}"
 							update="@form">
-
 							<p:confirm
 								message="Deseja ir para a Encaminhamento? A tela atual será perdida, senão salva!"
 								icon="ui-icon-mail-closed" />
@@ -217,218 +225,23 @@
 
 			<!-- GUIA DE CONSULTA -->
 			<h:form rendered="#{prontuarioBean.estado eq 'C'}">
-				<p:outputPanel>
-
-					<div align="center">
-						<p:panel>
-							<div align="center">
-								<p:outputLabel value="Guia de Consulta" styleClass="titulo" />
-							</div>
-							<div class="ui-fluid">
-								<div class="ui-g">
-									<div class="ui-g-12"
-										style="margin: 0 auto !important; text-align: center;">
-										<div class="card card-w-title">
-
-											<div class="ui-g">
-												<div class="ui-g-6">
-													<p:outputLabel value="Titulo:" rendered="false" />
-													<p:inputText id="nome" rendered="false"
-														value="#{prontuarioBean.prontuarioModel.nomePaciente}" />
-													<p:outputLabel value="Qual o nome do Paciente?"
-														style="text-align:center !important;" />
-													<br />
-													<p:autoComplete id="paciente"
-														completeMethod="#{auxController.completePaciente}"
-														forceSelection="true" converter="entityConverter" var="a"
-														itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
-														value="#{prontuarioBean.prontuarioModel.paciente}"
-														minQueryLength="2" dropdown="true" maxResults="30"
-														required="true" requiredMessage="Informe um paciente">
-														<p:column id="p">
-															<h:outputText value="#{a.pessoa.pessoaNome}" />
-														</p:column>
-													</p:autoComplete>
-
-												</div>
-
-												<div class="ui-g-6" style="text-align: center">
-
-													<h:outputText value="Data da Consulta"
-														style="color:#2e6e9e !important; font-weight: bold" />
-													<br />
-													<h:outputText pattern="dd/MM/yyyy HH:mm"
-														style="color:#2e6e9e !important; font-weight: bold"
-														value="#{prontuarioBean.prontuarioModel.dataConsulta}">
-														<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
-															timeZone="America/Sao_Paulo" locale="pt_BR" />
-
-													</h:outputText>
-
-												</div>
-											</div>
-
-											<div class="ui-g">
-
-												<div class="ui-g-6">
-													<p:outputLabel
-														value="Qual o problema relatado pelo paciente?" />
-													<br />
-													<p:inputTextarea title="Relato do paciente"
-														autoResize="true" rows="6" maxlength="2000"
-														value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
-														required="true"
-														requiredMessage="Informe o problema relatado pelo paciente" />
-												</div>
-
-												<div class="ui-g-6">
-													<p:outputLabel
-														value="Informe o método de avalição do médico?" />
-													<br />
-													<p:inputTextarea title="Avaliação" autoResize="true"
-														rows="6" maxlength="2000"
-														value="#{prontuarioBean.prontuarioModel.exameFisico}"
-														required="true"
-														requiredMessage="Informe o método de avalição do médico"></p:inputTextarea>
-												</div>
-											</div>
-											<div class="ui-g">
-												<div class="ui-g-6">
-													<p:outputLabel
-														value="Qual o diagnóstico que irá apresentar para o Paciente?" />
-													<br />
-													<p:inputTextarea title="Diagnóstico" autoResize="true"
-														rows="6" maxlength="2000"
-														value="#{prontuarioBean.prontuarioModel.diagnostico}"
-														required="true" requiredMessage="Informe um dignóstico"></p:inputTextarea>
-												</div>
-
-												<div class="ui-g-6">
-													<p:outputLabel
-														value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
-													<br />
-													<p:inputTextarea title="Receita" autoResize="true" rows="6"
-														maxlength="2000"
-														value="#{prontuarioBean.prontuarioModel.prescricao}"
-														required="true" requiredMessage="Informe uma prescrição" />
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-
-						</p:panel>
-					</div>
-				</p:outputPanel>
+				<ui:include src="/prontuario/guiaConsulta.xhtml" />
 			</h:form>
 
 			<!-- FORM HISTORICO -->
 			<h:form rendered="#{prontuarioBean.estado eq 'H'}">
-
-				<div class="ui-g">
-					<div class="ui-g-12" style="text-align: center;">
-						<p:outputLabel value="Histórico de Paciente" styleClass="titulo" />
-					</div>
-					<br/>
-					<br/>
-
-				</div>
-				<div class="ui-g">
-					<div class="ui-g-12" style="text-align: center;">
-						<p:inputText size="45" value="#{prontuarioBean.campoBusca}"
-							style="margin: 0;
-								outline: medium none;
-								padding: 4px;
-								font-weight: bold;
-								height: 35px !important;
-								font-size: medium !important;
-								text-align: center;"
-								placeholder="Buscar pelo Nome" id="inputCampo"
-								 />
-						<span> <p:commandButton icon="ui-icon-search"
-								style="height:45px; width: 50px;" id="btnBuscatxt"
-								action="#{prontuarioBean.busca}" update="table, inputCampo" />
-						</span>
-					</div>
-				</div>
-				<div class="ui-g">
-
-					<p:dataTable id="table" var="a" widgetVar="table"
-						emptyMessage="Não há Agendamentos" rowKey="#{a.idProntuario}"
-						value="#{prontuarioBean.listaProntuario}">
-
-						<p:column headerText="Paciente" style="text-align:left"
-							priority="1">
-							<p:outputLabel value="#{a.paciente.pessoa.pessoaNome}" />
-							<br />
-							<p:outputLabel value="CPF - #{a.paciente.pessoa.pessoaCPF}" />
-						</p:column>
-						<p:column headerText="Relato - Diagnóstico"
-							style="text-align:left">
-							<p:outputLabel
-								value="RELATO DO PACIENTE - " style="font-style: italic" />
-							<p:outputLabel
-								value="#{a.problemaPaciente.toUpperCase()}" />
-							<br />
-							<p:outputLabel
-								value="DIAGNÓSTICO - " style="font-style: italic" />
-							<p:outputLabel
-								value="#{a.diagnostico.toUpperCase()}" />
-						</p:column>
-
-						<p:column headerText="Prescrição Médica" style="text-align:left">
-							<p:outputLabel value="#{a.prescricao}" />
-						</p:column>
-
-						<p:column headerText="Data Consulta" priority="1"
-							style="width: 13%; text-align:center">
-							<p:outputLabel value="#{a.dataConsulta}">
-								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-							</p:outputLabel>
-						</p:column>
-					</p:dataTable>
-				</div>
+				<ui:include src="/prontuario/historico.xhtml" />
 			</h:form>
+
 			<!-- FORM ATESTADO -->
 			<h:form id="atestado" rendered="#{prontuarioBean.estado eq 'A'}">
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-12" style="text-align: center">
-						<p:panel style="text-align: center">
-							<p:inputTextarea
-								value="#{prontuarioBean.prontuarioModel.atestado}"
-								required="false" style="width: 100%; " />
-						</p:panel>
-					</div>
-					<div class="ui-g">
-						<div class="ui-g-12 ui-lg-2">
-							<p:commandButton value="Imprimir"
-								style="height:40px;width:130px; background-color: green; background: deeppink; color:white !important" />
-						</div>
-					</div>
-				</div>
+				<ui:include src="/prontuario/atestado.xhtml" />
 			</h:form>
 
 			<!-- FORM ENCAMINHAMENTO -->
 			<h:form rendered="#{prontuarioBean.estado eq 'E'}">
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-12">
-						<p:panel>
-							<p:inputTextarea autoResize="true"
-								value="#{prontuarioBean.prontuarioModel.encaminhamento}"
-								required="false" style="width: 100%; height: 400px" />
-						</p:panel>
-					</div>
-				</div>
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-2">
-						<p:commandButton value="Imprimir" />
-					</div>
-				</div>
+				<ui:include src="/prontuario/encaminhamento.xhtml" />
 			</h:form>
 		</h:form>
-
-
 	</ui:define>
 </ui:composition>

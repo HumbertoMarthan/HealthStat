@@ -22,14 +22,14 @@
     		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
 	  
 	  <system-event-listener>
-	  	<system-event-listener-class>br.com.projeto.bean.geral.ViewScopeCallbackRegistra</system-event-listener-class>
+	  	<system-event-listener-class>br.com.clinica.bean.geral.ViewScopeCallbackRegistra</system-event-listener-class>
 	  	<system-event-class>javax.faces.event.PostConstructViewMapEvent</system-event-class>
 	  	<source-class>javax.faces.component.UIViewRoot</source-class>
 	  </system-event-listener>
 	  
 	  
 	  <system-event-listener>
-	  	<system-event-listener-class>br.com.projeto.bean.geral.ViewScopeCallbackRegistra</system-event-listener-class>
+	  	<system-event-listener-class>br.com.clinica.bean.geral.ViewScopeCallbackRegistra</system-event-listener-class>
 	  	<system-event-class>javax.faces.event.PreDestroyViewMapEvent</system-event-class>
 	  	<source-class>javax.faces.component.UIViewRoot</source-class>
 	  </system-event-listener>
@@ -42,7 +42,7 @@
 	  
     </application>
     <factory>
-		<exception-handler-factory>br.com.projeto.exception.CustomExceptionHandlerFactory</exception-handler-factory>
+		<exception-handler-factory>br.com.clinica.exception.CustomExceptionHandlerFactory</exception-handler-factory>
 	</factory>
     
     

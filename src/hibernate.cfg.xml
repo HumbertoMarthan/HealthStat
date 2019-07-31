@@ -23,23 +23,29 @@
 		<property name="hibernate.connection.pool_size">50</property>
 
 
-		<mapping class="br.com.projeto.model.Login" />
-		<mapping class="br.com.projeto.model.Perfil" />
-		<mapping class="br.com.projeto.model.Mensagem" />
-		<mapping class="br.com.projeto.model.Paciente" />
-		<mapping class="br.com.projeto.model.Pessoa" />
-		<mapping class="br.com.projeto.model.Atendente" />
-		<mapping class="br.com.projeto.model.Doenca" />
-		<mapping class="br.com.projeto.model.Medico" />
-		<mapping class="br.com.projeto.model.Convenio" />
-		<mapping class="br.com.projeto.model.Fornecedor" />
-		<mapping class="br.com.projeto.model.Estoquista" />
-		<mapping class="br.com.projeto.model.Evento" />
-		<mapping class="br.com.projeto.model.Acompanhante" />
-		<mapping class="br.com.projeto.model.Prontuario" />
-		<mapping class="br.com.projeto.model.Especialidade" />
-		<mapping class="br.com.projeto.model.Material" />
+		<mapping class="br.com.clinica.model.cadastro.usuario.Login" />
+		<mapping class="br.com.clinica.model.cadastro.usuario.Perfil" />
 		
+
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Paciente" />
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Pessoa" />
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Atendente" />
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Medico" />
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Estoquista" />
+		<mapping class="br.com.clinica.model.cadastro.pessoa.Acompanhante" />
+
+		<mapping class="br.com.clinica.model.cadastro.outro.Doenca" />
+		<mapping class="br.com.clinica.model.cadastro.outro.Convenio" />
+		<mapping class="br.com.clinica.model.cadastro.outro.Especialidade" />
+		
+		<mapping class="br.com.clinica.model.prontuario.Prontuario" />
+		
+		<!-- Agendamento  -->
+		<mapping class="br.com.clinica.model.cadastro.agendamento.Evento" />
+
+		<mapping class="br.com.clinica.model.cadastro.estoque.Material" />
+		<mapping class="br.com.clinica.model.cadastro.estoque.Fornecedor" />
+	
 		<listener class="org.hibernate.envers.event.AuditEventListener"
          type="post-insert"/>
 

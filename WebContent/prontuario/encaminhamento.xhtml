@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes">
+<body>
+	<div class="content">
+		<p:panel>
+			<div align="center">
+				<p:outputLabel value="Guia de Encaminhamento" styleClass="titulo" />
+			</div>
+			<div class="ui-g">
+				<div class="ui-g-12 ui-lg-12" align="center">
+					<p:inputTextarea autoResize="true" rows="20" cols="60"
+						value="#{prontuarioBean.prontuarioModel.encaminhamento}"
+						required="false" />
+				</div>
+			</div>
+			<div class="ui-g" align="center">
+				<div class="ui-g-12 ui-lg-12">
+					<p:commandButton value="Imprimir"
+						style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important" />
+				</div>
+			</div>
+		</p:panel>
+	</div>
+</body>
+</html>

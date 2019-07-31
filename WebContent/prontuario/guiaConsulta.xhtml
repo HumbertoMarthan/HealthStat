@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes">
+<body>
+	<div class="content">
+		<div align="center">
+			<p:panel>
+				<div>
+					<div align="center">
+						<p:outputLabel value="Guia de Consulta" styleClass="titulo" />
+					</div>
+					
+				</div>
+				<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12" align="center">
+						<p:outputLabel value="Titulo:" rendered="false" />
+						<p:inputText id="nome" rendered="false"
+							value="#{prontuarioBean.prontuarioModel.nomePaciente}" />
+						<p:outputLabel value="Qual o nome do Paciente?"
+							style="text-align:center !important;" />
+						<br />
+						<p:autoComplete id="paciente"
+							completeMethod="#{auxController.completePaciente}"
+							forceSelection="true" converter="entityConverter" var="a"
+							itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
+							value="#{prontuarioBean.prontuarioModel.paciente}"
+							style="text-align:center"
+							minQueryLength="2" dropdown="true" maxResults="30"
+							required="true" requiredMessage="Informe um paciente">
+							<p:column id="p">
+								<h:outputText value="#{a.pessoa.pessoaNome}" />
+							</p:column>
+						</p:autoComplete>
+
+					</div>
+				</div>
+
+				<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12" align="center">
+						<p:outputLabel value="Qual o problema relatado pelo paciente?" />
+						<br/>
+						<p:inputTextarea title="Relato do paciente" autoResize="true"
+							rows="3" cols="50" maxlength="2000"
+							value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
+							required="true"
+							requiredMessage="Informe o problema relatado pelo paciente" />
+					</div>
+				</div>
+				<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12" align="center">
+						<p:outputLabel
+							value="Qual o diagnóstico que irá apresentar para o Paciente?" />
+							<br/>
+						<p:inputTextarea title="Diagnóstico" autoResize="true" rows="3"
+							maxlength="2000" cols="50"
+							value="#{prontuarioBean.prontuarioModel.diagnostico}"
+							required="true" requiredMessage="Informe um dignóstico" />
+					</div>
+
+					<div class="ui-g-12 ui-lg-12" align="center">
+						<p:outputLabel
+							value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
+							<br/>
+						<p:inputTextarea title="Receita" autoResize="true" rows="3"
+							cols="50" maxlength="2000"
+							value="#{prontuarioBean.prontuarioModel.prescricao}"
+							required="true" requiredMessage="Informe uma prescrição" />
+					</div>
+				</div>
+				<div align="right">
+						<h:outputText value="Data da Consulta: "
+							style="color:#2e6e9e !important; font-weight: bold" />
+						<h:outputText pattern="dd/MM/yyyy HH:mm"
+							style="color:#2e6e9e !important; font-weight: bold; text-align:right;"
+							value="#{prontuarioBean.prontuarioModel.dataConsulta}">
+							<f:convertDateTime pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" locale="pt_BR" />
+						</h:outputText>
+					</div>
+			</p:panel>
+		</div>
+	</div>
+</body>
+</html>

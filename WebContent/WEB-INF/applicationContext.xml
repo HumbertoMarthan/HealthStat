@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
@@ -21,35 +21,31 @@
 	<mvc:resources location="/resources/img"
 		mapping="/resources/**" cache-period="5000" />
 
-	
 	<context:component-scan
-		base-package="br.com.projeto.geral.controller" />
+		base-package="br.com.clinica.controller.geral" />
 	<context:component-scan
-		base-package="br.com.srv.interfaces" />
+		base-package="br.com.clinica.service.interfaces" />
 	<context:component-scan
-		base-package="br.com.srv.implementacao" />
+		base-package="br.com.clinica.service.implementacao" />
 	<context:component-scan
-		base-package="br.com.repository.interfaces" />
+		base-package="br.com.clinica.repository.interfaces" />
 	<context:component-scan
-		base-package="br.com.dao.implementacao" />
+		base-package="br.com.clinica.dao" />
 	<context:component-scan
-		base-package="br.com.projeto.bean.view" />
+		base-package="br.com.clinica.bean.view" />
 	<context:component-scan
-		base-package="br.com.projeto.bean.geral" />
+		base-package="br.com.clinica.bean.geral" />
 	<context:component-scan
-		base-package="br.com.projeto.report.util" />
+		base-package="br.com.clinica.relatorio" />
 	<context:component-scan
-		base-package="br.com.projeto.util.all" />
+		base-package="br.com.clinica.utils" />
 	<context:component-scan
-		base-package="br.com.projeto.bean.view.grafico" />
-	<context:component-scan
-		base-package="br.com.framework.controller.crud" />
-	<context:component-scan
-		base-package="br.com.framework.interface.crud" />
+		base-package="br.com.clinica.hibernate.controller" />
 
 	<!-- Data Source -->
 	<bean id="springDataSource" name="springDataSource"
-	    class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="false">
+		class="org.springframework.jndi.JndiObjectFactoryBean"
+		lazy-init="false">
 		<property name="jndiName">
 			<value>java:/comp/env/jdbc/datasource</value>
 		</property>
@@ -61,72 +57,87 @@
 
 		<property name="dataSource" ref="springDataSource" />
 	</bean>
-	
+
 	<bean id="jdbcTemplate" name="jdbcTemplate"
-	 class="br.com.framework.implementacao.crud.JdbcTemplateImpl">
-		<constructor-arg name="dataSource" ref="springDataSource"/>
+		class="br.com.clinica.hibernate.JdbcTemplateImpl">
+		<constructor-arg name="dataSource"
+			ref="springDataSource" />
 	</bean>
-	
+
 	<bean id="simpleJdbcTemplate" name="simpleJdbcTemplate"
-		class="br.com.framework.implementacao.crud.SimpleJdbcTemplateImpl">
-		<constructor-arg name="dataSource" ref="springDataSource"/>
+		class="br.com.clinica.hibernate.SimpleJdbcTemplateImpl">
+		<constructor-arg name="dataSource"
+			ref="springDataSource" />
 	</bean>
-	
-	
-	  <bean id="simpleJdbcInsert" name="simpleJdbcInsert" class="br.com.framework.implementacao.crud.SimpleJdbcInsertImplents" lazy-init="false">
-     	<constructor-arg name="dataSource" ref="springDataSource"/>
-     </bean>
-     
-      <bean id="simpleJdbcClassImpl" name="simpleJdbcClassImpl" class="br.com.framework.implementacao.crud.SimpleJdbcClassImpl" lazy-init="false">
-         <constructor-arg name="dataSource" ref="springDataSource"/>
-     </bean>
-	
-	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" 
-	lazy-init="false" >
+
+	<bean id="simpleJdbcInsert" name="simpleJdbcInsert"
+		class="br.com.clinica.hibernate.SimpleJdbcInsertImplents"
+		lazy-init="false">
+		<constructor-arg name="dataSource"
+			ref="springDataSource" />
+	</bean>
+
+	<bean id="simpleJdbcClassImpl" name="simpleJdbcClassImpl"
+		class="br.com.clinica.hibernate.SimpleJdbcClassImpl" lazy-init="false">
+		<constructor-arg name="dataSource"
+			ref="springDataSource" />
+	</bean>
+
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+		lazy-init="false">
 		<property name="mappings">
-		<props>
-			<prop key="/index.jsp">indexController</prop>
-		</props>
+			<props>
+				<prop key="/index.jsp">indexController</prop>
+			</props>
 		</property>
 	</bean>
-	
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
-	lazy-init="false">
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/WebContent"/>
-		<property name="suffix" value="*.jsf, *.xhtml, *.html, *.jsp, *.js" />
-	
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		lazy-init="false">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WebContent" />
+		<property name="suffix"
+			value="*.jsf, *.xhtml, *.html, *.jsp, *.js" />
+
 	</bean>
-	
-	<bean name="indexController" lazy-init="false" 
-	class="org.springframework.web.servlet.mvc.ParameterizableViewController"/>
-	
-	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer" 
-	lazy-init="false" >
+
+	<bean name="indexController" lazy-init="false"
+		class="org.springframework.web.servlet.mvc.ParameterizableViewController" />
+
+	<bean
+		class="org.springframework.beans.factory.config.CustomScopeConfigurer"
+		lazy-init="false">
 		<property name="scopes">
 			<map>
-			 	<entry key="view" >
-			 		<bean class="br.com.projeto.bean.geral.ViewScope" />
-			 	</entry>
+				<entry key="view">
+					<bean class="br.com.clinica.bean.geral.ViewScope" />
+				</entry>
 			</map>
 		</property>
 	</bean>
-	
-	<bean id="reportUtil" class="br.com.projeto.report.util.ReportUtil"/>
-	<bean id="utilFramework" class="br.com.framework.utils.UtilFrameworks" scope="session"/>
-	
-	
+
+	<bean id="reportUtil" class="br.com.clinica.relatorio.ReportUtil" />
+	<bean id="utilFramework"
+		class="br.com.clinica.hibernate.UtilFrameworks" scope="session" />
+
+
 	<!-- Services -->
-	<bean id="srvLogin"    class="br.com.srv.implementacao.SrvLoginImp" />
+	<bean id="srvLogin"
+		class="br.com.clinica.service.implementacao.SrvLoginImp" />
 
 	<!-- DAOS -->
-	<bean id="repositoryLogin"    class="br.com.dao.implementacao.DaoLogin" scope="singleton" />
-	
-	
+	<bean id="repositoryLogin" class="br.com.clinica.dao.DaoLogin"
+		scope="singleton" />
+
 	<!-- Controllers -->
-	<bean id="controller"         name="controller" class="br.com.framework.controller.crud.Controller"/>
-	<bean id="sessionController"  name="sessionController"  class="br.com.projeto.geral.controller.SessionControllerImp" scope="singleton"/>
-	<bean id="mensagemController" name="mensagemController" class="br.com.projeto.geral.controller.MensagemController" />
-	
-	
+	<bean id="controller" name="controller"
+		class="br.com.clinica.hibernate.Controller" />
+	<bean id="sessionController" name="sessionController"
+		class="br.com.clinica.controller.geral.SessionControllerImp"
+		scope="singleton" />
+
+
 </beans>
