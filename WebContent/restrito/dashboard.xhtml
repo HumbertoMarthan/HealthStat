@@ -49,6 +49,14 @@
 	font-weight: bold;
 }
 
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 30px;
+	/*font-size: 20px;*/
+	text-align: center;
+	color: #2e6e9e;
+}
+
 .ui-fluid .ui-inputtext {
 	width: 100%;
 	height: 35px;
@@ -146,7 +154,10 @@ esti {
 			<p:growl id="avisosGrowl" />
 			<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
 				dynamic="true" resizable="true" closable="true" showEffect="true"
-				modal="true" width="580" >
+				modal="true" width="580">
+				
+				
+				 <p:hotkey bind="esc" handler="PF('eventDialog').hide();" />
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank">
 
@@ -219,61 +230,72 @@ esti {
 					<p:column style="text-align:center">
 
 						<p:outputLabel value="Agendamento:" />
-						<p:selectOneButton value="#{scheduleBean.evento.tipoEvento}"
-							styleClass="inputAgenda" required="true"
-							style="padding-left: 30px"
+						<br/>
+						<p:selectOneRadio value="#{scheduleBean.evento.tipoEvento}"
+							styleClass="inputAgenda" required="true" style="width : 100%"
 							requiredMessage="Informe um tipo de agendamento">
 							<f:selectItems value="#{scheduleBean.tiposEventos}"
 								var="tipoEvento" itemLabel="#{tipoEvento.descricao}" />
-						</p:selectOneButton>
+						</p:selectOneRadio>
 						<p:outputLabel />
-
+   
 					</p:column>
 					<p:separator></p:separator>
 					<br />
 					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank"
-					columnClasses="campo, campo">
+						columnClasses="campo, campo">
 
-					<p:column>
-						<p:outputLabel value="Inicio"
-							style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
-						<br />
-						<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
-							popupIconOnly="true" alt="Agendamento Inicio"
-							mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
-							required="true" size="30"
-							requiredMessage="Informe uma data Inicio para o Agendamento"
-							autocomplete="true" showButtonPanel="true" maxHour="17"
-							timeZone="GMT-3" minHour="8" showTodayButton="false"
-							value="#{scheduleBean.evento.dataInicio}">
-							<p:ajax event="blur"
-								listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-							<p:ajax event="change"
-								listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-						</p:calendar>
-					</p:column>
-					<p:column>
-						<p:outputLabel value="Fim"
-						style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
-						<br />
-						<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
-							locale="pt_BR" autocomplete="true" popupIconOnly="true"
-							required="true" size="30"
-							requiredMessage="Informe uma data Fim para o Agendamento"
-							showButtonPanel="true" showTodayButton="false" maxHour="17"
-							timeZone="GMT-3" minHour="8" pattern="dd/MM/yyyy HH:mm">
-						</p:calendar>
-					</p:column>
-
-
-				</p:panelGrid>
-
+						<p:column>
+							<p:outputLabel value="Inicio"
+								style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
+							<br />
+							<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
+								popupIconOnly="true" alt="Agendamento Inicio"
+								mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
+								required="true" size="30"
+								requiredMessage="Informe uma data Inicio para o Agendamento"
+								autocomplete="true" showButtonPanel="true" maxHour="17"
+								timeZone="GMT-3" minHour="8" showTodayButton="false"
+								value="#{scheduleBean.evento.dataInicio}">
+								<p:ajax event="blur"
+									listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+								<p:ajax event="change"
+									listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+							</p:calendar>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="Fim"
+								style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
+							<br />
+							<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
+								locale="pt_BR" autocomplete="true" popupIconOnly="true"
+								required="true" size="30"
+								requiredMessage="Informe uma data Fim para o Agendamento"
+								showButtonPanel="true" showTodayButton="false" maxHour="17"
+								timeZone="GMT-3" minHour="8" pattern="dd/MM/yyyy HH:mm">
+							</p:calendar>
+						</p:column>
+					</p:panelGrid>
+					<br />
+					<br />
 					<f:facet name="footer">
 						<div align="center">
 							<p:commandButton value="Fechar"
+								style="height:40px;
+								width:130px; 
+								background-color: gray; 
+								background: gray; 
+								color:white !important;
+								font-size:large;"
 								onclick="PF('eventDialog').hide(); return false;" />
 
 							<p:commandButton value="Salvar"
+								style="height:40px;
+								width:130px; 
+								background-color: green; 
+								background: green; 
+								color:white !important;
+								font-size:large;"
 								update="avisosGrowl,formAgendamento:scheduleAgendamento,paciente, medico,dti, dtf"
 								oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
 								actionListener="#{scheduleBean.salvar()}">
@@ -281,6 +303,12 @@ esti {
 
 							<p:commandButton value="Remover" action="#{scheduleBean.remover}"
 								rendered="#{scheduleBean.evento.id != null}"
+								style="height:40px;
+								width:130px; 
+								background-color: red; 
+								background: red; 
+								color:white !important;
+								font-size:large;"
 								update="avisosGrowl,@form,formAgendamento:scheduleAgendamento">
 								<p:confirm
 									message="Confirmar Remoção do Agendamento Selecionado?"

@@ -109,8 +109,8 @@
 										icon="fa fa-group">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
 											<p:menuitem id="item_menu_financeiro" value="Gerencia"
+											action="#{contasPagarBean.redirecionarFindEntidade}" 
 												icon="fa fa-glass" />
-											<!-- 	action="#{materialBeanView.redirecionarFindEntidade}"  -->
 										</sec:ifAnyGranted>
 									</p:submenu>
 									<p:submenu id="submenu_financeiro_receber"

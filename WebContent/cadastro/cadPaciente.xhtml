@@ -332,8 +332,7 @@
 								<p:separator />
 
 								<p:panel id="panel" header="Acompanhante" 
-								 rendered="#{pacienteBean.idade lt 18}"
-									style="margin-bottom:20px">
+									style="margin-bottom:20px" rendered="false">
 									<div class="ui-g-12 ui-lg-4">
 										<h:outputLabel value="Nome : *" />
 										<p:inputText id="campo"
@@ -416,7 +415,7 @@
 										<p:column>
 											<p:commandLink
 												action="#{pacienteBean.excluirAcompanhante(pacienteBean.acompaModel.idAcompanhante)}"
-												update="table" id="excluirMaterial" ajax="true"
+												update="table" id="excluirAcompanhante" ajax="true"
 												immediate="true">
 												<i class="fa fa-trash" />
 												<f:setPropertyActionListener value="#{a}"

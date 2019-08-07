@@ -1,10 +1,10 @@
 package br.com.clinica.bean.view;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
@@ -14,7 +14,7 @@ import br.com.clinica.model.cadastro.pessoa.Pessoa;
 
 
 @Controller
-@Scope(value = "session")
+@ViewScoped
 @ManagedBean(name = "pessoaBeanView")
 public class PessoaBeanView extends BeanManagedViewAbstract {
 	

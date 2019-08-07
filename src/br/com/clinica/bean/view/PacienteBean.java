@@ -108,24 +108,6 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void salvarAcompanhante() throws Exception {
-			idadeMinimaPaciente();
-			
-		if (pacienteModel.getId() == null && ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
-			pacienteController.persist(pacienteModel);
-		} else if (pacienteModel.getId() == null && ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
-			pacienteController.merge(pacienteModel);
-		}
-			acompaModel.setIdPacienteFK(pacienteModel.getId());
-			acompanhanteController.merge(acompaModel);
-
-			addMsg("Adicionado");
-			acompaModel = new Acompanhante();
-			pacienteModel = new Paciente();
-			acompaModel.getPessoa().setPessoaTelefonePrimario(""); // verificar dps..
-		buscaAcompanhante();
-	}
-
 	public boolean idadeMinimaPaciente() {
 		Calendar dateOfBirth = new GregorianCalendar();
 		dateOfBirth.setTime(pacienteModel.getPessoa().getPessoaDataNascimento());
@@ -136,7 +118,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 			age--;
 		}
 		idade = age;
-		System.out.println("IDADE RESULTADO DO IDADE MINIMA>>>>"+age);
+		System.out.println("IDADE RESULTADO DO IDADE MINIMA>>>>" + age);
 		if (age < 18) {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
 					"O paciente deve ser acompanhado por um Responsável que tenha idade maior que 18 anos ", "");
@@ -237,19 +219,48 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
-		 idadeMinimaPaciente();
+		idadeMinimaPaciente();
 		if (ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
 			pacienteModel = pacienteController.merge(pacienteModel);
-
+			System.out.println("CPF Válido");
 			pacienteModel = new Paciente();
 			sucesso();
-			System.out.println("CPF Válido");
 		} else {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
 					"Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF(), "");
 			addMessage(message);
 			System.out.println("ERRO CPF INVÁLIDO");
 		}
+	}
+
+	public void salvarAcompanhante() throws Exception {
+		/*
+		 * idadeMinimaPaciente(); Acompanhante acompanhante = new Acompanhante();
+		 * acompanhante = acompaModel; if (pacienteModel.getId() != null) { if
+		 * (pacienteModel.getPessoa().getPessoaNome() != "") {
+		 * acompaModel.setIdPacienteFK(pacienteModel.getId());
+		 * lstAcompanhante.add(acompanhante);
+		 * acompanhanteController.merge(acompanhante); acompanhante = new
+		 * Acompanhante(); addMsg("Adicionado com sucesso"); } else {
+		 * addMsg("Preencha todos os dados do acompanhante "); } }
+		 */
+
+		if (pacienteModel.getId() == null) {
+			pacienteController.persist(pacienteModel);
+		} else if (pacienteModel.getId() != null) {
+			pacienteController.merge(pacienteModel);
+		}
+		Acompanhante a = new Acompanhante();
+		a = acompaModel;
+		lstAcompanhante.add(a);
+		acompaModel = new Acompanhante();
+		addMsg("Adicionado");
+
+
+		lstAcompanhante.add(acompaModel);
+		acompaModel = new Acompanhante();
+		addMsg("Adicionado");
+		buscaAcompanhante();
 	}
 
 	@Override
@@ -289,7 +300,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		// acompaModel = new Acompanhante();
 		buscaAcompanhante();
 	}
-	
+
 	@Override
 	protected Class<Paciente> getClassImp() {
 		return Paciente.class;

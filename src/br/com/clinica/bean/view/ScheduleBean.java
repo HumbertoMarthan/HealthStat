@@ -189,6 +189,39 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return true;
 
 	}
+	
+	/* Verifica se há agendamentos */
+	public boolean validarPaciente() throws Exception {
+		String[] param = new String[] { "idPaciente", "dataInicio", "dataFim" };
+		String hql = "FROM Evento e WHERE e.paciente.idPaciente = "
+				+ ":idPaciente AND (e.dataInicio BETWEEN :dataInicio AND :dataFim "
+				+ "OR e.dataFim BETWEEN :dataInicio AND :dataFim)";
+
+		List<Evento> lista = eventoController.findListByQueryDinamica(hql, Arrays.asList(param),
+				evento.getPaciente().getIdPaciente(), evento.getDataInicio(), evento.getDataFim());
+
+		if (!lista.isEmpty()) {
+			if (evento.getId() == null) {
+				return false;
+			} else {
+				for (Evento e : lista) {
+					if (evento.getId() != e.getId()) {
+						if (e.getDataInicio().after(evento.getDataInicio())
+								&& e.getDataInicio().before(evento.getDataFim())) {
+							return false;
+						} else if (e.getDataFim().before(evento.getDataFim())
+								&& e.getDataFim().after(evento.getDataInicio())) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		return true;
+
+	}
+	
 
 	/* Salva */
 	public void salvar() throws Exception {
@@ -200,12 +233,12 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				this.evento.getConfirmaConsulta(), this.evento);
 
 		/* Verifica se a Datafim está vindo antes da DataInicio */
-		if (evento.getDataFim().before(evento.getDataInicio())) {
+		if (evento.getDataFim().before(evento.getDataInicio())){
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Data Final não pode ser maior que a Data Inicial", "");
 			addMessage(message);
 
-		} else if (evento.getDataInicio() != null) {
+		} else if (validarMedico() && validarPaciente()) {
 			/* Se o Evento for novo */
 			if (evento.getId() == null) {
 				model.addEvent(newEvent);
@@ -218,16 +251,15 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				model.updateEvent(newEvent);
 				eventoController.merge(evento);
 			}
-			/* Mensagem de Sucesso */
-			/*
-			 * FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-			 * "Agendamento Salvo para: " +
-			 * evento.getPaciente().getPessoa().getPessoaNome(), "Agendamento para: " +
-			 * evento.getTitulo()); addMessage(message);
-			 */
+			
+			  FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+			  "Agendamento Salvo para: " +
+			  evento.getPaciente().getPessoa().getPessoaNome(), "Agendamento para: " +
+			  evento.getTitulo()); addMessage(message);
+			 
 		} else {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Já existe um paciente cadastrado neste horário para este médico", "");
+					"Já existe um agendamento cadastrado neste horário para este paciente ou médico", "Revise o calendário");
 			addMessage(message);
 		}
 	}

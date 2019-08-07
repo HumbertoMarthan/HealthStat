@@ -22,29 +22,36 @@
 		<property name="hibernate.connection.autocommit">false</property>
 		<property name="hibernate.connection.pool_size">50</property>
 
-
+		<!-- Usuário  -->
 		<mapping class="br.com.clinica.model.cadastro.usuario.Login" />
 		<mapping class="br.com.clinica.model.cadastro.usuario.Perfil" />
 		
-
+		<!-- Pessoas  -->
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Paciente" />
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Pessoa" />
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Atendente" />
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Medico" />
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Estoquista" />
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Acompanhante" />
-
+		
+		<!-- Outros  -->
 		<mapping class="br.com.clinica.model.cadastro.outro.Doenca" />
 		<mapping class="br.com.clinica.model.cadastro.outro.Convenio" />
 		<mapping class="br.com.clinica.model.cadastro.outro.Especialidade" />
 		
+		<!-- Prontuário Médico  -->
 		<mapping class="br.com.clinica.model.prontuario.Prontuario" />
 		
 		<!-- Agendamento  -->
 		<mapping class="br.com.clinica.model.cadastro.agendamento.Evento" />
-
+		
+		<!-- Estoque  -->
 		<mapping class="br.com.clinica.model.cadastro.estoque.Material" />
 		<mapping class="br.com.clinica.model.cadastro.estoque.Fornecedor" />
+		
+		<!-- Financeiro  -->
+		<mapping class="br.com.clinica.model.financeiro.ContasPagar" />
+		<mapping class="br.com.clinica.model.financeiro.ParcelaPagar" />
 	
 		<listener class="org.hibernate.envers.event.AuditEventListener"
          type="post-insert"/>

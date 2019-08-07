@@ -189,7 +189,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 				medicoModel = medicoController.merge(medicoModel);
 				medicoModel = new Medico();
 				sucesso();
-				busca();
+				//busca();
 				System.out.println("CPF Válido");
 			} else {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, 
@@ -279,7 +279,6 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void setUrlFind(String urlFind) {
 		this.urlFind = urlFind;
 	}
-
 
 	public void setUrl(String url) {
 		this.url = url;

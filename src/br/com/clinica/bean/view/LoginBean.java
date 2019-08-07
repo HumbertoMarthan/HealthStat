@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
@@ -19,7 +19,7 @@ import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 
 @Controller
-@Scope(value = "session")
+@ViewScoped
 @ManagedBean(name = "loginBean")
 public class LoginBean extends BeanManagedViewAbstract {
 
@@ -38,7 +38,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 	private Long selecionado;
 
 	@Autowired
-	private LoginController loginController; 
+	private LoginController loginController;
 
 	public LoginBean() {
 		loginAtualizaSenha = new LoginAtualizaSenha();
@@ -48,27 +48,24 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void updateSenha() throws Exception {
 		Login entidadeLogada = contextoBean.getEntidadeLogada();
-		if (!loginAtualizaSenha.getSenhaAtual().equals(entidadeLogada.getSenha())) {
-			addMsg("A senha atual não é valida.");
-			return;
-		} else if (loginAtualizaSenha.getSenhaAtual().equals(loginAtualizaSenha.getNovaSenha())) {
-			addMsg("A senha atual não pode ser igual a nova senha.");
-			return;
-		} else if (!loginAtualizaSenha.getNovaSenha().equals(loginAtualizaSenha.getConfirmaSenha())) {
-			addMsg("A nova senha e a confirmação não conferem.");
-			return;
-		} else {
+		System.out.println("Entidade da Sessão>>>>>><>>>>>>>" + entidadeLogada.getLogin());
+		/*
+		 * if (!loginAtualizaSenha.getSenhaAtual().equals(entidadeLogada.getSenha())) {
+		 * addMsg("A senha atual não é valida."); } if
+		 * (loginAtualizaSenha.getSenhaAtual().equals(loginAtualizaSenha.getNovaSenha())
+		 * ) { addMsg("A senha atual não pode ser igual a nova senha."); } if
+		 * (!loginAtualizaSenha.getNovaSenha().equals(loginAtualizaSenha.
+		 * getConfirmaSenha())) { addMsg("A nova senha e a confirmação não conferem.");
+		 * } else {
+		 */
 			entidadeLogada.setSenha(loginAtualizaSenha.getNovaSenha());
 			loginController.saveOrUpdate(entidadeLogada);
 			entidadeLogada = loginController.findByPorId(Login.class, entidadeLogada.getIdLogin());
-			if (entidadeLogada.getSenha().equals(loginAtualizaSenha.getNovaSenha())) {
-				sucesso();
-				entidadeLogada = new Login();
-			} else {
-				addMsg("A nova senha não foi atualizada");
-				error();
-			}
-		}
+		/*
+		 * if (entidadeLogada.getSenha().equals(loginAtualizaSenha.getNovaSenha())) {
+		 * sucesso(); entidadeLogada = new Login(); } else {
+		 * addMsg("A nova senha não foi atualizada"); error(); } }
+		 */
 	}
 
 	public void onRowSelect(SelectEvent event) {
@@ -112,13 +109,11 @@ public class LoginBean extends BeanManagedViewAbstract {
 		busca();
 	}
 
-	
 	@Override
 	public void setarVariaveisNulas() throws Exception {
 		loginModel = new Login();
 	}
 
-	
 	// GETTERS E SETTERS
 	public String getUsuarioLogadoSecurity() {
 		return contextoBean.getAuthentication().getName();
@@ -153,10 +148,10 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
-		
+
 		if (selecionado == 1) {
-				loginModel.setPerfil(new Perfil(getSelecionado()));
-		}		
+			loginModel.setPerfil(new Perfil(getSelecionado()));
+		}
 		if (selecionado == 2) {
 			loginModel.setPerfil(new Perfil(getSelecionado()));
 		}
