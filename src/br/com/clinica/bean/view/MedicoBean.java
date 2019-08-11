@@ -253,10 +253,6 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		medicoModel = new Medico();
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 	// Getter e Setters
 	public Medico getmedicoModel() {

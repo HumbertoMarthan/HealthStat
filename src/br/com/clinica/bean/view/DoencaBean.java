@@ -131,10 +131,5 @@ public class DoencaBean extends BeanManagedViewAbstract {
 	@Override
 	public void consultarEntidade() throws Exception {
 	}
-
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 	
 }

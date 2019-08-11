@@ -69,7 +69,8 @@ public class ReportUtil implements Serializable {
 	
 	/*Cria a lista DataSource de beans que carregam os dados para o relatório*/
 	@SuppressWarnings("unchecked")
-	public StreamedContent geraRelatorio(List<?> listDataBeanColletionReport,  @SuppressWarnings("rawtypes") HashMap parametrosRelatorio,
+	public StreamedContent geraRelatorio(List<?> listDataBeanColletionReport,  @SuppressWarnings("rawtypes") 
+	HashMap parametrosRelatorio,
 			String nomeRelatorioJasper, String nomeRelatorioSaida, int tipoRelatorio ) throws Exception{
 		
 		/*Cria a lista de collectionDataSource de beans que carregam os dados para o relatório*/

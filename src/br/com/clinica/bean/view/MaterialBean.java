@@ -66,6 +66,9 @@ public class MaterialBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
+		if (materialModel == null) {
+			materialModel = new Material();
+		}
 		materialModel = materialController.merge(materialModel);
 		materialModel = new Material();
 		sucesso();
@@ -81,6 +84,10 @@ public class MaterialBean extends BeanManagedViewAbstract {
 	public String novo() throws Exception {
 		setarVariaveisNulas();
 		return getUrl();
+	}
+
+	public void limpa() throws Exception {
+		materialModel = new Material();
 	}
 
 	public String edita() throws Exception {
@@ -129,10 +136,6 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		materialModel = new Material();
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 	// GETTERS E SETTERS
 

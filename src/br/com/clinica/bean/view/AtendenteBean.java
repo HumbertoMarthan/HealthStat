@@ -251,10 +251,6 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		 atendenteModel = new Atendente();
 	}
 	
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 	//GETTERS E SETTERS
 	

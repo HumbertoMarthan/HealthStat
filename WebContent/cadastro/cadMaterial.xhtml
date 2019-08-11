@@ -78,10 +78,6 @@
 	padding: 0.2em;
 	border-radius: 15px;
 }
-
-.ui-panel .ui-panel-title {
-	
-}
 </style>
 }
 	</ui:define>
@@ -107,7 +103,7 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{materialBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoNovo="false"
 										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
 												 and materialBean.materialModel.idMaterial == null}"
 										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 

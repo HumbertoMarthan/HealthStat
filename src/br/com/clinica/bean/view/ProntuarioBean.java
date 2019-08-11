@@ -167,10 +167,6 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		prontuarioModel = new Prontuario();
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 	/*Persistência -------------------------------------------*/
 	
 	/*ENCAMINHAMENTO*/

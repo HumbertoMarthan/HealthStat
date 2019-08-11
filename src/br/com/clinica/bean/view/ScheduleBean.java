@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
+import br.com.clinica.controller.geral.ContasReceberController;
 import br.com.clinica.controller.geral.EventoController;
 import br.com.clinica.controller.geral.PacienteController;
 import br.com.clinica.hibernate.InterfaceCrud;
@@ -30,6 +31,7 @@ import br.com.clinica.model.cadastro.agendamento.CustomScheduleEvent;
 import br.com.clinica.model.cadastro.agendamento.Evento;
 import br.com.clinica.model.cadastro.agendamento.TipoEvento;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.financeiro.ContasReceber;
 
 @ManagedBean(name = "scheduleBean")
 @Controller
@@ -40,6 +42,8 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	private ScheduleModel model;
 	private Evento evento;
+	private ContasReceber contasReceber = new ContasReceber();
+	private List<ContasReceber> lstContas = new ArrayList<ContasReceber>();
 	private ScheduleEvent event;
 	private List<ScheduleEvent> scheduleEvents;
 	private Date dataAtual;
@@ -51,25 +55,30 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private EventoController eventoController; /* Injetando */
+
+	@Autowired
+	private ContasReceberController contasReceberController; /* Injetando */
+
 	
 	@Autowired
 	private PacienteController pacienteController;
-	
-	public List<Paciente>  completePaciente(String q) throws Exception {
-		return pacienteController.
-				findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
+
+	public List<Paciente> completePaciente(String q) throws Exception {
+		return pacienteController.findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%"
+				+ q.toUpperCase() + "%' order by pessoa.pessoaNome ASC");
 	}
-	
+
 	public ScheduleBean() throws Exception {
 		event = new CustomScheduleEvent();
 		model = new DefaultScheduleModel();
 		setDataAtual(new Date());
 		evento = new Evento();
 		listaEvento = new ArrayList<Evento>();
-		//busca();
-	
+		// busca();
+
 	}
-	//Busca lista de Agendamento
+
+	// Busca lista de Agendamento
 	public List<Evento> busca() throws Exception {
 		listaEvento = eventoController.listarEventos();
 		return listaEvento;
@@ -135,13 +144,12 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao gravar paciente");
 		}
 	}
+
 	public void medicoEtiqueta() {
 		if (evento.getPaciente().getPessoa().getPessoaNome() != null
 				|| evento.getMedico().getPessoa().getPessoaNome() != null) {
-			String tooltip =
-					"Paciente: " + evento.getPaciente().getPessoa().getPessoaNome() 
-					+ "<br/>" 	 + 
-					"Médico: "	 + evento.getMedico().getPessoa().getPessoaNome();
+			String tooltip = "Paciente: " + evento.getPaciente().getPessoa().getPessoaNome() + "<br/>" + "Médico: "
+					+ evento.getMedico().getPessoa().getPessoaNome();
 			evento.setDescricao(tooltip);
 		} else {
 			System.out.println("Erro ao gravar medico");
@@ -153,9 +161,9 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	}
 
 	public void buscaRegistro() throws Exception {
-		listaEvento =  eventoController.findListByQueryDinamica
-				(" FROM Evento WHERE upper(titulo) like upper('%"+campoBusca+"%')");
-		campoBusca="";
+		listaEvento = eventoController
+				.findListByQueryDinamica(" FROM Evento WHERE upper(titulo) like upper('%" + campoBusca + "%')");
+		campoBusca = "";
 	}
 
 	/* Verifica se há agendamentos */
@@ -189,7 +197,47 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return true;
 
 	}
-	
+
+	public ContasReceber getContasReceber() {
+		return contasReceber;
+	}
+
+	public void setContasReceber(ContasReceber contasReceber) {
+		this.contasReceber = contasReceber;
+	}
+
+	public List<ContasReceber> getLstContas() {
+		return lstContas;
+	}
+
+	public void setLstContas(List<ContasReceber> lstContas) {
+		this.lstContas = lstContas;
+	}
+
+	public ScheduleEvent getEvent() {
+		return event;
+	}
+
+	public void setEvent(ScheduleEvent event) {
+		this.event = event;
+	}
+
+	public EventoController getEventoController() {
+		return eventoController;
+	}
+
+	public void setEventoController(EventoController eventoController) {
+		this.eventoController = eventoController;
+	}
+
+	public PacienteController getPacienteController() {
+		return pacienteController;
+	}
+
+	public void setPacienteController(PacienteController pacienteController) {
+		this.pacienteController = pacienteController;
+	}
+
 	/* Verifica se há agendamentos */
 	public boolean validarPaciente() throws Exception {
 		String[] param = new String[] { "idPaciente", "dataInicio", "dataFim" };
@@ -221,8 +269,24 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return true;
 
 	}
+	public void adicionarContasReceber() throws Exception {
+		if(evento.getTipoEvento().getDescricao() == "Confirmar") {
+			lstContas = contasReceberController.findListByQueryDinamica("from ContasReceber");
+				for (ContasReceber contas : lstContas ) {
+					if(contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente() &&
+						evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0 ){
+					contasReceberController.delete(contas);
+				}
+			}
+			contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
+				contasReceber.setDataPagamento(new Date());
+			contasReceber.setStatus("P");
+			contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+			contasReceberController.merge(contasReceber);
+		}
+	}
 	
-
+	
 	/* Salva */
 	public void salvar() throws Exception {
 		// Salva o construtor que implementa a interface (Custom) do Schedule com os
@@ -233,7 +297,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				this.evento.getConfirmaConsulta(), this.evento);
 
 		/* Verifica se a Datafim está vindo antes da DataInicio */
-		if (evento.getDataFim().before(evento.getDataInicio())){
+		if (evento.getDataFim().before(evento.getDataInicio())) {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Data Final não pode ser maior que a Data Inicial", "");
 			addMessage(message);
@@ -242,25 +306,52 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			/* Se o Evento for novo */
 			if (evento.getId() == null) {
 				model.addEvent(newEvent);
+				System.out.println("EDITANDO>>>"+evento.getTipoEvento().getDescricao());
+				if(evento.getTipoEvento().getDescricao() == "Confirmar") {
+					System.out.println("Entrou no Confirmar Consulta");
+				}
 				eventoController.persist(evento);
 				/* Se o Evento já existir */
 			} else {
-				
+
 				newEvent.setId(event.getId());
-				// informacoesEtiqueta();
 				model.updateEvent(newEvent);
+				System.out.println("ID DO EDITADO>>>"+evento.getId());
 				eventoController.merge(evento);
+				Long id = this.evento.getId();
+				evento = eventoController.findByPorId(Evento.class, id);
+				System.out.println("EDITANDO>>>"+evento.getTipoEvento().getDescricao());
+				
+				adicionarContasReceber();
+				/*
+				 * if(evento.getTipoEvento().getDescricao() == "Confirmar") { lstContas =
+				 * contasReceberController.findListByQueryDinamica("from ContasReceber"); for
+				 * (ContasReceber contas : lstContas ) { if(contas.getPaciente().getIdPaciente()
+				 * == evento.getPaciente().getIdPaciente() &&
+				 * evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0 ){
+				 * contasReceberController.delete(contas); } } contasReceber.setPaciente(new
+				 * Paciente(evento.getPaciente().getIdPaciente()));
+				 * contasReceber.setDataPagamento(new Date()); contasReceber.setStatus("P");
+				 * contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+				 * contasReceberController.merge(contasReceber); }
+				 */
 			}
-			
-			  FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-			  "Agendamento Salvo para: " +
-			  evento.getPaciente().getPessoa().getPessoaNome(), "Agendamento para: " +
-			  evento.getTitulo()); addMessage(message);
-			 
+			addMsg(" Agendamento Salvo para: "
+					+ evento.getPaciente().getPessoa().getPessoaNome() +
+					"Agendamento para: " + evento.getTitulo());
+			/*
+			 * FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+			 * "Agendamento Salvo para: " +
+			 * evento.getPaciente().getPessoa().getPessoaNome(), "Agendamento para: " +
+			 * evento.getTitulo()); addMessage(message);
+			 */
 		} else {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Já existe um agendamento cadastrado neste horário para este paciente ou médico", "Revise o calendário");
-			addMessage(message);
+			addMsg("Já existe um agendamento cadastrado neste horário para este paciente ou médico, Revise o calendário!");
+			/*
+			 * FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+			 * "Já existe um agendamento cadastrado neste horário para este paciente ou médico"
+			 * , "Revise o calendário"); addMessage(message);
+			 */
 		}
 	}
 
@@ -306,7 +397,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		Long id = this.evento.getId();
 		System.out.println("Evento Selecionado" + id);
 		this.evento = eventoController.findByPorId(Evento.class, id);
-		System.out.println("Evento vindo do banco" +evento);
+		System.out.println("Evento vindo do banco" + evento);
 	}
 
 	private void addMessage(FacesMessage message) {
@@ -396,13 +487,16 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	public void setDataAtual(Date dataAtual) {
 		LocalDate localDate = new LocalDate();
 		dataAtual = localDate.toDate();
-		
+
 		this.dataAtual = dataAtual;
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ContasReceberController getContasReceberController() {
+		return contasReceberController;
 	}
+
+	public void setContasReceberController(ContasReceberController contasReceberController) {
+		this.contasReceberController = contasReceberController;
+	}
+
 }

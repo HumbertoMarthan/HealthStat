@@ -95,9 +95,5 @@ public class LoginInvalidarBean extends BeanManagedViewAbstract {
 		return null;
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return null;
-	}
 
 }

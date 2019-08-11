@@ -50,6 +50,7 @@
 		<mapping class="br.com.clinica.model.cadastro.estoque.Fornecedor" />
 		
 		<!-- Financeiro  -->
+		<mapping class="br.com.clinica.model.financeiro.ContasReceber" />
 		<mapping class="br.com.clinica.model.financeiro.ContasPagar" />
 		<mapping class="br.com.clinica.model.financeiro.ParcelaPagar" />
 	

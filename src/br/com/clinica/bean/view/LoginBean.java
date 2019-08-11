@@ -142,11 +142,6 @@ public class LoginBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return null;
-	}
-
-	@Override
 	public void saveNotReturn() throws Exception {
 
 		if (selecionado == 1) {

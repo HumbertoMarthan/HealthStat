@@ -255,10 +255,6 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	public void consultarEntidade() throws Exception {
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 	public List<Estoquista> getLstEstoquista() {
 		return lstEstoquista;

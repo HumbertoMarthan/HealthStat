@@ -133,7 +133,7 @@
 					<br/>
 						<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
 							styleClass="table.gridtable" rowKey="#{d.idAtendente}"
-							selectionMode="single" id="table" 
+							selectionMode="single" id="table" rows="10" paginator="true"T
 							selection="#{atendenteBean.atendenteModel}">
 
 							<p:ajax event="rowSelect"

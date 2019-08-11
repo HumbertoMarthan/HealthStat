@@ -409,10 +409,4 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	public void setIdade(int idade) {
 		this.idade = idade;
 	}
-
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -37,15 +37,14 @@ public class Paciente implements EntityBase, Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paciente_seq")
 	private Long idPaciente;
-	
-	
+
 	@Override
 	public Long getId() {
 		return idPaciente;
 	}
-	
-	//private String permissaoAcompanhante;
-	
+
+	// private String permissaoAcompanhante;
+
 	@OneToOne
 	@JoinColumn(name = "idConvenio")
 	Convenio convenio;
@@ -67,9 +66,14 @@ public class Paciente implements EntityBase, Serializable {
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
 	}
-	// HASH & EQUALS
 
-	
+	public Paciente() {}
+
+	public Paciente(Long cod) {
+		this.idPaciente = cod;
+	}
+
+	// HASH & EQUALS
 
 	@Override
 	public int hashCode() {
@@ -103,7 +107,5 @@ public class Paciente implements EntityBase, Serializable {
 			return false;
 		return true;
 	}
-
-	
 
 }

@@ -115,10 +115,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		contasPagarModel = (ContasPagar) event.getObject();
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 
 	public String getUrl() {

@@ -127,7 +127,7 @@
 						<br />
 						<p:dataTable value="#{materialBean.lstMaterial}" var="d"
 							styleClass="table.gridtable" rowKey="#{d.idMaterial}"
-							selectionMode="single" id="table"
+							selectionMode="single" id="table" rows="10" paginator="true"
 							selection="#{materialBean.materialModel}">
 
 							<p:ajax event="rowSelect" listener="#{materialBean.onRowSelect}"
@@ -161,7 +161,6 @@
 									</p:commandLink>
 								</center>
 							</p:column>
-
 						</p:dataTable>
 					</div>
 				</p:panel>

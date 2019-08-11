@@ -40,12 +40,10 @@ public abstract class BeanReportView extends BeanViewAbstract {
 		this.reportUtil = reportUtil;
 	}
 
-	
-	  public StreamedContent getArquivoReport() throws Exception { return
-	  getReportUtil().geraRelatorio(getListDataBeanCollectionReport(),
-	  getParametrosRelatorio(), getNomeRelatorioJasper(), getNomeRelatorioSaida(),
-	  getTipoRelatorio()); }
-	 
+	public StreamedContent getArquivoReport() throws Exception {
+		return getReportUtil().geraRelatorio(getListDataBeanCollectionReport(), getParametrosRelatorio(),
+				getNomeRelatorioJasper(), getNomeRelatorioSaida(), getTipoRelatorio());
+	}
 
 	public int getTipoRelatorio() {
 		return tipoRelatorio;

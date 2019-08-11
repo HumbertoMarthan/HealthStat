@@ -84,23 +84,23 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{convenioBean.novo}" rendered="true"
-										immediate="true" icon="fa fa-plus" iconPos="right" />
+										action="#{convenioBean.novo}" rendered="true" immediate="true"
+										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-2">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
 										   color:white !important;
-										   font-size:large;" immediate="true"
-										   action="#{convenioBean.edita}"  
+										   font-size:large;"
+										immediate="true" action="#{convenioBean.edita}"
 										update="table, @form"
 										rendered="#{convenioBean.convenioModel.idConvenio > 0 }"
-										icon=" fa fa-pencil" iconPos="right" >
-										
-										<f:setPropertyActionListener value="#{d}" 
-								target="#{convenioBean.convenioModel}"/>
-										</p:commandButton>
+										icon=" fa fa-pencil" iconPos="right">
+
+										<f:setPropertyActionListener value="#{d}"
+											target="#{convenioBean.convenioModel}" />
+									</p:commandButton>
 								</div>
 							</h:panelGroup>
 							<div class="ui-g-12 ui-lg-4">
@@ -119,17 +119,20 @@
 							</div>
 						</div>
 					</div>
+					<p:commandButton immediate="true" actionListener="#{convenioBean.gerarRelatorio}" >
+					  
+						<h:graphicImage library="img" name="pdf.png" />
+					</p:commandButton>
 				</p:panel>
-				<p:panel> 
+				<p:panel>
 					<div class="ui-g">
-					<br/>
+						<br />
 						<p:dataTable value="#{convenioBean.lstConvenio}" var="d"
 							styleClass="table.gridtable" rowKey="#{d.idConvenio}"
-							selectionMode="single" id="table" 
+							selectionMode="single" id="table" rows="10" paginator="true"
 							selection="#{convenioBean.convenioModel}">
 
-							<p:ajax event="rowSelect"
-								listener="#{convenioBean.onRowSelect}"
+							<p:ajax event="rowSelect" listener="#{convenioBean.onRowSelect}"
 								update="table,:form:botoes" />
 
 							<p:column headerText="Convênio" priority="1"
@@ -147,13 +150,12 @@
 								<a>#{d.telefone} <br />
 								</a>
 							</p:column>
-							
+
 							<p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{convenioBean.excluir}"
-										update="table" id="excluir" ajax="true"
-										immediate="true">
+									<p:commandLink action="#{convenioBean.excluir}" update="table"
+										id="excluir" ajax="true" immediate="true">
 										<i class="fa fa-trash" aria-hidden="true"></i>
 										<f:setPropertyActionListener value="#{d}"
 											target="#{convenioBean.convenioModel}" />

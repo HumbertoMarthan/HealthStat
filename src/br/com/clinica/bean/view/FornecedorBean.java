@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -43,6 +44,14 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	
 	@Autowired
 	private FornecedorController fornecedorController;
+	
+	@Override
+	public StreamedContent getArquivoReport() throws Exception {
+		super.setNomeRelatorioJasper("report_convenio");
+		super.setNomeRelatorioSaida("report_convenio");
+		super.setListDataBeanCollectionReport(fornecedorController.findList(getClassImp()));
+		return super.getArquivoReport();
+	}
 	
 	public void busca() throws Exception {
 		StringBuilder str = new StringBuilder();
@@ -153,11 +162,6 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	
 	public void onRowSelect(SelectEvent event) {
 		fornecedorModel = (Fornecedor) event.getObject();
-	}
-
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
 	}
 
 	public Fornecedor getFornecedorModel() {

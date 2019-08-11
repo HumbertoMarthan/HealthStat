@@ -1,7 +1,9 @@
 package br.com.clinica.bean.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -15,6 +17,13 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.ConvenioController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.outro.Convenio;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Controller
 @ViewScoped
@@ -31,14 +40,7 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ConvenioController convenioController;
 
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_convenio");
-		super.setNomeRelatorioSaida("report_convenio");
-		super.setListDataBeanCollectionReport(convenioController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
-	
+
 	public ConvenioBean() {
 		setLstConvenio(new ArrayList<>());
 		convenioModel = new Convenio();
@@ -53,6 +55,45 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 		}
 		
 		lstConvenio =  convenioController.findListByQueryDinamica(str.toString());
+	}
+	
+	@Override
+	public StreamedContent getArquivoReport() throws Exception {
+		super.setNomeRelatorioJasper("a");
+		super.setNomeRelatorioSaida("a");
+		super.setListDataBeanCollectionReport(convenioController.findListByQueryDinamica("from Convenio"));
+		return super.getArquivoReport();
+	}
+	
+	public void gerarRelatorio()  throws JRException, Exception {	
+		
+			System.out.println("Gerando relatório...");
+			List<Convenio> 
+			listaConvenio = convenioController.findListByQueryDinamica("from Convenio");
+			
+				System.out.println("LISTA CONVENIO"+listaConvenio.size());
+				
+			
+			System.out.println("NOME DO CONVENIO"+ listaConvenio.get(0).getNomeConvenio() );
+			
+			//JasperReport pathjrxml = JasperCompileManager
+			//.compileReport("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jrxml");
+			
+			JasperReport relatorioJasper = (JasperReport) 
+					JRLoader.loadObjectFromFile
+					("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jasper");	
+			
+			Map<String, Object> parametros = new HashMap<>();
+			
+			JRBeanCollectionDataSource jrbcds = new JRBeanCollectionDataSource(listaConvenio, false);	
+			System.out.println("COLLECTION DATASOURCE>>>>>>>"+jrbcds);	
+			JasperPrint printReport = 
+					JasperFillManager.fillReport(relatorioJasper, 
+												 null, 
+												 jrbcds);
+			JasperExportManager.exportReportToPdfFile(
+					printReport, "C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.pdf");
+			System.out.println("Relatorio gerado");
 	}
 	
 	public String edita()  throws Exception {
@@ -136,10 +177,6 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 		convenioModel = new Convenio();
 	}
 
-	@Override
-	public String condicaoAndParaPesquisa() throws Exception {
-		return "";
-	}
 
 	public Convenio getObjetoSelecionado() {
 		return convenioModel;
