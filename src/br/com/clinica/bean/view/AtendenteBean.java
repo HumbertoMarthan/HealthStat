@@ -34,7 +34,7 @@ import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
 
 
-@Controller
+@Controller 
 @ViewScoped
 @ManagedBean(name = "atendenteBean")
 public class AtendenteBean extends BeanManagedViewAbstract {
