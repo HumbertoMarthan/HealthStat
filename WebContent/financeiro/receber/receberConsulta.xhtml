@@ -1,0 +1,137 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Receber Consulta</ui:define>
+
+	<ui:define name="head">
+
+		<style type="text/css">
+.ui-datatable thead th, .ui-datatable tfoot td {
+	text-align: center;
+	font-size: large;
+}
+
+.ui-lg-12.centralizar {
+	margin: 0 auto !important;
+	height: auto;
+	width: 100% text-align: center;
+	float: none !important;
+	position: inherit;
+}
+
+.tamanho {
+	height: 150px !important;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	/* height: 35px; */
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-g label {
+	font-size: medium;
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.subtitulo {
+	font-weight: bold;
+	font-size: 20px !important;
+	color: black !important;
+}
+
+.
+ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	/*height: 150px !important;*/
+}
+
+.ui-inputfield {
+	margin: 0;
+	outline: medium none;
+	padding: 4px;
+	font-weight: bold;
+	height: 35px;
+	font-size: medium !important;
+}
+
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+	padding-right: 2.4em;
+	width: 430px;
+}
+</style>
+
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="formPai">
+				<div align="center">
+					<p:panel id="panel" header="Menu">
+						<!-- Botão Contas Pendentes -->
+						<p:commandButton value="Contas Pendentes"
+							rendered="#{contasReceberBean.estado ne 'P'}"
+							style="height:40px;width:200px; background-color: seagreen; 
+							background: seagreen; color:white !important"
+							ajax="true" immediate="true" id="buttonAtestado"
+							icon="fa fa-info-circle" iconPos="right"
+							action="#{contasReceberBean.redirecionarFindEntidade}"
+							update="@form">
+						</p:commandButton>
+
+						<!-- Botão Pagamento -->
+						<p:commandButton value="Pagamento"
+							rendered="#{contasReceberBean.estado ne 'PA' and
+						contasReceberBean.contasReceberModel.idContasReceber > 0}"
+							style="height:40px;width:170px; 
+							background-color: darkcyan; background: darkcyan; color:white !important"
+							ajax="true" immediate="true" id="buttonPagamento"
+							icon="fa fa-info-circle" iconPos="right"
+							action="#{contasReceberBean.mudaEstadoPagamento}" update="@form">
+
+							<p:confirm
+								message="Deseja ir para a Guia de Consulta? A tela atual será perdida, senão salva!"
+								icon="ui-icon-mail-closed" />
+						</p:commandButton>
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							<div align="center">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+							</div>
+						</p:confirmDialog>
+						<p:commandButton value="Tabela de Preço"
+							style="height:40px;width:170px; 
+							background-color: darkcyan; background: darkcyan; color:white !important"
+							ajax="true" immediate="true" id="buttonTabelaPreco"
+							icon="fa fa-info-circle" iconPos="right"
+							action="#{contasReceberBean.mudaEstadoTabelaPreco}" 
+							update="@form">
+						</p:commandButton>
+					</p:panel>
+				</div>
+
+			<!-- FORM PENDENTES -->
+			<ui:include src="/financeiro/receber/buscaContasReceber.xhtml" />
+
+			<!-- FORM PAGAMENTO -->
+			<ui:include src="/financeiro/receber/pagamento.xhtml" />
+		</h:form>
+	</ui:define>
+</ui:composition>

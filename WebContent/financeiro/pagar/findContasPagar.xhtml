@@ -7,7 +7,7 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
-	<ui:define name="title">Busca Atendente</ui:define>
+	<ui:define name="title">Contas a Pagar</ui:define>
 	<ui:define name="head">
 		<style>
 .ui-g label {
@@ -74,7 +74,7 @@
 	<ui:define name="content">
 		<h:form id="form">
 			<div class="ui-fluid">
-				<p:panel header="Pesquisa de Atendentes" style="text-align:center">
+				<p:panel header="Pesquisa de Material" style="text-align:center">
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
@@ -84,99 +84,78 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{atendenteBean.novo}" rendered="true"
-										immediate="true" icon="fa fa-plus" iconPos="right" />
+										action="#{contasPagarBean.novo}" rendered="true" immediate="true"
+										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-2">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
 										   color:white !important;
-										   font-size:large;" immediate="true"
-										   action="#{atendenteBean.edita}"
+										   font-size:large;"
+										immediate="true" action="#{contasPagarBean.editar}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }"
-										icon=" fa fa-pencil" iconPos="right" >
-										
-										<f:setPropertyActionListener value="#{d}" 
-								target="#{atendenteBean.atendenteModel}"/>
-										</p:commandButton>
+										rendered="#{contasPagarBean.contasPagarModel.idContasPagar > 0 }"
+										icon=" fa fa-pencil" iconPos="right">
+
+										<f:setPropertyActionListener value="#{d}"
+											target="#{contasPagarBean.contasPagarModel}" />
+									</p:commandButton>
 								</div>
 							</h:panelGroup>
 							<div class="ui-g-12 ui-lg-4">
-								<p:inputText value="#{atendenteBean.campoBuscaNome}"
+								<p:inputText value="#{contasPagarBean.campoBuscaContasPagar}"
 									placeholder="Buscar pelo Nome" id="inputNome"
 									style="height:40px; ">
 
 								</p:inputText>
 							</div>
 
-							<div class="ui-g-12 ui-lg-2">
-								<p:inputText value="#{atendenteBean.campoBuscaCPF}"
-									placeholder="Buscar pelo CPF" id="inputCPF"
-									style="height:40px; ">
 
-								</p:inputText>
-							</div>
 							<div class="ui-g-12 ui-lg-1">
 								<p:commandButton style="height:40px;width:130px; "
 									styleClass="btn btn-blue" icon="ui-icon-search"
-									id="btnBuscatxt" actionListener="#{atendenteBean.busca}"
-									update=" inputNome,inputCPF,table" />
+									id="btnBuscatxt" actionListener="#{contasPagarBean.busca}"
+									update=" inputNome,table" />
 								<p:defaultCommand target="btnBuscatxt" />
 							</div>
 						</div>
 					</div>
 				</p:panel>
-				<p:panel> 
+				<p:panel>
 					<div class="ui-g">
-					<br/>
-						<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
-							styleClass="table.gridtable" rowKey="#{d.idAtendente}"
-							selectionMode="single" id="table" rows="10" paginator="true"
-							selection="#{atendenteBean.atendenteModel}">
+						<br />
+						<p:dataTable value="#{contasPagarBean.lstContasPagar}" var="d"
+							styleClass="table.gridtable" rowKey="#{d.idContasPagar}"
+							selectionMode="single" id="table"
+							selection="#{contasPagarBean.contasPagarModel}">
 
-							<p:ajax event="rowSelect"
-								listener="#{atendenteBean.onRowSelect}"
+							<p:ajax event="rowSelect" listener="#{contasPagarBean.onRowSelect}"
 								update="table,:form:botoes" />
-
-
-							<p:column headerText="Matricula" priority="1"
-								style="overflow: hidden;text-align: center; font-size: medium; width: 90px">
-								<a>#{d.idAtendente} <br />
-								</a>
+							<p:column headerText="Fornecedor" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								#{d.credor.nomeFornecedor}
+								
 							</p:column>
 
-							<p:column headerText="Atendente" priority="1"
+							<p:column headerText="Valor Total" priority="1"
 								style="overflow: hidden;text-align: left; font-size: medium">
-								<a>#{d.pessoa.pessoaNome} <br/> CPF -
-									#{d.pessoa.pessoaCPF} 
-								</a>
-							</p:column>
-
-							<p:column headerText="Endereço" priority="5"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								<a>#{d.pessoa.logradouro} <br />
-								</a>
-							</p:column>
-							<p:column headerText="Telefone" priority="5"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								<a>#{d.pessoa.pessoaTelefonePrimario} <br />
-								</a>
+								#{d.valorTotalConta} 
 							</p:column>
 							
 							<p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{atendenteBean.excluir}"
+									<p:commandLink action="#{contasPagarBean.excluir}"
 										update="table" id="excluir" ajax="true"
 										immediate="true">
 										<i class="fa fa-trash" aria-hidden="true"></i>
 										<f:setPropertyActionListener value="#{d}"
-											target="#{atendenteBean.atendenteModel}" />
+											target="#{contasPagarBean.contasPagarModel}" />
 									</p:commandLink>
 								</center>
 							</p:column>
+
 						</p:dataTable>
 					</div>
 				</p:panel>

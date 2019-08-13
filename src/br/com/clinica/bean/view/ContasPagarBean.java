@@ -24,8 +24,8 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	
 	private ContasPagar contasPagarModel;
 	
-	private String url = "/financeiro/contasPagar.jsf?faces-redirect=true";
-	private String urlFind = "/financeiro/findContasPagar.jsf?faces-redirect=true";
+	private String url = "/financeiro/pagar/contasPagar.jsf?faces-redirect=true";
+	private String urlFind = "/financeiro/pagar/findContasPagar.jsf?faces-redirect=true";
 	private List<ContasPagar> lstContasPagar;
 	private String campoBuscaContasPagar = "";
 	

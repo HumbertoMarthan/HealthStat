@@ -59,7 +59,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ContasReceberController contasReceberController; /* Injetando */
 
-	
 	@Autowired
 	private PacienteController pacienteController;
 
@@ -269,24 +268,24 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return true;
 
 	}
+
 	public void adicionarContasReceber() throws Exception {
-		if(evento.getTipoEvento().getDescricao() == "Confirmar") {
+		if (evento.getTipoEvento().getDescricao() == "Confirmar") {
 			lstContas = contasReceberController.findListByQueryDinamica("from ContasReceber");
-				for (ContasReceber contas : lstContas ) {
-					if(contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente() &&
-						evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0 ){
+			for (ContasReceber contas : lstContas) {
+				if (contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente()
+						&& evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0) {
 					contasReceberController.delete(contas);
 				}
 			}
 			contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-				contasReceber.setDataPagamento(new Date());
+			contasReceber.setDataPagamento(new Date());
 			contasReceber.setStatus("P");
 			contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 			contasReceberController.merge(contasReceber);
 		}
 	}
-	
-	
+
 	/* Salva */
 	public void salvar() throws Exception {
 		// Salva o construtor que implementa a interface (Custom) do Schedule com os
@@ -298,60 +297,33 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 		/* Verifica se a Datafim está vindo antes da DataInicio */
 		if (evento.getDataFim().before(evento.getDataInicio())) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Data Final não pode ser maior que a Data Inicial", "");
-			addMessage(message);
 
-		} else if (validarMedico() && validarPaciente()) {
-			/* Se o Evento for novo */
+			addMsg("Data Final do agendamento  não pode ser maior que a Data Inicial do mesmo");
+
+		} else if (validarMedico() && validarPaciente()) { /* Se o Evento for novo */
 			if (evento.getId() == null) {
-				model.addEvent(newEvent);
-				System.out.println("EDITANDO>>>"+evento.getTipoEvento().getDescricao());
-				if(evento.getTipoEvento().getDescricao() == "Confirmar") {
-					System.out.println("Entrou no Confirmar Consulta");
-				}
-				eventoController.persist(evento);
-				/* Se o Evento já existir */
-			} else {
 
+				model.addEvent(newEvent);
+				eventoController.persist(evento);
+
+			} else { /* Se o Evento já existir */
 				newEvent.setId(event.getId());
 				model.updateEvent(newEvent);
-				System.out.println("ID DO EDITADO>>>"+evento.getId());
+				System.out.println("ID DO EDITADO>>>" + evento.getId());
 				eventoController.merge(evento);
+
+				// Busca o Evento para comparação no Contas a receber
 				Long id = this.evento.getId();
 				evento = eventoController.findByPorId(Evento.class, id);
-				System.out.println("EDITANDO>>>"+evento.getTipoEvento().getDescricao());
-				
+
 				adicionarContasReceber();
-				/*
-				 * if(evento.getTipoEvento().getDescricao() == "Confirmar") { lstContas =
-				 * contasReceberController.findListByQueryDinamica("from ContasReceber"); for
-				 * (ContasReceber contas : lstContas ) { if(contas.getPaciente().getIdPaciente()
-				 * == evento.getPaciente().getIdPaciente() &&
-				 * evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0 ){
-				 * contasReceberController.delete(contas); } } contasReceber.setPaciente(new
-				 * Paciente(evento.getPaciente().getIdPaciente()));
-				 * contasReceber.setDataPagamento(new Date()); contasReceber.setStatus("P");
-				 * contasReceber.setDataInicioAgendamento(evento.getDataInicio());
-				 * contasReceberController.merge(contasReceber); }
-				 */
+				
+				
 			}
-			addMsg(" Agendamento Salvo para: "
-					+ evento.getPaciente().getPessoa().getPessoaNome() +
-					"Agendamento para: " + evento.getTitulo());
-			/*
-			 * FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-			 * "Agendamento Salvo para: " +
-			 * evento.getPaciente().getPessoa().getPessoaNome(), "Agendamento para: " +
-			 * evento.getTitulo()); addMessage(message);
-			 */
+			addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome() + "Agendamento para: "
+					+ evento.getTitulo());
 		} else {
 			addMsg("Já existe um agendamento cadastrado neste horário para este paciente ou médico, Revise o calendário!");
-			/*
-			 * FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-			 * "Já existe um agendamento cadastrado neste horário para este paciente ou médico"
-			 * , "Revise o calendário"); addMessage(message);
-			 */
 		}
 	}
 
@@ -370,7 +342,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 					"Agendamento Removido :" + evento.getTitulo());
 			addMessage(message);
 		} catch (Exception e) {
-
 			/* Lança erro ao remover etiqueta */
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Impossivel remover",
 					"Há dependencias:" + evento.getTitulo());

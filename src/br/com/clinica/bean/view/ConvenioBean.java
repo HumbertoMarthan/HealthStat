@@ -1,9 +1,7 @@
 package br.com.clinica.bean.view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -83,7 +81,7 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 					JRLoader.loadObjectFromFile
 					("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jasper");	
 			
-			Map<String, Object> parametros = new HashMap<>();
+			//Map<String, Object> parametros = new HashMap<>();
 			
 			JRBeanCollectionDataSource jrbcds = new JRBeanCollectionDataSource(listaConvenio, false);	
 			System.out.println("COLLECTION DATASOURCE>>>>>>>"+jrbcds);	

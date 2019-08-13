@@ -1,0 +1,70 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui">
+<body>
+	<p:panel rendered="#{contasReceberBean.estado eq 'PA'}">
+		<div class="content">
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<div class="ui-g-12 ui-lg-6">
+								<p:panel header="Editar Pagamento de Consulta">
+									<div class="ui-g" align="center">
+										<div class="ui-g-12 ui-lg-12">
+											<h:outputLabel value="Paciente" />
+											<p:inputText required="true"
+												value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
+										</div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-12 ui-lg-6">
+											<h:outputLabel value="Valor Consulta" />
+											<br />
+											<p:outputLabel required="true"
+												style="font-size: medium; color : black;"
+												value="#{contasReceberBean.contasReceberModel.valorConsulta}" />
+										</div>
+
+										<div class="ui-g-12 ui-lg-6">
+											<h:outputLabel value="Desconto" />
+											<br />
+											<p:inputText required="true"
+												style="font-size: medium; color : black" />
+										</div>
+									</div>
+								</p:panel>
+							</div>
+							<div class="ui-g-12 ui-lg-6">
+								<p:panel header="Pagamento">
+									<div class="ui-g">
+										<div class="ui-g-12 ui-lg-4">
+											<p:outputLabel value="Paciente:" />
+											<br />
+											<p:outputLabel required="true"
+												value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome.toUpperCase()}" />
+										</div>
+										<div class="ui-g-12 ui-lg-4">
+											<p:outputLabel value="Valor Devido:" />
+											<br />
+											<p:outputLabel required="true"
+												value="R$ #{contasReceberBean.contasReceberModel.valorConsulta	}" />
+										</div>
+									</div>
+								</p:panel>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</p:panel>
+
+</body>
+</html>

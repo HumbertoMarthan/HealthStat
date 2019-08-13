@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui">
+<body>
+<p:panel rendered="#{contasReceberBean.estado eq 'P'}">
+	<div class="content">
+		<div class="ui-fluid">
+			<p:panel header="Contas a Receber" style="text-align:center">
+				<div class="ui-g">
+					<div class="ui-g-12" align="center">
+					 <p:outputPanel>
+						<div class="ui-g-12 ui-lg-4" align="center">
+							<p:inputText value="#{contasReceberBean.campoBuscaContasReceber}"
+								placeholder="Buscar pelo Nome do Paciente" id="inputNome"
+								style="height:40px; ">
+							</p:inputText>
+						</div>
+					 </p:outputPanel>
+
+						<div class="ui-g-12 ui-lg-1">
+							<p:commandButton style="height:40px;width:130px; "
+								styleClass="btn btn-blue" icon="ui-icon-search" id="btnBuscatxt"
+								actionListener="#{contasReceberBean.busca}"
+								update=" inputNome,table" />
+							<p:defaultCommand target="btnBuscatxt" />
+						</div>
+					</div>
+				</div>
+			</p:panel>
+			<p:panel>
+				<div class="ui-g">
+					<br />
+					<p:dataTable value="#{contasReceberBean.lstContasReceber}" var="d"
+						styleClass="table.gridtable" rowKey="#{d.idContasReceber}"
+						selectionMode="single" id="table" 
+						selection="#{contasReceberBean.contasReceberModel}">
+
+						<p:ajax event="rowSelect"
+							listener="#{contasReceberBean.onRowSelect}" update="table, :formPai" />
+						<p:column headerText="Paciente" priority="5"
+							style="overflow: hidden;text-align: left; font-size: medium">
+								#{d.paciente.pessoa.pessoaNome}
+								
+							</p:column>
+
+						<p:column headerText="Valor da Consulta" priority="1"
+							style="overflow: hidden;text-align: left; font-size: medium">
+								#{d.valorConsulta} 
+							</p:column>
+						<p:column headerText="Status" priority="1"
+							style="overflow: hidden;text-align: left; font-size: medium">
+							<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}" />
+							<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}" />
+							<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}" />
+						</p:column>
+
+						<!-- 							<p:column style="width:50px" priority="4">
+								<center>
+									<f:facet name="header">Excluir</f:facet>
+									<p:commandLink action="#{contasReceberBean.excluir}"
+										update="table" id="excluir" ajax="true"
+										immediate="true">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+										<f:setPropertyActionListener value="#{d}"
+											target="#{contasReceberBean.contasReceberModel}" />
+									</p:commandLink>
+								</center>
+							</p:column>
+ -->
+					</p:dataTable>
+				</div>
+			</p:panel>
+		</div>
+	</div>
+	</p:panel>
+</body>
+</html>
+
