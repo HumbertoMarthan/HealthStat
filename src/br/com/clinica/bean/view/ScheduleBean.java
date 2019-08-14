@@ -278,11 +278,43 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 					contasReceberController.delete(contas);
 				}
 			}
-			contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-			contasReceber.setDataPagamento(new Date());
-			contasReceber.setStatus("P");
-			contasReceber.setDataInicioAgendamento(evento.getDataInicio());
-			contasReceberController.merge(contasReceber);
+			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Unimed")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("UNIMED")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("unimed")) {
+				contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
+				contasReceber.setDataPagamento(new Date());
+				contasReceber.setStatus("C");
+				contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+				contasReceber.setValorConsulta(200.00D);
+				contasReceber.setObservacao("Recolher Assinatura de Paciente!");
+				contasReceberController.merge(contasReceber);
+
+			}
+			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Prever")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("PREVER")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("prever")) {
+
+				contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
+				contasReceber.setDataPagamento(new Date());
+				contasReceber.setStatus("P");
+				contasReceber.setValorConsulta(200.00D);
+				contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+				contasReceberController.merge(contasReceber);
+
+			}
+			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Sas")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("SAS")
+					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("sas")) {
+
+				contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
+				contasReceber.setDataPagamento(new Date());
+				contasReceber.setStatus("P");
+				contasReceber.setValorConsulta(200.00D);
+				contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+				contasReceberController.merge(contasReceber);
+
+			}	
+			
 		}
 	}
 
@@ -317,8 +349,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				evento = eventoController.findByPorId(Evento.class, id);
 
 				adicionarContasReceber();
-				
-				
+
 			}
 			addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome() + "Agendamento para: "
 					+ evento.getTitulo());

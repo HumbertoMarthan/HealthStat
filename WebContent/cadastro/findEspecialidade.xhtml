@@ -6,23 +6,161 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:sec="http://www.springframework.org/security/facelets/tags"
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
-	xmlns:p="http://primefaces.org/ui"  template="/WEB-INF/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
 	<ui:define name="title">Find Especialidade</ui:define>
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: large;
+	color: black;
+	font-weight: bold
+}
 
-	<ui:define name="content">
-		<div class="ui-g">
-			<div class="ui-g-12">
-				<div class="card">
-					<util:pesquisa managedBeanView="#{especialidadeBeanView}"
-						menuImpressao="true"
-						ocultaNovo="#{contextoBean.possuiAcesso('UNIDADE_DE_MEDIDA_NOVO','ADMIN')}"
-						nomePesquisa="Pesquisa de Especilidade Médica" exibirAdd="false"
-						colunasGridDataTableList="/resources/componentes/colunasDataTableEspecialidade.xhtml">
-					</util:pesquisa>
-				</div>
-			</div>
-		</div>
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-panel .ui-panel-title {
+	font-size: medium;
+}
+</style>
 	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<div class="ui-fluid">
+				<p:panel header="Pesquisa de Especialidades" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botoes">
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton value="Incluir"
+										style="height:40px; background: greenyellow !important  ;   
+										background-color: greenyellow; 
+										color:white !important;
+										font-size:large; "
+										action="#{especialidadeBean.novo}" rendered="true" immediate="true"
+										icon="fa fa-plus" iconPos="right" />
+								</div>
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoEditar" value="Editar"
+										style="height:40px; background: lightskyblue !important  ;
+										   background-color: lightskyblue ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{especialidadeBean.editar}"
+										update="table, @form"
+										rendered="#{especialidadeBean.especialidadeModel.idEspecialidade> 0 }"
+										icon=" fa fa-pencil" iconPos="right">
+
+										<f:setPropertyActionListener value="#{d}"
+											target="#{especialidadeBean.especialidadeModel}" />
+									</p:commandButton>
+								</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-4">
+								<p:inputText value="#{especialidadeBean.campoBuscaEspecialidade}"
+									placeholder="Buscar pela Especialidade" id="inputNome"
+									style="height:40px; ">
+
+								</p:inputText>
+							</div>
+
+
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandButton style="height:40px;width:130px; "
+									styleClass="btn btn-blue" icon="ui-icon-search"
+									id="btnBuscatxt" actionListener="#{especialidadeBean.busca}"
+									update=" inputNome,table" />
+								<p:defaultCommand target="btnBuscatxt" />
+							</div>
+						</div>
+					</div>
+				</p:panel>
+				<p:panel>
+					<div class="ui-g">
+						<br />
+						<p:dataTable value="#{especialidadeBean.lstEspecialidade}" var="d"
+							styleClass="table.gridtable" rowKey="#{d.idEspecialidade}"
+							selectionMode="single" id="table" rows="10" paginator="true"
+							selection="#{especialidadeBean.especialidadeModel}">
+
+							<p:ajax event="rowSelect" listener="#{especialidadeBean.onRowSelect}"
+								update="table,:form:botoes" />
+							<p:column headerText="Especialidade" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								#{d.nomeEspecialidade}
+								
+							</p:column>
+
+							<p:column headerText="Observação" priority="1"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								#{d.observacao} 
+							</p:column>
+							<p:column style="width:50px" priority="4">
+								<center>
+									<f:facet name="header">Excluir</f:facet>
+									<p:commandLink action="#{especialidadeBean.excluir}" update="table"
+										id="excluir" ajax="true" immediate="true">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+										<f:setPropertyActionListener value="#{d}"
+											target="#{especialidadeBean.especialidadeModel}" />
+									</p:commandLink>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+
+
 
 </ui:composition>

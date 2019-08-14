@@ -103,19 +103,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							icon="fa fa-info-circle" iconPos="right"
 							action="#{contasReceberBean.mudaEstadoPagamento}" update="@form">
 
-							<p:confirm
-								message="Deseja ir para a Guia de Consulta? A tela atual será perdida, senão salva!"
-								icon="ui-icon-mail-closed" />
 						</p:commandButton>
-						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-							<div align="center">
-								<p:commandButton value="Sim" type="button"
-									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-
-								<p:commandButton value="Não" type="button"
-									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
-							</div>
-						</p:confirmDialog>
 						<p:commandButton value="Tabela de Preço"
 							style="height:40px;width:170px; 
 							background-color: darkcyan; background: darkcyan; color:white !important"

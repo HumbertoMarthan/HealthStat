@@ -1,7 +1,6 @@
 package br.com.clinica.model.financeiro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -44,9 +43,11 @@ public class ContasReceber implements EntityBase, Serializable {
 	
 	private Date dataPagamento;
 
-	private BigDecimal valorConsulta;
+	private Double valorConsulta;
 	
 	private String status;
+	
+	private String observacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInicioAgendamento;
@@ -57,10 +58,16 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	//----------------------------------------------------
 	
-	
-	
 	public Long getIdContasReceber() {
 		return idContasReceber;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	public Date getDataInicioAgendamento() {
@@ -75,11 +82,11 @@ public class ContasReceber implements EntityBase, Serializable {
 		this.idContasReceber = idContasReceber;
 	}
 
-	public BigDecimal getValorConsulta() {
+	public Double getValorConsulta() {
 		return valorConsulta;
 	}
 
-	public void setValorConsulta(BigDecimal valorConsulta) {
+	public void setValorConsulta(Double valorConsulta) {
 		this.valorConsulta = valorConsulta;
 	}
 

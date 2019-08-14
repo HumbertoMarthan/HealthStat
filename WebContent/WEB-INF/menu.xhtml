@@ -60,10 +60,16 @@
 											action="#{convenioBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
-									<sec:ifAnyGranted roles="MED, ADMIN">
+									<!-- <sec:ifAnyGranted roles="MED, ADMIN">
 										<p:menuitem id="item_menu_doencas" value="Doença"
 											icon="fa fa-stethoscope"
 											action="#{doencaBeanView.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
+									 -->
+									<sec:ifAnyGranted roles="ATE, ADMIN">
+										<p:menuitem id="item_menu_especialidade" value="Especialidade"
+											icon="fa fa-glass"
+											action="#{especialidadeBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="EST, ATE, ADMIN">

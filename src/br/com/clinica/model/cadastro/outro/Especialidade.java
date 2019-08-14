@@ -26,39 +26,54 @@ import br.com.clinica.model.cadastro.pessoa.Medico;
 @Entity
 @Table(name = "especialidade")
 @SequenceGenerator(name = "especialidade_seq", sequenceName = "especialidade_seq", initialValue = 1, allocationSize = 1)
-public class Especialidade  implements EntityBase, Serializable {
-   
+public class Especialidade implements EntityBase, Serializable {
+
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE,	generator = "especialidade_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "especialidade_seq")
 	private Long idEspecialidade;
-	
+
 	private String nomeEspecialidade;
-	
+
 	@ManyToMany(mappedBy = "especialidades")
 	private List<Medico> medicos = new ArrayList<>();
-	
+
 	@Override
 	public Long getId() {
 		return idEspecialidade;
 	}
 
-	//GETTERS E SETTERS-------------------------
-	
+	private String observacao;
+
+	// GETTERS E SETTERS-------------------------
+
 	public Long getIdEspecialidade() {
 		return idEspecialidade;
 	}
 
+	public List<Medico> getMedicos() {
+		return medicos;
+	}
+
+	public void setMedicos(List<Medico> medicos) {
+		this.medicos = medicos;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
 
 	public void setIdEspecialidade(Long idEspecialidade) {
 		this.idEspecialidade = idEspecialidade;
 	}
 
-
 	public String getNomeEspecialidade() {
 		return nomeEspecialidade;
 	}
-
 
 	public void setNomeEspecialidade(String nomeEspecialidade) {
 		this.nomeEspecialidade = nomeEspecialidade;
@@ -66,9 +81,7 @@ public class Especialidade  implements EntityBase, Serializable {
 
 	@Override
 	public String toString() {
-		return  nomeEspecialidade;
+		return nomeEspecialidade;
 	}
-	
-	
-	
+
 }

@@ -1,5 +1,6 @@
 package br.com.clinica.bean.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -27,9 +28,10 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private String urlFind = "/financeiro/receber/receberConsulta.jsf?faces-redirect=true";
 	private List<ContasReceber> lstContasReceber;
 	private String campoBuscaContasReceber = "";
-
+	private String campoBuscaTipoConta = "P";
 	String estado = "P";
 
+	
 	public String getEstado() {
 		return estado;
 	}
@@ -38,8 +40,17 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		this.estado = estado;
 	}
 
+	public String getCampoBuscaTipoConta() {
+		return campoBuscaTipoConta;
+	}
+
+	public void setCampoBuscaTipoConta(String campoBuscaTipoConta) {
+		this.campoBuscaTipoConta = campoBuscaTipoConta;
+	}
+
 	public ContasReceberBean() {
 		contasReceberModel = new ContasReceber();
+		lstContasReceber = new ArrayList<ContasReceber>();
 	}
 
 	@Autowired
@@ -61,13 +72,17 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	}
 
 	public void busca() throws Exception {
+		System.out.println("LISTA"+lstContasReceber);
+		//lstContasReceber.clear();
+		lstContasReceber = new ArrayList<ContasReceber>();
+		System.out.println("LISTA limpa"+lstContasReceber);
 		StringBuilder str = new StringBuilder();
 		str.append("from ContasReceber a where 1=1");
 
 		if (!campoBuscaContasReceber.isEmpty()) {
 			str.append(" and paciente.pessoa.pessoaNome like '%" + campoBuscaContasReceber + "%'");
 		}
-
+		str.append(" and a.status = '"+ campoBuscaTipoConta.toUpperCase()+"'");
 		lstContasReceber = contasReceberController.findListByQueryDinamica(str.toString());
 	}
 

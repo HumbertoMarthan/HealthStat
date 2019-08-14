@@ -7,59 +7,73 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	xmlns:p="http://primefaces.org/ui">
 <body>
-<p:panel rendered="#{contasReceberBean.estado eq 'P'}">
-	<div class="content">
-		<div class="ui-fluid">
-			<p:panel header="Contas a Receber" style="text-align:center">
-				<div class="ui-g">
-					<div class="ui-g-12" align="center">
-					 <p:outputPanel>
-						<div class="ui-g-12 ui-lg-4" align="center">
-							<p:inputText value="#{contasReceberBean.campoBuscaContasReceber}"
-								placeholder="Buscar pelo Nome do Paciente" id="inputNome"
-								style="height:40px; ">
-							</p:inputText>
-						</div>
-					 </p:outputPanel>
+	<p:panel rendered="#{contasReceberBean.estado eq 'P'}">
+		<div class="content">
+			<div class="ui-fluid">
+				<p:panel header="Contas a Receber" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12" align="center">
+							<div class="ui-g-12 ui-lg-4" align="center">
+								<p:inputText
+									value="#{contasReceberBean.campoBuscaContasReceber}"
+									placeholder="Buscar pelo Nome do Paciente" id="inputNome"
+									style="height:40px; ">
+								</p:inputText>
+							</div>
+							<div class="ui-g-12 ui-lg-4" align="center">
+								<p:selectOneRadio value="#{contasReceberBean.campoBuscaTipoConta}">
+									<f:selectItem itemLabel="Pendente" itemValue="P" />
+									<f:selectItem itemLabel="Concluido" itemValue="C" />
+									<f:selectItem itemLabel="Atrasado" itemValue="A" />
+									<p:ajax event="change" 
+									update="table"
+									listener="#{contasReceberBean.busca}" />
+								</p:selectOneRadio>
+							</div>
 
-						<div class="ui-g-12 ui-lg-1">
-							<p:commandButton style="height:40px;width:130px; "
-								styleClass="btn btn-blue" icon="ui-icon-search" id="btnBuscatxt"
-								actionListener="#{contasReceberBean.busca}"
-								update=" inputNome,table" />
-							<p:defaultCommand target="btnBuscatxt" />
+
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandButton style="height:40px;width:130px; "
+									styleClass="btn btn-blue" icon="ui-icon-search"
+									id="btnBuscatxt" actionListener="#{contasReceberBean.busca}"
+									update=" inputNome,table" />
+								<p:defaultCommand target="btnBuscatxt" />
+							</div>
 						</div>
 					</div>
-				</div>
-			</p:panel>
-			<p:panel>
-				<div class="ui-g">
-					<br />
-					<p:dataTable value="#{contasReceberBean.lstContasReceber}" var="d"
-						styleClass="table.gridtable" rowKey="#{d.idContasReceber}"
-						selectionMode="single" id="table" 
-						selection="#{contasReceberBean.contasReceberModel}">
+				</p:panel>
+				<p:panel>
+					<div class="ui-g">
+						<br />
+						<p:dataTable value="#{contasReceberBean.lstContasReceber}" var="d"
+							styleClass="table.gridtable" rowKey="#{d.idContasReceber}"
+							selectionMode="single" id="table"
+							selection="#{contasReceberBean.contasReceberModel}">
 
-						<p:ajax event="rowSelect"
-							listener="#{contasReceberBean.onRowSelect}" update="table, :formPai" />
-						<p:column headerText="Paciente" priority="5"
-							style="overflow: hidden;text-align: left; font-size: medium">
+							<p:ajax event="rowSelect"
+								listener="#{contasReceberBean.onRowSelect}"
+								update="table, :formPai" />
+							<p:column headerText="Paciente" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
 								#{d.paciente.pessoa.pessoaNome}
-								
+								<br />
+								#{d.paciente.convenio.nomeConvenio}
+								<br />
+								Valor Consulta : R$ #{d.valorConsulta} 
 							</p:column>
 
-						<p:column headerText="Valor da Consulta" priority="1"
-							style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.valorConsulta} 
+							<p:column headerText="Status" priority="1"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}" />
+								<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}" />
+								<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}" />
 							</p:column>
-						<p:column headerText="Status" priority="1"
-							style="overflow: hidden;text-align: left; font-size: medium">
-							<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}" />
-							<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}" />
-							<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}" />
-						</p:column>
 
-						<!-- 							<p:column style="width:50px" priority="4">
+							<p:column headerText="Observação" priority="1">
+								#{d.observacao}
+							</p:column>
+
+							<!-- 							<p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
 									<p:commandLink action="#{contasReceberBean.excluir}"
@@ -72,11 +86,11 @@
 								</center>
 							</p:column>
  -->
-					</p:dataTable>
-				</div>
-			</p:panel>
+						</p:dataTable>
+					</div>
+				</p:panel>
+			</div>
 		</div>
-	</div>
 	</p:panel>
 </body>
 </html>
