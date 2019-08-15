@@ -3,8 +3,12 @@ package br.com.clinica.model.cadastro.agendamento;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.primefaces.model.ScheduleEvent;
 
+import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 
@@ -22,7 +26,11 @@ public class CustomScheduleEvent implements ScheduleEvent, Serializable {
 	private boolean editable;
 	private Medico medico;
 	private Paciente paciente;
+	private Atendente atendente;
 	private String confirmarConsulta;
+	
+	@Temporal(TemporalType.DATE)
+	private Date vencimentoContasReceber;
 
 	public CustomScheduleEvent() {
 	}
@@ -72,7 +80,38 @@ public class CustomScheduleEvent implements ScheduleEvent, Serializable {
 		this.paciente = paciente;
 		this.setConfirmarConsulta(confirma);
 	}
+	
+	public CustomScheduleEvent(String title, Date start, Date end, String styleClass, boolean allDay,
+			String description, Medico medico, Paciente paciente, Atendente atendente, String confirma, Object data) {
+		this.title = title;
+		this.startDate = start;
+		this.endDate = end;
+		this.styleClass = styleClass;
+		this.allDay = allDay;
+		this.data = data;
+		this.description = description;
+		this.medico = medico;
+		this.paciente = paciente;
+		this.atendente = atendente;
+		this.setConfirmarConsulta(confirma);
+	}
+	
+	public CustomScheduleEvent(String title, Date start, Date end, String styleClass, boolean allDay,
+			String description, Medico medico, Paciente paciente, Atendente atendente, Date vencimentoContasReceber ,String confirma, Object data) {
+		this.title = title;
+		this.startDate = start;
+		this.endDate = end;
+		this.styleClass = styleClass;
+		this.allDay = allDay;
+		this.data = data;
+		this.description = description;
+		this.medico = medico;
+		this.paciente = paciente;
+		this.atendente = atendente;
+		this.setConfirmarConsulta(confirma);
+	}
 
+	
 	@Override
 	public String getId() {
 		return id;
@@ -99,6 +138,14 @@ public class CustomScheduleEvent implements ScheduleEvent, Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+
+	public Atendente getAtendente() {
+		return atendente;
+	}
+
+	public void setAtendente(Atendente atendente) {
+		this.atendente = atendente;
 	}
 
 	@Override
@@ -213,4 +260,14 @@ public class CustomScheduleEvent implements ScheduleEvent, Serializable {
 		this.confirmarConsulta = confirmarConsulta;
 	}
 
+	public Date getVencimentoContasReceber() {
+		return vencimentoContasReceber;
+	}
+
+	public void setVencimentoContasReceber(Date vencimentoContasReceber) {
+		this.vencimentoContasReceber = vencimentoContasReceber;
+	}
+
+	
+	
 }

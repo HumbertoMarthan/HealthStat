@@ -41,6 +41,17 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Autowired
+	private ContextoBean contextoBean;
+	
+	public ContextoBean getContextoBean() {
+		return contextoBean;
+	}
+
+	public void setContextoBean(ContextoBean contextoBean) {
+		this.contextoBean = contextoBean;
+	}
+
 	private Atendente atendenteModel;
 	private String url = "/cadastro/cadAtendente.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findAtendente.jsf?faces-redirect=true";
@@ -151,6 +162,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	}
 	
 	public void busca() throws Exception {
+		lstAtendente = new ArrayList<Atendente>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Atendente a where 1=1");
 
@@ -161,7 +173,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
 		
-		lstAtendente=  atendenteController.findListByQueryDinamica(str.toString());
+		lstAtendente = atendenteController.findListByQueryDinamica(str.toString());
 	}
 	
 	private void addMessage(FacesMessage message) {
@@ -176,12 +188,12 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		
 		return "";
 	}
-	
+
 	@Override
 	public void saveNotReturn() throws Exception {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isCPF(atendenteModel.getPessoa().getPessoaCPF())) { 
-		atendenteModel = atendenteController.merge(atendenteModel);
+				atendenteModel = atendenteController.merge(atendenteModel);
 		atendenteModel = new Atendente();
 		sucesso();
 			}else{

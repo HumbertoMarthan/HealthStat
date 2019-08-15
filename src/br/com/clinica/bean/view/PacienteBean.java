@@ -71,7 +71,8 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	public void busca() throws Exception {
 		// lstAcompanhante = acompanhanteController.findListByQueryDinamica(" from
 		// Acompanhante");
-
+		
+		lstPaciente = new ArrayList<Paciente>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Paciente a where 1=1");
 
@@ -219,7 +220,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
-		idadeMinimaPaciente();
+		//idadeMinimaPaciente();
 		if (ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
 			pacienteModel = pacienteController.merge(pacienteModel);
 			System.out.println("CPF Válido");

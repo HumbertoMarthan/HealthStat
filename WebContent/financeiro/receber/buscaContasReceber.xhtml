@@ -21,13 +21,13 @@
 								</p:inputText>
 							</div>
 							<div class="ui-g-12 ui-lg-4" align="center">
-								<p:selectOneRadio value="#{contasReceberBean.campoBuscaTipoConta}">
+								<p:selectOneRadio
+									value="#{contasReceberBean.campoBuscaTipoConta}">
 									<f:selectItem itemLabel="Pendente" itemValue="P" />
 									<f:selectItem itemLabel="Concluido" itemValue="C" />
 									<f:selectItem itemLabel="Atrasado" itemValue="A" />
-									<p:ajax event="change" 
-									update="table"
-									listener="#{contasReceberBean.busca}" />
+									<p:ajax event="change" update="table"
+										listener="#{contasReceberBean.busca}" />
 								</p:selectOneRadio>
 							</div>
 
@@ -53,24 +53,46 @@
 							<p:ajax event="rowSelect"
 								listener="#{contasReceberBean.onRowSelect}"
 								update="table, :formPai" />
-							<p:column headerText="Paciente" priority="5"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.paciente.pessoa.pessoaNome}
-								<br />
-								#{d.paciente.convenio.nomeConvenio}
-								<br />
-								Valor Consulta : R$ #{d.valorConsulta} 
-							</p:column>
 
 							<p:column headerText="Status" priority="1"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}" />
-								<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}" />
-								<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}" />
+								style="overflow: hidden;text-align: center; font-size: medium;width: 10%">
+								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+									style="color : magenta" />
+								<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}"
+									style="color : green" />
+								<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}"
+									style="color : red" />
+							</p:column>
+							
+							
+							<p:column headerText="Usuário"
+								style="overflow: hidden;text-align: center; font-size: medium; width: 10%">
+								<p:outputLabel style=" font-size: medium" value="#{d.login.login.toUpperCase()}" />
 							</p:column>
 
+							<p:column headerText="Paciente" priority="5"
+								style="overflow: hidden;text-align: left; font-size: medium">
+								<p:outputLabel style=" font-size: medium" value="#{d.paciente.pessoa.pessoaNome}"/>
+								<br />
+								<p:outputLabel style=" font-size: medium" value="#{d.paciente.convenio.nomeConvenio}"/>
+							</p:column>
+
+							<p:column headerText="Pagamento" priority="4">
+								<p:outputLabel style=" font-size: medium"
+									value="Data de Vencimento :"/> 
+								<p:outputLabel style=" font-size: medium; color: red"
+									value="#{d.dataVencimentoContasReceber}">
+									<f:convertDateTime pattern="dd/MM/yyyy" 
+										timeZone="America/Sao_Paulo" />
+								</p:outputLabel>
+								<br />
+								<p:outputLabel value="Valor Consulta : " style="font-size: medium;"/>
+								<p:outputLabel style=" font-size: medium; color: red"
+								 value="R$ #{d.valorConsulta}" />
+							
+							</p:column>
 							<p:column headerText="Observação" priority="1">
-								#{d.observacao}
+								<p:outputLabel style=" font-size: medium" value="#{d.observacao}" />
 							</p:column>
 
 							<!-- 							<p:column style="width:50px" priority="4">

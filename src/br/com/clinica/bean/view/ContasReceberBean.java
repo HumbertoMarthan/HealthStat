@@ -23,15 +23,21 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private static final long serialVersionUID = 1L;
 
 	private ContasReceber contasReceberModel;
-
 	private String url = "/financeiro/receber/contasReceber.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/receber/receberConsulta.jsf?faces-redirect=true";
 	private List<ContasReceber> lstContasReceber;
 	private String campoBuscaContasReceber = "";
 	private String campoBuscaTipoConta = "P";
 	String estado = "P";
-
 	
+	@Autowired
+	private ContasReceberController contasReceberController;
+
+	public ContasReceberBean() {
+		contasReceberModel = new ContasReceber();
+		lstContasReceber = new ArrayList<ContasReceber>();
+	}
+
 	public String getEstado() {
 		return estado;
 	}
@@ -48,14 +54,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		this.campoBuscaTipoConta = campoBuscaTipoConta;
 	}
 
-	public ContasReceberBean() {
-		contasReceberModel = new ContasReceber();
-		lstContasReceber = new ArrayList<ContasReceber>();
-	}
-
-	@Autowired
-	private ContasReceberController contasReceberController;
-
 	public void mudaEstadoPendencia() {
 		setEstado("P");
 	}
@@ -63,6 +61,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void mudaEstadoEditarPagamento() {
 		setEstado("E");
 	}
+
 	public void mudaEstadoTabelaPreco() {
 		setEstado("T");
 	}
@@ -72,17 +71,17 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	}
 
 	public void busca() throws Exception {
-		System.out.println("LISTA"+lstContasReceber);
-		//lstContasReceber.clear();
 		lstContasReceber = new ArrayList<ContasReceber>();
-		System.out.println("LISTA limpa"+lstContasReceber);
 		StringBuilder str = new StringBuilder();
+
 		str.append("from ContasReceber a where 1=1");
 
 		if (!campoBuscaContasReceber.isEmpty()) {
 			str.append(" and paciente.pessoa.pessoaNome like '%" + campoBuscaContasReceber + "%'");
 		}
-		str.append(" and a.status = '"+ campoBuscaTipoConta.toUpperCase()+"'");
+		if (!campoBuscaTipoConta.toUpperCase().isEmpty()) {
+			str.append(" and a.status = '" + campoBuscaTipoConta.toUpperCase() + "'");
+		}
 		lstContasReceber = contasReceberController.findListByQueryDinamica(str.toString());
 	}
 
@@ -96,6 +95,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	@Override
 	public String save() throws Exception {
+
 		contasReceberModel = contasReceberController.merge(contasReceberModel);
 		contasReceberModel = new ContasReceber();
 		return "";

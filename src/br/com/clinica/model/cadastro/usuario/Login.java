@@ -62,7 +62,6 @@ public class Login implements Serializable {
 	 * HashSet<String>();
 	 */
 	
-	
 	//GETTERS E SETTERS -----------------------------------------
 
 	
@@ -72,6 +71,11 @@ public class Login implements Serializable {
 		int result = 1;
 		result = prime * result + ((idLogin == null) ? 0 : idLogin.hashCode());
 		return result;
+	}
+	
+	public Login() {}
+	public Login(Long idLogin) {
+		this.idLogin = idLogin;
 	}
 	public JSONObject getJson() {
 		Map<Object, Object> map = new HashMap<Object, Object>();

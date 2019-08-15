@@ -1,5 +1,6 @@
 package br.com.clinica.bean.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -29,19 +30,19 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private List<ContasPagar> lstContasPagar;
 	private String campoBuscaContasPagar = "";
 	
+	
 	public ContasPagarBean() {
 		contasPagarModel = new ContasPagar();
+		lstContasPagar = new ArrayList<ContasPagar>();
 	}
 	
 	@Autowired
 	private ContasPagarController contasPagarController;
 	
 	public void busca() throws Exception {
+		lstContasPagar = new ArrayList<ContasPagar>();
 		StringBuilder str = new StringBuilder();
 		str.append("from ContasPagar a where 1=1");
-		//if (!campoBuscaContasPagar.equals("")) {
-			//str.append(" and upper(a.nomeContasPagar) like upper('%" + campoBuscaContasPagar + "%')");
-		//}
 
 		lstContasPagar = contasPagarController.findListByQueryDinamica(str.toString());
 	}

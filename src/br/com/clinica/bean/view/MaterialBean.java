@@ -42,6 +42,7 @@ public class MaterialBean extends BeanManagedViewAbstract {
 	}
 
 	public void busca() throws Exception {
+		lstMaterial = new ArrayList<Material>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Material a where 1=1");
 

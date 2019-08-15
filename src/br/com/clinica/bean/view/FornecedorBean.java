@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -54,6 +55,7 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	}
 	
 	public void busca() throws Exception {
+		lstFornecedor = new ArrayList<Fornecedor>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Fornecedor a where 1=1");
 		if (!campoBuscaFornecedor.equals("")) {

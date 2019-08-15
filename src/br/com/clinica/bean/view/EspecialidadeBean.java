@@ -37,6 +37,7 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	}
 
 	public void busca() throws Exception {
+		lstEspecialidade = new ArrayList<Especialidade>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Especialidade a where 1=1");
 

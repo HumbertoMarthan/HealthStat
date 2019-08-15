@@ -66,6 +66,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	}
 	
 	public void busca() throws Exception {
+		lstMedico = new ArrayList<Medico>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Medico a where 1=1");
 

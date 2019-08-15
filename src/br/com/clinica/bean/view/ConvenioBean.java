@@ -45,6 +45,7 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	}
 	
 	public void busca() throws Exception {
+		lstConvenio = new ArrayList<Convenio>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Convenio a where 1=1");
 

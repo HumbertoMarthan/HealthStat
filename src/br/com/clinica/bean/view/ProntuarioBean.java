@@ -1,6 +1,7 @@
 package br.com.clinica.bean.view;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -85,14 +86,13 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 }
 	
 	public void busca() throws Exception {
+		listaProntuario = new ArrayList<Prontuario>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Prontuario a where 1=1");
 		if (!campoBusca.equals("")) {
 			str.append(" and upper(a.paciente.pessoa.pessoaNome) like'%" + campoBusca.toUpperCase() + "%'");
 		}
-		listaProntuario = 
-				prontuarioController.findListByQueryDinamica
-				(str.toString());
+		listaProntuario = prontuarioController.findListByQueryDinamica(str.toString());
 	}
 	
     /*Persistência ---------------------------------*/

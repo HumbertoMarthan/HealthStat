@@ -19,9 +19,7 @@ import br.com.clinica.model.cadastro.pessoa.Pessoa;
 public class PessoaBeanView extends BeanManagedViewAbstract {
 	
 	private static final long serialVersionUID = 1L;
-	
 	private Pessoa objetoSelecionado = new Pessoa();
-	
 	private String url = "/cadastro/cad_pessoaj.sf?faces-redirect=true";
 	private String urlFind = "/cadastro/find_pessoa.jsf?faces-redirect=true";
 	

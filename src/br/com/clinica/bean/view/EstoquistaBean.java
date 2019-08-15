@@ -56,6 +56,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	}
 	
 	public void busca() throws Exception {
+		lstEstoquista = new ArrayList<Estoquista>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Estoquista a where 1=1");
 

@@ -14,10 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
+import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 
@@ -53,16 +56,9 @@ public class Evento implements EntityBase, Serializable {
 	private Date dataInicioRelatorio;
 	private Date dataFimRelatorio;
 	private String confirmaConsulta;
-	/*
-	 * @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	 * 
-	 * @JoinColumn private Paciente paciente;
-	 * 
-	 * @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	 * 
-	 * @JoinColumn private Medico medico;
-	 */
 	
+	@Temporal(TemporalType.DATE)
+	private Date dataVencimentoContasReceber;
 
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn
@@ -72,6 +68,11 @@ public class Evento implements EntityBase, Serializable {
 	@JoinColumn
 	private Medico medico;
 
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Atendente atendente;
+
+	
 	public Evento() {
 		this.tipoEvento = TipoEvento.CONSULTA;
 		this.titulo = "";
@@ -106,7 +107,42 @@ public class Evento implements EntityBase, Serializable {
 		this.medico = medico;
 		this.confirmaConsulta = confirma;
 	}
+	
+	public Evento(Long id, String titulo, Date dataInicio, Date dataFim, boolean diaInteiro, TipoEvento tipoEvento,
+			String descricao, Paciente paciente, Medico medico, Atendente atendente,  String confirma) {
 
+		this.id = id;
+		this.titulo = titulo;
+		this.dataInicio = dataInicio;
+		this.dataFim = dataFim;
+		this.diaInteiro = diaInteiro;
+		this.tipoEvento = tipoEvento;
+		this.setDescricao(descricao);
+		this.paciente = paciente;
+		this.medico = medico;
+		this.atendente = atendente;
+		this.confirmaConsulta = confirma;
+	}
+
+	public Evento(Long id, String titulo, Date dataInicio, Date dataFim, boolean diaInteiro, TipoEvento tipoEvento,
+			String descricao, Paciente paciente, Medico medico, Atendente atendente, Date vencimentoContasReceber ,  String confirma) {
+
+		this.id = id;
+		this.titulo = titulo;
+		this.dataInicio = dataInicio;
+		this.dataFim = dataFim;
+		this.diaInteiro = diaInteiro;
+		this.tipoEvento = tipoEvento;
+		this.setDescricao(descricao);
+		this.paciente = paciente;
+		this.medico = medico;
+		this.atendente = atendente;
+		this.confirmaConsulta = confirma;
+		this.dataVencimentoContasReceber = vencimentoContasReceber;
+	}
+
+	
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -124,10 +160,6 @@ public class Evento implements EntityBase, Serializable {
 	}
 
 	public void setDataInicio(Date dataInicio) {
-		// Calendar calendar = java.util.Calendar.getInstance() ;
-		// calendar.set(Calendar.HOUR_OF_DAY, 8) ;
-		// calendar.set(Calendar);
-
 		this.dataInicio = dataInicio;
 	}
 
@@ -153,6 +185,14 @@ public class Evento implements EntityBase, Serializable {
 
 	public void setTipoEvento(TipoEvento tipoEvento) {
 		this.tipoEvento = tipoEvento;
+	}
+
+	public Date getDataVencimentoContasReceber() {
+		return dataVencimentoContasReceber;
+	}
+
+	public void setDataVencimentoContasReceber(Date dataVencimentoContasReceber) {
+		this.dataVencimentoContasReceber = dataVencimentoContasReceber;
 	}
 
 	public Medico getMedico() {
@@ -206,6 +246,16 @@ public class Evento implements EntityBase, Serializable {
 
 	public Date getDataInicioRelatorio() {
 		return dataInicioRelatorio;
+	}
+	
+	
+
+	public Atendente getAtendente() {
+		return atendente;
+	}
+
+	public void setAtendente(Atendente atendente) {
+		this.atendente = atendente;
 	}
 
 	public void setDataInicioRelatorio(Date dataInicioRelatorio) {

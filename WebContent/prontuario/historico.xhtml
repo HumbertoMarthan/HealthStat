@@ -33,7 +33,8 @@
 			<div class="ui-g">
 				<p:dataTable id="table" var="a" widgetVar="table"
 					emptyMessage="Não há Agendamentos" rowKey="#{a.idProntuario}"
-					value="#{prontuarioBean.listaProntuario}">
+					value="#{prontuarioBean.listaProntuario}" 
+					rows="10" paginator="true">
 
 					<p:column headerText="Paciente" style="text-align:left"
 						priority="1">

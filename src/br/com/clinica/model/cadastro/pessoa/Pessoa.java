@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -16,6 +18,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
+import br.com.clinica.model.cadastro.usuario.Login;
 
 /**
  * @author Humberto
@@ -67,7 +70,11 @@ public class Pessoa implements  EntityBase,Serializable {
 	//Registro Inicial
 	@Column(name = "pessoaDataRegistro")
 	private Date pessoaDataRegistro;
-	
+
+	@OneToOne
+	@JoinColumn(name="idLogin")
+	private Login pessoaUsuario;
+
 	@Column(name ="cep")
 	private String cep;
 	
@@ -243,7 +250,17 @@ public class Pessoa implements  EntityBase,Serializable {
 	public String getLocalidade() {
 		return localidade;
 	}
+	
+	
 	// HASH E EQUALS
+
+	public Login getPessoaUsuario() {
+		return pessoaUsuario;
+	}
+
+	public void setPessoaUsuario(Login pessoaUsuario) {
+		this.pessoaUsuario = pessoaUsuario;
+	}
 
 	@Override
 	public int hashCode() {

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -18,6 +19,7 @@ import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.cadastro.usuario.Login;
 
 /**
  * @author Humberto
@@ -41,6 +43,10 @@ public class ContasReceber implements EntityBase, Serializable {
 		return idContasReceber;
 	}
 	
+	@OneToOne
+	@JoinColumn(name = "idLogin")
+	private Login login;
+	
 	private Date dataPagamento;
 
 	private Double valorConsulta;
@@ -49,6 +55,11 @@ public class ContasReceber implements EntityBase, Serializable {
 	
 	private String observacao;
 	
+
+	@Temporal(TemporalType.DATE)
+	private Date dataVencimentoContasReceber;
+	
+	//Somente para comparação
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInicioAgendamento;
 	
@@ -72,6 +83,22 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	public Date getDataInicioAgendamento() {
 		return dataInicioAgendamento;
+	}
+
+	public Date getDataVencimentoContasReceber() {
+		return dataVencimentoContasReceber;
+	}
+
+	public void setDataVencimentoContasReceber(Date dataVencimentoContasReceber) {
+		this.dataVencimentoContasReceber = dataVencimentoContasReceber;
+	}
+
+	public Login getLogin() {
+		return login;
+	}
+
+	public void setLogin(Login login) {
+		this.login = login;
 	}
 
 	public void setDataInicioAgendamento(Date dataInicioAgendamento) {

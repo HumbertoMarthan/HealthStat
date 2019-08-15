@@ -104,28 +104,15 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{atendenteBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
+										botaoNovo="#{contextoBean.possuiAcesso('ATE','ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('ATE','ADMIN')
 												 and atendenteBean.atendenteModel.idAtendente == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('ATE','ADMIN') 
 												 and atendenteBean.atendenteModel.idAtendente != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('ATE','ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 
-									<p:commandButton value="Limpar"
-										style="height:40px;width:130px;
-										background-color: brown; 
-										background: brown; 
-										color:white !important;
-										font-size:large; "
-										ajax="true" immediate="true" id="buttonLimpar"
-										icon="fa fa-eraser" iconPos="right">
-										<p:ajax event="click" listener="#{atendenteBean.limpa}"
-											update="nome,nascimento,sexo,email,rg,cpf,obs,telefonePrimario,telefoneSecundario
-													logradouro,bairro,uf,complemento,localidade" />
-										<p:ajax update="form" resetValues="true" />
-									</p:commandButton>
 								</div>
 
 								<br />
