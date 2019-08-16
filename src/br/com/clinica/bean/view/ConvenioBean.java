@@ -2,6 +2,7 @@ package br.com.clinica.bean.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -32,13 +33,37 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	private Convenio convenioModel;
 	private String url = "/cadastro/cadConvenio.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findConvenio.jsf?faces-redirect=true";
-	private List<Convenio> lstConvenio; 
+	private List<Convenio> lstConvenio;
+	private List<Map<Object, Object>> lstConvenioTeste;
 	private String campoBuscaNome = "";
 
 	@Autowired
 	private ConvenioController convenioController;
+	
+	
+	public List<Map<Object, Object>> getLstConvenioTeste() {
+		return lstConvenioTeste;
+	}
 
+	public void setLstConvenioTeste(List<Map<Object, Object>> lstConvenioTeste) {
+		this.lstConvenioTeste = lstConvenioTeste;
+	}
 
+	public void teste() {
+		lstConvenioTeste =  convenioController.getSqlListMap("select nomeconvenio from convenio ");
+		System.out.println("TAMANHO DA LISTA" +lstConvenioTeste.size());
+		System.out.println("POSIÇÃO 1 "+lstConvenioTeste.get(0));
+		
+	
+	}
+
+	public void teste1() {
+		long number =  convenioController.getCountParam("from Convenio ");
+		System.out.println("QUANTIDADE "+number);
+		
+	
+	}
+	
 	public ConvenioBean() {
 		setLstConvenio(new ArrayList<>());
 		convenioModel = new Convenio();

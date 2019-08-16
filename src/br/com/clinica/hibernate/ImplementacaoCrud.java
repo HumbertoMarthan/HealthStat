@@ -3,10 +3,12 @@ package br.com.clinica.hibernate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -48,7 +50,7 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		sessionFactory.getCurrentSession().save(obj);
 		executeFlushSession();
 	}
-
+	
 	@Override
 	public void persist(T obj) throws Exception {
 		validaSessionFactory();
@@ -86,7 +88,45 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		executeFlushSession();
 		return obj;
 	}
+	/**
+	 * Select em HQL, CONTADOR
+	 * @param hql
+	 * @return
+	 */
+	public Long getCountParam(String hql){
+		try {
+			return (Long) getSession()
+					.createQuery("select count(*) " + hql.replace("fetch", ""))
+					.uniqueResult();
+            
+        } catch (Exception e) {
+        	System.out.println("Erro:" + e.getMessage());
+		}
+		
+		return new Long("0");
+	}
+	/**
+	 * Map recebe como parametro um sql puro
+	 * @param sql
+	 * @return
+	 */
+	public List<Map<Object,Object>> getSqlListMap(final String sql){
 
+		try{
+			return (List<Map<Object,Object>>)  getSession()
+					.createSQLQuery(sql)
+					.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
+					.list();
+        
+		} catch (Exception e) {
+        	System.out.println("Erro:" + e.getMessage());
+		}
+		
+        return null;
+	}
+	/**
+	 * Retorna uma lista é pedido uma classe para trazer os valores
+	 */
 	@Override
 	public List<T> findList(Class<T> login) throws Exception {
 		validaSessionFactory();

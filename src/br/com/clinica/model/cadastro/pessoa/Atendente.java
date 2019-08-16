@@ -42,12 +42,23 @@ public class Atendente  implements EntityBase, Serializable {
 		return idAtendente;
 	}
 	
+	private String ativo = "A" ;
+	
 	//GETTERS E SETTERS-------------------------
+	
 	
 	public Pessoa getPessoa() { 
 		return pessoa; 
 	}
 	 
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
+
 	public void setPessoa(Pessoa pessoa) { 
 		 this.pessoa = pessoa; 
 	}
@@ -86,9 +97,4 @@ public class Atendente  implements EntityBase, Serializable {
 			return false;
 		return true;
 	}
-	 
-	 
-
-	
-	
 }
