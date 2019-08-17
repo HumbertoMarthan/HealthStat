@@ -37,7 +37,9 @@ public class Paciente implements EntityBase, Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paciente_seq")
 	private Long idPaciente;
-
+	
+	private String email;
+	
 	@Override
 	public Long getId() {
 		return idPaciente;
@@ -73,6 +75,13 @@ public class Paciente implements EntityBase, Serializable {
 		this.idPaciente = cod;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	// HASH & EQUALS
 
 	@Override

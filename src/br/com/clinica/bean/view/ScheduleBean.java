@@ -25,14 +25,18 @@ import org.springframework.stereotype.Controller;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.ContasReceberController;
 import br.com.clinica.controller.geral.EventoController;
+import br.com.clinica.controller.geral.EventoPacienteController;
 import br.com.clinica.controller.geral.PacienteController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.agendamento.CustomScheduleEvent;
 import br.com.clinica.model.cadastro.agendamento.Evento;
+import br.com.clinica.model.cadastro.agendamento.EventoPaciente;
 import br.com.clinica.model.cadastro.agendamento.TipoEvento;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.financeiro.ContasReceber;
+import br.com.clinica.utils.DatasUtils;
+import br.com.clinica.utils.EmailUtils;
 
 @ManagedBean(name = "scheduleBean")
 @Controller
@@ -44,6 +48,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	private ScheduleModel model;
 	private Evento evento;
 	private ContasReceber contasReceber;
+	private EventoPaciente eventoPacienteModel;
 	private List<ContasReceber> lstContas;
 	private ScheduleEvent event;
 	private List<ScheduleEvent> scheduleEvents;
@@ -63,11 +68,16 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	private PacienteController pacienteController;
 
 	@Autowired
+	private EventoPacienteController eventoPacienteController;
+
+	
+	@Autowired
 	private ContextoBean contextoBean;
 
 	public ScheduleBean() throws Exception {
 		event = new CustomScheduleEvent();
 		model = new DefaultScheduleModel();
+		eventoPacienteModel = new EventoPaciente();
 		setDataAtual(new Date());
 		evento = new Evento();
 		listaEvento = new ArrayList<Evento>();
@@ -377,6 +387,22 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
+	private void persistirEventoPaciente() throws Exception {
+		System.out.println("Entrou no Persiste Evento>>>>>>");
+		eventoPacienteModel.setIdEvento(evento.getId());
+		eventoPacienteModel.setPaciente(new Paciente(evento.getPaciente().getId()));
+		System.out.println("ID PERSISTE EVENTO"+eventoPacienteModel.getId());
+		eventoPacienteController.persist(eventoPacienteModel);
+	}
+	
+	private void atualizarEventoPaciente() throws Exception {
+		System.out.println("Entrou no Att Evento>>>>>>");
+		eventoPacienteModel.setIdEvento(evento.getId());
+		eventoPacienteModel.setPaciente(new Paciente(evento.getPaciente().getId()));
+		System.out.println("ID ATUALIZA EVENTO"+eventoPacienteModel.getId());
+		eventoPacienteController.merge(eventoPacienteModel);
+	}
+	
 	/* Salva */
 	public void salvar() throws Exception {
 		// Salva o construtor que implementa a interface (Custom) do Schedule com os
@@ -392,13 +418,16 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		} else if (validarMedico() && validarPaciente()) { /* Se o Evento for novo */
 			if (evento.getId() == null) {
 				model.addEvent(newEvent);
+				persistirEventoPaciente();
+				sendEmailAgendamento(evento);
 				eventoController.persist(evento);
 			} else { /* Se o Evento já existir */
 				newEvent.setId(event.getId());
 				model.updateEvent(newEvent);
-				System.out.println("ID DO EDITADO>>>" + evento.getId());
+				atualizarEventoPaciente();
+				sendEmailAgendamento(evento);
 				eventoController.merge(evento);
-
+				
 				// Busca o Evento para comparação no Contas a receber
 				Long id = this.evento.getId();
 				evento = eventoController.findByPorId(Evento.class, id);
@@ -406,6 +435,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				adicionarContasReceber();
 
 			}
+			
 			addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome() + "Agendamento para: "
 					+ evento.getTitulo());
 		} else {
@@ -464,7 +494,35 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	public TipoEvento[] getTiposEventos() {
 		return TipoEvento.values();
 	}
+	
+	public void sendEmailAgendamento(Evento t) throws Exception {
 
+		long codigoPaciente = t.getPaciente().getIdPaciente();
+
+		List<Evento> emails = eventoController.findListByQueryDinamica("from Evento where paciente.idPaciente ="+ codigoPaciente);
+		String email ="";
+
+		for (Evento e : emails) {
+		 email = e.getPaciente().getEmail();
+		}
+
+		String emailTitulo = "";
+		emailTitulo += "Um Agendamento foi Adicionada/Atualizada para o paciente: '" + t.getPaciente().getPessoa().getPessoaNome()
+				+ "'";
+
+		String emailConteudo = "";
+		emailConteudo += "<b>INFORMAÇÕES DO AGENDAMENTO</b><br />";
+		emailConteudo += "<b>NUMERO DO AGENDAMENTO: </b> " + t.getId() + "<br />";
+		emailConteudo += "<b>PACIENTE:</b> " + t.getPaciente().getPessoa().getPessoaNome() + "<br />";
+		emailConteudo += "<b>MÉDICO:</b> " + t.getMedico().getPessoa().getPessoaNome() + "<br /><br /><br />";
+		emailConteudo += "<b>DATA/HORA DO INICIO DO AGENDAMENTO :</b> " + DatasUtils.formatDate(t.getDataInicio())  + "<br /><br /><br />";
+		emailConteudo += "<b>DATA/HORA DO FIM DO AGENDAMENTO :</b> " + DatasUtils.formatDate(t.getDataFim()) + "<br /><br /><br />";
+		emailConteudo += "<b>TIPO DO AGENDAMENTO :</b>" + t.getTipoEvento().getDescricao();
+
+		//Enviar Email com o dados coletados dentro desse método
+		EmailUtils.enviarEmail(email,emailTitulo, emailConteudo, true);
+	}
+	
 	// GETTERS E SETTERS
 
 	public void onRowSelect(SelectEvent event) {
@@ -606,6 +664,22 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void setContasReceberController(ContasReceberController contasReceberController) {
 		this.contasReceberController = contasReceberController;
+	}
+
+	public EventoPacienteController getEventoPacienteController() {
+		return eventoPacienteController;
+	}
+
+	public void setEventoPacienteController(EventoPacienteController eventoPacienteController) {
+		this.eventoPacienteController = eventoPacienteController;
+	}
+
+	public EventoPaciente getEventoPacienteModel() {
+		return eventoPacienteModel;
+	}
+
+	public void setEventoPacienteModel(EventoPaciente eventoPacienteModel) {
+		this.eventoPacienteModel = eventoPacienteModel;
 	}
 
 }

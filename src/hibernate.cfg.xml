@@ -44,6 +44,7 @@
 		
 		<!-- Agendamento  -->
 		<mapping class="br.com.clinica.model.cadastro.agendamento.Evento" />
+		<mapping class="br.com.clinica.model.cadastro.agendamento.EventoPaciente" />
 		
 		<!-- Estoque  -->
 		<mapping class="br.com.clinica.model.cadastro.estoque.Material" />

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
@@ -19,12 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
+public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static SessionFactory sessionFactory = HibernateUtil
-			.getSessionFactory();
+	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
 	@Autowired
 	private JdbcTemplateImpl jdbcTemplate;
@@ -50,7 +50,7 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		sessionFactory.getCurrentSession().save(obj);
 		executeFlushSession();
 	}
-	
+
 	@Override
 	public void persist(T obj) throws Exception {
 		validaSessionFactory();
@@ -88,42 +88,63 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		executeFlushSession();
 		return obj;
 	}
+
 	/**
 	 * Select em HQL, CONTADOR
+	 * 
 	 * @param hql
 	 * @return
 	 */
-	public Long getCountParam(String hql){
+	public Long getCountParam(String hql) {
 		try {
-			return (Long) getSession()
-					.createQuery("select count(*) " + hql.replace("fetch", ""))
-					.uniqueResult();
-            
-        } catch (Exception e) {
-        	System.out.println("Erro:" + e.getMessage());
+			return (Long) getSession().createQuery("select count(*) " + hql.replace("fetch", "")).uniqueResult();
+
+		} catch (Exception e) {
+			System.out.println("Erro:" + e.getMessage());
 		}
-		
+
 		return new Long("0");
 	}
+
 	/**
 	 * Map recebe como parametro um sql puro
+	 * 
 	 * @param sql
 	 * @return
 	 */
-	public List<Map<Object,Object>> getSqlListMap(final String sql){
+	@SuppressWarnings("unchecked")
+	public List<Map<Object, Object>> getSqlListMap(final String sql) {
 
-		try{
-			return (List<Map<Object,Object>>)  getSession()
-					.createSQLQuery(sql)
-					.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
-					.list();
-        
+		try {
+			return (List<Map<Object, Object>>) getSession().createSQLQuery(sql)
+					.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE).list();
+
 		} catch (Exception e) {
-        	System.out.println("Erro:" + e.getMessage());
+			System.out.println("Erro:" + e.getMessage());
 		}
-		
-        return null;
+
+		return null;
 	}
+	
+	/**
+	 * Passa um sql e uma classe para retorna uma Lista para manipular
+	 * @param sql
+	 * @param entity
+	 * @return
+	 */
+	public List<?> getSQLListParam(String sql, Class<?> entity) {
+
+		try {
+			SQLQuery query = getSession().createSQLQuery(sql);
+			query.addEntity(entity);
+			return query.list();
+		} catch (Exception e) {
+			System.out.println("Erro:" + e.getMessage());
+		}
+
+		return null;
+	}
+
 	/**
 	 * Retorna uma lista é pedido uma classe para trazer os valores
 	 */
@@ -146,8 +167,8 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		Object obj = sessionFactory.getCurrentSession().load(login, id);
 		return obj;
 	}
-	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
 	@Override
 	public T findByPorId(Class<T> login, Long id) throws Exception {
 		validaSessionFactory();
@@ -174,9 +195,9 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 
 	@Override
 	public void executeUpdateSQLDinamica(String s) throws Exception {
-	validaSessionFactory();
-	sessionFactory.getCurrentSession().createSQLQuery(s).executeUpdate();
-	executeFlushSession();
+		validaSessionFactory();
+		sessionFactory.getCurrentSession().createSQLQuery(s).executeUpdate();
+		executeFlushSession();
 
 	}
 
@@ -203,7 +224,7 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		List<?> lista = sessionFactory.getCurrentSession().createSQLQuery(sql).list();
 		return lista;
 	}
-
+	
 	@Override
 	public JdbcTemplate getJdbcTemplate() {
 		return jdbcTemplate;
@@ -246,8 +267,7 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> findListByQueryDinamica(String query, int iniciaNoRegistro,
-			int maximoResultado) throws Exception {
+	public List<T> findListByQueryDinamica(String query, int iniciaNoRegistro, int maximoResultado) throws Exception {
 		validaSessionFactory();
 		List<T> lista = new ArrayList<T>();
 		lista = sessionFactory.getCurrentSession().createQuery(query).setFirstResult(iniciaNoRegistro)
@@ -284,36 +304,34 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 	private void executeFlushSession() {
 		sessionFactory.getCurrentSession().flush();
 	}
-	
+
 	public List<Object[]> getListSQLDinamicaArray(String sql) throws Exception {
 		validaSessionFactory();
-		
+
 		@SuppressWarnings("unchecked")
 		List<Object[]> lista = (List<Object[]>) sessionFactory.getCurrentSession().createSQLQuery(sql).list();
-		return lista;		
+		return lista;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public T findUniqueByQueryDinamica(String query) throws Exception {
 		validaSessionFactory();
 		T obj = (T) sessionFactory.getCurrentSession().createQuery(query.toString()).uniqueResult();
-		
+
 		return obj;
 	}
 
-	public T findUniqueByProperty(Class<T> login, Object valor,
-			String atributo, String condicao) throws Exception {
-		
+	public T findUniqueByProperty(Class<T> login, Object valor, String atributo, String condicao) throws Exception {
+
 		validaSessionFactory();
 		StringBuilder query = new StringBuilder();
-		
-		query.append(" select entity from ").append(login.getSimpleName())
-		.append(" entity where entity.").append(atributo)
-		.append(" = '").append(valor).append("' ").append(condicao);
-		
+
+		query.append(" select entity from ").append(login.getSimpleName()).append(" entity where entity.")
+				.append(atributo).append(" = '").append(valor).append("' ").append(condicao);
+
 		T obj = (T) this.findUniqueByQueryDinamica(query.toString());
-		
+
 		return obj;
 	}
 
@@ -323,16 +341,13 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable  {
 		validaSessionFactory();
 		List<T> lista = new ArrayList<T>();
 		Query q = HibernateUtil.getCurrentSession().createQuery(s);
-		
-		for(String p: param){
+
+		for (String p : param) {
 			int i = param.indexOf(p);
 			q.setParameter(p, value[i]);
 		}
 		lista = q.list();
 		return lista;
 	}
-
-	
-	
 
 }
