@@ -31,7 +31,6 @@ import br.com.clinica.controller.geral.AtendenteController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
-import br.com.clinica.utils.Notificacao;
 import br.com.clinica.utils.ValidaCPF;
 
 @Controller
@@ -110,8 +109,6 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		atendenteController.saveOrUpdate(atendenteModel);
 		this.atendenteModel = new Atendente();
 		busca();
-
-		Notificacao.alertSucess("Cadastro Excluir/Inativado!");
 	}
 
 	public void busca() throws Exception {
