@@ -3,7 +3,9 @@ package br.com.clinica.model.financeiro;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,10 +53,21 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	private Double valorConsulta;
 	
+	private Double valorComDesconto;
+	
+	private Double valorDesconto;
+	
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "idFormaPagamento")
+	private FormaPagamento formaPagamento;
+	
+	private Double valorParcelado;
+	
+	private int quantidadeParcelas = 0;
+
 	private String status;
 	
 	private String observacao;
-	
 
 	@Temporal(TemporalType.DATE)
 	private Date dataVencimentoContasReceber;
@@ -67,10 +80,43 @@ public class ContasReceber implements EntityBase, Serializable {
 	@ManyToOne
 	private Paciente paciente;
 
+	public ContasReceber(Long idContasReceber) {
+		this.idContasReceber = idContasReceber;
+	}
+
+	
+	public ContasReceber() {
+	}
+
+
 	//----------------------------------------------------
 	
 	public Long getIdContasReceber() {
 		return idContasReceber;
+	}
+
+	public Double getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(Double valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+
+	public Double getValorParcelado() {
+		return valorParcelado;
+	}
+
+	public void setValorParcelado(Double valorParcelado) {
+		this.valorParcelado = valorParcelado;
 	}
 
 	public String getObservacao() {
@@ -139,6 +185,23 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Double getValorComDesconto() {
+		return valorComDesconto;
+	}
+
+	public void setValorComDesconto(Double valorComDesconto) {
+		this.valorComDesconto = valorComDesconto;
+	}
+
+	public int getQuantidadeParcelas() {
+		return quantidadeParcelas;
+	}
+
+
+	public void setQuantidadeParcelas(int quantidadeParcelas) {
+		this.quantidadeParcelas = quantidadeParcelas;
 	}
 
 }

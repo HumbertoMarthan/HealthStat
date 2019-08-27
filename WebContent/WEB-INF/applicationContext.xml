@@ -122,7 +122,7 @@
 	<bean id="reportUtil" class="br.com.clinica.relatorio.ReportUtil" />
 	<bean id="utilFramework"
 		class="br.com.clinica.hibernate.UtilFrameworks" scope="session" />
-
+	
 
 	<!-- Services -->
 	<bean id="srvLogin"

@@ -10,7 +10,6 @@
 	<p:panel rendered="#{contasReceberBean.estado eq 'P'}">
 		<div class="content">
 			<div class="ui-fluid">
-				<p:panel header="Contas a Receber" style="text-align:center">
 					<div class="ui-g">
 						<div class="ui-g-12" align="center">
 							<div class="ui-g-12 ui-lg-4" align="center">
@@ -24,8 +23,8 @@
 								<p:selectOneRadio
 									value="#{contasReceberBean.campoBuscaTipoConta}">
 									<f:selectItem itemLabel="Pendente" itemValue="P" />
-									<f:selectItem itemLabel="Concluido" itemValue="C" />
-									<f:selectItem itemLabel="Atrasado" itemValue="A" />
+									<f:selectItem itemLabel="Pago" itemValue="PA" />
+									<f:selectItem itemLabel="Lançado" itemValue="L" />
 									<p:ajax event="change" update="table"
 										listener="#{contasReceberBean.busca}" />
 								</p:selectOneRadio>
@@ -41,13 +40,11 @@
 							</div>
 						</div>
 					</div>
-				</p:panel>
-				<p:panel>
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{contasReceberBean.lstContasReceber}" var="d"
 							styleClass="table.gridtable" rowKey="#{d.idContasReceber}"
-							selectionMode="single" id="table"
+							selectionMode="single" id="table" paginator="true" rows="8"
 							selection="#{contasReceberBean.contasReceberModel}">
 
 							<p:ajax event="rowSelect"
@@ -57,11 +54,11 @@
 							<p:column headerText="Status" priority="1"
 								style="overflow: hidden;text-align: center; font-size: medium;width: 10%">
 								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
-									style="color : magenta" />
-								<p:outputLabel value="Concluido" rendered="#{d.status eq 'C'}"
-									style="color : green" />
-								<p:outputLabel value="Atrasado" rendered="#{d.status eq 'A'}"
 									style="color : red" />
+								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
+									style="color : blue" />
+								<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
+									style="color : green" />
 							</p:column>
 							
 							
@@ -78,39 +75,22 @@
 							</p:column>
 
 							<p:column headerText="Pagamento" priority="4">
-								<p:outputLabel style=" font-size: medium"
-									value="Data de Vencimento :"/> 
-								<p:outputLabel style=" font-size: medium; color: red"
-									value="#{d.dataVencimentoContasReceber}">
-									<f:convertDateTime pattern="dd/MM/yyyy" 
-										timeZone="America/Sao_Paulo" />
-								</p:outputLabel>
-								<br />
 								<p:outputLabel value="Valor Consulta : " style="font-size: medium;"/>
 								<p:outputLabel style=" font-size: medium; color: red"
 								 value="R$ #{d.valorConsulta}" />
 							
-							</p:column>
-							<p:column headerText="Observação" priority="1">
-								<p:outputLabel style=" font-size: medium" value="#{d.observacao}" />
-							</p:column>
-
-							<!-- 							<p:column style="width:50px" priority="4">
-								<center>
-									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{contasReceberBean.excluir}"
-										update="table" id="excluir" ajax="true"
-										immediate="true">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-										<f:setPropertyActionListener value="#{d}"
-											target="#{contasReceberBean.contasReceberModel}" />
-									</p:commandLink>
-								</center>
-							</p:column>
- -->
+							</p:column> 
+							<p:column headerText="Parcelas" priority="1"
+							rendered="#{contasReceberBean.contasReceberModel.status eq 'L' or
+										contasReceberBean.contasReceberModel.status eq 'PA' and
+							contasReceberBean.contasReceberModel.idContasReceber > 0}" >
+								<p:commandLink  
+								value="Parcelas" update=" , :formulario:tableParcelas"
+								actionListener="#{contasReceberBean.buscaParcelas}"
+								onclick="PF('mostraParcelas').show()" />
+							</p:column> 	
 						</p:dataTable>
 					</div>
-				</p:panel>
 			</div>
 		</div>
 	</p:panel>

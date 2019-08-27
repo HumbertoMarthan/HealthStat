@@ -151,9 +151,10 @@ esti {
 			<p:growl id="avisosGrowl" />
 			<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
 				dynamic="true" resizable="true" closable="true" showEffect="true"
-				modal="true" width="580" header="Atendente/Usuario : #{loginBean.usuarioLogadoSecurity}" >
+				modal="true" width="580"
+				header="Atendente/Usuario : #{loginBean.usuarioLogadoSecurity}">
 				<p:hotkey bind="esc" handler="PF('eventDialog').hide();" />
-				<p:panelGrid columns="1" layout="grid" 
+				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank">
 
 					<p:outputLabel value="Titulo:" rendered="false" />
@@ -165,19 +166,18 @@ esti {
 						rendered="false" value="#{scheduleBean.evento.descricao}"
 						style="width: 242px" />
 
-					<p:panelGrid columns="1" 
-						columnClasses="ui-g-6">
+					<!-- <p:panelGrid columns="1" columnClasses="ui-g-6">
 						<p:column>
 							<p:outputLabel value="Data de Pagamento" />
 							<p:calendar mindate="today"
- 								value="#{scheduleBean.evento.dataVencimentoContasReceber}" 
- 								locale="pt_BR" autocomplete="true" popupIconOnly="true"
-								required="true" 
+								value="#{scheduleBean.evento.dataVencimentoContasReceber}"
+								locale="pt_BR" autocomplete="true" popupIconOnly="true"
+								required="true"
 								requiredMessage="Informe uma data Fim para o Agendamento"
-								showButtonPanel="true" showTodayButton="false" 
-								timeZone="GMT-3" pattern="dd/MM/yyyy"/>
+								showButtonPanel="true" showTodayButton="false" timeZone="GMT-3"
+								pattern="dd/MM/yyyy" />
 						</p:column>
-					</p:panelGrid>
+					</p:panelGrid> -->
 					<p:outputLabel value="Paciente" />
 					<p:column>
 						<p:autoComplete id="paciente"
@@ -228,11 +228,11 @@ esti {
 						<p:column>
 							<h:outputText value="#{a.pessoa.pessoaNome.toUpperCase()}" />
 						</p:column>
-						<!-- 						<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
+						<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
 							update="descricao" />
- 
-							<p:ajax event="itemSelect"
-								listener="#{scheduleBean.medicoEtiqueta}" update="descricao" />-->
+
+						<p:ajax event="itemSelect"
+							listener="#{scheduleBean.medicoEtiqueta}" update="descricao" />
 					</p:autoComplete>
 
 					<p:column style="text-align:center">

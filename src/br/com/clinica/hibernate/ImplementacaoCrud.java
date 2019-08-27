@@ -50,9 +50,25 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable {
 		sessionFactory.getCurrentSession().save(obj);
 		executeFlushSession();
 	}
+	
+	@Transactional
+	public void saveTransaction(Object data){
+		
+		try{
+			getSession().save(data);
+		} catch (Exception e) {
+        	System.out.println("Erro:" + e.getMessage());
+		}
+	}
 
 	@Override
 	public void persist(T obj) throws Exception {
+		validaSessionFactory();
+		sessionFactory.getCurrentSession().persist(obj);
+		executeFlushSession();
+	}
+	@Transactional
+	public void persistTransaction(T obj) throws Exception {
 		validaSessionFactory();
 		sessionFactory.getCurrentSession().persist(obj);
 		executeFlushSession();

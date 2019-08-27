@@ -73,47 +73,73 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 .ui-autocomplete-input.ui-autocomplete-dd-input {
 	padding-right: 2.4em;
-	width: 430px;
+	width: 100% !important;
 }
 </style>
 
 	</ui:define>
 	<ui:define name="content">
 		<h:form id="formPai">
-				<div align="center">
-					<p:panel id="panel" header="Menu">
-						<!-- Botão Contas Pendentes -->
-						<p:commandButton value="Contas Pendentes"
-							rendered="#{contasReceberBean.estado ne 'P'}"
-							style="height:40px;width:200px; background-color: seagreen; 
+			<div align="center">
+				<p:panel id="panel" header="Menu">
+					<!-- Botão Contas Pendentes -->
+					<p:commandButton value="Contas Pendentes"
+						rendered="#{contasReceberBean.estado ne 'P'}"
+						style="height:40px;width:200px; background-color: seagreen; 
 							background: seagreen; color:white !important"
-							ajax="true" immediate="true" id="buttonAtestado"
-							icon="fa fa-info-circle" iconPos="right"
-							action="#{contasReceberBean.redirecionarFindEntidade}"
-							update="@form">
-						</p:commandButton>
+						ajax="true" immediate="true" id="buttonAtestado"
+						icon="fa fa-info-circle" iconPos="right"
+						action="#{contasReceberBean.redirecionarFindEntidade}"
+						update="@form">
+					</p:commandButton>
 
-						<!-- Botão Pagamento -->
-						<p:commandButton value="Pagamento"
-							rendered="#{contasReceberBean.estado ne 'PA' and
+					<!-- Botão Pagamento -->
+					<p:commandButton value="Pagamento"
+						rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and
 						contasReceberBean.contasReceberModel.idContasReceber > 0}"
-							style="height:40px;width:170px; 
+						style="height:40px;width:170px; 
 							background-color: darkcyan; background: darkcyan; color:white !important"
-							ajax="true" immediate="true" id="buttonPagamento"
-							icon="fa fa-info-circle" iconPos="right"
-							action="#{contasReceberBean.mudaEstadoPagamento}" update="@form">
+						ajax="true" immediate="true" id="buttonPagamento"
+						icon="fa fa-info-circle" iconPos="right"
+						action="#{contasReceberBean.mudaEstadoPagamento}" update="@form">
+					</p:commandButton>
 
-						</p:commandButton>
-						<p:commandButton value="Tabela de Preço"
-							style="height:40px;width:170px; 
+					<!--  Botão Estorno 
+					<p:commandButton value="Estorno"
+						rendered="#{contasReceberBean.contasReceberModel.status eq 'L' and
+						contasReceberBean.contasReceberModel.idContasReceber > 0 and 
+						loginBean.usuarioLogadoSecurity eq 'ate'}"
+						style="height:40px;width:170px; 
 							background-color: darkcyan; background: darkcyan; color:white !important"
-							ajax="true" immediate="true" id="buttonTabelaPreco"
-							icon="fa fa-info-circle" iconPos="right"
-							action="#{contasReceberBean.mudaEstadoTabelaPreco}" 
-							update="@form">
-						</p:commandButton>
-					</p:panel>
-				</div>
+						ajax="true" immediate="true" id="buttonEstorno"
+						icon="fa fa-info-circle" iconPos="right"
+						action="#{contasReceberBean.relancarContasReceberAtendente}"
+						update="@form">
+					</p:commandButton>
+
+					Botão Estorno
+					<p:commandButton value="Estorno ADM"
+						rendered="#{contasReceberBean.contasReceberModel.status eq 'L' and
+						contasReceberBean.contasReceberModel.idContasReceber > 0 and 
+						loginBean.usuarioLogadoSecurity eq 'admin'}"
+						style="height:40px;width:170px; 
+							background-color: darkcyan; background: darkcyan; color:white !important"
+						ajax="true" immediate="true" id="buttonEstornoADM"
+						icon="fa fa-info-circle" iconPos="right"
+						action="#{contasReceberBean.relancarContasReceberAdm}"
+						update="@form">
+					</p:commandButton>
+ -->
+
+					<p:commandButton value="Tabela de Preço"
+						style="height:40px;width:170px; 
+							background-color: darkcyan; background: darkcyan; color:white !important"
+						ajax="true" immediate="true" id="buttonTabelaPreco"
+						icon="fa fa-info-circle" iconPos="right"
+						action="#{contasReceberBean.mudaEstadoTabelaPreco}" update="@form">
+					</p:commandButton>
+				</p:panel>
+			</div>
 
 			<!-- FORM PENDENTES -->
 			<ui:include src="/financeiro/receber/buscaContasReceber.xhtml" />
@@ -121,5 +147,77 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 			<!-- FORM PAGAMENTO -->
 			<ui:include src="/financeiro/receber/pagamento.xhtml" />
 		</h:form>
+
+		<p:dialog widgetVar="mostraParcelas" id="mostraParcelas" modal="true"
+			resizable="false" height="250" width="800" dynamic="true"
+			onHide="atualizarAoSair()" appendToBody="@body" header="Parcelas">
+			<h:form id="formulario">
+				<p:remoteCommand name="atualizarAoSair" update="@form"
+					actionListener="#{contasReceberBean.busca}" />
+
+				<p:commandButton
+					rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'P' and
+					contasReceberBean.parcelaPagarModel.idParcela > 0}"
+					value="Pagar Parcela" update="tableParcelas"
+					actionListener="#{contasReceberBean.pagarParcela}" />
+
+				<p:commandButton
+					rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
+								contasReceberBean.contasReceberModel.status eq 'L' and
+								loginBean.usuarioLogadoSecurity eq 'ate' and
+								contasReceberBean.parcelaPagarModel.idParcela > 0 }"
+					value="Estornar Parcela" update="tableParcelas"
+					actionListener="#{contasReceberBean.estornarParcelas}" />
+
+				<p:commandButton
+					rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
+								contasReceberBean.contasReceberModel.status eq 'L' or
+								contasReceberBean.contasReceberModel.status eq 'PA'  and
+								loginBean.usuarioLogadoSecurity eq 'admin' and
+								contasReceberBean.parcelaPagarModel.idParcela > 0 }"
+					value="Estornar Parcela de Conta Paga" update="tableParcelas , table"
+					actionListener="#{contasReceberBean.estornarParcelasPagas}"
+				 />
+
+				<p:dataTable value="#{contasReceberBean.lstParcelaPagarPendentes}"
+					var="d" styleClass="table.gridtable" rowKey="#{d.idParcela}"
+					selectionMode="single" id="tableParcelas" paginator="true" rows="8"
+					selection="#{contasReceberBean.parcelaPagarModel}">
+
+					<p:ajax event="rowSelect"
+						listener="#{contasReceberBean.onRowSelectParcelas}"
+						update="tableParcelas , @form" />
+
+					<p:column headerText="Nº Parcela" priority="1"
+						style="width:10%; text-align:center; ">
+						#{d.numeroParcela}
+					</p:column>
+					<p:column headerText="Vencimento" priority="1"
+						style="text-align:center; width: 20% ; font-size: 18px">
+						<p:outputLabel value="#{d.dataVencimento}">
+							<f:convertDateTime timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Pagamento" priority="1"
+						style="text-align:center; width: 20% ; font-size: 18px">
+						<p:outputLabel value="#{d.dataPagamento}">
+							<f:convertDateTime timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Situação" priority="1"
+						style="width: 20%; text-align:center; font-size: 18px">
+						<p:outputLabel value="Pendente" rendered="#{d.situacao eq 'P'}"
+							style="color : green" />
+						<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
+							style="color : red" />
+					</p:column>
+
+					<p:column headerText="Valor" priority="1"
+						style="text-align:right; width: 15%; font-size: 18px">
+						R$ #{d.valorBruto}
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

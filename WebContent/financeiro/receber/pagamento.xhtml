@@ -8,57 +8,117 @@
 	xmlns:p="http://primefaces.org/ui">
 <body>
 	<p:panel rendered="#{contasReceberBean.estado eq 'PA'}">
-		<div class="content">
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<div class="card card-w-title">
 							<div class="ui-g-12 ui-lg-6">
-								<p:panel header="Editar Pagamento de Consulta">
-									<div class="ui-g" align="center">
-										<div class="ui-g-12 ui-lg-12">
-											<h:outputLabel value="Paciente" />
-											<p:inputText required="true"
-												value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
-										</div>
-									</div>
+								<p:panel header="Pagamento da Consulta">
 									<div class="ui-g">
 										<div class="ui-g-12 ui-lg-6">
+											<h:outputLabel value="Paciente: " />
+											<h:outputLabel
+												value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
+										</div>
+
+										<div class="ui-g-12 ui-lg-3">
 											<h:outputLabel value="Valor Consulta" />
 											<br />
-											<p:outputLabel required="true"
-												style="font-size: medium; color : black;"
+											<p:outputLabel required="true" style="font-size: medium;"
 												value="#{contasReceberBean.contasReceberModel.valorConsulta}" />
 										</div>
 
-										<div class="ui-g-12 ui-lg-6">
+										<div class="ui-g-12 ui-lg-3">
+											<h:outputLabel value="Valor com Desconto" />
+											<br />
+											<p:outputLabel id="valorComDesconto" required="true"
+												style="font-size: medium;"
+												value="#{contasReceberBean.contasReceberModel.valorComDesconto}">
+
+											</p:outputLabel>
+										</div>
+									</div>
+									<div class="ui-g">
+
+										<div class="ui-g-12 ui-lg-3">
+											<h:outputLabel value="Data de Vencimento" />
+											<br />
+											<p:calendar locale="pt_BR" autocomplete="true"
+												popupIconOnly="true" required="true"
+												requiredMessage="Informe uma data Fim para o Agendamento"
+												showButtonPanel="true" showTodayButton="false"
+												timeZone="GMT-3" pattern="dd/MM/yyyy" mindate="today"
+												style="font-size: medium"
+												value="#{contasReceberBean.contasReceberModel.dataVencimentoContasReceber}">
+											</p:calendar>
+										</div>
+
+										<div class="ui-g-12 ui-lg-3">
 											<h:outputLabel value="Desconto" />
 											<br />
-											<p:inputText required="true"
-												style="font-size: medium; color : black" />
+											<p:inputText style="font-size: medium"
+												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
+												<p:ajax event="keyup" update="valorComDesconto,par" />
+												<p:ajax event="blur" update="valorComDesconto"
+													listener="#{contasReceberBean.fazerDesconto}" />
+											</p:inputText>
+										</div>
+										<div class="ui-g-12 ui-lg-4">
+											<h:outputLabel value="Forma de Pagamento" />
+											<p:autoComplete id="pagamento"
+												completeMethod="#{auxController.completeFormaPagamento}"
+												forceSelection="true" converter="entityConverter" var="a"
+												itemLabel="#{a.nomePagamento}" itemValue="#{a}"
+												value="#{contasReceberBean.contasReceberModel.formaPagamento}"
+												minQueryLength="2" dropdown="true" maxResults="30"
+												required="false" size="20"
+												requiredMessage="Informe uma uma forma de pagamento">
+												<p:column id="p">
+													<h:outputText value="#{a.nomePagamento.toUpperCase()}" />
+												</p:column>
+												<p:column>
+													<h:outputText value="#{a.idFormaPagamento}" />
+												</p:column>
+												<p:ajax event="itemSelect" update="parcelas" />
+											</p:autoComplete>
 										</div>
 									</div>
-								</p:panel>
-							</div>
-							<div class="ui-g-12 ui-lg-6">
-								<p:panel header="Pagamento">
 									<div class="ui-g">
-										<div class="ui-g-12 ui-lg-4">
-											<p:outputLabel value="Paciente:" />
-											<br />
-											<p:outputLabel required="true"
-												value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome.toUpperCase()}" />
+
+										<div class="ui-g-12 ui-lg-2">
+											<p:outputPanel id="parcelas">
+												<h:outputLabel value="Parcela(s)"
+													rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}" />
+												<br />
+												<p:selectOneMenu required="true"
+													value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
+													rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}">
+													<f:selectItem itemLabel="1x" itemValue="1" />
+													<f:selectItem itemLabel="2x" itemValue="2" />
+													<f:selectItem itemLabel="3x" itemValue="3" />
+													<f:param name="parametro"
+														value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}" />
+													<p:ajax event="change" update="par"
+														listener="#{contasReceberBean.fazerParcelas(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
+													<p:ajax event="itemSelect" update="par"
+														listener="#{contasReceberBean.fazerParcelas(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
+												</p:selectOneMenu>
+											</p:outputPanel>
 										</div>
 										<div class="ui-g-12 ui-lg-4">
-											<p:outputLabel value="Valor Devido:" />
+											<h:outputLabel value="Valor da Parcela" />
 											<br />
-											<p:outputLabel required="true"
-												value="R$ #{contasReceberBean.contasReceberModel.valorConsulta	}" />
+											<p:inputText id="par"
+												value="#{contasReceberBean.contasReceberModel.valorParcelado}"
+												style="font-size: medium;" />
+										</div>
+										<div class="ui-g-12 ui-lg-2">
+											<p:commandButton value="Fazer Lançamento" style="width :100%"
+												actionListener="#{contasReceberBean.fazerPagamento}" update="table, @form" />
 										</div>
 									</div>
 								</p:panel>
 							</div>
-						</div>
 					</div>
 				</div>
 			</div>

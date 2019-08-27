@@ -1,92 +1,112 @@
 package br.com.clinica.model.financeiro;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.joda.time.LocalDate;
+import br.com.clinica.converters.EntityBase;
+
 @Entity
 @Table(name = "parcelapagar")
-public class ParcelaPagar  {
-	
+@SequenceGenerator(name = "parcelapagar_seq", sequenceName = "parcelapagar_seq", initialValue = 1, allocationSize = 1)
+
+public class ParcelaPagar implements EntityBase, Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "parcelapagar_seq")
 	private Long idParcela;
+
+	@Override
+	public Long getId() {
+		return idParcela;
+	}
+
+	private int numeroParcela;
 	
-	private int numero;
+	@ManyToOne
+	@JoinColumn(name = "idContasReceber")
+	private ContasReceber contasReceber;
 
-	private ContasPagar contaPagar;
-
-	private LocalDate dataVencimento;
-
-	private LocalDate dataPagamento;
-
-	private BigDecimal valorBruto;
-
-	private BigDecimal acrescimoDesconto;
-
-	//ABERTA (A), VENCIDA (V), QUITADA (Q)
-	private String situacao = "A";
 	
-	public int getNumero() {
-		return numero;
+	private Date dataVencimento;
+
+	private Date dataPagamento;
+
+	public Double getValorDesconto() {
+		return valorDesconto;
 	}
 
-	public void setNumero(int numero) {
-		this.numero = numero;
+	public void setValorDesconto(Double valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
-	public ContasPagar getContaPagar() {
-		return contaPagar;
-	}
+	private Double valorBruto;
 
-	public void setContaPagar(ContasPagar contaPagar) {
-		this.contaPagar = contaPagar;
-	}
+	private Double valorDesconto;
 
-	public LocalDate getDataVencimento() {
-		return dataVencimento;
-	}
-
-	public void setDataVencimento(LocalDate dataVencimento) {
-		this.dataVencimento = dataVencimento;
-	}
-
-	public LocalDate getDataPagamento() {
-		return dataPagamento;
-	}
-
-	public void setDataPagamento(LocalDate dataPagamento) {
-		this.dataPagamento = dataPagamento;
-	}
-
-	public BigDecimal getValorBruto() {
-		return valorBruto;
-	}
-
-	public void setValorBruto(BigDecimal valorBruto) {
-		this.valorBruto = valorBruto;
-	}
-
-	public BigDecimal getAcrescimoDesconto() {
-		return acrescimoDesconto;
-	}
-
-	public void setAcrescimoDesconto(BigDecimal acrescimoDesconto) {
-		this.acrescimoDesconto = acrescimoDesconto;
-	}
+	// PENDENTE (P), PAGA(PA)
+	private String situacao = "P";
 
 	public Long getIdParcela() {
 		return idParcela;
+	}
+
+	public int getNumeroParcela() {
+		return numeroParcela;
+	}
+
+	public ContasReceber getContasReceber() {
+		return contasReceber;
+	}
+
+	public Double getValorBruto() {
+		return valorBruto;
+	}
+
+	public String getSituacao() {
+		return situacao;
 	}
 
 	public void setIdParcela(Long idParcela) {
 		this.idParcela = idParcela;
 	}
 
-	public String getSituacao() {
-		return situacao;
+	public void setNumeroParcela(int numeroParcela) {
+		this.numeroParcela = numeroParcela;
+	}
+
+	public void setContasReceber(ContasReceber contasReceber) {
+		this.contasReceber = contasReceber;
+	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+
+	public void setValorBruto(Double valorBruto) {
+		this.valorBruto = valorBruto;
 	}
 
 	public void setSituacao(String situacao) {
@@ -117,7 +137,4 @@ public class ParcelaPagar  {
 			return false;
 		return true;
 	}
-
-	
-	
 }

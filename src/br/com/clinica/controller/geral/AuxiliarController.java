@@ -11,12 +11,16 @@ import br.com.clinica.model.cadastro.estoque.Fornecedor;
 import br.com.clinica.model.cadastro.outro.Convenio;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.financeiro.FormaPagamento;
 
 @RequestScoped
 @ManagedBean(name = "auxController")
 public class AuxiliarController implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
+	
+	
+	//VERIFICAR SE A INJEÇÃO ESTÁ CORRETA E SE HÁ GET E SET
 	
 	@ManagedProperty("#{pacienteController}")
 	private PacienteController pacienteController;
@@ -30,10 +34,18 @@ public class AuxiliarController implements Serializable{
 	@ManagedProperty("#{convenioController}")
 	private ConvenioController convenioController;
 	
+	@ManagedProperty("#{formaPagamentoController}")
+	private FormaPagamentoController formaPagamentoController;
+	
 	
 	public List<Convenio>  completeConvenio(String q) throws Exception {
 		return convenioController.
 				findListByQueryDinamica(" from Convenio where nomeConvenio like '%" + q.toUpperCase()  + "%' order by nomeConvenio  ASC");
+	}
+	
+	public List<FormaPagamento>  completeFormaPagamento(String q) throws Exception {
+		return formaPagamentoController.
+				findListByQueryDinamica(" from FormaPagamento where nomePagamento like '%" + q.toUpperCase()  + "%' order by nomePagamento  ASC");
 	}
 	
 	public List<Paciente>  completePaciente(String q) throws Exception {
@@ -71,6 +83,16 @@ public class AuxiliarController implements Serializable{
 
 	public void setPacienteController(PacienteController pacienteController) {
 		this.pacienteController = pacienteController;
+	}
+
+	
+	
+	public FormaPagamentoController getFormaPagamentoController() {
+		return formaPagamentoController;
+	}
+
+	public void setFormaPagamentoController(FormaPagamentoController formaPagamentoController) {
+		this.formaPagamentoController = formaPagamentoController;
 	}
 
 	public ConvenioController getConvenioController() {
