@@ -112,7 +112,7 @@
 										update="table, @form"
 										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }">
 
-									</p:commandButton>
+										</p:commandButton>
 								</div>
 								<div class="ui-g-12 ui-lg-3">
 									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}">
@@ -153,6 +153,7 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
+							emptyMessage="Não Há Registros Lançados" 
 							styleClass="table.gridtable" rowKey="#{d.idAtendente}"
 							selectionMode="single" id="table" rows="10" paginator="true"
 							selection="#{atendenteBean.atendenteModel}">

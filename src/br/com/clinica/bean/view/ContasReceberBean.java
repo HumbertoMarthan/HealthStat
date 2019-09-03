@@ -12,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
+import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.ContasReceberController;
 import br.com.clinica.controller.geral.ParcelaPagarController;
 import br.com.clinica.hibernate.InterfaceCrud;
+import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasReceber;
 import br.com.clinica.model.financeiro.FormaPagamento;
 import br.com.clinica.model.financeiro.ParcelaPagar;
@@ -29,6 +32,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	private ContasReceber contasReceberModel;
 	private ParcelaPagar parcelaPagarModel;
+	private Caixa caixaModel;
 	private String url = "/financeiro/receber/contasReceber.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/receber/receberConsulta.jsf?faces-redirect=true";
 	private List<ContasReceber> lstContasReceber;
@@ -38,6 +42,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private String campoBuscaTipoConta = "P";
 	String estado = "P";
 	Double valorComDesconto;
+	// É valor de quantas parcelas sera feita o valor total
+	Long parcelas;
 
 	@Autowired
 	private ContasReceberController contasReceberController;
@@ -45,12 +51,16 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ParcelaPagarController parcelaPagarController;
 
+	@Autowired
+	private CaixaController caixaController;
+
 	public ContasReceberBean() {
 		parcelaPagarModel = new ParcelaPagar();
 		contasReceberModel = new ContasReceber();
 		lstContasReceber = new ArrayList<ContasReceber>();
 		lstParcelaPagar = new ArrayList<ParcelaPagar>();
 		lstParcelaPagarPendentes = new ArrayList<ParcelaPagar>();
+		caixaModel = new Caixa();
 		try {
 			busca();
 		} catch (Exception e) {
@@ -59,8 +69,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
-
-	
 
 	public void mudaEstadoPendencia() {
 		setEstado("P");
@@ -155,11 +163,23 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	public void pagarParcela() {
 		try {
+			ContasReceber conta =  (ContasReceber) contasReceberController.findById(ContasReceber.class, parcelaPagarModel.getContasReceber().getIdContasReceber());
 			// Muda a situação da parcela para paga
 			parcelaPagarModel.setSituacao("PA");
 			// Muda da
 			parcelaPagarModel.setDataPagamento(new Date());
+
 			// adiciona valor da parcela ao CAIXA DA EMPRESA
+			// ----------------------------------------------------------
+			caixaModel.setPaciente(new Paciente(conta.getPaciente().getIdPaciente()));
+			caixaModel.setContasReceber(new ContasReceber(parcelaPagarModel.getContasReceber().getIdContasReceber()));
+			caixaModel.setParcelaPagar(new ParcelaPagar(parcelaPagarModel.getIdParcela()));
+			caixaModel.setDataLancamento(new Date());
+			caixaModel.setTipo("CR");
+			caixaModel.setValorInserido(parcelaPagarModel.getValorBruto());
+			caixaController.merge(caixaModel);
+			// adiciona valor da parcela ao CAIXA DA EMPRESA
+			// ----------------------------------------------------------
 
 			// salva
 			parcelaPagarController.merge(parcelaPagarModel);
@@ -270,25 +290,41 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		parcelaPagarModel.setDataPagamento(null);
 		// Limpar data de vencimento
 		// parcelaPagarModel.setDataVencimento(null);
-		// Se tiver alguma parcela da conta inserida no caixa ela será deletada
+		try {
+			// Se tiver alguma parcela da conta inserida no caixa ela será deletada
+			List<Caixa> lstCaixa = new ArrayList<Caixa>();
+			lstCaixa = caixaController.findListByQueryDinamica(
+					"from Caixa where 1=1 and parcelaPagar.idParcela = " + parcelaPagarModel.getIdParcela());
+
+			// apagar conta do caixa
+			// mudar status da parcela
+			// limpar data de pagamento
+			for (Caixa caixas : lstCaixa) {
+				caixaController.delete(caixas); // Deleta as parcelas e relançam
+			}
+
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		// verificar necessidade **************************************************
 		try {
 			ContasReceber contaAtual = new ContasReceber();
-			 contaAtual = contasReceberController
-					 .findByPorId(ContasReceber.class, parcelaPagarModel.getContasReceber().getIdContasReceber());
-			 //Se a conta for pendente
-			 if(contaAtual.getStatus().equals("P")) {
-				 contaAtual.setStatus("P");
-			 }
-			 contasReceberController.merge(contaAtual);
-			 parcelaPagarController.merge(parcelaPagarModel);
-			 busca();
+			contaAtual = contasReceberController.findByPorId(ContasReceber.class,
+					parcelaPagarModel.getContasReceber().getIdContasReceber());
+			// Se a conta for pendente
+			if (contaAtual.getStatus().equals("P")) {
+				contaAtual.setStatus("P");
+			}
+			contasReceberController.merge(contaAtual);
+			parcelaPagarController.merge(parcelaPagarModel);
+			busca();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void estornarParcelasPagas() {
-		
+
 		// Selecionar a parcela
 		// Trocar status para Pendente
 		parcelaPagarModel.setSituacao("P");
@@ -296,20 +332,26 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		parcelaPagarModel.setDataPagamento(null);
 		// Limpar data de vencimento
 		// parcelaPagarModel.setDataVencimento(null);
-		// Se tiver alguma parcela da conta inserida no caixa ela será deletada
-		
 		try {
-			//Faz uma pesquisa no BD - para modificar a conta a receber
+			// Se tiver alguma parcela da conta inserida no caixa ela será deletada
+			caixaController.getListSQLDinamica("delete from caixa where idContasReceber = "
+					+ parcelaPagarModel.getContasReceber().getIdContasReceber() + " and idParcela = "
+					+ parcelaPagarModel.getIdParcela());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		try {
+			// Faz uma pesquisa no BD - para modificar a conta a receber
 			ContasReceber contaAtual = new ContasReceber();
-			 contaAtual = contasReceberController
-					 .findByPorId(ContasReceber.class, parcelaPagarModel.getContasReceber().getIdContasReceber());
-			 //Se a conta for paga
-			 if(contaAtual.getStatus().equals("PA")) {
-				 contaAtual.setStatus("L");
-			 }
-			 contasReceberController.merge(contaAtual);
-			 parcelaPagarController.merge(parcelaPagarModel);
-			 busca();
+			contaAtual = contasReceberController.findByPorId(ContasReceber.class,
+					parcelaPagarModel.getContasReceber().getIdContasReceber());
+			// Se a conta for paga
+			if (contaAtual.getStatus().equals("PA")) {
+				contaAtual.setStatus("L");
+			}
+			contasReceberController.merge(contaAtual);
+			parcelaPagarController.merge(parcelaPagarModel);
+			busca();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -344,9 +386,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		parcelas = idForma;
 	}
 
-	// É valor de quantas parcelas sera feita o valor total
-	Long parcelas;
-
 	/**
 	 * Lanca as parcelas que o atendente selecionou
 	 *
@@ -355,6 +394,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void fazerPagamento() throws Exception {
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
 		if (parcelas == 1) {
+			parcelaPagarModel = new ParcelaPagar();
 			parcelaPagarModel.setNumeroParcela(1);
 			parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
 			parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
@@ -391,7 +431,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 		if (parcelas == 2) {
 			for (int i = 1; i <= 2; i++) {
-
+				parcelaPagarModel = new ParcelaPagar();
 				parcelaPagarModel.setNumeroParcela(i);
 				parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
 
@@ -432,6 +472,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 		if (parcelas == 3) {
 			for (int i = 1; i <= 3; i++) {
+				parcelaPagarModel = new ParcelaPagar();
 				parcelaPagarModel.setNumeroParcela(i);
 				parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
 				if (i == 1) {
@@ -473,6 +514,40 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			limpar();
 		}
 		busca();
+	}
+
+	/**
+	 * Edita uma lançamento de parcelas já feito ao usuario e o STATUS É PENDENTE
+	 * 
+	 * @throws Exception
+	 */
+	public void editarPagamento() {
+		Long idContaReceber = contasReceberModel.getIdContasReceber();
+		// Deleta a parcela referente a conta, para que eu possa relancar parcelas novas
+		try {
+			List<ParcelaPagar> lstParcelas = new ArrayList<ParcelaPagar>();
+			lstParcelas = parcelaPagarController.findListByQueryDinamica("from ParcelaPagar");
+			for (ParcelaPagar parcelas : lstParcelas) {
+				if (parcelas.getContasReceber().getIdContasReceber() == idContaReceber
+						&& contasReceberModel.getStatus().equals("L") // Se o status da conta for Lançadp
+						&& parcelas.getSituacao().equals("P")) { // Se as parcelas estiverem pendentes
+					parcelaPagarController.delete(parcelas); // Deleta as parcelas e relançam
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao executar Delete");
+			e.printStackTrace();
+		}
+
+		try {
+			fazerPagamento();
+			busca();
+			buscaParcelas();
+		} catch (Exception e) {
+			System.out.println("Erro ao salvar parcelas!");
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -648,7 +723,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void setContasReceberModel(ContasReceber contasReceberModel) {
 		this.contasReceberModel = contasReceberModel;
 	}
-	
+
 	public String getEstado() {
 		return estado;
 	}
@@ -672,5 +747,21 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void onRowSelectParcelas(SelectEvent event) {
 		parcelaPagarModel = (ParcelaPagar) event.getObject();
 	}
-	
+
+	public Caixa getCaixaModel() {
+		return caixaModel;
+	}
+
+	public void setCaixaModel(Caixa caixaModel) {
+		this.caixaModel = caixaModel;
+	}
+
+	public CaixaController getCaixaController() {
+		return caixaController;
+	}
+
+	public void setCaixaController(CaixaController caixaController) {
+		this.caixaController = caixaController;
+	}
+
 }

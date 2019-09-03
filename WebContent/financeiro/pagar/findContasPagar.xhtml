@@ -16,6 +16,22 @@
 	font-weight: bold
 }
 
+.ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
+	font-weight: normal;
+	height: 35px;
+	color: black;
+	text-align: center;
+	font-size: 20px !important;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100% !important;
+	text-align: center;
+	height: 35px !important;
+	font-size: 20px !important;
+	color: black;
+}
+
 .ui-fluid .ui-inputmask {
 	font-size: 20px;
 	width: 100%;
@@ -45,6 +61,11 @@
 	color: black;
 }
 
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+	padding-right: 2.4em;
+	height: 35px
+}
+
 .ui-selectonemenu label.ui-selectonemenu-label {
 	cursor: pointer;
 	height: 33px;
@@ -67,34 +88,35 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
 </style>
 	</ui:define>
 	<ui:define name="content">
-		<h:form id="form">
+		<h:form id="botao">
 			<div class="ui-fluid">
-				<p:panel header="Pesquisa de Material" style="text-align:center">
+				<p:panel header="Contas a Pagar (Lançamentos)">
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{contasPagarBean.novo}" rendered="true" immediate="true"
+										update="form" action="#{contasPagarBean.setarVariaveisNulas}"
+										onclick="PF('pagar').show()" rendered="true" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
 										   color:white !important;
 										   font-size:large;"
-										immediate="true" action="#{contasPagarBean.editar}"
-										update="table, @form"
+										immediate="true" update="table"
+										oncomplete="PF('pagar').show()"
 										rendered="#{contasPagarBean.contasPagarModel.idContasPagar > 0 }"
 										icon=" fa fa-pencil" iconPos="right">
 
@@ -102,65 +124,182 @@
 											target="#{contasPagarBean.contasPagarModel}" />
 									</p:commandButton>
 								</div>
-							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-4">
-								<p:inputText value="#{contasPagarBean.campoBuscaContasPagar}"
-									placeholder="Buscar pelo Nome" id="inputNome"
-									style="height:40px; ">
+								<div class="ui-g-12 ui-lg-1">
+									<p:commandButton id="botaoPagar" value="Pagar"
+										style="height:40px; background: green !important  ;
+										   background-color: green ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{contasPagarBean.pagarContaReceber}"
+										update="table"
+										rendered="#{contasPagarBean.contasPagarModel.status eq 'P' and 
+										contasPagarBean.contasPagarModel.idContasPagar > 0}" 
+										icon="fa fa-money" iconPos="right">
 
+										<f:setPropertyActionListener value="#{d}"
+											target="#{contasPagarBean.contasPagarModel}" />
+									</p:commandButton>
+								</div>	
+								<div class="ui-g-12 ui-lg-2">
+									<p:selectOneRadio value="#{contasPagarBean.campoBuscaStatus}">
+										<f:selectItem itemLabel="Pendente" itemValue="P" />
+										<f:selectItem itemLabel="Pago" itemValue="PA" />
+										<p:ajax event="change" listener="#{contasPagarBean.busca}"
+											update="table" />
+									</p:selectOneRadio>
+								</div>
+
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-2">
+								<p:inputText value="#{contasPagarBean.campoBuscaFornecedor}"
+									placeholder="Buscar pelo Fornecedor" id="inputNome"
+									style="height:40px; ">
 								</p:inputText>
 							</div>
-
 
 							<div class="ui-g-12 ui-lg-1">
 								<p:commandButton style="height:40px;width:130px; "
 									styleClass="btn btn-blue" icon="ui-icon-search"
-									id="btnBuscatxt" actionListener="#{contasPagarBean.busca}"
+									immediate="true" id="btnBuscatxt"
+									actionListener="#{contasPagarBean.busca}"
 									update=" inputNome,table" />
 								<p:defaultCommand target="btnBuscatxt" />
 							</div>
 						</div>
 					</div>
-				</p:panel>
-				<p:panel>
+
 					<div class="ui-g">
 						<br />
-						<p:dataTable value="#{contasPagarBean.lstContasPagar}" var="d"
+						<p:dataTable value="#{contasPagarBean.lstContasPagar}" var="d" emptyMessage="Não Há Registros Lançados" 
+							rows="10" paginator="true"
 							styleClass="table.gridtable" rowKey="#{d.idContasPagar}"
 							selectionMode="single" id="table"
 							selection="#{contasPagarBean.contasPagarModel}">
 
-							<p:ajax event="rowSelect" listener="#{contasPagarBean.onRowSelect}"
-								update="table,:form:botoes" />
+							<p:ajax event="rowSelect"
+								listener="#{contasPagarBean.onRowSelect}"
+								update="table,:botao:botoes" />
+							
+							<p:column headerText="Status" priority="5" 
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
+									style="color : red" />
+								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+									style="color : blue" />
+								
+							</p:column>
+							
 							<p:column headerText="Fornecedor" priority="5"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.credor.nomeFornecedor}
+								style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.fornecedor.nomeFornecedor}"/>
 								
 							</p:column>
 
-							<p:column headerText="Valor Total" priority="1"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.valorTotalConta} 
-							</p:column>
-							
-							<p:column style="width:50px" priority="4">
-								<center>
-									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{contasPagarBean.excluir}"
-										update="table" id="excluir" ajax="true"
-										immediate="true">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-										<f:setPropertyActionListener value="#{d}"
-											target="#{contasPagarBean.contasPagarModel}" />
-									</p:commandLink>
-								</center>
+							<p:column headerText="Lançamento" priority="1"
+								style="overflow: hidden;text-align: center; font-size: large">
+									<p:outputLabel  value="#{d.dataLancamento}"  style="color : blue">
+										<f:convertDateTime timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy"  />
+									</p:outputLabel>
 							</p:column>
 
+							<p:column headerText="Pagamento" priority="1" 
+								style="overflow: hidden;text-align: center; font-size: large">
+									<p:outputLabel rendered="#{d.status eq 'PA'}" value="#{d.dataPagamento}"  >
+									<f:convertDateTime timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy"  />
+									</p:outputLabel>
+									<p:outputLabel rendered="#{d.status eq 'P'}" value="Pagamento não Efetuado"
+									style="color: red"  />
+							</p:column>
+
+							<p:column headerText="Vencimento" priority="1"
+								style="overflow: hidden;text-align: center; font-size: large">
+									<p:outputLabel value="#{d.dataVencimento}">
+										<f:convertDateTime timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy"  />
+									</p:outputLabel>
+									
+							</p:column>
+							<p:column headerText="Valor Total" priority="1"
+								style="overflow: hidden;text-align: right; font-size: large">
+										<p:outputLabel value="R$ #{d.valorConta}"/>
+							</p:column>
 						</p:dataTable>
 					</div>
 				</p:panel>
 			</div>
 		</h:form>
+
+		<p:dialog widgetVar="pagar" id="pagar" modal="true" resizable="false"
+			responsive="true" width="700" dynamic="true" appendToBody="@body"
+			header="Parcelas">
+			<h:form id="form">
+				<div align="center">
+					<util:botoesCrud managedBeanView="#{contasPagarBean}"
+						camposReload=":formTemplate:msg, form"
+						botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
+						botaoSalvar="#{contasPagarBean.contasPagarModel.idContasPagar == null}"
+						botaoAtualizar="#{contasPagarBean.contasPagarModel.idContasPagar != null}"
+						botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+						botaoExcluir="false">
+					</util:botoesCrud>
+				</div>
+				<hr />
+
+				<p:panelGrid columns="1" layout="grid"
+					columnClasses="ui-g-12 ui-lg-12" styleClass="ui-panelgrid-blank">
+					<p:column>
+
+						<h:outputLabel value="Fornecedor:*" />
+						<br />
+						<p:autoComplete id="fornecedor"
+							completeMethod="#{auxController.completeFornecedor}"
+							forceSelection="true" converter="entityConverter" var="a"
+							itemLabel="#{a.nomeFornecedor}" itemValue="#{a}"
+							value="#{contasPagarBean.contasPagarModel.fornecedor}"
+							minQueryLength="2" dropdown="true" maxResults="30" size="50"
+							required="true" requiredMessage="Informe um Fornecedor">
+						</p:autoComplete>
+
+					</p:column>
+
+
+					<p:column>
+						<h:outputLabel value="Tipo de Conta" />
+						<br />
+						<p:selectOneMenu required="true" style="width: 580px"
+							value="#{contasPagarBean.contasPagarModel.tipoConta}">
+							<f:selectItem itemLabel="Água" itemValue="A" />
+							<f:selectItem itemLabel="Luz" itemValue="L" />
+							<f:selectItem itemLabel="Internet" itemValue="I" />
+							<f:selectItem itemLabel="Telefone" itemValue="T" />
+
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Data de Vencimento" />
+						<br />
+						<p:calendar locale="pt_BR" autocomplete="true" size="55"
+							popupIconOnly="true" required="true"
+							requiredMessage="Informe uma data " showButtonPanel="true"
+							showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
+							mindate="today" style="font-size: large"
+							value="#{contasPagarBean.contasPagarModel.dataVencimento}">
+						</p:calendar>
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Valor" />
+						<br />
+						<p:inputNumber decimalPlaces="2" symbol="R$" symbolPosition="p"
+							required="true" style="width: 580px !important"
+							value="#{contasPagarBean.contasPagarModel.valorConta}" />
+					</p:column>
+
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
 	</ui:define>
 </ui:composition>
 

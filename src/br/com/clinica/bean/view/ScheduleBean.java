@@ -298,6 +298,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceber.setValorConsulta(200.00D);
 		contasReceber.setObservacao("Recolher Assinatura de Paciente!");
 		contasReceberController.merge(contasReceber);
@@ -317,6 +318,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setStatus("P");
 		contasReceber.setValorConsulta(200.00D);
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
 
 	}
@@ -333,6 +335,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setStatus("P");
 		contasReceber.setValorConsulta(200.00D);
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
 
 	}
@@ -349,6 +352,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setStatus("P");
 		contasReceber.setValorConsulta(200.00D);
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
+		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
 
 	}

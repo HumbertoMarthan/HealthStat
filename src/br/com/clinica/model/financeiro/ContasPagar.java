@@ -1,14 +1,18 @@
 package br.com.clinica.model.financeiro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -36,11 +40,24 @@ public class ContasPagar implements EntityBase, Serializable {
 		return idContasPagar;
 	}
 	
-	private BigDecimal valorTotalConta;
+	private String status  = "P";
 	
-	//private List<ParcelaPagar> parcelas;
+	private String tipoConta;
+	
+	private Double valorConta;
 
-	private Fornecedor credor;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataPagamento;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataLancamento;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataVencimento;
+	
+	@ManyToOne
+	@JoinColumn(name = "idFornecedor")
+	private Fornecedor fornecedor;
 	
 	public Long getIdContasPagar() {
 		return idContasPagar;
@@ -50,21 +67,67 @@ public class ContasPagar implements EntityBase, Serializable {
 		this.idContasPagar = idContasPagar;
 	}
 
-
-	public BigDecimal getValorTotalConta() {
-		return valorTotalConta;
+	public Double getValorConta() {
+		return valorConta;
 	}
 
-	public void setValorTotalConta(BigDecimal valorTotalConta) {
-		this.valorTotalConta = valorTotalConta;
+	public void setValorConta(Double valorConta) {
+		this.valorConta = valorConta;
 	}
 
-	public Fornecedor getCredor() {
-		return credor;
+	public Date getDataPagamento() {
+		return dataPagamento;
 	}
 
-	public void setCredor(Fornecedor credor) {
-		this.credor = credor;
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
+	public String getTipoConta() {
+		return tipoConta;
+	}
+
+	public void setTipoConta(String tipoConta) {
+		this.tipoConta = tipoConta;
+	}
+
+	public ContasPagar() {
+	}
+
+	public ContasPagar(Long idContasPagar) {
+		this.idContasPagar = idContasPagar;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override
@@ -91,7 +154,5 @@ public class ContasPagar implements EntityBase, Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

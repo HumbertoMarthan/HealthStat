@@ -43,7 +43,10 @@
 
 .ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	width: 100%;
+	text-align: center;
 	height: 35px;
+	font-size: 20px !important;
+	color: black;
 }
 
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
@@ -100,7 +103,7 @@
 							<p:panel>
 								<br />
 								<div align="center">
-									<p:outputLabel value="Cadastro De Contas"
+									<p:outputLabel value="Cadastro De Contas a Pagar"
 										styleClass="titulo" />
 								</div>
 								<br />
@@ -109,15 +112,27 @@
 									<util:botoesCrud managedBeanView="#{contasPagarBean}"
 										camposReload=":formTemplate:msg, form"
 										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
-												 and contasPagarBean.contasPagarModel.idContasPagar == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
-												 and contasPagarBean.contasPagarModel.idContasPagar != null}"
+										botaoSalvar="false" botaoAtualizar="false"
 										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
+									<p:commandButton value="Salvar"
+										style="height:40px;     width: 140px;background: green !important  ;   
+										background-color: green; 
+										color:white !important;
+										font-size:large; "
+										action="#{contasPagarBean.adicionarContasPagar}"
+										rendered="#{contasPagarBean.contasPagarModel.idContasPagar == null}"
+										immediate="true" icon="fa fa-plus" iconPos="right" />
+									<p:commandButton value="Atualizar"
+										style="height:40px;    width: 140px;; background: greenyellow !important  ;   
+										background-color: greenyellow; 
+										color:white !important;
+										font-size:large; "
+										action="#{contasPagarBean.adicionarContasPagar}"
+										rendered="#{contasPagarBean.contasPagarModel.idContasPagar != null}"
+										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
-
 								<br />
 								<p:outputLabel value="Campos Obrigatórios()"
 									styleClass="obrigatorio" />
@@ -125,28 +140,75 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-3">
 										<h:outputLabel value="Fornecedor:*" />
 										<p:autoComplete id="fornecedor"
 											completeMethod="#{auxController.completeFornecedor}"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomeFornecedor}" itemValue="#{a}"
-											value="#{contasPagarBean.contasPagarModel.credor}" minQueryLength="2"
-											dropdown="true"  maxResults="30" required="true"
-											requiredMessage="Informe um Fornecedor"
+											value="#{contasPagarBean.contasPagarModel.fornecedor}"
+											minQueryLength="2" dropdown="true" maxResults="30"
+											required="true" requiredMessage="Informe um Fornecedor"
 											style="height: 35px">
 											<p:column id="p">
 												<h:outputText value="#{a.nomeFornecedor}" />
 											</p:column>
 										</p:autoComplete>
 
-									</div>	
-									
-									<div class="ui-g-12 ui-lg-6">
-										<h:outputLabel value="Valor Total" />
-										<p:inputText required="true"
-											value="#{contasPagarBean.contasPagarModel.valorTotalConta}" />
 									</div>
+
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Tipo de Conta" />
+										<p:selectOneMenu required="true"
+											value="#{contasPagarBean.contasPagarModel.tipoConta}">
+											<f:selectItem itemLabel="Água" itemValue="A" />
+											<f:selectItem itemLabel="Luz" itemValue="L" />
+											<f:selectItem itemLabel="Internet" itemValue="I" />
+											<f:selectItem itemLabel="Telefone" itemValue="T" />
+
+										</p:selectOneMenu>
+									</div>
+
+									<!-- <div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Data de Lançamento" />
+										<p:calendar locale="pt_BR" autocomplete="true"
+											popupIconOnly="true" required="true"
+											requiredMessage="Informe uma data " showButtonPanel="true"
+											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
+											mindate="today" style="font-size: medium"
+											value="#{contasPagarBean.contasPagarModel.dataLancamento}">
+										</p:calendar>
+									</div>-->
+									
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Data de Vencimento" />
+										<p:calendar locale="pt_BR" autocomplete="true"
+											popupIconOnly="true" required="true"
+											requiredMessage="Informe uma data " showButtonPanel="true"
+											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
+											mindate="today" style="font-size: medium"
+											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
+										</p:calendar>
+									</div>
+
+									<!-- <div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Data de Pagamento" />
+										<p:calendar locale="pt_BR" autocomplete="true"
+											popupIconOnly="true" required="true"
+											requiredMessage="Informe uma data " showButtonPanel="true"
+											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
+											mindate="today" style="font-size: medium"
+											value="#{contasPagarBean.contasPagarModel.dataPagamento}">
+										</p:calendar>
+									</div>-->
+									
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="Valor" />
+										<p:inputNumber decimalPlaces="2" symbol="R$"
+											symbolPosition="p" required="true"
+											value="#{contasPagarBean.contasPagarModel.valorConta}" />
+									</div>
+
 								</div>
 							</p:panel>
 						</div>

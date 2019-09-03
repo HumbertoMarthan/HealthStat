@@ -44,39 +44,43 @@ public class ContasReceber implements EntityBase, Serializable {
 	public Long getId() {
 		return idContasReceber;
 	}
-	
+
 	@OneToOne
 	@JoinColumn(name = "idLogin")
 	private Login login;
-	
+
 	private Date dataPagamento;
 
 	private Double valorConsulta;
-	
+
 	private Double valorComDesconto;
-	
+
 	private Double valorDesconto;
-	
+
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "idFormaPagamento")
 	private FormaPagamento formaPagamento;
-	
+
 	private Double valorParcelado;
-	
+
 	private int quantidadeParcelas = 0;
 
 	private String status;
-	
+
 	private String observacao;
 
 	@Temporal(TemporalType.DATE)
 	private Date dataVencimentoContasReceber;
-	
-	//Somente para comparação
+
+	// Somente para comparação
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInicioAgendamento;
-	
-	@JoinColumn(name="idPaciente")
+
+	// Somente para comparação
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataFimAgendamento;
+
+	@JoinColumn(name = "idPaciente")
 	@ManyToOne
 	private Paciente paciente;
 
@@ -84,13 +88,11 @@ public class ContasReceber implements EntityBase, Serializable {
 		this.idContasReceber = idContasReceber;
 	}
 
-	
 	public ContasReceber() {
 	}
 
+	// ----------------------------------------------------
 
-	//----------------------------------------------------
-	
 	public Long getIdContasReceber() {
 		return idContasReceber;
 	}
@@ -199,9 +201,18 @@ public class ContasReceber implements EntityBase, Serializable {
 		return quantidadeParcelas;
 	}
 
-
 	public void setQuantidadeParcelas(int quantidadeParcelas) {
 		this.quantidadeParcelas = quantidadeParcelas;
 	}
 
+	public Date getDataFimAgendamento() {
+		return dataFimAgendamento;
+	}
+
+	public void setDataFimAgendamento(Date dataFimAgendamento) {
+		this.dataFimAgendamento = dataFimAgendamento;
+	}
+
+	
+	
 }
