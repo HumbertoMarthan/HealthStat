@@ -37,6 +37,8 @@ public class Estoquista  implements EntityBase,Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE,	generator = "estoquista_seq")
 	private Long idEstoquista;
 	
+	private String ativo = "A";
+	
 	@Override
 	public Long getId() {
 		return idEstoquista;
@@ -59,6 +61,14 @@ public class Estoquista  implements EntityBase,Serializable {
 		return idEstoquista;
 	}
 
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
+	
 	// HASH CODE & EQUALS
 	@Override
 	public int hashCode() {

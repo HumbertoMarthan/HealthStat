@@ -26,15 +26,19 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.ContasReceberController;
 import br.com.clinica.controller.geral.EventoController;
 import br.com.clinica.controller.geral.EventoPacienteController;
+import br.com.clinica.controller.geral.MedicoController;
 import br.com.clinica.controller.geral.PacienteController;
+import br.com.clinica.controller.geral.ProntuarioController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.agendamento.CustomScheduleEvent;
 import br.com.clinica.model.cadastro.agendamento.Evento;
 import br.com.clinica.model.cadastro.agendamento.EventoPaciente;
 import br.com.clinica.model.cadastro.agendamento.TipoEvento;
+import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.financeiro.ContasReceber;
+import br.com.clinica.model.prontuario.Prontuario;
 import br.com.clinica.utils.DatasUtils;
 import br.com.clinica.utils.EmailUtils;
 
@@ -51,6 +55,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	private EventoPaciente eventoPacienteModel;
 	private List<ContasReceber> lstContas;
 	private ScheduleEvent event;
+	private ArrayList<Medico> lstPrecos; 
 	private List<ScheduleEvent> scheduleEvents;
 	private Date dataAtual;
 	private Calendar dataAtualSchedule;
@@ -66,10 +71,16 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private PacienteController pacienteController;
+	
+	@Autowired
+	private MedicoController medicoController;
 
 	@Autowired
 	private EventoPacienteController eventoPacienteController;
 
+	@Autowired
+	private ProntuarioController  prontuarioController;
+	
 	@Autowired
 	private ContextoBean contextoBean;
 
@@ -82,6 +93,19 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		listaEvento = new ArrayList<Evento>();
 		contasReceber = new ContasReceber();
 		lstContas = new ArrayList<ContasReceber>();
+		lstPrecos = new ArrayList<Medico>();
+	}
+	
+	public void buscaPreco(){
+		lstPrecos = new ArrayList<>();
+		StringBuilder str = new StringBuilder();
+		str.append("from Medico a where 1=1");
+		try {
+			lstPrecos = (ArrayList<Medico>) medicoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -287,6 +311,19 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			contasReceber.setDataVencimentoContasReceber(evento.getDataVencimentoContasReceber());
 		}
 	}
+	
+	public void geraProntuario() {
+		Prontuario prontuarioModel = new Prontuario();
+		prontuarioModel.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
+		prontuarioModel.setMedico(new Medico(evento.getMedico().getIdMedico()));
+		try {
+			prontuarioController.merge(prontuarioModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao gerar prontuario na tabela");
+			e.printStackTrace();
+		}
+		
+	}
 
 	public void convenioUnimed() throws Exception {
 		Long usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
@@ -299,9 +336,12 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setStatus("P");
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
-		contasReceber.setValorConsulta(200.00D);
+		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setObservacao("Recolher Assinatura de Paciente!");
 		contasReceberController.merge(contasReceber);
+		
+		//Gera um Prontuario 
+		geraProntuario();
 
 	}
 
@@ -316,11 +356,13 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(200.00D);
+		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
-
+		
+		//Gera um Prontuario 
+				geraProntuario();
 	}
 
 	public void convenioParticular() throws Exception {
@@ -333,11 +375,14 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(200.00D);
+		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
-
+		
+		//Gera um Prontuario 
+				geraProntuario();
+		
 	}
 
 	public void convenioSas() throws Exception {
@@ -350,11 +395,13 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(200.00D);
+		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
 		contasReceberController.merge(contasReceber);
 
+		//Gera um Prontuario 
+				geraProntuario();
 	}
 
 	public void adicionarContasReceber() throws Exception {
@@ -719,6 +766,30 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void setEventoPacienteModel(EventoPaciente eventoPacienteModel) {
 		this.eventoPacienteModel = eventoPacienteModel;
+	}
+
+	public ArrayList<Medico> getLstPrecos() {
+		return lstPrecos;
+	}
+
+	public void setLstPrecos(ArrayList<Medico> lstPrecos) {
+		this.lstPrecos = lstPrecos;
+	}
+
+	public ProntuarioController getProntuarioController() {
+		return prontuarioController;
+	}
+
+	public void setProntuarioController(ProntuarioController prontuarioController) {
+		this.prontuarioController = prontuarioController;
+	}
+
+	public MedicoController getMedicoController() {
+		return medicoController;
+	}
+
+	public void setMedicoController(MedicoController medicoController) {
+		this.medicoController = medicoController;
 	}
 
 }

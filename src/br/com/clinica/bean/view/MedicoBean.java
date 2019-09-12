@@ -46,8 +46,9 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	private String url = "/cadastro/cadMedico.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findMedico.jsf?faces-redirect=true";
 	List<Medico> lstMedico;
-	private String campoBuscaNome;
-	private String campoBuscaCPF;
+	private String campoBuscaAtivo = "T";
+	private String campoBuscaNome = "";
+	private String campoBuscaCPF = "";
 	
 	@Autowired
 	private MedicoController medicoController; // Injetando o Controller do Médico
@@ -76,6 +77,14 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")  ) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+		}
 		
 		lstMedico=  medicoController.findListByQueryDinamica(str.toString());
 	}
@@ -89,6 +98,28 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		return super.getArquivoReport();
 	}
 
+	public void inativar() {
+
+		if (medicoModel.getAtivo().equals("I")) {
+			medicoModel.setAtivo("A");
+		} else {
+			medicoModel.setAtivo("I");
+		}
+		try {
+		medicoController.saveOrUpdate(medicoModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao inativar/ativar");
+		}
+		this.medicoModel = new Medico();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar médico");
+			e.printStackTrace();
+		}
+			
+	}
+	
 	private void addMessage(FacesMessage message) {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
@@ -335,6 +366,14 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	public void setEspeModel(Especialidade espeModel) {
 		this.espeModel = espeModel;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
 	
 	

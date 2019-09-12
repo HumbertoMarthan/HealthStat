@@ -61,6 +61,13 @@ public class Pessoa implements  EntityBase,Serializable {
 
 	@Column(name = "pessoaEmail")
 	private String pessoaEmail;
+	
+	@Column(name = "pessoaAltura")
+	private String pessoaAltura;
+	
+	@Column(name = "pessoaPeso")
+	private String pessoaPeso;
+	
 	//celular
 	@Column(name = "pessoaTelefonePrimario")
 	private String pessoaTelefonePrimario;
@@ -260,6 +267,22 @@ public class Pessoa implements  EntityBase,Serializable {
 
 	public void setPessoaUsuario(Login pessoaUsuario) {
 		this.pessoaUsuario = pessoaUsuario;
+	}
+
+	public String getPessoaAltura() {
+		return pessoaAltura;
+	}
+
+	public void setPessoaAltura(String pessoaAltura) {
+		this.pessoaAltura = pessoaAltura;
+	}
+
+	public String getPessoaPeso() {
+		return pessoaPeso;
+	}
+
+	public void setPessoaPeso(String pessoaPeso) {
+		this.pessoaPeso = pessoaPeso;
 	}
 
 	@Override

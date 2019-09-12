@@ -32,29 +32,28 @@ import br.com.clinica.model.cadastro.pessoa.Estoquista;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
 
-
 @Controller
 @ViewScoped
 @ManagedBean(name = "estoquistaBean")
 public class EstoquistaBean extends BeanManagedViewAbstract {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Estoquista estoquistaModel;
 	private List<Estoquista> lstEstoquista;
 	private String url = "/cadastro/cadEstoquista.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findEstoquista.jsf?faces-redirect=true";
-	private String campoBuscaNome;
-	private String campoBuscaCPF;
-	
+	private String campoBuscaNome = "";
+	private String campoBuscaCPF = "";
+	private String campoBuscaAtivo = "T";
 
 	@Autowired
 	private EstoquistaController estoquistaController;
-	
+
 	public EstoquistaBean() {
 		estoquistaModel = new Estoquista();
 		lstEstoquista = new ArrayList<Estoquista>();
 	}
-	
+
 	public void busca() throws Exception {
 		lstEstoquista = new ArrayList<Estoquista>();
 		StringBuilder str = new StringBuilder();
@@ -66,25 +65,55 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
-		
-		lstEstoquista =  estoquistaController.findListByQueryDinamica(str.toString());
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+		}
+
+		lstEstoquista = estoquistaController.findListByQueryDinamica(str.toString());
 	}
-	
+
+	public void inativar() {
+
+		if (estoquistaModel.getAtivo().equals("I")) {
+			estoquistaModel.setAtivo("A");
+		} else {
+			estoquistaModel.setAtivo("I");
+		}
+
+		try {
+			estoquistaController.saveOrUpdate(estoquistaModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
+		this.estoquistaModel = new Estoquista();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
+	}
+
 	public void limpar() {
-		
+
 		this.estoquistaModel = new Estoquista();
 	}
-	
+
 	public void onRowSelect(SelectEvent event) {
 		estoquistaModel = (Estoquista) event.getObject();
 	}
-	
 
 	public EstoquistaController getEstoquistaController() {
 		return estoquistaController;
 	}
-	
-	//Gera o Relatório 
+
+	// Gera o Relatório
 	@Override
 	public StreamedContent getArquivoReport() throws Exception {
 		super.setNomeRelatorioJasper("report_estoquista");
@@ -92,63 +121,63 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		super.setListDataBeanCollectionReport(estoquistaController.findList(getClassImp()));
 		return super.getArquivoReport();
 	}
-	
+
 	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
 		try {
-			URL url = new URL("https://viacep.com.br/ws/"+ estoquistaModel.getPessoa().getCep() +"/json/");
+			URL url = new URL("https://viacep.com.br/ws/" + estoquistaModel.getPessoa().getCep() + "/json/");
 			URLConnection connection = url.openConnection();
-			InputStream inputStream = connection.getInputStream(); //is
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); //br
-		
+			InputStream inputStream = connection.getInputStream(); // is
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br
+
 			String cep = "";
 			StringBuilder jsonCEP = new StringBuilder();
-			
-			while((cep = bufferedReader.readLine()) != null)    {
+
+			while ((cep = bufferedReader.readLine()) != null) {
 				jsonCEP.append(cep);
-				
+
 			}
 			Pessoa gson = new Gson().fromJson(jsonCEP.toString(), Pessoa.class);
-			
-			//String logradouro ="";
+
+			// String logradouro ="";
 			estoquistaModel.getPessoa().setCep(gson.getCep());
 			estoquistaModel.getPessoa().setLogradouro(gson.getLogradouro());
 			estoquistaModel.getPessoa().setBairro(gson.getBairro());
-			//estoquistaModel.getPessoa().setIbge(gson.getIbge());
+			// estoquistaModel.getPessoa().setIbge(gson.getIbge());
 			estoquistaModel.getPessoa().setComplemento(gson.getComplemento());
 			estoquistaModel.getPessoa().setUf(gson.getUf());
 			estoquistaModel.getPessoa().setLocalidade(gson.getLocalidade());
-			System.out.println("CEP Saindo " +jsonCEP);
-			
+			System.out.println("CEP Saindo " + jsonCEP);
+
 		} catch (MalformedURLException ex) {
 			ex.printStackTrace();
 			addMsg("Cep Inválido (Erro ao Buscar|Sem internet");
 			error();
-		} catch (IOException   e) {
+		} catch (IOException e) {
 			addMsg("Cep Inválido");
 		}
 	}
-	
+
 	public void limpa() {
-		
-		  /*Dados*/
-		  estoquistaModel.getPessoa().setPessoaNome("");
-		  estoquistaModel.getPessoa().setPessoaDataNascimento(null);
-		  estoquistaModel.getPessoa().setPessoaSexo("");
-		  estoquistaModel.getPessoa().setPessoaEmail("");
-		  estoquistaModel.getPessoa().setPessoaRG("");
-		  estoquistaModel.getPessoa().setPessoaCPF("");
-		  estoquistaModel.getPessoa().setPessoaObservacao("");
-		  estoquistaModel.getPessoa().setPessoaTelefonePrimario("");
-		  estoquistaModel.getPessoa().setPessoaTelefoneSecundario("");
-		  /*Endereço*/
-		  estoquistaModel.getPessoa().setCep("");
-		  estoquistaModel.getPessoa().setBairro("");
-		  estoquistaModel.getPessoa().setUf("");
-		  estoquistaModel.getPessoa().setLogradouro("");
-		  estoquistaModel.getPessoa().setComplemento("");
-		  estoquistaModel.getPessoa().setLocalidade("");
+
+		/* Dados */
+		estoquistaModel.getPessoa().setPessoaNome("");
+		estoquistaModel.getPessoa().setPessoaDataNascimento(null);
+		estoquistaModel.getPessoa().setPessoaSexo("");
+		estoquistaModel.getPessoa().setPessoaEmail("");
+		estoquistaModel.getPessoa().setPessoaRG("");
+		estoquistaModel.getPessoa().setPessoaCPF("");
+		estoquistaModel.getPessoa().setPessoaObservacao("");
+		estoquistaModel.getPessoa().setPessoaTelefonePrimario("");
+		estoquistaModel.getPessoa().setPessoaTelefoneSecundario("");
+		/* Endereço */
+		estoquistaModel.getPessoa().setCep("");
+		estoquistaModel.getPessoa().setBairro("");
+		estoquistaModel.getPessoa().setUf("");
+		estoquistaModel.getPessoa().setLogradouro("");
+		estoquistaModel.getPessoa().setComplemento("");
+		estoquistaModel.getPessoa().setLocalidade("");
 	}
-	
+
 	public boolean idadeMinimaFuncionario() {
 		Calendar dateOfBirth = new GregorianCalendar();
 		dateOfBirth.setTime(estoquistaModel.getPessoa().getPessoaDataNascimento());
@@ -170,68 +199,69 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		}
 
 	}
-	
+
 	private void addMessage(FacesMessage message) {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
 	@Override
 	public String save() throws Exception {
-	    
+
 		estoquistaModel = estoquistaController.merge(estoquistaModel);
 		estoquistaModel = new Estoquista();
 		return "";
 	}
-	
+
 	@Override
 	public void saveNotReturn() throws Exception {
 		if (idadeMinimaFuncionario() == true) {
-			if (ValidaCPF.isCPF(estoquistaModel.getPessoa().getPessoaCPF())) { 
-		estoquistaModel = estoquistaController.merge(estoquistaModel);
-		estoquistaModel = new Estoquista();
-		sucesso();
-			}else {
-				FacesMessage message = new FacesMessage(
-						FacesMessage.SEVERITY_WARN, "Cpf Inválido: "
-				+estoquistaModel.getPessoa().getPessoaCPF(), "");
+			if (ValidaCPF.isCPF(estoquistaModel.getPessoa().getPessoaCPF())) {
+				estoquistaModel = estoquistaController.merge(estoquistaModel);
+				estoquistaModel = new Estoquista();
+				sucesso();
+			} else {
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
+						"Cpf Inválido: " + estoquistaModel.getPessoa().getPessoaCPF(), "");
 				addMessage(message);
 				System.out.println("ERRO CPF INVÁLIDO");
 			}
-		}else {
-				//FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Cpf Inválido", "");
-				//addMessage(message);
-				System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
+		} else {
+			// FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Cpf
+			// Inválido", "");
+			// addMessage(message);
+			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
 		}
 	}
-	
+
 	@Override
 	public void saveEdit() throws Exception {
 		saveNotReturn();
 	}
-	
+
 	@Override
 	public String novo() throws Exception {
 		setarVariaveisNulas();
 		return getUrl();
 	}
-	
-	public String edita()  throws Exception {
+
+	public String edita() throws Exception {
 		return getUrl();
 	}
-	
+
 	@Override
 	public void setarVariaveisNulas() throws Exception {
 		estoquistaModel = new Estoquista();
 	}
-	
+
 	public String editar() throws Exception {
 		return getUrl();
 	}
-	
+
 	@Override
 	public void excluir() throws Exception {
-		estoquistaModel = (Estoquista) estoquistaController.getSession().get(getClassImp(),  estoquistaModel.getIdEstoquista());
-		estoquistaController.delete(estoquistaModel);	
+		estoquistaModel = (Estoquista) estoquistaController.getSession().get(getClassImp(),
+				estoquistaModel.getIdEstoquista());
+		estoquistaController.delete(estoquistaModel);
 		estoquistaModel = new Estoquista();
 		sucesso();
 		busca();
@@ -241,7 +271,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	protected Class<Estoquista> getClassImp() {
 		return Estoquista.class;
 	}
-	
+
 	@Override
 	public String redirecionarFindEntidade() throws Exception {
 		setarVariaveisNulas();
@@ -252,10 +282,10 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	protected InterfaceCrud<Estoquista> getController() {
 		return estoquistaController;
 	}
+
 	@Override
 	public void consultarEntidade() throws Exception {
 	}
-
 
 	public List<Estoquista> getLstEstoquista() {
 		return lstEstoquista;
@@ -264,7 +294,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	public void setLstEstoquista(List<Estoquista> lstEstoquista) {
 		this.lstEstoquista = lstEstoquista;
 	}
-	
+
 	public void setEstoquistaController(EstoquistaController estoquistaController) {
 		this.estoquistaController = estoquistaController;
 	}
@@ -276,19 +306,19 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	public Estoquista getestoquistaModel() {
 		return estoquistaModel;
 	}
-	
+
 	public void setestoquistaModel(Estoquista estoquistaModel) {
 		this.estoquistaModel = estoquistaModel;
 	}
-	
+
 	public String getUrl() {
 		return url;
 	}
-	
+
 	public String getUrlFind() {
 		return urlFind;
 	}
-	
+
 	public String getCampoBuscaNome() {
 		return campoBuscaNome;
 	}
@@ -304,10 +334,25 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	public void setCampoBuscaCPF(String campoBuscaCPF) {
 		this.campoBuscaCPF = campoBuscaCPF;
 	}
-	
+
 	public void setUrlFind(String urlFind) {
 		this.urlFind = urlFind;
 	}
-	
-	
+
+	public Estoquista getEstoquistaModel() {
+		return estoquistaModel;
+	}
+
+	public void setEstoquistaModel(Estoquista estoquistaModel) {
+		this.estoquistaModel = estoquistaModel;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+
 }

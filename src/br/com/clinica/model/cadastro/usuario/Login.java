@@ -11,11 +11,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 import org.primefaces.json.JSONObject;
+
+import br.com.clinica.model.cadastro.pessoa.Pessoa;
 
 @Audited
 @Entity
@@ -26,14 +29,13 @@ public class Login implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	
 	private Long idLogin;
-	
-	//private Long idLogin;
-	
-	//private String ent_login = null;
-	
 	private String login = null;
 	private String senha = null;
 	private boolean inativo = false;
+	
+	@OneToOne
+	@JoinColumn(name = "idPessoa")
+	private Pessoa pessoa;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date ultimoAcesso;
@@ -49,19 +51,6 @@ public class Login implements Serializable {
 	@JoinColumn(name ="idPerfil")
 	Perfil perfil;
 	
-	/*
-	 * @CollectionOfElements
-	 * 
-	 * @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-	 * 
-	 * @JoinTable(name = "perfil", uniqueConstraints = {@UniqueConstraint(name =
-	 * "unique_perfil_key", columnNames = { "idLogin", "tipoAcesso" }) },
-	 * joinColumns = { @JoinColumn(name = "idLogin") })
-	 * 
-	 * @Column(name = "tipoAcesso", length = 20) private Set<String> acessos = new
-	 * HashSet<String>();
-	 */
-	
 	//GETTERS E SETTERS -----------------------------------------
 
 	
@@ -73,6 +62,12 @@ public class Login implements Serializable {
 		return result;
 	}
 	
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
 	public Login() {}
 	public Login(Long idLogin) {
 		this.idLogin = idLogin;

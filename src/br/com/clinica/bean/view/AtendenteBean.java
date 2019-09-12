@@ -55,8 +55,8 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	private String url = "/cadastro/cadAtendente.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findAtendente.jsf?faces-redirect=true";
 	private List<Atendente> lstAtendente;
-	private String campoBuscaNome="";
-	private String campoBuscaCPF="";
+	private String campoBuscaNome = "";
+	private String campoBuscaCPF = "";
 	private String campoBuscaAtivo = "A";
 	@Autowired
 	private AtendenteController atendenteController; // Injeta o Atendente Controller
@@ -99,16 +99,27 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		atendenteModel.getPessoa().setLocalidade("");
 	}
 
-	public void inativar() throws Exception {
+	public void inativar() {
 
 		if (atendenteModel.getAtivo().equals("I")) {
 			atendenteModel.setAtivo("A");
 		} else {
 			atendenteModel.setAtivo("I");
 		}
-		atendenteController.saveOrUpdate(atendenteModel);
+
+		try {
+			atendenteController.saveOrUpdate(atendenteModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
 		this.atendenteModel = new Atendente();
-		busca();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
 	}
 
 	public void busca() throws Exception {
@@ -122,7 +133,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
-		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")  ) {
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
 			System.out.println("Entrou no A or I");
 			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
 		}
@@ -130,7 +141,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 			System.out.println("Entro no T");
 			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
 		}
-		System.out.println("LISTA SELECT :> "+str);
+		System.out.println("LISTA SELECT :> " + str);
 		lstAtendente = atendenteController.findListByQueryDinamica(str.toString());
 	}
 
@@ -216,7 +227,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	protected InterfaceCrud<Atendente> getController() {
 		return atendenteController;
 	}
-	
+
 	// PESQUISA CEP
 	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
 		try {
@@ -277,6 +288,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		}
 
 	}
+
 	@Override
 	public void consultarEntidade() throws Exception {
 		atendenteModel = new Atendente();
@@ -356,6 +368,5 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
-	
-	
+
 }

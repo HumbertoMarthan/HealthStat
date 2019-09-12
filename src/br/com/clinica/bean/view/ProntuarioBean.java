@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.StreamedContent;
@@ -16,6 +17,7 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.PacienteController;
 import br.com.clinica.controller.geral.ProntuarioController;
 import br.com.clinica.hibernate.InterfaceCrud;
+import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.prontuario.Prontuario;
 
 /**
@@ -30,13 +32,15 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	private static final long serialVersionUID = 1L;
 
 	private Prontuario prontuarioModel;
-
+	private List<Prontuario> lstDadosPaciente;
 	private List<Prontuario> listaProntuario;
 	
 	String estado = "C";
 	String campoBusca ="";
-	private String url = "/prontuario/prontuarioMedico.jsf?faces-redirect=true";
-
+	private String url = "/prontuario/listaProntuario.jsf?faces-redirect=true";
+	private String urlGuia = "/prontuario/prontuarioMedico.jsf?faces-redirect=true";
+	private String campoBuscaAtivo = "T";
+	
 	@Autowired
 	private ProntuarioController prontuarioController; // Injeta o Prontuario Controller
 
@@ -66,8 +70,16 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	}
 
 	public ProntuarioBean() {
+		lstDadosPaciente = new ArrayList<>(); 
+		listaProntuario = new ArrayList<>();
 		prontuarioModel = new Prontuario();
 		setEstado("C");
+	}
+	
+	public List<Paciente>  completePaciente(String q) throws Exception {
+		return pacienteController.  
+				findListByQueryDinamica(" from Paciente p where EXISTS( from Evento e where e.paciente.idPaciente = p.idPaciente) and p.status = 'P' and pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
+		
 	}
 	
 	// Insere nome do Paciente em Tabela Prontuário
@@ -83,7 +95,8 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) throws IOException {
 		
 		prontuarioModel = (Prontuario) event.getObject();
-}
+	
+	}
 	
 	public void busca() throws Exception {
 		listaProntuario = new ArrayList<Prontuario>();
@@ -92,7 +105,23 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		if (!campoBusca.equals("")) {
 			str.append(" and upper(a.paciente.pessoa.pessoaNome) like'%" + campoBusca.toUpperCase() + "%'");
 		}
+		if (campoBuscaAtivo.equals("P") || campoBuscaAtivo.equals("F")) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.status = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and a.status = 'A' or a.status = 'I' ");
+		}
 		listaProntuario = prontuarioController.findListByQueryDinamica(str.toString());
+	}
+	
+	public void buscaDadosPaciente() throws Exception {
+		lstDadosPaciente = new ArrayList<Prontuario>();
+		StringBuilder str = new StringBuilder();
+		str.append("from Prontuario a where 1=1");
+			str.append(" and a.paciente.idPaciente = " + prontuarioModel.getPaciente().getIdPaciente() );
+		lstDadosPaciente = prontuarioController.findListByQueryDinamica(str.toString());
 	}
 	
     /*Persistência ---------------------------------*/
@@ -107,10 +136,14 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
-
+		prontuarioModel.setStatus("F");
 		prontuarioModel = prontuarioController.merge(prontuarioModel);
 		sucesso();
 		prontuarioModel = new Prontuario();
+		
+		FacesContext.getCurrentInstance()
+		   .getExternalContext().redirect("/clinica/prontuario/listaProntuario.jsf");
+		return;
 	}
 
 	@Override
@@ -155,6 +188,11 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	public String redirecionarFindEntidade() throws Exception {
 		setarVariaveisNulas();
 		return getUrl();
+	}
+	
+	public String redirecionarGuia() throws Exception {
+		buscaDadosPaciente();	
+		return getUrlGuia();
 	}
 
 	@Override
@@ -238,8 +276,32 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		return pacienteController;
 	}
 
+	public String getUrlGuia() {
+		return urlGuia;
+	}
+
+	public void setUrlGuia(String urlGuia) {
+		this.urlGuia = urlGuia;
+	}
+
 	public void setPacienteController(PacienteController pacienteController) {
 		this.pacienteController = pacienteController;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+
+	public List<Prontuario> getLstDadosPaciente() {
+		return lstDadosPaciente;
+	}
+
+	public void setLstDadosPaciente(List<Prontuario> lstDadosPaciente) {
+		this.lstDadosPaciente = lstDadosPaciente;
 	}
 
 	

@@ -29,11 +29,17 @@
 }
 
 .ui-fluid .ui-inputtext {
-	width: 100%;
+	width: 100% !important;
 	/* height: 35px; */
 	font-size: large;
 	text-align: center;
 	color: black;
+}
+
+.ui-inputtextarea-resizable {
+	overflow: hidden;
+	resize: none;
+	width: 100% !important;
 }
 
 .ui-g label {
@@ -72,19 +78,28 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 }
 
 .ui-autocomplete-input.ui-autocomplete-dd-input {
-    padding-right: 2.4em;
-    width: 430px;
+	padding-right: 2.4em;
+	/*width: 430px;*/
 }
 </style>
 
 	</ui:define>
 	<ui:define name="content">
 		<h:form>
+
+
 			<p:outputPanel>
 				<div align="center">
 					<p:panel>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-lg-12">
+								<div align="center">
+									<p:outputLabel value="Guia de Consulta" styleClass="titulo" />
+								</div>
+							</div>
+						</div>
 						<!-- Botão Atestado -->
-						<p:commandButton value="Atestado"
+						<!-- <p:commandButton value="Atestado"
 							rendered="#{prontuarioBean.estado ne 'A'}"
 							style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important"
 							ajax="true" immediate="true" id="buttonAtestado"
@@ -103,7 +118,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								<p:commandButton value="Não" type="button"
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
-						</p:confirmDialog>
+						</p:confirmDialog> -->
 
 						<!-- Botão Guia de Consulta -->
 						<p:commandButton value="Guia Consulta"
@@ -126,17 +141,6 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
 						</p:confirmDialog>
-						<!-- Botão Nova -->
-						<p:commandButton value="Novo"
-							style="height:40px;width:130px; background-color: gray; background: gray; color:white !important"
-							rendered="#{prontuarioBean.estado eq 'C'}"
-							action="#{prontuarioBean.novo}" ajax="true" immediate="true"
-							id="buttonNovo" update="@form" icon="fa fa-plus" iconPos="right">
-
-							<p:confirm
-								message="Ao Clicar em sim um novo formulário de cadastro será criado, as informações atuais serão perdidas, senão salvas!"
-								icon="ui-icon-mail-closed" />
-						</p:commandButton>
 
 						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 							<div align="center">
@@ -148,25 +152,8 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							</div>
 						</p:confirmDialog>
 
-						<!-- Botão Salvar -->
-						<p:commandButton value="Salvar"
-							style="height:40px;width:130px; background-color: green; background: green; color:white !important"
-							rendered="#{prontuarioBean.estado eq 'C' and prontuarioBean.prontuarioModel.idProntuario == null}"
-							actionListener="#{prontuarioBean.saveNotReturn}" ajax="true"
-							partialSubmit="true" process="@this, @form" id="buttonSalvar"
-							immediate="false" update="@form" icon="fa fa-floppy-o fa"
-							iconPos="rigth">
-						</p:commandButton>
-
-						<util:botoesCrud managedBeanView="#{prontuarioBean}"
-							camposReload=":formTemplate:msg, @form" botaoNovo="false"
-							botaoSalvar="false"
-							botaoAtualizar="prontuarioBean.prontuarioModel.idProntuario != null}"
-							botaoRedirecionar="false" botaoExcluir="false">
-						</util:botoesCrud>
-
 						<!-- Botão Historico -->
-						<p:commandButton value="Histórico"
+						<!-- <p:commandButton value="Histórico"
 							rendered="#{prontuarioBean.estado ne 'H'}"
 							style="height:40px;width:130px; background-color: silver; background: silver; color:white !important"
 							ajax="true" immediate="true" id="buttonHistorico"
@@ -187,14 +174,14 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
 						</p:confirmDialog>
-						<!-- Botão Limpar -->
-						<p:commandButton value="Limpar"
+ -->						<!-- Botão Limpar -->
+	<!-- 					<p:commandButton value="Limpar"
 							style="height:40px;width:130px; background-color: saddlebrown; background: saddlebrown; color:white !important"
 							ajax="true" immediate="false" id="buttonLimpar"
 							icon="fa fa-info-circle" iconPos="right">
 						</p:commandButton>
 
-						<!-- Botão Encaminhamento -->
+						Botão Encaminhamento
 						<p:commandButton value="Encaminhamento"
 							rendered="#{prontuarioBean.estado ne 'E'}"
 							style="height:40px;width:170px; background-color: darkblue; background: darkblue; color:white !important"
@@ -216,7 +203,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
 							</div>
 						</p:confirmDialog>
-					</p:panel>
+ -->					</p:panel>
 				</div>
 			</p:outputPanel>
 
@@ -224,7 +211,8 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 			<br />
 
 			<!-- GUIA DE CONSULTA -->
-			<h:form rendered="#{prontuarioBean.estado eq 'C'}">
+			<h:form
+				rendered="#{prontuarioBean.estado eq 'C' and (prontuarioBean.prontuarioModel.paciente != null)}">
 				<ui:include src="/prontuario/guiaConsulta.xhtml" />
 			</h:form>
 

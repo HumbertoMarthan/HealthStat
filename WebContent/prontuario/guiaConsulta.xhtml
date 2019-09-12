@@ -5,72 +5,274 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:util="http://java.sun.com/jsf/composite/componentes">
 <body>
-	<div class="content">
-		<div align="center">
+	<div class="ui-lg-12">
 			<p:panel>
-				<div>
-					<div align="center">
-						<p:outputLabel value="Guia de Consulta" styleClass="titulo" />
-					</div>
-					
-				</div>
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-12" align="center">
-						<p:outputLabel value="Titulo:" rendered="false" />
-						<p:inputText id="nome" rendered="false"
-							value="#{prontuarioBean.prontuarioModel.nomePaciente}" />
-						<p:outputLabel value="Qual o nome do Paciente?"
-							style="text-align:center !important;" />
-						<br />
-						<p:autoComplete id="paciente"
-							completeMethod="#{auxController.completePaciente}"
-							forceSelection="true" converter="entityConverter" var="a"
-							itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
-							value="#{prontuarioBean.prontuarioModel.paciente}"
-							style="text-align:center"
-							minQueryLength="2" dropdown="true" maxResults="30"
-							required="true" requiredMessage="Informe um paciente">
-							<p:column id="p">
-								<h:outputText value="#{a.pessoa.pessoaNome}" />
-							</p:column>
-						</p:autoComplete>
-
-					</div>
-				</div>
-
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-12" align="center">
-						<p:outputLabel value="Qual o problema relatado pelo paciente?" />
-						<br/>
-						<p:inputTextarea title="Relato do paciente" autoResize="true"
-							rows="3" cols="50" maxlength="2000"
-							value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
-							required="true"
-							requiredMessage="Informe o problema relatado pelo paciente" />
-					</div>
-				</div>
-				<div class="ui-g">
-					<div class="ui-g-12 ui-lg-12" align="center">
-						<p:outputLabel
-							value="Qual o diagnóstico que irá apresentar para o Paciente?" />
+		<div class="ui-g">
+				<div class="ui-g-12 ui-lg-5 ui-sm-12">
+					<p:tabView>
+						<p:tab title="Paciente">
+							<div class="ui-g" align="center">
+								<div class="ui-g-12 ui-lg-12 ui-sm-12">
+									<p:outputLabel style="font-size:22px ; text-align:center"
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaNome.toUpperCase()}" />
+								</div>
+							</div>
 							<br/>
-						<p:inputTextarea title="Diagnóstico" autoResize="true" rows="3"
-							maxlength="2000" cols="50"
-							value="#{prontuarioBean.prontuarioModel.diagnostico}"
-							required="true" requiredMessage="Informe um dignóstico" />
-					</div>
+							<p:separator />
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+									<p:outputLabel value="Nascimento:" />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaDataNascimento}">
+										<f:convertDateTime pattern="dd/MM/yyyy"
+											timeZone="America_Sao_Paulo" locale="pt_BR" />
+									</p:outputLabel>
+								</div>
+								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+									<p:outputLabel value="Sexo:" />
+									<br />
+									<p:outputLabel
+										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaSexo eq 'M'}"
+										value="Masculino" />
+									<p:outputLabel
+										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaSexo eq 'F'}"
+										value="Feminino" />
+								</div>
+								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+									<p:outputLabel value="Altura:" />
+									<br />
+									<p:outputLabel value="Não Específ"
+										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaAltura == null}" />
+								</div>
+								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+									<p:outputLabel value="Peso:" />
+									<br />
+									<p:outputLabel value="Não Específ"
+										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaPeso == null}" />
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="Convênio: " />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.convenio.nomeConvenio}" />
+								</div>
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="RG: " />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaRG}" />
+								</div>
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="CPF: " />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaCPF}" />
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="Registro:  " />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaDataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy"
+											timeZone="America_Sao_Paulo" locale="pt_BR" />
+									</p:outputLabel>
+								</div>
 
-					<div class="ui-g-12 ui-lg-12" align="center">
-						<p:outputLabel
-							value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
-							<br/>
-						<p:inputTextarea title="Receita" autoResize="true" rows="3"
-							cols="50" maxlength="2000"
-							value="#{prontuarioBean.prontuarioModel.prescricao}"
-							required="true" requiredMessage="Informe uma prescrição" />
-					</div>
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="Contato 1:  " />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefonePrimario}">
+										<f:convertDateTime pattern="dd/MM/yyyy"
+											timeZone="America_Sao_Paulo" locale="pt_BR" />
+									</p:outputLabel>
+								</div>
+
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="Contato 2:  " />
+									<p:outputLabel value="Sem Registro"
+										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefoneSecundario == null}" />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefoneSecundario}">
+										<f:convertDateTime pattern="dd/MM/yyyy"
+											timeZone="America_Sao_Paulo" locale="pt_BR" />
+									</p:outputLabel>
+								</div>
+							</div>
+							<h4>Endereço</h4>
+							<p:separator />
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12 ui-sm-12">
+									<p:outputLabel value="Endereço" />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.logradouro}" />
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-8 ui-sm-12">
+									<p:outputLabel value="Bairro:" />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.bairro}" />
+								</div>
+								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+									<p:outputLabel value="Localidade:" />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.localidade}" />
+								</div>
+								<div class="ui-g-12 ui-lg-1 ui-sm-12">
+									<p:outputLabel value="UF:" />
+									<br />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.uf}" />
+								</div>
+							</div>
+						</p:tab>
+						<!-- <p:tab title="Histórico do Paciente na Clinica">
+						<div class="ui-g">
+							<p:panel style="border : 1; border-radius:10px">
+								<p:repeat value="#{prontuarioBean.lstDadosPaciente}" var="d">
+									<div class="ui-g-12 ui-lg-12 ">
+										<p:outputLabel value="Data da Consulta: "
+											style="font-weight: bold" />
+										<p:outputLabel value="#{d.dataConsulta}">
+											<f:convertDateTime pattern="dd/MM/yyyy"
+												timeZone="America_Sao_Paulo" locale="pt_BR" />
+										</p:outputLabel>
+									</div>
+									<br />
+									<div class="ui-g-12 ui-lg-12 ">
+										<p:outputLabel value="Motivo da Consulta: "
+											style="font-weight: bold" />
+										<br />
+										<p:outputLabel value="#{d.problemaPaciente}" />
+									</div>
+									<div class="ui-g-12 ui-lg-12 ">
+										<p:outputLabel value="Diagnóstico:" style="font-weight: bold" />
+										<br />
+										<p:outputLabel value="#{d.diagnostico}" />
+									</div>
+									<div class="ui-g-12 ui-lg-12 ">
+										<p:outputLabel value="Prescricão Médica:"
+											style="font-weight: bold" />
+										<br />
+										<p:outputLabel value="#{d.prescricao}" />
+									</div>
+								</p:repeat>
+							</p:panel>
+						</div>
+
+					</p:tab> -->
+					</p:tabView>
 				</div>
-				<div align="right">
+				<div class="ui-g-12 ui-lg-7 ui-sm-12 ui-md-12">
+					<p:tabView>
+						<p:tab title="Motivo da Consulta">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<p:outputLabel value="Qual o problema relatado pelo paciente?" />
+									<br />
+									<p:inputTextarea title="Relato do paciente" autoResize="true"
+										rows="17" cols="50" maxlength="2000"
+										value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
+										required="true"
+										requiredMessage="Informe o problema relatado pelo paciente" />
+								</div>
+							</div>
+						</p:tab>
+						<p:tab title="Diagnóstico">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<p:outputLabel
+										value="Qual o diagnóstico que irá apresentar para o Paciente?" />
+									<br />
+									<p:inputTextarea title="Diagnóstico" autoResize="true"
+										rows="17" maxlength="2000" cols="50"
+										value="#{prontuarioBean.prontuarioModel.diagnostico}"
+										required="true" requiredMessage="Informe um dignóstico" />
+								</div>
+							</div>
+						</p:tab>
+						<p:tab title="Medicamento">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<p:outputLabel
+										value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
+									<br />
+									<p:autoComplete id="medicamento"
+										completeMethod="#{auxController.completeMedicamento}"
+										forceSelection="true" converter="entityConverter" var="a"
+										itemLabel="#{a.nomeMedicamento}" itemValue="#{a}"
+										value="#{prontuarioBean.prontuarioModel.medicamento}"
+										style="text-align:center" minQueryLength="2" dropdown="true"
+										maxResults="30" required="true" size="60"
+										requiredMessage="Informe um medicamento">
+										<p:column>
+											<h:outputText value="#{a.nomeMedicamento}" />
+										</p:column>
+									</p:autoComplete>
+								</div>
+								<div class="ui-g-12 ui-lg-12">
+									<p:outputLabel value="Qual a Posologia?" />
+									<br />
+									<p:inputTextarea title="Posologia" autoResize="true" rows="4"
+										cols="40" maxlength="2000"
+										value="#{prontuarioBean.prontuarioModel.posologia}"
+										required="true" requiredMessage="Informe uma posologia" />
+								</div>
+							</div>
+
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<p:outputLabel
+										value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
+									<br />
+									<p:inputTextarea title="Receita" autoResize="true" rows="3"
+										cols="50" maxlength="2000"
+										value="#{prontuarioBean.prontuarioModel.prescricao}"
+										required="true" requiredMessage="Informe uma prescrição" />
+								</div>
+							</div>
+							<!-- Botão Salvar -->
+							<div class="ui-g" align="center">
+								<div class="ui-g-12 ui-lg-12">
+									<p:commandButton value="Salvar"
+										style="height:40px;width:130px; background-color: green; background: green; color:white !important"
+										rendered="#{prontuarioBean.estado eq 'C'}"
+										actionListener="#{prontuarioBean.saveNotReturn}" ajax="true"
+										partialSubmit="true" process="@this, @form" id="buttonSalvar"
+										immediate="false" update="@form" icon="fa fa-floppy-o fa"
+										iconPos="rigth">
+									</p:commandButton>
+
+									<util:botoesCrud managedBeanView="#{prontuarioBean}"
+										camposReload=":formTemplate:msg, @form" botaoNovo="false"
+										botaoSalvar="false"
+										botaoAtualizar="prontuarioBean.prontuarioModel.idProntuario != null}"
+										botaoRedirecionar="false" botaoExcluir="false">
+									</util:botoesCrud>
+								</div>
+							</div>
+						</p:tab>
+						<p:tab title="Atestado">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<ui:include src="/prontuario/atestado.xhtml" />
+								</div>
+							</div>
+						</p:tab>
+						<p:tab title="Encaminhamento">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12">
+									<ui:include src="/prontuario/encaminhamento.xhtml" />
+								</div>
+							</div>
+						</p:tab>
+					</p:tabView>
+					<div align="right">
 						<h:outputText value="Data da Consulta: "
 							style="color:#2e6e9e !important; font-weight: bold" />
 						<h:outputText pattern="dd/MM/yyyy HH:mm"
@@ -80,8 +282,10 @@
 								timeZone="America/Sao_Paulo" locale="pt_BR" />
 						</h:outputText>
 					</div>
-			</p:panel>
+				</div>
 		</div>
+			</p:panel>
 	</div>
+
 </body>
 </html>

@@ -40,6 +40,18 @@ public class Paciente implements EntityBase, Serializable {
 	
 	private String email;
 	
+	private String status = "P"; //Pendente & Finalizado
+	
+	private String ativo = "A"; //Pendente & Finalizado
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public Long getId() {
 		return idPaciente;
@@ -98,6 +110,14 @@ public class Paciente implements EntityBase, Serializable {
 
 	public void setConvenio(Convenio convenio) {
 		this.convenio = convenio;
+	}
+
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

@@ -6,11 +6,13 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,6 +21,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
+import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 
 /**
@@ -42,6 +45,16 @@ public class Prontuario implements EntityBase, Serializable {
 	@JoinColumn
 	private Paciente paciente;
 	
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Medico medico;
+	
+	private String status = "P"; //Pendente & Finalizado
+	
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "idMedicamento")
+	private Medicamento medicamento;
+	
 	@Column
 	private String nomePaciente;
 	
@@ -52,7 +65,10 @@ public class Prontuario implements EntityBase, Serializable {
 
 	/* Exame fisico */ //
 	private String exameFisico;
-
+	
+	@Column(length=2000)
+	private String posologia;
+	
 	/* Diagnostico do paciente feito pelo medico */
 	@Column(length=2000)
 	private String diagnostico;
@@ -168,5 +184,37 @@ public class Prontuario implements EntityBase, Serializable {
 
 	public void setAtestado(String atestado) {
 		this.atestado = atestado;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Medico getMedico() {
+		return medico;
+	}
+
+	public void setMedico(Medico medico) {
+		this.medico = medico;
+	}
+
+	public Medicamento getMedicamento() {
+		return medicamento;
+	}
+
+	public void setMedicamento(Medicamento medicamento) {
+		this.medicamento = medicamento;
+	}
+
+	public String getPosologia() {
+		return posologia;
+	}
+
+	public void setPosologia(String posologia) {
+		this.posologia = posologia;
 	}
 }

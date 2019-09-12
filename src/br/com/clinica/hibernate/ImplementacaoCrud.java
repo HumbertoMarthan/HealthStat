@@ -121,6 +121,25 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable {
 
 		return new Long("0");
 	}
+	
+	
+
+	@Transactional
+	public boolean setExecuteParam(String sql){
+		
+		try {
+			sessionFactory
+					.getCurrentSession()
+					.createSQLQuery(sql)
+					.executeUpdate();
+			
+			return true;
+        } catch (Exception e) {
+        	System.out.println("Erro:" + e.getMessage());
+        }		
+		
+		return false;
+	}
 
 	/**
 	 * Map recebe como parametro um sql puro

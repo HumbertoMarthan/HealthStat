@@ -111,6 +111,15 @@
 							<sec:ifAnyGranted roles="ATE ,ADMIN">
 								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"
 									icon="fa fa-money">
+									<p:submenu id="submenu_caixa" label="Caixa"
+										icon="fa fa-group">
+										<sec:ifAnyGranted roles="ATE ,ADMIN">
+											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"
+											action="#{caixaBean.redirecionarFindEntidade}" 
+												icon="fa fa-glass" />
+										</sec:ifAnyGranted>
+									</p:submenu>
+									
 									<p:submenu id="submenu_financeiro_pagar" label="Contas a Pagar"
 										icon="fa fa-group">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">

@@ -116,34 +116,61 @@ esti {
 
 	<ui:define name="content">
 		<h:form id="formAgendamento">
+			<p:tabView id="tabView">
+				<p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}" update="@form" />
+				<p:tab id="tabAgenda" title="Agendamento">
+					<div align="center">
+						<div align="center" style="width: 1200px">
+							<p:panel header="Agendamento de Consultas"
+								rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
+								<p:schedule value="#{scheduleBean.model}" showWeekends="false"
+									initialDate="#{scheduleBean.dataAtualSchedule}"
+									widgetVar="scheduleAgendamento" id="scheduleAgendamento"
+									allDaySlot="false" centerHeaderTemplate="true" timeZone="GMT-3"
+									locale="pt_BR" scrollTime="18:00" tooltip="true"
+									timeFormat="HH:mm" axisFormat="HH:mm" view="agendaWeek"
+									minTime="8:00" maxTime="20:00" aspectRatio="2.0">
 
-			<div align="center">
-				<div align="center" style="width: 1200px">
-					<p:panel header="Agendamento de Consultas"
-						rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
-						<p:schedule value="#{scheduleBean.model}" showWeekends="false"
-							initialDate="#{scheduleBean.dataAtualSchedule}"
-							widgetVar="scheduleAgendamento" id="scheduleAgendamento"
-							allDaySlot="false" centerHeaderTemplate="true" timeZone="GMT-3"
-							locale="pt_BR" scrollTime="18:00" tooltip="true"
-							timeFormat="HH:mm" axisFormat="HH:mm" view="agendaWeek"
-							minTime="8:00" maxTime="20:00" aspectRatio="2.0">
+									<!-- DATA SELECIONADA -->
+									<p:ajax event="dateSelect"
+										listener="#{scheduleBean.onDateSelect}"
+										update="#{p:component('formScheduleDialog')}"
+										oncomplete="PF('eventDialog').show();" />
 
-							<!-- DATA SELECIONADA -->
-							<p:ajax event="dateSelect"
-								listener="#{scheduleBean.onDateSelect}"
-								update="#{p:component('formScheduleDialog')}"
-								oncomplete="PF('eventDialog').show();" />
+									<!-- EVENTO SELECIONADO DO AGENDAMENTO -->
+									<p:ajax event="eventSelect"
+										listener="#{scheduleBean.onEventSelect}"
+										update="#{p:component('formScheduleDialog')}"
+										oncomplete="PF('eventDialog').show();" />
+								</p:schedule>
+							</p:panel>
+						</div>
+					</div>
+				</p:tab>
+				<p:tab title="Tabela de Preços">
+					<p:dataTable value="#{scheduleBean.lstPrecos}" var="d"
+						emptyMessage="Não Há Registros Lançados" id="table"
+						rows="10" paginator="true">
+						
+						<p:column headerText="Médico" style="font-size: medium">
+							<p:outputLabel value="#{d.pessoa.pessoaNome}" />
+						</p:column>
+						
+						<p:column headerText="Especialidade" style="font-size: medium;">
+							<p:outputLabel value="#{d.especialidades}" />
+						</p:column>
+						
+						<p:column headerText="Telefone" style="font-size: medium;">
+							<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
+						</p:column>
+						
+						<p:column headerText="Valor da Consulta" style="font-size: medium;">
+							<p:outputLabel value="#{d.valorConsulta}" />
+						</p:column>
 
-							<!-- EVENTO SELECIONADO DO AGENDAMENTO -->
-							<p:ajax event="eventSelect"
-								listener="#{scheduleBean.onEventSelect}"
-								update="#{p:component('formScheduleDialog')}"
-								oncomplete="PF('eventDialog').show();" />
-						</p:schedule>
-					</p:panel>
-				</div>
-			</div>
+					</p:dataTable>
+				</p:tab>
+			</p:tabView>
 
 		</h:form>
 
@@ -226,7 +253,8 @@ esti {
 						dropdown="true" maxResults="30" required="true" size="60"
 						requiredMessage="Informe um médico">
 						<p:column>
-							<h:outputText value="#{a.pessoa.pessoaNome.toUpperCase()}" />
+							<h:outputText
+								value="#{a.pessoa.pessoaNome.toUpperCase()} | #{a.especialidades}" />
 						</p:column>
 						<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
 							update="descricao" />
@@ -304,7 +332,7 @@ esti {
 								background: green; 
 								color:white !important;
 								font-size:large;"
-								update="avisosGrowl,formAgendamento:scheduleAgendamento,paciente, medico,dti, dtf"
+								update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf"
 								oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
 								actionListener="#{scheduleBean.salvar()}">
 							</p:commandButton>
@@ -317,7 +345,7 @@ esti {
 								background: red; 
 								color:white !important;
 								font-size:large;"
-								update="avisosGrowl,@form,formAgendamento:scheduleAgendamento">
+								update="avisosGrowl,@form,:formAgendamento:tabView:scheduleAgendamento">
 								<p:confirm
 									message="Confirmar Remoção do Agendamento Selecionado?"
 									icon="ui-icon-mail-closed" />

@@ -163,7 +163,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	public void pagarParcela() {
 		try {
-			ContasReceber conta =  (ContasReceber) contasReceberController.findById(ContasReceber.class, parcelaPagarModel.getContasReceber().getIdContasReceber());
+			ContasReceber conta = (ContasReceber) contasReceberController.findById(ContasReceber.class,
+					parcelaPagarModel.getContasReceber().getIdContasReceber());
 			// Muda a situação da parcela para paga
 			parcelaPagarModel.setSituacao("PA");
 			// Muda da
@@ -196,14 +197,20 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	 * Seta o valor do desconto na label ValorComDesconto
 	 */
 	public void fazerDesconto() {
-		System.out.println(" O Valor da Consulta " + contasReceberModel.getValorConsulta());
-		contasReceberModel.setValorComDesconto(contasReceberModel.getValorConsulta());
-		System.out.println(" O Valor do Desconto" + contasReceberModel.getValorDesconto());
-
-		Double total = contasReceberModel.getValorConsulta() - contasReceberModel.getValorDesconto();
-		System.out.println("TOTAL " + total);
-
-		contasReceberModel.setValorComDesconto(total);
+		try {
+			System.out.println(" O Valor da Consulta " + contasReceberModel.getValorConsulta());
+			contasReceberModel.setValorComDesconto(contasReceberModel.getValorConsulta());
+			System.out.println(" O Valor do Desconto" + contasReceberModel.getValorDesconto());
+			Double total = contasReceberModel.getValorConsulta() - (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
+			if (total < 0 || total > contasReceberModel.getValorComDesconto()) {
+				addMsg("Impossível atribuir um Desconto mair que o total da consulta");
+			}else {
+				System.out.println("TOTAL " + total);
+				contasReceberModel.setValorComDesconto(total);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void limpar() {
@@ -385,6 +392,14 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		// Passa o numero da parcela para a condição de quantas vezes parcelas
 		parcelas = idForma;
 	}
+	
+	public void fazerValorAvista() {
+
+			Double valorAvista = contasReceberModel.getValorComDesconto();
+			System.out.println("VALOR A VISTA: " + valorAvista);
+			contasReceberModel.setValorParcelado(valorAvista);
+	}
+
 
 	/**
 	 * Lanca as parcelas que o atendente selecionou

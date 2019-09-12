@@ -80,6 +80,11 @@
 	border-radius: 15px;
 }
 
+.ui-fluid .ui-autocomplete-multiple-container {
+    width: 100%;
+    height: 35px;
+}
+
 .ui-panel .ui-panel-title {
 	
 }
@@ -212,7 +217,9 @@
 											autoResize="true"
 											value="#{medicoBean.medicoModel.pessoa.pessoaObservacao}" />
 									</div>
-									<div class="ui-g-12 ui-lg-12">
+									<div class="ui-g-12 ui-lg-10">
+										<h:outputLabel 
+											value="Especialidade:" />
 										<p:autoComplete id="esp"
 											completeMethod="#{medicoBean.completeEspecialidade}"
 											multiple="true"
@@ -225,6 +232,12 @@
 												<h:outputText value="#{a.nomeEspecialidade}" />
 											</p:column>
 										</p:autoComplete>
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel 
+											value="Valor da Consulta:*" />
+										<p:inputNumber required="true" requiredMessage="Valor da Consulta" emptyValue="0" decimalPlaces="2" 
+											value="#{medicoBean.medicoModel.valorConsulta}" />
 									</div>
 								</div>
 								<p:separator />

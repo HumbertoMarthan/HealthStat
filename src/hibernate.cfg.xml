@@ -41,6 +41,7 @@
 		
 		<!-- Prontuário Médico  -->
 		<mapping class="br.com.clinica.model.prontuario.Prontuario" />
+		<mapping class="br.com.clinica.model.prontuario.Medicamento" />
 		
 		<!-- Agendamento  -->
 		<mapping class="br.com.clinica.model.cadastro.agendamento.Evento" />
@@ -55,7 +56,8 @@
 		<mapping class="br.com.clinica.model.financeiro.ContasPagar" />
 		<mapping class="br.com.clinica.model.financeiro.ParcelaPagar" />
 		<mapping class="br.com.clinica.model.financeiro.Caixa" />
-	
+		<mapping class="br.com.clinica.model.financeiro.CaixaMensal" />
+			
 		<listener class="org.hibernate.envers.event.AuditEventListener"
          type="post-insert"/>
 

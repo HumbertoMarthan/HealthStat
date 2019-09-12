@@ -12,6 +12,7 @@ import br.com.clinica.model.cadastro.outro.Convenio;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.financeiro.FormaPagamento;
+import br.com.clinica.model.prontuario.Medicamento;
 
 @RequestScoped
 @ManagedBean(name = "auxController")
@@ -34,6 +35,9 @@ public class AuxiliarController implements Serializable{
 	@ManagedProperty("#{convenioController}")
 	private ConvenioController convenioController;
 	
+	@ManagedProperty("#{medicamentoController}")
+	private MedicamentoController medicamentoController;
+	
 	@ManagedProperty("#{formaPagamentoController}")
 	private FormaPagamentoController formaPagamentoController;
 	
@@ -43,6 +47,11 @@ public class AuxiliarController implements Serializable{
 				findListByQueryDinamica(" from Convenio where nomeConvenio like '%" + q.toUpperCase()  + "%' order by nomeConvenio  ASC");
 	}
 	
+	public List<Medicamento>  completeMedicamento(String q) throws Exception {
+		return medicamentoController.
+				findListByQueryDinamica(" from Medicamento where nomeMedicamento like '%" + q.toUpperCase()  + "%' order by nomeMedicamento ASC");
+	}
+	
 	public List<FormaPagamento>  completeFormaPagamento(String q) throws Exception {
 		return formaPagamentoController.
 				findListByQueryDinamica(" from FormaPagamento where nomePagamento like '%" + q.toUpperCase()  + "%' order by nomePagamento  ASC");
@@ -50,17 +59,17 @@ public class AuxiliarController implements Serializable{
 	
 	public List<Paciente>  completePaciente(String q) throws Exception {
 		return pacienteController.
-				findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
+				findListByQueryDinamica(" from Paciente where ativo='A' and pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
 	}
 	
-	public List<Medico> completeMedico(String q) throws Exception {
+  	public List<Medico> completeMedico(String q) throws Exception {
 		return medicoController.
-				findListByQueryDinamica(" from Medico where pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
+				findListByQueryDinamica(" from Medico where  ativo='A' and pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC ");
 	}
 	
 	public List<Fornecedor> completeFornecedor(String q) throws Exception {
 		return fornecedorController.
-				findListByQueryDinamica(" from Fornecedor where nomeFornecedor like '%" + q.toUpperCase()  + "%' order by nomeFornecedor ASC");
+				findListByQueryDinamica(" from Fornecedor where nomeFornecedor and like '%" + q.toUpperCase()  + "%' order by nomeFornecedor ASC");
 	}
 	
 	public MedicoController getMedicoController() {
@@ -101,6 +110,14 @@ public class AuxiliarController implements Serializable{
 
 	public void setConvenioController(ConvenioController convenioController) {
 		this.convenioController = convenioController;
+	}
+
+	public MedicamentoController getMedicamentoController() {
+		return medicamentoController;
+	}
+
+	public void setMedicamentoController(MedicamentoController medicamentoController) {
+		this.medicamentoController = medicamentoController;
 	}
 	
 	/*public String getColorStatus(String sigla) {

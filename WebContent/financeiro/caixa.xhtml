@@ -29,7 +29,7 @@
 .ui-fluid .ui-inputtext {
 	width: 100%;
 	height: 35px;
-	font-size: large;
+	font-size: medium;
 	text-align: center;
 	color: black;
 }
@@ -95,57 +95,447 @@
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">
-						<div class="card card-w-title">
-							<br />
-							<p:panel>
+						<p:panel>
+							<div class="card card-w-title">
 								<br />
 								<div align="center">
-									<p:outputLabel value="Caixa" styleClass="titulo" />
+									<p:outputLabel value="Revisão(Caixa)" styleClass="titulo" />
 								</div>
 								<hr />
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-1">
-										<p:commandButton style="height:40px;width:130px; "
-											styleClass="btn btn-blue" icon="ui-icon-search"
-											actionListener="#{caixaBean.buscar}"
-											update="tableReceber" />
+									<div class="ui-g-12 ui-lg-2">
+										<p:outputLabel value="Data Inicial" />
+										<p:calendar value="#{caixaBean.campoDataInicio}" navigator="true" />
 									</div>
-
+									<div class="ui-g-12 ui-lg-2">
+										<p:outputLabel value="Data Fim" />
+										<p:calendar id="dtFim" value="#{caixaBean.campoDataFim}" navigator="true"/>
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+									<p:outputLabel value="Nome do Fornecedor" />
+										<p:inputText value="#{caixaBean.campoBuscaFornecedor}"  />
+									</div>
+									<div class="ui-g-12 ui-lg-2">
+										<p:outputLabel value="Nome do Paciente" />
+										<p:inputText value="#{caixaBean.campoBuscaPaciente}"  />
+									</div>
+									<div class="ui-g-12 ui-lg-1">
+										<p:outputLabel value=" " />
+										<br />
+										<p:commandButton styleClass="btn btn-blue"
+											icon="ui-icon-search" actionListener="#{caixaBean.busca}"
+											update="@form" />
+									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 										<p:dataTable value="#{caixaBean.lstCaixa}" var="d"
-										emptyMessage="Não há Pendências"
-											styleClass="table.gridtable" rowKey="#{d.idCaixa}"
-											selectionMode="single" id="tableReceber" paginator="true"
-											rows="8" selection="#{caixaBean.caixaModel}">
+											emptyMessage="Não há Pendências" styleClass="table.gridtable"
+											rowKey="#{d.idCaixa}" selectionMode="single"
+											id="tableReceber" paginator="true" rows="8"
+											selection="#{caixaBean.caixaModel}">
 
 											<p:ajax event="rowSelect" listener="#{caixaBean.onRowSelect}"
 												update="tableReceber , @form" />
 
-											<p:column headerText="Paciente" priority="1"
-												style="width:10%; text-align:center; font-size: large ">
-												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" style="color: blue;" />
-												<p:outputLabel value="#{d.fornecedor.nomeFornecedor}" style="color: red;" />
+											<p:column headerText="Lançamento" priority="2"
+												style="width:20%; text-align:center; font-size: small ">
+												<p:outputLabel value="#{d.dataLancamento}">
+													<f:convertDateTime timeZone="America/Sao_Paulo"
+														pattern="dd/MM/yyyy" />
+												</p:outputLabel>
 											</p:column>
-										
+
+											<p:column headerText="Paciente/Fornecedor" priority="1"
+												style="width:60%; text-align:left; font-size: small ">
+												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}"
+													style="color: blue;" />
+												<p:outputLabel value="#{d.fornecedor.nomeFornecedor}"
+													style="color: red;" />
+											</p:column>
+
 											<p:column headerText="Valor" priority="1"
-												style="width:10%; text-align:center; font-size: large ">
-												<p:outputLabel value="#{d.valorRetirado}" style="color:red;" />
-												<p:outputLabel value="#{d.valorInserido}" style="color:blue;"/>
+												style="width:20%; text-align:right; font-size: small ">
+												<p:outputLabel value="R$ " />
+												<p:outputLabel value="#{d.valorRetirado}" />
+												<p:outputLabel value="#{d.valorInserido}" />
 											</p:column>
 											
+											<p:column headerText="Tipo" priority="1"
+												style="width:20%; text-align:right; font-size: small ">
+												<p:outputLabel value="Recebimento" rendered="#{d.tipo eq 'CR'}" style="color: blue;" />
+												<p:outputLabel value="Pagamento" rendered="#{d.tipo eq 'CP'}" style="color: red;" />
+											</p:column>
+
 										</p:dataTable>
 									</div>
-
 								</div>
-							</p:panel>
-						</div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+										<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
+											reflow="true">
+											<f:facet name="header">
+												<p:outputLabel value="Receita" />
+											</f:facet>
+											<p:column headerText="Janeiro"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.janeiror}"
+													rendered="#{lst.janeiror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.janeiror} == null}" />
+											</p:column>
+
+											<p:column headerText="Fevereiro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.fevereiror}"
+													rendered="#{lst.fevereiror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.fevereiror == null}" />
+											</p:column>
+
+											<p:column headerText="Março" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.marcor}"
+													rendered="#{lst.marcor != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.marcor == null}" />
+											</p:column>
+
+											<p:column headerText="Abril" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.abrilr}"
+													rendered="#{lst.abrilr != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.abrilr == null}" />
+											</p:column>
+
+											<p:column headerText="Maio" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.maior}"
+													rendered="#{lst.maior != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.maior == null}" />
+											</p:column>
+											<p:column headerText="Junho" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.junhor}"
+													rendered="#{lst.junhor != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.junhor == null}" />
+											</p:column>
+											<p:column headerText="Julho" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.julhor}"
+													rendered="#{lst.julhor != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.julhor == null}" />
+											</p:column>
+											<p:column headerText="Agosto" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.agostor}"
+													rendered="#{lst.agostor != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.agostor == null}" />
+											</p:column>
+											<p:column headerText="Setembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.setembror}"
+													rendered="#{lst.setembror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.setembror == null}" />
+											</p:column>
+											<p:column headerText="Outubro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.outubror}"
+													rendered="#{lst.outubror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.outubror == null}" />
+											</p:column>
+											<p:column headerText="Novembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.novembror}"
+													rendered="#{lst.novembror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.novembror == null}" />
+											</p:column>
+											<p:column headerText="Dezembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.dezembror}"
+													rendered="#{lst.dezembror != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.dezembror == null}" />
+											</p:column>
+										</p:dataTable>
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-12 ui-sm-12">
+										<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
+											reflow="true">
+											<f:facet name="header">
+												<p:outputLabel value="Despesa" />
+											</f:facet>
+											<p:column headerText="Janeiro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.janeirop}"
+													rendered="#{lst.janeirop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.janeirop == null}" />
+											</p:column>
+
+											<p:column headerText="Fevereiro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.fevereirop}"
+													rendered="#{lst.fevereirop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.fevereirop == null}" />
+											</p:column>
+
+											<p:column headerText="Março" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.marcop}"
+													rendered="#{lst.marcop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.marcop == null}" />
+											</p:column>
+
+											<p:column headerText="Abril" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.abrilp}"
+													rendered="#{lst.abrilp != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.abrilp == null}" />
+											</p:column>
+
+											<p:column headerText="Maio" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.maiop}"
+													rendered="#{lst.maiop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.maiop == null}" />
+											</p:column>
+											<p:column headerText="Junho" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.junhop}"
+													rendered="#{lst.junhop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.junhop == null}" />
+											</p:column>
+											<p:column headerText="Julho" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.julhop}"
+													rendered="#{lst.julhop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.julhop == null}" />
+											</p:column>
+											<p:column headerText="Agosto" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.agostop}"
+													rendered="#{lst.agostop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.agostop == null}" />
+											</p:column>
+											<p:column headerText="Setembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.setembrop}"
+													rendered="#{lst.setembrop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.setembrop == null}" />
+											</p:column>
+											<p:column headerText="Outubro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.outubrop}"
+													rendered="#{lst.outubrop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.outubrop == null}" />
+											</p:column>
+											<p:column headerText="Novembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.novembrop}"
+													rendered="#{lst.novembrop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.novembrop == null}" />
+											</p:column>
+											<p:column headerText="Dezembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.dezembrop}"
+													rendered="#{lst.dezembrop != null}" />
+												<p:outputLabel value="Não Lançado" style="color: red"
+													rendered="#{lst.mediumP == null}" />
+											</p:column>
+										</p:dataTable>
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+										<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
+											reflow="true">
+											<f:facet name="header">
+												<p:outputLabel value="Balanço" />
+											</f:facet>
+											<p:column headerText="Janeiro"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldojaneiro}"
+													rendered="#{lst.saldojaneiro != null}" />
+											
+												<p:outputLabel value="R$ #{lst.janeiror}" style="color: blue"
+													rendered="#{lst.saldojaneiro == null and (lst.janeiror != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldojaneiro == null and (lst.janeiror == null )}" />
+												
+
+											</p:column>
+
+											<p:column headerText="Fevereiro" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldofevereiro}"
+													rendered="#{lst.saldofeveireiro != null}" />
+												
+												<p:outputLabel value="R$ #{lst.fevereiror}" style="color: blue"
+													rendered="#{lst.saldofevereiro == null and (lst.fevereiror != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldofevereiro == null and (lst.fevereiror == null )}" />
+														
+
+											</p:column>
+
+											<p:column headerText="Março" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldomarco}"
+													rendered="#{lst.saldomarco != null}" />
+												
+												<p:outputLabel value="R$ #{lst.marcor}" style="color: blue"
+													rendered="#{lst.saldomarco == null and (lst.marcor != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldomarco == null and (lst.marcor == null )}" />
+												
+
+											</p:column>
+
+											<p:column headerText="Abril" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.saldoabril}"
+													rendered="#{lst.saldoabril != null}" />
+												
+												<p:outputLabel value="R$ #{lst.abrilr}" style="color: blue"
+													rendered="#{lst.saldoabril == null and (lst.abrilr != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldoabril == null and (lst.abrilr == null )}" />
+											
+											</p:column>
+
+											<p:column headerText="Maio" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.saldomaio}"
+													rendered="#{lst.saldomaio != null}" />
+												
+												<p:outputLabel value="R$ #{lst.maior}" style="color: blue"
+													rendered="#{lst.saldomaio == null and (lst.maior != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldomaio == null and (lst.maior == null )}" />
+																									
+													
+											</p:column>
+											<p:column headerText="Junho" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldojunho}"
+													rendered="#{lst.saldojunho != null}" />
+												
+												 <p:outputLabel value="R$ #{lst.julhor}" style="color: blue"
+													rendered="#{lst.saldojunho == null and (lst.junhor != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldojunho == null and (lst.junhor == null )}" />
+												
+											</p:column>
+											<p:column headerText="Julho" priority="2"
+												style=" text-align:center; font-size: small ">
+
+												<p:outputLabel value="R$ #{lst.saldojulho}"
+													rendered="#{lst.saldojulho != null}" />
+													
+												<p:outputLabel value="R$ #{lst.julhor}" style="color: blue"
+													rendered="#{lst.saldojulho == null and (lst.julhor != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldojulho == null and (lst.julhor  == null )}" />
+											
+											
+											</p:column>
+											<p:column headerText="Agosto" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldoagosto}"
+													rendered="#{lst.saldoagosto != null}" />
+											
+												<p:outputLabel value="R$ #{lst.agostor}" style="color: blue"
+													rendered="#{lst.saldoagosto == null and (lst.agostor != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldoagosto == null and (lst.agostor  == null )}" />
+											
+											
+											</p:column>
+											<p:column headerText="Setembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldosetembro}"
+													rendered="#{lst.saldosetembro  != null}" />
+													
+												<p:outputLabel value="R$ #{lst.setembror}" style="color: green"
+													rendered="#{lst.saldosetembro == null and (lst.setembror != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldosetembro == null and (lst.setembror == null )}" />
+											</p:column>
+											<p:column headerText="Outubro" priority="2"
+												style=" text-align:center; font-size: small ">
+												
+												<p:outputLabel value="R$ #{lst.saldooutubro}"
+													rendered="#{lst.saldooutubro != null }" />
+												
+												<p:outputLabel value="R$ #{lst.outubror}" style="color: blue"
+													rendered="#{lst.saldooutubro == null and (lst.outubror != null )}" />
+												
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldooutubro == null and (lst.outubror == null )}" />
+											</p:column>
+											<p:column headerText="Novembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.saldonovembro}"
+													rendered="#{lst.saldonovembro != null}" />
+												<p:outputLabel value="R$ #{lst.novembror}" style="color: blue"
+													rendered="#{lst.saldonovembro == null and (lst.novembro != null )}" />
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldonovembro == null and (lst.novembro == null )}" />
+											</p:column>
+											<p:column headerText="Dezembro" priority="2"
+												style=" text-align:center; font-size: small ">
+												<p:outputLabel value="R$ #{lst.saldodezembro}"
+													rendered="#{lst.saldodezembro != null}" />
+												<p:outputLabel value="R$ #{lst.dezembror}" style="color: blue"
+													rendered="#{lst.saldodezembro == null and (lst.dezembro != null )}" />
+												<p:outputLabel value="Não Lançado" style="color: blue"
+													rendered="#{lst.saldodezembro == null and (lst.dezembro == null )}" />
+											</p:column>
+										</p:dataTable>
+									</div>
+								</div>
+							</div>
+						</p:panel>
 					</div>
 				</div>
 			</div>
-
 		</h:form>
 
 

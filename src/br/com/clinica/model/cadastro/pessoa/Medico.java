@@ -54,8 +54,13 @@ public class Medico  implements EntityBase ,Serializable {
 	@Column(name="numeroCrm")
 	private String numeroCrm;
 	
+	@Column(name="valorConsulta")
+	private Double valorConsulta;
+	
 	@Temporal(TemporalType.DATE)
 	private Date dataInscricaoCrm;
+	
+	private String ativo = "A";
 	
 	@ManyToMany(cascade = CascadeType.MERGE,  fetch = FetchType.EAGER)
 	@JoinTable(name="medico_especialidade",
@@ -64,6 +69,14 @@ public class Medico  implements EntityBase ,Serializable {
 	inverseJoinColumns={
 			@JoinColumn(name="especialidadeId",	referencedColumnName="idEspecialidade")}) 
 	private List<Especialidade>  especialidades = new ArrayList<>();
+	
+	public Medico(Long idMedico) {
+		this.idMedico = idMedico;
+	}
+
+	public Medico() {
+	}
+
 	
 	//GETTERS E SETTERS-------------------------
 	public Long getIdMedico() {
@@ -109,10 +122,25 @@ public class Medico  implements EntityBase ,Serializable {
 		this.numeroCrm = numeroCrm;
 	}
 	
+	public String getAtivo() {
+		return ativo;
+	}
+
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
+
+
+	public Double getValorConsulta() {
+		return valorConsulta;
+	}
+
+	public void setValorConsulta(Double valorConsulta) {
+		this.valorConsulta = valorConsulta;
+	}
+
 	// HASH CODE & EQUALS
-
-
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -137,6 +165,12 @@ public class Medico  implements EntityBase ,Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "especialidades=" + especialidades + ",";
+	}
+	
 
 	
 }

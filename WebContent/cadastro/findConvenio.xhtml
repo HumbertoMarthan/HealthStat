@@ -119,15 +119,12 @@
 							</div>
 						</div>
 					</div>
-					<p:commandButton immediate="true" actionListener="#{convenioBean.gerarRelatorio}" >
-					  
-						<h:graphicImage library="img" name="pdf.png" />
-					</p:commandButton>
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{convenioBean.lstConvenio}" var="d"
+							emptyMessage="Não há dados"
 							styleClass="table.gridtable" rowKey="#{d.idConvenio}"
 							selectionMode="single" id="table" rows="10" paginator="true"
 							selection="#{convenioBean.convenioModel}">
@@ -137,21 +134,19 @@
 
 							<p:column headerText="Convênio" priority="1"
 								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.nomeConvenio} 
+								<p:outputLabel value="#{d.nomeConvenio}" /> 
 							</p:column>
 
 							<p:column headerText="Endereço" priority="5"
 								style="overflow: hidden;text-align: left; font-size: medium">
-								<a>#{d.logradouro} <br />
-								</a>
+								<p:outputLabel value="#{d.logradouro}"  /> <br />
 							</p:column>
 							<p:column headerText="Telefone" priority="5"
 								style="overflow: hidden;text-align: left; font-size: medium">
-								<a>#{d.telefone} <br />
-								</a>
+								<p:outputLabel value="#{d.telefone}" /> <br />
 							</p:column>
 
-							<p:column style="width:50px" priority="4">
+<!-- 							<p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
 									<p:commandLink action="#{convenioBean.excluir}" update="table"
@@ -162,7 +157,7 @@
 									</p:commandLink>
 								</center>
 							</p:column>
-						</p:dataTable>
+ -->						</p:dataTable>
 					</div>
 				</p:panel>
 			</div>

@@ -50,6 +50,9 @@ public class Fornecedor  implements EntityBase,Serializable {
 	
 	@Column(name = "nomeFantasia")
 	private String nomeFantasia;
+	
+	@Column(name = "ativo")
+	private String ativo = "A";
 
 	@Column(name = "telefone")
 	private String telefone;
@@ -178,6 +181,12 @@ public class Fornecedor  implements EntityBase,Serializable {
 		this.localidade = localidade;
 	}
 	
-	
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
 	
 }

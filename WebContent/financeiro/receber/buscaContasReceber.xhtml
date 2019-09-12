@@ -19,20 +19,9 @@
 									style="height:40px; ">
 								</p:inputText>
 							</div>
-							<div class="ui-g-12 ui-lg-4" align="center">
-								<p:selectOneRadio
-									value="#{contasReceberBean.campoBuscaTipoConta}">
-									<f:selectItem itemLabel="Pendente" itemValue="P" />
-									<f:selectItem itemLabel="Pago" itemValue="PA" />
-									<f:selectItem itemLabel="Lançado" itemValue="L" />
-									<p:ajax event="change" update="table"
-										listener="#{contasReceberBean.busca}" />
-								</p:selectOneRadio>
-							</div>
-
 
 							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;width:130px; "
+								<p:commandButton style="height:40px; "
 									styleClass="btn btn-blue" icon="ui-icon-search"
 									id="btnBuscatxt" actionListener="#{contasReceberBean.busca}"
 									update=" inputNome,table" />

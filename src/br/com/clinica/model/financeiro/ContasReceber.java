@@ -56,7 +56,9 @@ public class ContasReceber implements EntityBase, Serializable {
 	private Double valorComDesconto;
 
 	private Double valorDesconto;
-
+	
+	private Double valorEntrada;
+	
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "idFormaPagamento")
 	private FormaPagamento formaPagamento;
@@ -211,6 +213,14 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	public void setDataFimAgendamento(Date dataFimAgendamento) {
 		this.dataFimAgendamento = dataFimAgendamento;
+	}
+
+	public Double getValorEntrada() {
+		return valorEntrada;
+	}
+
+	public void setValorEntrada(Double valorEntrada) {
+		this.valorEntrada = valorEntrada;
 	}
 
 	

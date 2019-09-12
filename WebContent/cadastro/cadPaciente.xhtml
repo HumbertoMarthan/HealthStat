@@ -123,7 +123,7 @@
 										rendered="#{pacienteBean.pacienteModel.idPaciente == null}"
 										actionListener="#{pacienteBean.saveNotReturn}" ajax="true"
 										partialSubmit="true" process="@this, @form" id="buttonSalvar"
-										immediate="false" update="panel" icon="fa fa-floppy-o fa"
+										immediate="false" update="@form" icon="fa fa-floppy-o fa"
 										iconPos="rigth">
 									</p:commandButton>
 

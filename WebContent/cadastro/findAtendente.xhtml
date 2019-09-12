@@ -11,9 +11,24 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: large;
+	font-size: medium;
 	color: black;
 	font-weight: bold
+}
+
+.ui-selectoneradio label {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 16px 0 8px;
+    vertical-align: middle;
+    /*color: #2e6e9e !important;*/
+    font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #c5dbec;
+    font-weight: bold;
+    color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -50,7 +65,22 @@
 	height: 33px;
 	font-size: 20px;
 	text-align: center;
-	color: black;
+	
+}
+
+.ui-selectoneradio label {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 16px 0 8px;
+    vertical-align: middle;
+    /*color: #2e6e9e !important;*/
+    font-size: medium;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #c5dbec;
+    background: #dfeffc url(/clinica/javax.faces.resource/images/ui-bg_glass_85_dfeffc_1x400.png.xhtml?ln=primefaces-redmond) 50% 50% repeat-x;
+    font-weight: bold;
+    color: black;
 }
 
 }
@@ -84,8 +114,7 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{atendenteBean.novo}" rendered="true"
-										immediate="true" icon="fa fa-plus" iconPos="right" />
+										action="#{atendenteBean.novo}" rendered="true"/>
 								</div>
 								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
@@ -95,15 +124,14 @@
 										   font-size:large;"
 										immediate="true" action="#{atendenteBean.edita}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }"
-										icon=" fa fa-pencil" iconPos="right">
+										rendered="#{atendenteBean.atendenteModel.idAtendente > 0}">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{atendenteBean.atendenteModel}" />
 									</p:commandButton>
 								</div>
 								<div class="ui-g-12 ui-lg-2">
-									<p:commandButton id="botaoInativar" value="Desativar"
+									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
 										   color:white !important;
@@ -115,7 +143,8 @@
 										</p:commandButton>
 								</div>
 								<div class="ui-g-12 ui-lg-3">
-									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}">
+									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}" 
+									style="padding-left: 10% !important">
 										<f:selectItem itemLabel="Todos" itemValue="T" />
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
 										<f:selectItem itemLabel="Inativo" itemValue="I" />
@@ -132,7 +161,7 @@
 								</p:inputText>
 							</div>
 
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ">
 								<p:inputText value="#{atendenteBean.campoBuscaCPF}"
 									placeholder="Buscar pelo CPF" id="inputCPF"
 									style="height:40px; ">
@@ -140,8 +169,8 @@
 								</p:inputText>
 							</div>
 							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;width:130px; "
-									styleClass="btn btn-blue" icon="ui-icon-search"
+								<p:commandButton style="height:40px;"
+									 icon="ui-icon-search"
 									id="btnBuscatxt" actionListener="#{atendenteBean.busca}"
 									update=" inputNome,inputCPF,table" />
 								<p:defaultCommand target="btnBuscatxt" />
@@ -160,12 +189,6 @@
 
 							<p:ajax event="rowSelect" listener="#{atendenteBean.onRowSelect}"
 								update="table,:form:botoes" />
-
-
-							<p:column headerText="Matricula" priority="1"
-								style="overflow: hidden;text-align: center; font-size: large; width: 90px">
-								<p:outputLabel value="#{d.idAtendente}" /> 
-							</p:column>
 
 							<p:column headerText="Atendente" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
@@ -189,7 +212,6 @@
 									style="color : green" />
 								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
 									style="color : red" />
-
 							</p:column>
 
 							<!-- <p:column style="width:10%" priority="4">
