@@ -18,6 +18,7 @@ import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import br.com.clinica.model.cadastro.estoque.Material;
 
 /**
  * @author Humberto
@@ -58,6 +59,12 @@ public class ContasPagar implements EntityBase, Serializable {
 	@ManyToOne
 	@JoinColumn(name = "idFornecedor")
 	private Fornecedor fornecedor;
+
+	@ManyToOne
+	@JoinColumn(name = "idMaterial")
+	private Material material;
+	
+	private Integer quantidade;
 	
 	public Long getIdContasPagar() {
 		return idContasPagar;
@@ -128,6 +135,22 @@ public class ContasPagar implements EntityBase, Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
 	}
 
 	@Override

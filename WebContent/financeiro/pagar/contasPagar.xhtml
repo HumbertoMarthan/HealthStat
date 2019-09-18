@@ -143,7 +143,7 @@
 									<div class="ui-g-12 ui-lg-3">
 										<h:outputLabel value="Fornecedor:*" />
 										<p:autoComplete id="fornecedor"
-											completeMethod="#{auxController.completeFornecedor}"
+											completeMethod="#{contasPagarBean.completeFornecedor}"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomeFornecedor}" itemValue="#{a}"
 											value="#{contasPagarBean.contasPagarModel.fornecedor}"
@@ -153,6 +153,7 @@
 											<p:column id="p">
 												<h:outputText value="#{a.nomeFornecedor}" />
 											</p:column>
+											<p:ajax event="change" listener="#{contasPagarBean.selecionaFornecedor(a.idFornecedor)}" />
 										</p:autoComplete>
 
 									</div>

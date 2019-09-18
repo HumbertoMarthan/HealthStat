@@ -36,6 +36,8 @@ public class ParcelaPagar implements EntityBase, Serializable {
 
 	private int numeroParcela;
 	
+	private Double pagamentoEspecial;
+	
 	@ManyToOne
 	@JoinColumn(name = "idContasReceber")
 	private ContasReceber contasReceber;
@@ -147,5 +149,13 @@ public class ParcelaPagar implements EntityBase, Serializable {
 		} else if (!idParcela.equals(other.idParcela))
 			return false;
 		return true;
+	}
+
+	public Double getPagamentoEspecial() {
+		return pagamentoEspecial;
+	}
+
+	public void setPagamentoEspecial(Double pagamentoEspecial) {
+		this.pagamentoEspecial = pagamentoEspecial;
 	}
 }

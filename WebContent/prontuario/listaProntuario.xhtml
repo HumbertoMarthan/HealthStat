@@ -143,6 +143,7 @@
 							<div class="ui-g">
 								<br />
 								<p:dataTable value="#{prontuarioBean.listaProntuario}" var="d"
+									emptyMessage="Não há registros"
 									rowKey="#{d.idProntuario}" selectionMode="single" id="tablea"
 									selection="#{prontuarioBean.prontuarioModel}">
 

@@ -50,6 +50,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	private String url = "/cadastro/cadPaciente.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findPaciente.jsf?faces-redirect=true";
 	private String campoBuscaNome;
+	private String campoBuscaAtivo = "A";
 	private String campoBuscaCPF;
 	private int idade = 20;
 
@@ -82,9 +83,42 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
+		
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+		}
 		lstPaciente = pacienteController.findListByQueryDinamica(str.toString());
 
 	}
+	
+	public void inativar() {
+
+		if (pacienteModel.getAtivo().equals("I")) {
+			pacienteModel.setAtivo("A");
+		} else {
+			pacienteModel.setAtivo("I");
+		}
+
+		try {
+			pacienteController.saveOrUpdate(pacienteModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
+		this.pacienteModel = new Paciente();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
+	}
+
 
 	public void buscaAcompanhante() throws Exception {
 		StringBuilder str = new StringBuilder();
@@ -409,5 +443,13 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	public void setIdade(int idade) {
 		this.idade = idade;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
 }

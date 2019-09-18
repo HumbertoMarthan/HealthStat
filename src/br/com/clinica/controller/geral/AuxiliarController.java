@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.outro.Convenio;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
@@ -31,6 +32,9 @@ public class AuxiliarController implements Serializable{
 	
 	@ManagedProperty("#{fornecedorController}")
 	private FornecedorController fornecedorController;
+	
+	@ManagedProperty("#{materialController}")
+	private MaterialController materialController;
 	
 	@ManagedProperty("#{convenioController}")
 	private ConvenioController convenioController;
@@ -69,7 +73,7 @@ public class AuxiliarController implements Serializable{
 	
 	public List<Fornecedor> completeFornecedor(String q) throws Exception {
 		return fornecedorController.
-				findListByQueryDinamica(" from Fornecedor where nomeFornecedor and like '%" + q.toUpperCase()  + "%' order by nomeFornecedor ASC");
+				findListByQueryDinamica(" from Fornecedor where ativo='A' and nomeFornecedor like '%" + q.toUpperCase()  + "%' order by nomeFornecedor ASC");
 	}
 	
 	public MedicoController getMedicoController() {
@@ -118,6 +122,14 @@ public class AuxiliarController implements Serializable{
 
 	public void setMedicamentoController(MedicamentoController medicamentoController) {
 		this.medicamentoController = medicamentoController;
+	}
+
+	public MaterialController getMaterialController() {
+		return materialController;
+	}
+
+	public void setMaterialController(MaterialController materialController) {
+		this.materialController = materialController;
 	}
 	
 	/*public String getColorStatus(String sigla) {

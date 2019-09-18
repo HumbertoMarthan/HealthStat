@@ -223,6 +223,4 @@ public class ContasReceber implements EntityBase, Serializable {
 		this.valorEntrada = valorEntrada;
 	}
 
-	
-	
 }

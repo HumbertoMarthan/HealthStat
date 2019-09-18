@@ -14,7 +14,11 @@ import org.springframework.stereotype.Controller;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.ContasPagarController;
+import br.com.clinica.controller.geral.FornecedorController;
+import br.com.clinica.controller.geral.MaterialController;
 import br.com.clinica.hibernate.InterfaceCrud;
+import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasPagar;
 
@@ -32,11 +36,20 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private List<ContasPagar> lstContasPagar;
 	private String campoBuscaFornecedor = "";
 	private String campoBuscaStatus = "P";
+	private String tipoConta = "";
+	private Fornecedor fornecedorSelecionado;
+	
 	@Autowired
 	private ContasPagarController contasPagarController;
 
 	@Autowired
 	private CaixaController caixaController;
+
+	@Autowired
+	private MaterialController materialController;
+	
+	@Autowired
+	private FornecedorController fornecedorController;
 
 	public ContasPagarBean() {
 		contasPagarModel = new ContasPagar();
@@ -58,12 +71,35 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		if (!campoBuscaStatus.equals("")) {
 			str.append(" and a.status = '" + campoBuscaStatus.toUpperCase() + "'");
 		}
-		System.out.println("pESQUISA...........>>> "+campoBuscaFornecedor);
+		System.out.println("PESQUISA...........>>> " + campoBuscaFornecedor);
 		if (!campoBuscaFornecedor.equals("")) {
 			str.append(" and a.fornecedor.nomeFornecedor = '" + campoBuscaFornecedor.toUpperCase() + "'");
 		}
-		
+
 		lstContasPagar = contasPagarController.findListByQueryDinamica(str.toString());
+	}
+
+	public void selecionaFornecedor(Long cod) {
+		fornecedorSelecionado = new Fornecedor();
+		fornecedorSelecionado.setIdFornecedor(cod);
+	}
+
+	public List<Material> completeMaterial(String q) throws Exception {
+		try {
+		return materialController.findListByQueryDinamica(" from Material where ativo='A' and nomeMaterial like '%"
+				+ q.toUpperCase() + "%' and fornecedor.idFornecedor =  " + fornecedorSelecionado.getIdFornecedor() +"order by nomeMaterial ASC");
+		}catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+		}
+		return materialController.findListByQueryDinamica(" from Material where ativo='A' and nomeMaterial like '%"
+				+ q.toUpperCase() + "%' order by nomeMaterial ASC");
+		}
+
+	public List<Fornecedor> completeFornecedor(String q) throws Exception {
+		contasPagarModel.setMaterial(new Material());
+		return fornecedorController
+				.findListByQueryDinamica(" from Fornecedor where ativo='A' and nomeFornecedor like '%" + q.toUpperCase() + "%' order by nomeFornecedor ASC");
 	}
 
 	@Override
@@ -246,6 +282,38 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void setCampoBuscaFornecedor(String campoBuscaFornecedor) {
 		this.campoBuscaFornecedor = campoBuscaFornecedor;
+	}
+
+	public String getTipoConta() {
+		return tipoConta;
+	}
+
+	public void setTipoConta(String tipoConta) {
+		this.tipoConta = tipoConta;
+	}
+
+	public Fornecedor getFornecedorSelecionado() {
+		return fornecedorSelecionado;
+	}
+
+	public void setFornecedorSelecionado(Fornecedor fornecedorSelecionado) {
+		this.fornecedorSelecionado = fornecedorSelecionado;
+	}
+
+	public FornecedorController getFornecedorController() {
+		return fornecedorController;
+	}
+
+	public void setFornecedorController(FornecedorController fornecedorController) {
+		this.fornecedorController = fornecedorController;
+	}
+
+	public MaterialController getMaterialController() {
+		return materialController;
+	}
+
+	public void setMaterialController(MaterialController materialController) {
+		this.materialController = materialController;
 	}
 
 	public void setCaixaController(CaixaController caixaController) {

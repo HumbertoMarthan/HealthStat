@@ -37,6 +37,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private String urlFind = "/financeiro/receber/receberConsulta.jsf?faces-redirect=true";
 	private List<ContasReceber> lstContasReceber;
 	private List<ParcelaPagar> lstParcelaPagar;
+	private List<ParcelaPagar> lstParcelaPersonalizada;
+	private List<ParcelaPagar> lstContaParcela;
 	private List<ParcelaPagar> lstParcelaPagarPendentes;
 	private String campoBuscaContasReceber = "";
 	private String campoBuscaTipoConta = "P";
@@ -112,7 +114,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
 			str.append(
-					"select idparcela, acrescimodesconto, situacao, valorbruto, numeroparcela, valordesconto, datapagamento, datavencimento,"
+					"select idparcela, acrescimodesconto, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
 							+ " idcontasreceber from parcelapagar   where 1=1 and idcontasreceber = "
 							+ contasReceberModel.getIdContasReceber());
 
@@ -124,6 +126,110 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			System.out.println("LISTA COM 0");
 			e.printStackTrace();
 		}
+	}
+	
+	public void pagamentoPersonalizado() {
+		ParcelaPagar pAtual = parcelaPagarModel;
+		Long conta = parcelaPagarModel.getContasReceber().getIdContasReceber();
+		// select a conta pelo id do parcelapagar
+		try {
+			lstContaParcela = parcelaPagarController
+					.findListByQueryDinamica("from ParcelaPagar where contasReceber.idContasReceber = " + conta);
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar Parcelas pagamento persolinado ");
+			e.printStackTrace();
+		}
+		ParcelaPagar p1 = new ParcelaPagar();
+		ParcelaPagar p2 = new ParcelaPagar();
+		ParcelaPagar p3 = new ParcelaPagar();
+		Double somando = 0.0;
+		try {
+			if (lstContaParcela.get(0) != null) {
+				p1 = lstContaParcela.get(0);
+				somando += lstContaParcela.get(0).getValorBruto();
+			}
+			if (lstContaParcela.get(1) != null) {
+				p2 = lstContaParcela.get(1);
+				somando += lstContaParcela.get(1).getValorBruto();
+			}
+			if (lstContaParcela.get(2) != null) {
+				p3 = lstContaParcela.get(2);
+				somando += lstContaParcela.get(2).getValorBruto();
+			}
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+		}
+		Double totalRestante = pAtual.getPagamentoEspecial();
+
+		if (totalRestante <= somando) {
+			if (totalRestante > p1.getValorBruto() && totalRestante != 0.0) {
+				try {
+					totalRestante = somando - totalRestante;
+					p1.setDataPagamento(new Date());
+					p1.setSituacao("PA");
+				} catch (Exception e) {
+					e.printStackTrace();
+					e.getMessage();
+				}
+				try {
+					parcelaPagarController.merge(p1);
+				} catch (Exception e) {
+					e.getMessage();
+					e.printStackTrace();
+				}
+			}
+			if (totalRestante != 0.0 && p2 != null) {
+				try {
+					if (totalRestante > p2.getValorBruto() || totalRestante < p2.getValorBruto() ) {
+						totalRestante = somando - totalRestante;
+						p2.setDataPagamento(new Date());
+						p2.setSituacao("PA");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					e.getMessage();
+				}
+				try {
+					parcelaPagarController.merge(p2);
+				} catch (Exception e) {
+					e.getMessage();
+					e.printStackTrace();
+				}
+			}
+			if (totalRestante != 0.0 && p3 != null) {
+				try {
+					if (totalRestante > p3.getValorBruto()) {
+						
+						totalRestante = somando - totalRestante;
+						p3.setDataPagamento(new Date());
+						p3.setSituacao("PA");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					e.getMessage();
+				}
+				try {
+					parcelaPagarController.merge(p3);
+				} catch (Exception e) {
+					e.getMessage();
+					e.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				addMsg("Valor que está sendo pago é maior que o total da consulta devida!");
+			} catch (Exception e) {
+				e.getMessage();
+				e.printStackTrace();
+			}
+		}
+
+		// parcela 2 tbm
+		// troca o status da conta para PA
+		// seta a datapagamento para hora atual
+		// se as parcelas da lista com o id da conta corrente for PA
+		// troca o status da conta para PA
 	}
 
 	/**
@@ -201,10 +307,11 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			System.out.println(" O Valor da Consulta " + contasReceberModel.getValorConsulta());
 			contasReceberModel.setValorComDesconto(contasReceberModel.getValorConsulta());
 			System.out.println(" O Valor do Desconto" + contasReceberModel.getValorDesconto());
-			Double total = contasReceberModel.getValorConsulta() - (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
+			Double total = contasReceberModel.getValorConsulta()
+					- (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
 			if (total < 0 || total > contasReceberModel.getValorComDesconto()) {
 				addMsg("Impossível atribuir um Desconto mair que o total da consulta");
-			}else {
+			} else {
 				System.out.println("TOTAL " + total);
 				contasReceberModel.setValorComDesconto(total);
 			}
@@ -277,10 +384,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				}
 				// select nas parcelas que são dessa conta e a situacao seja diferente de paga
 				// deletar parcelas que estão pendentes
-				parcelaPagarController.getListSQLDinamica("delete from parcelapagar where idcontasreceber = "
+				parcelaPagarController.setExecuteParam("delete from parcelapagar where idcontasreceber = "
 						+ contasReceberModel.getIdContasReceber() + " and situacao = 'P' ");
-			} else {
-
 			}
 		} catch (Exception e) {
 
@@ -366,40 +471,44 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	// gera valor das parcelas
 	public void fazerParcelas(Long idForma) {
+		try {
+			if (idForma == 1) {
+				System.out.println("ENTROU 1");
+				Double valorParcela = contasReceberModel.getValorComDesconto();
+				contasReceberModel.setValorParcelado(valorParcela);
+				System.out.println("VALOR DA PARCELA POR 1" + valorParcela);
+			}
 
-		if (idForma == 1) {
-			System.out.println("ENTROU 1");
-			Double valorParcela = contasReceberModel.getValorComDesconto();
-			contasReceberModel.setValorParcelado(valorParcela);
-			System.out.println("VALOR DA PARCELA POR 1" + valorParcela);
-		}
-
-		if (idForma == 2) {
-			System.out.println("ENTROU 2");
-			Double valorParcela = contasReceberModel.getValorComDesconto();
-			valorParcela = valorParcela / 2;
-			System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
-			contasReceberModel.setValorParcelado(valorParcela);
-		}
-		if (idForma == 3) {
-			System.out.println("ENTROU 3");
-			Double valorParcela = contasReceberModel.getValorComDesconto();
-			valorParcela = valorParcela / 3;
-			System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
-			contasReceberModel.setValorParcelado(valorParcela);
+			if (idForma == 2) {
+				System.out.println("ENTROU 2");
+				Double valorParcela = contasReceberModel.getValorComDesconto();
+				valorParcela = valorParcela / 2;
+				System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
+				contasReceberModel.setValorParcelado(valorParcela);
+			}
+			if (idForma == 3) {
+				System.out.println("ENTROU 3");
+				Double valorParcela = contasReceberModel.getValorComDesconto();
+				valorParcela = valorParcela / 3;
+				System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
+				contasReceberModel.setValorParcelado(valorParcela);
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao gerar numero e valor de parcelas");
+			e.getMessage();
+			e.printStackTrace();
 		}
 
 		// Passa o numero da parcela para a condição de quantas vezes parcelas
 		parcelas = idForma;
 	}
-	
+
 	public void fazerValorAvista() {
 
-			Double valorAvista = contasReceberModel.getValorComDesconto();
-			System.out.println("VALOR A VISTA: " + valorAvista);
-			contasReceberModel.setValorParcelado(valorAvista);
+		Double valorAvista = contasReceberModel.getValorComDesconto();
+		System.out.println("VALOR A VISTA: " + valorAvista);
+		contasReceberModel.setValorParcelado(valorAvista);
 	}
-
 
 	/**
 	 * Lanca as parcelas que o atendente selecionou
@@ -555,11 +664,19 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 
 		try {
+			
 			fazerPagamento();
 			busca();
 			buscaParcelas();
 		} catch (Exception e) {
 			System.out.println("Erro ao salvar parcelas!");
+			e.printStackTrace();
+		}
+
+		try {
+			addMsg("Operação Realizada Com Sucesso!");
+		} catch (Exception e) {
+			e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -777,6 +894,22 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	public void setCaixaController(CaixaController caixaController) {
 		this.caixaController = caixaController;
+	}
+
+	public List<ParcelaPagar> getLstContaParcela() {
+		return lstContaParcela;
+	}
+
+	public void setLstContaParcela(List<ParcelaPagar> lstContaParcela) {
+		this.lstContaParcela = lstContaParcela;
+	}
+
+	public List<ParcelaPagar> getLstParcelaPersonalizada() {
+		return lstParcelaPersonalizada;
+	}
+
+	public void setLstParcelaPersonalizada(List<ParcelaPagar> lstParcelaPersonalizada) {
+		this.lstParcelaPersonalizada = lstParcelaPersonalizada;
 	}
 
 }

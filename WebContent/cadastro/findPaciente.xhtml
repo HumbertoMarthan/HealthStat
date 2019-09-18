@@ -41,10 +41,11 @@
 }
 
 .ui-fluid .ui-inputtext {
-	width: 100%;
-	height: 35px;
-	font-size: large;
-	color: black;
+    width: 100%;
+    height: 35px;
+    font-size: large;
+    text-align: center;
+    color: black;
 }
 
 .ui-fluid .ui-inputtextarea {
@@ -131,12 +132,12 @@
 							</h:panelGroup>
 							<div class="ui-g-12 ui-lg-3" align="center">
 								<p:selectOneRadio styleClass="corOne"
-									value="#{contasReceberBean.campoBuscaTipoConta}">
-									<f:selectItem itemLabel="Pendente" itemValue="P" />
-									<f:selectItem itemLabel="Pago" itemValue="PA" />
-									<f:selectItem itemLabel="Lançado" itemValue="L" />
+									value="#{pacienteBean.campoBuscaAtivo}">
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<f:selectItem itemLabel="Ativo" itemValue="A" />
+									<f:selectItem itemLabel="Inativo" itemValue="I" />
 									<p:ajax event="change" update="table"
-										listener="#{contasReceberBean.busca}" />
+										listener="#{pacienteBean.busca}" />
 								</p:selectOneRadio>
 							</div>
 							<div class="ui-g-12 ui-lg-2">
@@ -168,6 +169,7 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{pacienteBean.lstPaciente}" var="d"
+						emptyMessage="Não há registros"
 							rowKey="#{d.idPaciente}" selectionMode="single" id="table"
 							selection="#{pacienteBean.pacienteModel}">
 
