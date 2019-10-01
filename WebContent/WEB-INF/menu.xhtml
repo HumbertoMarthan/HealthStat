@@ -90,11 +90,10 @@
 								icon="fa fa-refresh">
 								<p:submenu id="submenu_estoque" label="Estoque"
 									icon="fa fa-archive">
-									<sec:ifAnyGranted roles="ADMIN">
+									<sec:ifAnyGranted roles="EST, ADMIN">
 										<p:menuitem id="item_menu_estoque" value="Gerencia"
-											icon="fa fa-refresh" />
-										<!-- 	action="#{materialBeanView.redirecionarFindEntidade}"  -->
-
+											icon="fa fa-refresh" 
+											action="#{estoqueBean.redirecionarFindEntidade}" /> 
 									</sec:ifAnyGranted>
 								</p:submenu>
 							</p:submenu>

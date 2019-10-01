@@ -3,12 +3,15 @@ package br.com.clinica.model.financeiro;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -46,7 +49,11 @@ public class ContasPagar implements EntityBase, Serializable {
 	private String tipoConta;
 	
 	private Double valorConta;
-
+	
+	private Double valorTotalConta;
+	
+	private int quantidadeParcelas;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataPagamento;
 	
@@ -62,9 +69,21 @@ public class ContasPagar implements EntityBase, Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "idMaterial")
-	private Material material;
+	private Material material = null;
+	
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "idFormaPagamento")
+	private FormaPagamento formaPagamento;
 	
 	private Integer quantidade;
+	
+	public ContasPagar(Long cod) {
+		this.idContasPagar = cod;
+	}
+
+	public ContasPagar() {
+		
+	}
 	
 	public Long getIdContasPagar() {
 		return idContasPagar;
@@ -122,13 +141,6 @@ public class ContasPagar implements EntityBase, Serializable {
 		this.tipoConta = tipoConta;
 	}
 
-	public ContasPagar() {
-	}
-
-	public ContasPagar(Long idContasPagar) {
-		this.idContasPagar = idContasPagar;
-	}
-	
 	public String getStatus() {
 		return status;
 	}
@@ -151,6 +163,30 @@ public class ContasPagar implements EntityBase, Serializable {
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public int getQuantidadeParcelas() {
+		return quantidadeParcelas;
+	}
+
+	public void setQuantidadeParcelas(int quantidadeParcelas) {
+		this.quantidadeParcelas = quantidadeParcelas;
+	}
+
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+
+	public Double getValorTotalConta() {
+		return valorTotalConta;
+	}
+
+	public void setValorTotalConta(Double valorTotalConta) {
+		this.valorTotalConta = valorTotalConta;
 	}
 
 	@Override

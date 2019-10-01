@@ -18,15 +18,15 @@ import br.com.clinica.converters.EntityBase;
 
 @Entity
 @Audited
-@Table(name = "parcelapagar")
-@SequenceGenerator(name = "parcelapagar_seq", sequenceName = "parcelapagar_seq", initialValue = 1, allocationSize = 1)
+@Table(name = "parcelacontaspagar")
+@SequenceGenerator(name = "parcelacontaspagar_seq", sequenceName = "parcelacontaspagar_seq", initialValue = 1, allocationSize = 1)
 
-public class ParcelaPagar implements EntityBase, Serializable {
+public class ParcelaContasPagar implements EntityBase, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "parcelapagar_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "parcelacontaspagar_seq")
 	private Long idParcela;
 
 	@Override
@@ -39,8 +39,8 @@ public class ParcelaPagar implements EntityBase, Serializable {
 	private Double pagamentoEspecial;
 
 	@ManyToOne
-	@JoinColumn(name = "idContasReceber")
-	private ContasReceber contasReceber;
+	@JoinColumn(name = "idContasPagar")
+	private ContasPagar contasPagar;
 
 	private Date dataVencimento;
 
@@ -50,21 +50,69 @@ public class ParcelaPagar implements EntityBase, Serializable {
 
 	private Double valorDesconto;
 
-	// PENDENTE (P), PAGA(PA)
+	// PENDENTE (P), PAGA(PA)}
 	private String situacao = "P";
 
-	public ParcelaPagar() {}
+	public ParcelaContasPagar(long cod) {
+		this.idParcela = cod;
+	}
+
+	public ParcelaContasPagar() {}
 
 	public Long getIdParcela() {
 		return idParcela;
+	}
+
+	public void setIdParcela(Long idParcela) {
+		this.idParcela = idParcela;
 	}
 
 	public int getNumeroParcela() {
 		return numeroParcela;
 	}
 
-	public ParcelaPagar(long cod) {
-		this.idParcela = cod;
+	public void setNumeroParcela(int numeroParcela) {
+		this.numeroParcela = numeroParcela;
+	}
+
+	public Double getPagamentoEspecial() {
+		return pagamentoEspecial;
+	}
+
+	public void setPagamentoEspecial(Double pagamentoEspecial) {
+		this.pagamentoEspecial = pagamentoEspecial;
+	}
+
+	public ContasPagar getContasPagar() {
+		return contasPagar;
+	}
+
+	public void setContasPagar(ContasPagar contasPagar) {
+		this.contasPagar = contasPagar;
+	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+
+	public Double getValorBruto() {
+		return valorBruto;
+	}
+
+	public void setValorBruto(Double valorBruto) {
+		this.valorBruto = valorBruto;
 	}
 
 	public Double getValorDesconto() {
@@ -75,60 +123,12 @@ public class ParcelaPagar implements EntityBase, Serializable {
 		this.valorDesconto = valorDesconto;
 	}
 
-	public ContasReceber getContasReceber() {
-		return contasReceber;
-	}
-
-	public Double getValorBruto() {
-		return valorBruto;
-	}
-
 	public String getSituacao() {
 		return situacao;
 	}
 
-	public void setIdParcela(Long idParcela) {
-		this.idParcela = idParcela;
-	}
-
-	public void setNumeroParcela(int numeroParcela) {
-		this.numeroParcela = numeroParcela;
-	}
-
-	public void setContasReceber(ContasReceber contasReceber) {
-		this.contasReceber = contasReceber;
-	}
-
-	public Date getDataVencimento() {
-		return dataVencimento;
-	}
-
-	public Date getDataPagamento() {
-		return dataPagamento;
-	}
-
-	public void setDataVencimento(Date dataVencimento) {
-		this.dataVencimento = dataVencimento;
-	}
-
-	public void setDataPagamento(Date dataPagamento) {
-		this.dataPagamento = dataPagamento;
-	}
-
-	public void setValorBruto(Double valorBruto) {
-		this.valorBruto = valorBruto;
-	}
-
 	public void setSituacao(String situacao) {
 		this.situacao = situacao;
-	}
-
-	public Double getPagamentoEspecial() {
-		return pagamentoEspecial;
-	}
-
-	public void setPagamentoEspecial(Double pagamentoEspecial) {
-		this.pagamentoEspecial = pagamentoEspecial;
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class ParcelaPagar implements EntityBase, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ParcelaPagar other = (ParcelaPagar) obj;
+		ParcelaContasPagar other = (ParcelaContasPagar) obj;
 		if (idParcela == null) {
 			if (other.idParcela != null)
 				return false;
@@ -155,5 +155,6 @@ public class ParcelaPagar implements EntityBase, Serializable {
 			return false;
 		return true;
 	}
-
+	
+	
 }

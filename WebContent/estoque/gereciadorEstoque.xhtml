@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Movimentação de Estoque</ui:define>
+
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: medium;
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+	text-align: center;
+}
+
+.ui-selectcheckboxmenu-multiple-container.ui-inputfield {
+	padding: 0 22px 0 0;
+	border: 0;
+	height: 35px !important;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+.subtitulo {
+	font-weight: bold;
+	font-size: 20px !important;
+	color: black !important;
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-fluid .ui-autocomplete-input {
+	width: 100%;
+	height: 35px;
+}
+
+.ui-panel .ui-panel-title {
+	
+}
+</style>
+}
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<p:tabView>
+								<p:tab title="Pedido">
+									<p:panel>
+										<div align="center">
+											<util:botoesCrud managedBeanView="#{pedidoBean}"
+												camposReload=":formTemplate:msg, form" botaoNovo="false"
+												botaoSalvar="false" botaoAtualizar="false"
+												botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+												botaoExcluir="false">
+											</util:botoesCrud>
+
+											<p:commandButton value="Adicionar ao Pedido"
+												rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+												actionListener="#{pedidoBean.addLista}" update="@form"
+												style="height:40px;
+													width: 240px;
+													background-color: black; 
+													background: black; 
+													color:white !important;
+													font-size:large;"
+												icon="fa fa-plus" iconPos="rigth" />
+
+											<p:commandButton value="Fechar o Pedido" immediate="true"
+												rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+												actionListener="#{pedidoBean.salvarLista}" update="@form"
+												style="height:40px;
+													width: 200px !important;
+													background-color: green; 
+													background: green; 
+													color:white !important;
+													font-size:large;"
+												icon="fa fa-floppy-o fa" iconPos="rigth" />
+
+											<p:commandButton value="Limpar Pedido" immediate="true"
+												actionListener="#{pedidoBean.limparLista}" update="@form"
+												style="height:40px;
+													width: 200px !important;
+													background-color: red; 
+													background: red; 
+													color:white !important;
+													font-size:large;"
+												icon="fa fa-floppy-o fa" iconPos="rigth" />
+
+										</div>
+
+										<br />
+										<p:outputLabel value="Campos Obrigatórios()"
+											styleClass="obrigatorio" />
+										<p:separator />
+
+										<br />
+										<div class="ui-g">
+											<div class="ui-g-12 ui-lg-2">
+												<h:outputLabel value="Num Pedido:" />
+												<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
+													disabled="false" />
+											</div>
+
+											<div class="ui-g-12 ui-lg-4">
+												<h:outputLabel value="Material*:" />
+												<p:autoComplete id="material"
+													completeMethod="#{auxController.completeMaterial}"
+													forceSelection="true" converter="entityConverter" var="a"
+													itemLabel="#{a.nomeMaterial}" itemValue="#{a}"
+													value="#{pedidoBean.pedidoModel.material}"
+													minQueryLength="2" dropdown="true" maxResults="30"
+													required="true" requiredMessage="Informe o Material">
+												</p:autoComplete>
+											</div>
+
+											<div class="ui-g-12 ui-lg-1">
+												<h:outputLabel value="Quantidade:" />
+												<p:inputText value="#{pedidoBean.pedidoModel.quantidade}"
+													requiredMessage="Informe uma quantidade" required="true" />
+											</div>
+
+
+										</div>
+
+
+										<div class="ui-g">
+											<p:dataTable value="#{pedidoBean.lstPedido}" var="d"
+												emptyMessage="Não há dados">
+												<p:column headerText="Número do Pedido">
+													<p:outputLabel value="#{d.numPedido}" />
+												</p:column>
+												<p:column headerText="Material">
+													<p:outputLabel value="#{d.material.nomeMaterial}" />
+												</p:column>
+												<p:column headerText="Quantidade">
+													<p:outputLabel value="#{d.quantidade}" />
+												</p:column>
+
+
+											</p:dataTable>
+										</div>
+									</p:panel>
+								</p:tab>
+							</p:tabView>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,390 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/facelets/tags"
+	xmlns:util="http://java.sun.com/jsf/composite/componentes"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Busca Estoque</ui:define>
+	<ui:define name="head">
+		<style>
+.ui-g label {
+	font-size: medium;
+	color: black;
+	font-weight: bold
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100%;
+	height: 35px;
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	color: black;
+	text-align: center;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	font-size: 20px !important;
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+	color: black;
+}
+
+}
+/*CAMPOS OBRIGATÓRIOS(*) */
+.obrigatorio {
+	font-weight: bold !important;
+	font-size: 10px !important;
+	color: red !important;
+}
+
+.ui-panel {
+	padding: 0.2em;
+	border-radius: 15px;
+}
+
+.ui-panel .ui-panel-title {
+	font-size: medium;
+}
+</style>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<div class="ui-fluid">
+				<p:panel header="Pesquisa de Estoque" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botoes">
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoPedido" value="Fazer Pedido"
+										style="height:40px; background: darkblue !important  ;   
+										background-color: darkblue; 
+										color:white !important;
+										font-size:large; "
+										actionListener="#{pedidoBean.limparPedido}"
+										action="#{pedidoBean.geraPedido}" update=":forma"
+										onclick="PF('fazerPedido').show()" immediate="true" />
+								</div>
+
+
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoEditar" value="Alocar Material"
+										style="height:40px; background: lightskyblue !important  ;
+										   background-color: lightskyblue ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" update="table, @form"
+										rendered="#{estoqueBean.estoqueModel.idEstoque > 0 and (estoqueBean.estoqueModel.status eq 'A') }">
+
+										<f:setPropertyActionListener value="#{d}"
+											target="#{estoqueBean.estoqueModel}" />
+									</p:commandButton>
+								</div>
+
+								<!-- <div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
+										style="height:40px;background: tomato !important  ;
+										   background-color: tomato ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{estoqueBean.inativar}"
+										update="table, @form"
+										rendered="#{estoqueBean.estoqueModel.idEstoque > 0 }">
+									</p:commandButton>
+								</div> -->
+								<!-- 
+								<div class="ui-g-12 ui-lg-3">
+									<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
+										style="    padding-left: 10% !important;">
+										<f:selectItem itemLabel="Todos" itemValue="T" />
+										<f:selectItem itemLabel="Ativo" itemValue="A" />
+										<f:selectItem itemLabel="Inativo" itemValue="I" />
+										<p:ajax event="change" listener="#{estoqueBean.busca}"
+											update="table" />
+									</p:selectOneRadio>
+								</div>
+ -->
+							</h:panelGroup>
+
+							<div class="ui-g-12 ui-lg-5">
+								<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
+									style="padding-left: 10% !important">
+									<f:selectItem itemLabel="Em Análise" itemValue="EM" />
+									<f:selectItem itemLabel="Aprovado" itemValue="A" />
+									<f:selectItem itemLabel="Reprovado" itemValue="R" />
+									<p:ajax event="change" listener="#{estoqueBean.busca}"
+										update="table" />
+								</p:selectOneRadio>
+							</div>
+
+							<div class="ui-g-12 ui-lg-2">
+								<p:inputText value="#{estoqueBean.campoBusca}"
+									placeholder="Buscar Material" style="height:40px; ">
+
+								</p:inputText>
+							</div>
+
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandButton style="height:40px; " styleClass="btn btn-blue"
+									icon="ui-icon-search" id="btnBuscatxt" update="table, tablePedido"
+									actionListener="#{estoqueBean.busca}"
+									action="#{pedidoBean.busca}" />
+
+							</div>
+						</div>
+					</div>
+				</p:panel>
+				<p:panel>
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-9 ui-sm-12">
+							<p:dataTable value="#{estoqueBean.lstEstoque}" var="d"
+								emptyMessage="Não há dados" styleClass="table.gridtable"
+								rowKey="#{d.idEstoque}" selectionMode="single" id="table"
+								rows="10" paginator="true" paginatorPosition="bottom"
+								selection="#{estoqueBean.estoqueModel}">
+
+								<p:ajax event="rowSelect" listener="#{estoqueBean.onRowSelect}"
+									update="table,:form:botoes" />
+
+								<p:column headerText="Material" priority="1"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.material.nomeMaterial}" />
+
+								</p:column>
+
+								<p:column headerText="Fornecedor" priority="5"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.material.fornecedor.nomeFornecedor}" />
+								</p:column>
+
+								<p:column headerText="Quantidade" priority="1"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.quantidade}" />
+								</p:column>
+
+								<p:column headerText="Valor" priority="1"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.valorUnitario}"
+										rendered="#{d.valorUnitario != null}" />
+									<p:outputLabel value="Aguardando Lançamento"
+										rendered="#{d.valorUnitario == null}" style="color : blue" />
+								</p:column>
+
+								<p:column headerText="Status" priority="5" width="10%"
+									style="overflow: hidden;text-align: center; font-size: large;">
+									<p:outputLabel value="Reprovado" rendered="#{d.status eq 'R'}"
+										style="color : red" />
+									<p:outputLabel value="Em analise"
+										rendered="#{d.status eq 'EM'}" style="color : blue" />
+									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
+										style="color : green" />
+								</p:column>
+								<!--  <p:column style="width:50px" priority="4">
+								<center>
+									<f:facet name="header">Excluir</f:facet>
+									<p:commandLink action="#{estoqueBean.excluir}"
+										update="table" id="excluir" ajax="true"
+										immediate="true">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+										<f:setPropertyActionListener value="#{d}"
+											target="#{estoqueBean.estoqueModel}" />
+									</p:commandLink>
+								</center>
+							</p:column> -->
+							</p:dataTable>
+						</div>
+
+						<div class="ui-g-2 ui-lg-3 ui-sm-12">
+							<p:dataTable value="#{pedidoBean.lstPedido}" var="d"
+								emptyMessage="Não há dados" styleClass="table.gridtable"
+								rowKey="#{d.idPedido}" selectionMode="single" id="tablePedido"
+								rows="10" paginator="true" paginatorPosition="bottom"
+								selection="#{pedidoBean.pedidoModel}">
+
+								<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" />
+
+								<f:facet name="header">
+       								 Status do(s) Pedido(s)
+ 							   </f:facet>
+
+								<p:column headerText="Nº Pedido">
+									<p:outputLabel value="#{d.numPedido}" />
+								</p:column>
+
+								<p:column headerText="Status">
+									<p:outputLabel value="Em Análise"
+										rendered="#{d.status eq 'EM'}" style="color: gray" />
+									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
+										style="color: green" />
+									<p:outputLabel value="Reprovado" rendered="#{d.status eq 'R'}"
+										style="color: red" />
+								</p:column>
+							</p:dataTable>
+						</div>
+
+					</div>
+				</p:panel>
+			</div>
+		</h:form>
+
+		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
+			resizable="false" height="350" width="1100" responsive="true"
+			dynamic="true" appendToBody="@body" header="Fazer Novo Pedido">
+			<h:form id="forma">
+				<div class="ui-fluid">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<div class="card card-w-title">
+								<div align="center">
+									<util:botoesCrud managedBeanView="#{pedidoBean}"
+										camposReload=":formTemplate:msg, form" botaoNovo="false"
+										botaoSalvar="false" botaoAtualizar="false"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoExcluir="false">
+									</util:botoesCrud>
+
+									<p:commandButton value="Adicionar ao Pedido"
+										rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+										actionListener="#{pedidoBean.addLista}" update="@form"
+										style="height:40px;
+													width: 240px;
+													background-color: black; 
+													background: black; 
+													color:white !important;
+													font-size:large;"
+										action="#{pedidoBean.geraPedido}" icon="fa fa-plus"
+										iconPos="rigth">
+									</p:commandButton>
+
+									<p:commandButton value="Finalizar Pedido" immediate="true"
+										rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+										actionListener="#{pedidoBean.salvarLista}" update="@form"
+										oncomplete="PF('fazerPedido').hide()"
+										style="height:40px;
+													width: 200px !important;
+													background-color: green; 
+													background: green; 
+													color:white !important;
+													font-size:large;"
+										icon="fa fa-floppy-o fa" iconPos="rigth" />
+
+									<p:commandButton value="Limpar Pedido" immediate="true"
+										actionListener="#{pedidoBean.limparLista}" update="@form"
+										style="height:40px;
+													width: 200px !important;
+													background-color: red; 
+													background: red; 
+													color:white !important;
+													font-size:large;"
+										icon="fa fa-floppy-o fa" iconPos="rigth" />
+
+								</div>
+
+								<br />
+								<p:outputLabel value="Campos Obrigatórios()"
+									styleClass="obrigatorio" />
+								<p:separator />
+
+								<br />
+								<div class="ui-g">
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Num Pedido:" />
+										<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
+											disabled="false" />
+									</div>
+
+									<div class="ui-g-12 ui-lg-4">
+										<h:outputLabel value="Material*:" />
+										<p:autoComplete id="material"
+											completeMethod="#{auxController.completeMaterial}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.nomeMaterial}" itemValue="#{a}"
+											value="#{pedidoBean.pedidoModel.material}" minQueryLength="2"
+											dropdown="true" maxResults="30" required="true"
+											requiredMessage="Informe o Material">
+										</p:autoComplete>
+									</div>
+
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="Quantidade:" />
+										<p:inputText value="#{pedidoBean.pedidoModel.quantidade}"
+											requiredMessage="Informe uma quantidade" required="true" />
+									</div>
+
+
+								</div>
+
+
+								<div class="ui-g">
+									<p:dataTable value="#{pedidoBean.lstPedidoCarrinho}" var="d"
+										emptyMessage="Não há dados">
+
+										<f:facet name="header">
+       								 Status do(s) Pedido(s)
+ 							   </f:facet>
+
+										<p:column headerText="Número do Pedido">
+											<p:outputLabel value="#{d.numPedido}" />
+										</p:column>
+										<p:column headerText="Material">
+											<p:outputLabel value="#{d.material.nomeMaterial}" />
+										</p:column>
+										<p:column headerText="Quantidade">
+											<p:outputLabel value="#{d.quantidade}" />
+										</p:column>
+									</p:dataTable>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
+

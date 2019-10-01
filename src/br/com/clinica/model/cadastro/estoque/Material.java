@@ -39,12 +39,26 @@ public class Material implements EntityBase, Serializable {
 	private String nomeMaterial;
 
 	private Integer quantidade;
-	
-	@JoinColumn(name ="idFornecedor")
+
+	@JoinColumn(name = "idFornecedor")
 	@ManyToOne
 	Fornecedor fornecedor;
-	
+
 	private String ativo = "A";
+
+	private Double valor;
+
+	public Material() {
+	}
+
+	public Material(Long id) {
+		this.idMaterial = id;
+	}
+
+	public Material(Integer quantidade, Double valor) {
+		this.quantidade = quantidade;
+		this.valor = valor;
+	}
 
 	// GETTERS E SETTERS
 	public Long getIdMaterial() {
@@ -70,7 +84,7 @@ public class Material implements EntityBase, Serializable {
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
-	
+
 	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
@@ -85,6 +99,14 @@ public class Material implements EntityBase, Serializable {
 
 	public void setAtivo(String ativo) {
 		this.ativo = ativo;
+	}
+
+	public Double getValor() {
+		return valor;
+	}
+
+	public void setValor(Double valor) {
+		this.valor = valor;
 	}
 
 	@Override
@@ -113,7 +135,5 @@ public class Material implements EntityBase, Serializable {
 	}
 
 	// EQUALS E HASCODE
-	
-	
 
 }

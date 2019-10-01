@@ -49,6 +49,9 @@
 		<!-- Estoque  -->
 		<mapping class="br.com.clinica.model.cadastro.estoque.Material" />
 		<mapping class="br.com.clinica.model.cadastro.estoque.Fornecedor" />
+		<mapping class="br.com.clinica.model.cadastro.estoque.Estoque" />
+		<mapping class="br.com.clinica.model.cadastro.estoque.Pedido" />
+		<mapping class="br.com.clinica.model.cadastro.estoque.PedidoMaterial" />
 		
 		<!-- Financeiro  -->
 		<mapping class="br.com.clinica.model.financeiro.ContasReceber" />
@@ -57,6 +60,7 @@
 		<mapping class="br.com.clinica.model.financeiro.ParcelaPagar" />
 		<mapping class="br.com.clinica.model.financeiro.Caixa" />
 		<mapping class="br.com.clinica.model.financeiro.CaixaMensal" />
+		<mapping class="br.com.clinica.model.financeiro.ParcelaContasPagar" />
 			
 		<listener class="org.hibernate.envers.event.AuditEventListener"
          type="post-insert"/>

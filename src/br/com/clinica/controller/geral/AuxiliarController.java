@@ -76,6 +76,10 @@ public class AuxiliarController implements Serializable{
 				findListByQueryDinamica(" from Fornecedor where ativo='A' and nomeFornecedor like '%" + q.toUpperCase()  + "%' order by nomeFornecedor ASC");
 	}
 	
+	public List<Material> completeMaterial(String q) throws Exception {
+			return materialController.findListByQueryDinamica(" from Material where ativo='A' and nomeMaterial like '%" + q.toUpperCase()+ "%' order by nomeMaterial ASC");
+	}
+	
 	public MedicoController getMedicoController() {
 		return medicoController;
 	}

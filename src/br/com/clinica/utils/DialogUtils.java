@@ -1,0 +1,15 @@
+package br.com.clinica.utils;
+
+import org.primefaces.context.PrimeFacesContext;
+import org.primefaces.context.RequestContext;
+
+public class DialogUtils {
+	public static void openDialog(String dialog){
+		RequestContext.getCurrentInstance().execute("PF('" + dialog + "').show();");
+	}
+	
+	public static void updateForm(String form){
+		RequestContext.getCurrentInstance().update(form);
+	}
+
+}
