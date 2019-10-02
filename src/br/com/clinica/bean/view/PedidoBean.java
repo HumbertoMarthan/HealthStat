@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.StreamedContent;
@@ -55,7 +53,7 @@ public class PedidoBean extends BeanManagedViewAbstract {
 
 	@PostConstruct
 	public void init() {
-		materialModel = new Material();
+		// materialModel = new Material();
 		pedidoModel = new Pedido();
 		lstPedido = new ArrayList<Pedido>();
 		lstPedidoCarrinho = new ArrayList<>();
@@ -76,10 +74,10 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		System.out.println(lst.get(0).get("num"));
 		if (lst.get(0).get("num") == null) {
 			pedidoModel.setNumPedido(1);
-			System.out.println("Numero do Pedido :>"+pedidoModel);
+			System.out.println("Numero do Pedido :>" + pedidoModel);
 		} else {
 			pedidoModel.setNumPedido((Integer) lst.get(0).get("num"));
-			System.out.println("Numero do Pedido :>"+pedidoModel);
+			System.out.println("Numero do Pedido :>" + pedidoModel);
 		}
 	}
 
@@ -124,9 +122,11 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	public void addLista() {
+		pedidoModel.setMaterial(new Material(materialModel.getIdMaterial()));
+		;
+		System.out.println("Pedido :>" + pedidoModel.getMaterial().getIdMaterial());
 		lstPedidoCarrinho.add(pedidoModel);
 		pedidoModel = new Pedido();
-		System.out.println("Pedido :>" + pedidoModel);
 	}
 
 	public void removerLista(Pedido pedido) {
@@ -134,70 +134,71 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	public void salvarLista() {
-		Pedido pedido= new Pedido();
+		int num = lstPedidoCarrinho.get(0).getNumPedido();
+		boolean salvo = false;
 		for (Pedido carrinho : lstPedidoCarrinho) {
+
 			StringBuilder sql = new StringBuilder();
 			sql.append("from Estoque where idMaterial = " + carrinho.getMaterial().getIdMaterial());
 			List<Estoque> armazenado = new ArrayList<Estoque>();
 
 			try {
 				armazenado = estoqueController.findListByQueryDinamica(sql.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 
-			if (!armazenado.isEmpty()) { //Se o material ja tiver no estoque entra nesta condição
+			Long idMaterial = carrinho.getMaterial().getIdMaterial();
+			Integer qtd = carrinho.getQuantidade();
+
+			if (salvo == false) {
 				try {
-					if (armazenado.get(0).getMaterial().getIdMaterial() == carrinho.getMaterial().getIdMaterial()) { // se
-						Estoque estoque = armazenado.get(0);
-						Integer soma = carrinho.getQuantidade() + armazenado.get(0).getQuantidade();
-
-						estoque.setNumPedido(carrinho.getNumPedido());
-						estoque.setMaterial(new Material(carrinho.getMaterial().getIdMaterial()));
-						// estoque.setIdMaterial(carrinho.getMaterial().getIdMaterial());
-						estoque.setQuantidade(soma);
-
-						estoqueController.merge(estoque);
-						addMsg("Pedido Realizado com sucesso!");
-					}
+					pedidoController.merge(carrinho); // salva pedido
+					salvo = true;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
 
-			} else {
-				// se o item for novo
-				estoqueModel.setNumPedido(carrinho.getNumPedido());
-				estoqueModel.setPedido(new Pedido(carrinho.getIdPedido()));
-				estoqueModel.setMaterial(new Material(carrinho.getMaterial().getIdMaterial()));
-				// estoqueModel.setIdMaterial(carrinho.getMaterial().getIdMaterial());
-				estoqueModel.setQuantidade(carrinho.getQuantidade());
+			if (!armazenado.isEmpty()) { // Se o material ja tiver no estoque entra nesta condição
+
+				if (armazenado.get(0).getMaterial().getIdMaterial() == idMaterial) {
+					Estoque estoque = armazenado.get(0);
+					Integer soma = qtd + armazenado.get(0).getQuantidade();
+
+					estoque.setNumPedido(num);
+					estoque.setMaterial(new Material(idMaterial));
+					estoque.setQuantidade(soma);
+					
+					try {
+						estoqueController.merge(estoque);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} else { // se o item for novo
+
+				estoqueModel.setNumPedido(num);
+				estoqueModel.setMaterial(new Material(idMaterial));
+				estoqueModel.setQuantidade(qtd);
 
 				try {
 					estoqueController.merge(estoqueModel);
-					addMsg("Pedido Realizado com sucesso!");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
 			}
-			pedido = carrinho;
 		}
 		try {
-			pedidoController.merge(pedido); // salva pedido
+			addMsg("Pedido Realizado com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		limparCarrinho();
-		try {
-			busca();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void limparCarrinho() {
-		pedidoModel = new Pedido();
+		// pedidoModel = new Pedido();
 		lstPedidoCarrinho = new ArrayList<Pedido>();
 	}
 

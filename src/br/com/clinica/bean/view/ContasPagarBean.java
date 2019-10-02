@@ -101,7 +101,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		try {
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
 			lstEstoque = estoqueController
-					.findListByQueryDinamica("from Estoque e where e.numPedido = " + pedidoModel.getNumPedido() +" and pedido.statu = 'EM'");
+					.findListByQueryDinamica("from Estoque e where e.numPedido = " + pedidoModel.getNumPedido() +" and pedido.status = 'EM'");
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();

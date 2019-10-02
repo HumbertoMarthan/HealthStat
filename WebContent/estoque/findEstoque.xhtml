@@ -154,8 +154,8 @@
 							<div class="ui-g-12 ui-lg-5">
 								<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
 									style="padding-left: 10% !important">
-									<f:selectItem itemLabel="Em Análise" itemValue="EM" />
 									<f:selectItem itemLabel="Aprovado" itemValue="A" />
+									<f:selectItem itemLabel="Em Análise" itemValue="EM" />
 									<f:selectItem itemLabel="Reprovado" itemValue="R" />
 									<p:ajax event="change" listener="#{estoqueBean.busca}"
 										update="table" />
@@ -191,6 +191,10 @@
 								<p:ajax event="rowSelect" listener="#{estoqueBean.onRowSelect}"
 									update="table,:form:botoes" />
 
+								<f:facet name="header">
+       								 Relação de Estoque
+ 							   </f:facet>
+
 								<p:column headerText="Material" priority="1"
 									style="overflow: hidden;text-align: left; font-size: large">
 									<p:outputLabel value="#{d.material.nomeMaterial}" />
@@ -202,8 +206,8 @@
 									<p:outputLabel value="#{d.material.fornecedor.nomeFornecedor}" />
 								</p:column>
 
-								<p:column headerText="Quantidade" priority="1"
-									style="overflow: hidden;text-align: left; font-size: large">
+								<p:column headerText="Quantidade" priority="1" width="10%"
+									style="overflow: hidden;text-align: center; font-size: large">
 									<p:outputLabel value="#{d.quantidade}" />
 								</p:column>
 
@@ -211,7 +215,7 @@
 									style="overflow: hidden;text-align: left; font-size: large">
 									<p:outputLabel value="#{d.valorUnitario}"
 										rendered="#{d.valorUnitario != null}" />
-									<p:outputLabel value="Aguardando Lançamento"
+									<p:outputLabel value="Aguardando Lançamento do Financeiro"
 										rendered="#{d.valorUnitario == null}" style="color : blue" />
 								</p:column>
 
@@ -252,11 +256,11 @@
        								 Status do(s) Pedido(s)
  							   </f:facet>
 
-								<p:column headerText="Nº Pedido">
+								<p:column headerText="Nº Pedido" width="20%" style="text-align:center">
 									<p:outputLabel value="#{d.numPedido}" />
 								</p:column>
 
-								<p:column headerText="Status">
+								<p:column headerText="Status" style="text-align:center">
 									<p:outputLabel value="Em Análise"
 										rendered="#{d.status eq 'EM'}" style="color: gray" />
 									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
@@ -344,7 +348,7 @@
 											completeMethod="#{auxController.completeMaterial}"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomeMaterial}" itemValue="#{a}"
-											value="#{pedidoBean.pedidoModel.material}" minQueryLength="2"
+											value="#{pedidoBean.materialModel}" minQueryLength="2"
 											dropdown="true" maxResults="30" required="true"
 											requiredMessage="Informe o Material">
 										</p:autoComplete>

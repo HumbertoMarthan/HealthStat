@@ -116,7 +116,8 @@
 												</div>
 												<div class="ui-g-12 ui-lg-2">
 													<!-- Editar Fornecedor Sem Material -->
-													<p:commandButton id="botaoEditarFixo" value="Editar / Lançar"
+													<p:commandButton id="botaoEditarFixo"
+														value="Editar / Lançar"
 														style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
 										   color:white !important;
@@ -286,11 +287,9 @@
 													<p:outputLabel value="#{d.numPedido}" />
 												</p:column>
 
-												<p:column headerText="Status">
-													<p:outputLabel value="Pendente"
-														rendered="#{d.status eq 'P'}" style="color: blue" />
+												<p:column headerText="Status" style="text-align:center">
 													<p:outputLabel value="Em Análise"
-														rendered="#{d.status eq 'E'}" style="color: gray" />
+														rendered="#{d.status eq 'EM'}" style="color: gray" />
 													<p:outputLabel value="Aprovado"
 														rendered="#{d.status eq 'A'}" style="color: green" />
 													<p:outputLabel value="Reprovado"
@@ -320,8 +319,8 @@
 											background-color: greenyellow; 
 											color:white !important;
 											font-size:large; "
-											action="#D{contasPagarBean.aprovarPedido}"
-										immediate="true" update="botoesPedidoSelecionado" />
+										action="#D{contasPagarBean.aprovarPedido}" immediate="true"
+										update="botoesPedidoSelecionado" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-2">
@@ -334,7 +333,7 @@
 								</div>
 								<div class="ui-g-12 ui-lg-3">
 									<p:outputLabel value="Valor Total do Pedido : " />
-									<br/>
+									<br />
 									<p:outputLabel value="R$ #{contasPagarBean.valorPedido}" />
 								</div>
 							</h:panelGroup>

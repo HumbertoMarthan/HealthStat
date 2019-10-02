@@ -41,11 +41,11 @@ public class Estoque  implements EntityBase,Serializable {
 	//private long idMaterial;
 	
 	@JoinColumn(name ="idMaterial")
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	Material material;
 	
 	@JoinColumn(name ="idPedido")
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	Pedido pedido;
 	
 	private Integer numPedido;

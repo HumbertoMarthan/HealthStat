@@ -53,7 +53,7 @@ public class Pedido  implements EntityBase,Serializable {
 	private Double total;
 	
 	@JoinColumn(name ="idMaterial")
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	Material material;
 	
 	public Pedido(Long idPedido) {
