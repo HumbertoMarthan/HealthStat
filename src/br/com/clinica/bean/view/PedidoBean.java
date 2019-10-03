@@ -122,8 +122,8 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	public void addLista() {
-		pedidoModel.setMaterial(new Material(materialModel.getIdMaterial()));
-		;
+		//pedidoModel.setMaterial(new Material(materialModel.getIdMaterial()));
+		pedidoModel.setMaterial(materialModel);
 		System.out.println("Pedido :>" + pedidoModel.getMaterial().getIdMaterial());
 		lstPedidoCarrinho.add(pedidoModel);
 		pedidoModel = new Pedido();
@@ -195,6 +195,11 @@ public class PedidoBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 		limparCarrinho();
+		try {
+			busca();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void limparCarrinho() {

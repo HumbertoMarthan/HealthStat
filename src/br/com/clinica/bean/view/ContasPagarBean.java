@@ -101,14 +101,31 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		try {
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
 			lstEstoque = estoqueController
-					.findListByQueryDinamica("from Estoque e where e.numPedido = " + pedidoModel.getNumPedido() +" and pedido.status = 'EM'");
+					.findListByQueryDinamica("from Estoque where numPedido = "+ pedidoModel.getNumPedido());
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
 		}
-		calcularTotalPedido();
+		//calcularTotalPedido();
 	}
-
+	
+	public void calcularTotalPedido() {
+		try {
+		StringBuilder str = new StringBuilder();
+		str.append("select sum(c.valorUnitario * quantidade) as total from Estoque c where numpedido = "+ pedidoModel.getNumPedido());
+		try {
+			lstTotalPedido = contasPagarController.getSqlListMap(str.toString());
+			System.out.println("Tamanho da lista calcular :>"+lstContasPagar.size());
+			valorPedido = Double.parseDouble(String.valueOf(lstTotalPedido.get(0).get("total")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+		}
+	}
+	
 	public void onCellEdit(CellEditEvent event) {
 		try {
 			Object oldValue = event.getOldValue();
@@ -137,9 +154,16 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	
 	public void aprovarPedido() {
 		try {
+		List<Estoque> lstEstoque = new ArrayList<>();
+		lstEstoque = estoqueController.findListByQueryDinamica("from Estoque where numPedido =" +pedidoModel.getNumPedido());
+		System.out.println("Tamanho da Lista Estoque :> "+lstEstoque.size());
+		for (Estoque estoque : lstEstoque) {
+			estoque.setStatus("A");
+			estoqueController.merge(estoque);
+		}
+			
 		pedidoModel.setTotal(valorPedido); //pegar valor total do sum
 		pedidoModel.setStatus("A"); //aprova o pedido 
-		
 		
 		//setar valor para contas a pagar
 		contasPagarModel.setDataLancamento(new Date());//data atual
@@ -162,23 +186,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		
 	}	
 		
-	public void calcularTotalPedido() {
-		try {
-		StringBuilder str = new StringBuilder();
-		str.append("select sum(c.valorUnitario) as total from Estoque c where numpedido = 9");
-		try {
-			lstTotalPedido = contasPagarController.getSqlListMap(str.toString());
-			System.out.println("Tamanho da lista calcular"+lstContasPagar.size());
-			valorPedido = Double.parseDouble(String.valueOf(lstTotalPedido.get(0).get("total")));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		}catch (Exception e) {
-			e.printStackTrace();
-			e.getMessage();
-		}
-	}
-
 	public void busca() throws Exception {
 		lstContasPagar = new ArrayList<ContasPagar>();
 		StringBuilder str = new StringBuilder();

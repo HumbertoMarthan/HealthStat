@@ -86,17 +86,14 @@
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<p:submenu id="pm_hierarchy_movimentação" label="Movimentação"
-								icon="fa fa-refresh">
-								<p:submenu id="submenu_estoque" label="Estoque"
-									icon="fa fa-archive">
-									<sec:ifAnyGranted roles="EST, ADMIN">
-										<p:menuitem id="item_menu_estoque" value="Gerencia"
-											icon="fa fa-refresh" 
-											action="#{estoqueBean.redirecionarFindEntidade}" /> 
-									</sec:ifAnyGranted>
+							<sec:ifAnyGranted roles="EST, ADMIN">
+								<p:submenu id="pm_hierarchy_movimentação" label="Movimentação"
+									icon="fa fa-refresh">
+									<p:menuitem id="submenu_estoque" value="Estoque"
+										action="#{estoqueBean.redirecionarFindEntidade}" 
+										icon="fa fa-archive"/>
 								</p:submenu>
-							</p:submenu>
+							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="MED, ADMIN">
 								<p:submenu id="pm_hierarchy_medico" label="Movimentação"
@@ -110,29 +107,20 @@
 							<sec:ifAnyGranted roles="ATE ,ADMIN">
 								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"
 									icon="fa fa-money">
-									<p:submenu id="submenu_caixa" label="Caixa"
-										icon="fa fa-group">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
 											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"
-											action="#{caixaBean.redirecionarFindEntidade}" 
+												action="#{caixaBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
-									</p:submenu>
-									
-									<p:submenu id="submenu_financeiro_pagar" label="Contas a Pagar"
-										icon="fa fa-group">
+
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro" value="Gerencia"
-											action="#{contasPagarBean.redirecionarFindEntidade}" 
+											<p:menuitem id="item_menu_financeiro" value="Pagamento de Contas"
+												action="#{contasPagarBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
-									</p:submenu>
-									<p:submenu id="submenu_financeiro_receber"
-										label="Contas a Receber" icon="fa fa-group">
-										<p:menuitem id="item_menu_receber_consultas" 
-										action="#{contasReceberBean.redirecionarFindEntidade}"
+										<p:menuitem id="item_menu_receber_consultas"
+											action="#{contasReceberBean.redirecionarFindEntidade}"
 											value="Receber Consultas" icon="fa fa-glass" />
-									</p:submenu>
 								</p:submenu>
 							</sec:ifAnyGranted>
 

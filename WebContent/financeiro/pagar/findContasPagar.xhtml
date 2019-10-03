@@ -93,12 +93,12 @@
 </style>
 	</ui:define>
 	<ui:define name="content">
-		<h:form id="botao">
+		<h:form id="formContasPagar">
 			<div class="ui-fluid">
 				<p:panel>
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12 ui-sm-12">
-							<p:tabView>
+							<p:tabView id="tabs">
 								<p:tab title="Contas Pagar">
 									<div class="ui-g">
 										<div class="ui-g-12">
@@ -182,10 +182,8 @@
 												<p:commandButton style="height:40px;"
 													styleClass="btn btn-blue" icon="ui-icon-search"
 													immediate="true" id="btnBuscatxt"
-													action="#{contasPagarBean.buscaPedido}"
 													actionListener="#{contasPagarBean.busca}"
-													update=" inputNome,table,tablePedido" />
-												<p:defaultCommand target="btnBuscatxt" />
+													update=" inputNome,table" />
 											</div>
 										</div>
 									</div>
@@ -198,7 +196,7 @@
 												id="table" selection="#{contasPagarBean.contasPagarModel}">
 
 												<p:ajax event="rowSelect"
-													listener="#{contasPagarBean.onRowSelect}" update="table" />
+													listener="#{contasPagarBean.onRowSelect}" update="table, :formContasPagar:tabs:botoes" />
 
 												<p:column headerText="Status" priority="5"
 													style="overflow: hidden;text-align: left; font-size: large">
@@ -235,7 +233,8 @@
 														value="Pagamento não Efetuado" style="color: red" />
 												</p:column>
 
-												<p:column headerText="Vencimento" priority="1"
+												<p:column headerText="Vencimento" priority="1" 
+												rendered="#{contasPagarBean.campoBuscaStatus ne 'P'}"
 													style="overflow: hidden;text-align: center; font-size: large">
 													<p:outputLabel value="#{d.dataVencimento}">
 														<f:convertDateTime timeZone="America/Sao_Paulo"
@@ -256,7 +255,7 @@
 										<div class="ui-g-12">
 											<h:panelGroup id="botoesPedido">
 
-												<div class="ui-g-12 ui-lg-2">
+												<div class="ui-g-12 ui-lg-3">
 													<p:commandButton value="Movimentar o Pedido"
 														style="height:40px; background: greenyellow !important  ;   
 														background-color: greenyellow; 
@@ -265,9 +264,20 @@
 														action="#{contasPagarBean.abrirPedido}"
 														oncomplete="PF('pedidosDialog').show()" immediate="true"
 														update=":formDialogPedidos"
-														rendered="#{contasPagarBean.pedidoModel.idPedido > 0}" />
+														rendered="#{contasPagarBean.pedidoModel.idPedido > 0 and (contasPagarBean.pedidoModel.status eq 'EM')}" />
+														<p:outputLabel value="Nenhum Pedido Pendente Selecionado" 
+														rendered="#{contasPagarBean.pedidoModel.idPedido == null or (contasPagarBean.pedidoModel.status ne 'EM')}" />
 												</div>
-
+												
+												<div class="ui-g-12 ui-lg-1">
+												<p:commandButton style="height:40px;"
+													styleClass="btn btn-blue" icon="ui-icon-search"
+													immediate="true" 
+													action="#{contasPagarBean.buscaPedido}"
+													update=" inputNome,table,tablePedido" />
+												<p:defaultCommand target="btnBuscatxt" />
+											</div>
+												
 											</h:panelGroup>
 										</div>
 									</div>
@@ -281,7 +291,7 @@
 												selection="#{contasPagarBean.pedidoModel}">
 
 												<p:ajax event="rowSelect"
-													listener="#{contasPagarBean.onRowSelectPedido}" />
+													listener="#{contasPagarBean.onRowSelectPedido}" update="tablePedido, :formDialogPedidos, :formContasPagar:tabs:botoesPedido" />
 
 												<p:column headerText="Nº Pedido" style="text-align: center">
 													<p:outputLabel value="#{d.numPedido}" />
@@ -319,7 +329,8 @@
 											background-color: greenyellow; 
 											color:white !important;
 											font-size:large; "
-										action="#D{contasPagarBean.aprovarPedido}" immediate="true"
+										action="#{contasPagarBean.aprovarPedido}" immediate="true"
+										oncomplete="PF('pedidosDialog').hide()"
 										update="botoesPedidoSelecionado" />
 								</div>
 
