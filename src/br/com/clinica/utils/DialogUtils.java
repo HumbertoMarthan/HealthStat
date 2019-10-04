@@ -11,5 +11,10 @@ public class DialogUtils {
 	public static void updateForm(String form){
 		RequestContext.getCurrentInstance().update(form);
 	}
+	
+	public static void closeDialog(String dialog){
+		RequestContext.getCurrentInstance().execute("PF('" + dialog + "').hide();");
+	}
+	
 
 }

@@ -31,6 +31,7 @@ import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasPagar;
 import br.com.clinica.model.financeiro.ParcelaContasPagar;
 import br.com.clinica.utils.DatasUtils;
+import br.com.clinica.utils.DialogUtils;
 
 @Controller
 @ViewScoped
@@ -174,16 +175,36 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 		pedidoController.merge(pedidoModel);
 		contasPagarController.merge(contasPagarModel);
+		addMsg("Operação realizada com sucesso");
+		buscaPedido();
 		}catch(Exception e){
+			try {
+				addMsg("Ocorreu um erro ao aprovar");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 			e.getMessage();
 			e.printStackTrace();
 		}
+		DialogUtils.closeDialog("pedidosDialog");
 	}
 	
 	public void reprovarPedido() {
 		pedidoModel.setTotal(valorPedido); //pegar valor total do sum
 		pedidoModel.setStatus("R"); //reprova o pedido 
-		
+		try {
+			pedidoController.merge(pedidoModel);
+			addMsg("Operação realizada com sucesso");
+			buscaPedido();
+		} catch (Exception e) {
+			try {
+				addMsg("Ocorreu um erro ao aprovar");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		DialogUtils.closeDialog("pedidosDialog");
 	}	
 		
 	public void busca() throws Exception {
@@ -194,7 +215,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		if (!campoBuscaStatus.equals("")) {
 			str.append(" and a.status = '" + campoBuscaStatus.toUpperCase() + "'");
 		}
-		System.out.println("PESQUISA...........>>> " + campoBuscaFornecedor);
 		if (!campoBuscaFornecedor.equals("")) {
 			str.append(" and a.fornecedor.nomeFornecedor = '" + campoBuscaFornecedor.toUpperCase() + "'");
 		}
