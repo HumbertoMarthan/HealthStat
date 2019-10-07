@@ -17,18 +17,19 @@
 }
 
 .ui-selectoneradio label {
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 16px 0 8px;
-    vertical-align: middle;
-    /*color: #2e6e9e !important;*/
-    font-size: medium;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
 }
 
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-    border: 1px solid #c5dbec;
-    font-weight: bold;
-    color: black;
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -40,11 +41,11 @@
 }
 
 .ui-fluid .ui-inputtext {
-    width: 100%;
-    height: 35px;
-    font-size: large;
-    text-align: center;
-    color: black;
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
 }
 
 .ui-fluid .ui-inputtextarea {
@@ -66,21 +67,22 @@
 	height: 33px;
 	font-size: 20px;
 	text-align: center;
-	
 }
 
 .ui-selectoneradio label {
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 16px 0 8px;
-    vertical-align: middle;
-    /*color: #2e6e9e !important;*/
-    font-size: medium;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
 }
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-    border: 1px solid #c5dbec;
-    font-weight: bold;
-    color: black;
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 }
@@ -114,7 +116,8 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{atendenteBean.novo}" rendered="true"/>
+										action="#{atendenteBean.novo}" rendered="true"
+										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
@@ -124,7 +127,8 @@
 										   font-size:large;"
 										immediate="true" action="#{atendenteBean.edita}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0}">
+										rendered="#{atendenteBean.atendenteModel.idAtendente > 0}"
+										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{atendenteBean.atendenteModel}" />
@@ -138,13 +142,14 @@
 										   font-size:large;"
 										immediate="true" action="#{atendenteBean.inativar}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }">
+										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }"
+										icon="fa fa-check" iconPos="right">
 
-										</p:commandButton>
+									</p:commandButton>
 								</div>
 								<div class="ui-g-12 ui-lg-3">
-									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}" 
-									style="padding-left: 10% !important">
+									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}"
+										style="padding-left: 10% !important">
 										<f:selectItem itemLabel="Todos" itemValue="T" />
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
 										<f:selectItem itemLabel="Inativo" itemValue="I" />
@@ -162,18 +167,14 @@
 							</div>
 
 							<div class="ui-g-12 ui-lg-2 ">
-								<p:inputText value="#{atendenteBean.campoBuscaCPF}"
-									placeholder="Buscar pelo CPF" id="inputCPF"
-									style="height:40px; ">
-
-								</p:inputText>
-							</div>
-							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;"
-									 icon="ui-icon-search"
-									id="btnBuscatxt" actionListener="#{atendenteBean.busca}"
-									update=" inputNome,inputCPF,table" />
-								<p:defaultCommand target="btnBuscatxt" />
+								<div class="ui-inputgroup">
+									<p:inputText value="#{atendenteBean.campoBuscaCPF}"
+										placeholder="Buscar pelo CPF" id="inputCPF"
+										style="height:40px; " />
+									<p:commandButton style="height:40px;" icon="ui-icon-search"
+										id="btnBuscatxt" actionListener="#{atendenteBean.busca}"
+										update=" inputNome,inputCPF,table" />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -182,9 +183,9 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
-							emptyMessage="Não Há Registros Lançados" 
-							styleClass="table.gridtable" rowKey="#{d.idAtendente}"
-							selectionMode="single" id="table" rows="10" paginator="true"
+							emptyMessage="Não Há Registros Lançados"
+							 rowKey="#{d.idAtendente}"
+							selectionMode="single" id="table" rows="10" paginator="true" 
 							selection="#{atendenteBean.atendenteModel}">
 
 							<p:ajax event="rowSelect" listener="#{atendenteBean.onRowSelect}"
@@ -194,11 +195,16 @@
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
 								<br />
-								<p:outputLabel value=" CPF - #{d.pessoa.pessoaCPF}" />
+								<p:outputLabel
+									value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
+							</p:column>
+
+							<p:column headerText="Mais Informações" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.pessoa.pessoaEmail}" />
 								<br />
 								<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
 							</p:column>
-
 							<p:column headerText="Endereço" priority="5"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.logradouro} - " />

@@ -89,6 +89,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	}
 
 	public void busca() {
+		limpar();
 		try {
 			lstContasReceber = new ArrayList<ContasReceber>();
 			StringBuilder str = new StringBuilder();
@@ -113,8 +114,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		try {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
-			str.append(
-					"select idparcela, acrescimodesconto, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
+			str.append( //acrescimodesconto
+					"select idparcela, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
 							+ " idcontasreceber from parcelapagar   where 1=1 and idcontasreceber = "
 							+ contasReceberModel.getIdContasReceber());
 

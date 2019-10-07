@@ -136,6 +136,7 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
+		System.out.println("Salvar Prontuario");
 		prontuarioModel.setStatus("F");
 		prontuarioModel = prontuarioController.merge(prontuarioModel);
 		sucesso();

@@ -102,31 +102,32 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		try {
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
 			lstEstoque = estoqueController
-					.findListByQueryDinamica("from Estoque where numPedido = "+ pedidoModel.getNumPedido());
+					.findListByQueryDinamica("from Estoque where numPedido = " + pedidoModel.getNumPedido());
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
 		}
-		//calcularTotalPedido();
+		// calcularTotalPedido();
 	}
-	
+
 	public void calcularTotalPedido() {
 		try {
-		StringBuilder str = new StringBuilder();
-		str.append("select sum(c.valorUnitario * quantidade) as total from Estoque c where numpedido = "+ pedidoModel.getNumPedido());
-		try {
-			lstTotalPedido = contasPagarController.getSqlListMap(str.toString());
-			System.out.println("Tamanho da lista calcular :>"+lstContasPagar.size());
-			valorPedido = Double.parseDouble(String.valueOf(lstTotalPedido.get(0).get("total")));
+			StringBuilder str = new StringBuilder();
+			str.append("select sum(c.valorUnitario * quantidade) as total from Estoque c where numpedido = "
+					+ pedidoModel.getNumPedido());
+			try {
+				lstTotalPedido = contasPagarController.getSqlListMap(str.toString());
+				System.out.println("Tamanho da lista calcular :>" + lstContasPagar.size());
+				valorPedido = Double.parseDouble(String.valueOf(lstTotalPedido.get(0).get("total")));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		}catch (Exception e) {
 			e.printStackTrace();
 			e.getMessage();
 		}
 	}
-	
+
 	public void onCellEdit(CellEditEvent event) {
 		try {
 			Object oldValue = event.getOldValue();
@@ -150,34 +151,35 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		     calcularTotalPedido();
+		calcularTotalPedido();
 	}
-	
+
 	public void aprovarPedido() {
 		try {
-		List<Estoque> lstEstoque = new ArrayList<>();
-		lstEstoque = estoqueController.findListByQueryDinamica("from Estoque where numPedido =" +pedidoModel.getNumPedido());
-		System.out.println("Tamanho da Lista Estoque :> "+lstEstoque.size());
-		for (Estoque estoque : lstEstoque) {
-			estoque.setStatus("A");
-			estoqueController.merge(estoque);
-		}
-			
-		pedidoModel.setTotal(valorPedido); //pegar valor total do sum
-		pedidoModel.setStatus("A"); //aprova o pedido 
-		
-		//setar valor para contas a pagar
-		contasPagarModel.setDataLancamento(new Date());//data atual
-		contasPagarModel.setStatus("P");
-		contasPagarModel.setValorTotalConta(valorPedido);
-		contasPagarModel.setMaterial(pedidoModel.getMaterial());
-		contasPagarModel.setFornecedor(pedidoModel.getMaterial().getFornecedor());
+			List<Estoque> lstEstoque = new ArrayList<>();
+			lstEstoque = estoqueController
+					.findListByQueryDinamica("from Estoque where numPedido =" + pedidoModel.getNumPedido());
+			System.out.println("Tamanho da Lista Estoque :> " + lstEstoque.size());
+			for (Estoque estoque : lstEstoque) {
+				estoque.setStatus("A");
+				estoqueController.merge(estoque);
+			}
 
-		pedidoController.merge(pedidoModel);
-		contasPagarController.merge(contasPagarModel);
-		addMsg("Operação realizada com sucesso");
-		buscaPedido();
-		}catch(Exception e){
+			pedidoModel.setTotal(valorPedido); // pegar valor total do sum
+			pedidoModel.setStatus("A"); // aprova o pedido
+
+			// setar valor para contas a pagar
+			contasPagarModel.setDataLancamento(new Date());// data atual
+			contasPagarModel.setStatus("P");
+			contasPagarModel.setValorTotalConta(valorPedido);
+			contasPagarModel.setMaterial(pedidoModel.getMaterial());
+			contasPagarModel.setFornecedor(pedidoModel.getMaterial().getFornecedor());
+
+			pedidoController.merge(pedidoModel);
+			contasPagarController.merge(contasPagarModel);
+			addMsg("Operação realizada com sucesso");
+			buscaPedido();
+		} catch (Exception e) {
 			try {
 				addMsg("Ocorreu um erro ao aprovar");
 			} catch (Exception e1) {
@@ -188,10 +190,10 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 		DialogUtils.closeDialog("pedidosDialog");
 	}
-	
+
 	public void reprovarPedido() {
-		pedidoModel.setTotal(valorPedido); //pegar valor total do sum
-		pedidoModel.setStatus("R"); //reprova o pedido 
+		pedidoModel.setTotal(valorPedido); // pegar valor total do sum
+		pedidoModel.setStatus("R"); // reprova o pedido
 		try {
 			pedidoController.merge(pedidoModel);
 			addMsg("Operação realizada com sucesso");
@@ -205,8 +207,8 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 		DialogUtils.closeDialog("pedidosDialog");
-	}	
-		
+	}
+
 	public void busca() throws Exception {
 		lstContasPagar = new ArrayList<ContasPagar>();
 		StringBuilder str = new StringBuilder();
@@ -235,216 +237,18 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		fornecedorSelecionado.setIdFornecedor(cod);
 	}
 
-	// gera valor das parcelas
-	public void fazerParcelas(Long idForma) {
-		try {
-			if (idForma == 1) {
-				System.out.println("ENTROU 1");
-				Double valorParcela = contasPagarModel.getValorTotalConta();
-				contasPagarModel.setValorConta(valorParcela);
-				System.out.println("VALOR DA PARCELA POR 1" + valorParcela);
-			}
-
-			if (idForma == 2) {
-				System.out.println("ENTROU 2");
-				Double valorParcela = contasPagarModel.getValorTotalConta();
-				valorParcela = valorParcela / 2;
-				System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
-				contasPagarModel.setValorConta(valorParcela);
-			}
-			if (idForma == 3) {
-				System.out.println("ENTROU 3");
-				Double valorParcela = contasPagarModel.getValorTotalConta();
-				valorParcela = valorParcela / 3;
-				System.out.println("VALOR DA PARCELA POR 2: " + valorParcela);
-				contasPagarModel.setValorConta(valorParcela);
-			}
-		} catch (Exception e) {
-			System.out.println("Erro ao gerar numero e valor de parcelas");
-			e.getMessage();
-			e.printStackTrace();
-		}
-
-		// Passa o numero da parcela para a condição de quantas vezes parcelas
-		parcelas = idForma;
-	}
-
 	public void editarPagamento() {
-		/*
-		 * if (contasPagarModel.getIdContasPagar() != null) { Long idContaPagar =
-		 * contasPagarModel.getIdContasPagar(); // Deleta a parcela referente a conta,
-		 * para que eu // possa relancar parcelas novas try { List<ParcelaContasPagar>
-		 * lstParcelas = new ArrayList<ParcelaContasPagar>(); lstParcelas =
-		 * parcelaContasPagarController.
-		 * findListByQueryDinamica("from ParcelaContasPagar"); for (ParcelaContasPagar
-		 * parcelas : lstParcelas) { if (parcelas.getContasPagar().getIdContasPagar() ==
-		 * idContaPagar && contasPagarModel.getStatus().equals("L") // Se o status da
-		 * conta for Lançadp && parcelas.getSituacao().equals("P")) { // Se as parcelas
-		 * estiverem pendentes parcelaContasPagarController.delete(parcelas); // Deleta
-		 * as parcelas e relançam } } } catch (Exception e) {
-		 * System.out.println("Erro ao executar Delete"); e.printStackTrace(); } } else
-		 * {
-		 */
 		try {
-			contasPagarModel = contasPagarController.merge(contasPagarModel);
+			contasPagarModel.setStatus("L");
+			contasPagarController.merge(contasPagarModel);
+			busca();
+			addMsg("Operação Realizada Com Sucesso!");
 		} catch (Exception e) {
-			System.out.println("Erro ao salvar contas a pagar ");
+			contasPagarModel = new ContasPagar();
 			e.printStackTrace();
 		}
 
-		/*
-		 * try {
-		 * 
-		 * fazerPagamento(); busca(); buscaParcelas(); } catch (Exception e) {
-		 * System.out.println("Erro ao salvar parcelas!"); e.printStackTrace(); }
-		 * 
-		 * try { addMsg("Operação Realizada Com Sucesso!"); } catch (Exception e) {
-		 * e.getMessage(); e.printStackTrace(); }
-		 */
-		contasPagarModel = new ContasPagar();
-	}
-
-	public void buscaParcelas() throws Exception {
-		try {
-			StringBuilder str = new StringBuilder();
-			System.out.println("ID CONTAS A PAGAR PARA A PARCELA " + contasPagarModel.getIdContasPagar());
-			str.append(" select idparcela, situacao, valorbruto, numeroparcela, ");
-			str.append(" valordesconto, datapagamento, datavencimento, pagamentoEspecial,");
-			str.append(" idcontaspagar from parcelacontaspagar   where 1=1 and idcontascontaspagar = "
-					+ contasPagarModel.getIdContasPagar());
-
-			lstParcelaPagarPendentes = (List<ParcelaContasPagar>) parcelaContasPagarController
-					.getSQLListParam(str.toString(), ParcelaContasPagar.class);
-
-		} catch (Exception e) {
-
-			System.out.println("LISTA COM 0");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Lanca as parcelas que o atendente selecionou
-	 *
-	 * @throws Exception
-	 */
-	public void fazerPagamento() throws Exception {
-		Long idContaPagar = contasPagarModel.getIdContasPagar();
-		if (parcelas == 1) {
-			parcelaContasPagarModel = new ParcelaContasPagar();
-			parcelaContasPagarModel.setNumeroParcela(1);
-			parcelaContasPagarModel.setDataVencimento(contasPagarModel.getDataVencimento());
-			parcelaContasPagarModel.setValorBruto(contasPagarModel.getValorConta());
-			parcelaContasPagarModel.setContasPagar(new ContasPagar(contasPagarModel.getIdContasPagar()));
-
-			System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
-			// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
-			// junto
-			lstParcelaPagar.clear();
-			System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
-
-			// Adiciona os dados setados a lista
-			lstParcelaPagar.add(parcelaContasPagarModel);
-
-			// Percorre a lista e salva no banco cada parcela
-			for (ParcelaContasPagar parcelaPagar : lstParcelaPagar) {
-				parcelaContasPagarController.merge(parcelaPagar);
-			}
-			// Pesquisa
-			contasPagarModel = contasPagarController.findByPorId(ContasPagar.class, idContaPagar);
-			// Seta como conta já lançada
-			contasPagarModel.setStatus("L");
-
-			// Limpa a parcela e prepara para outra inserção
-			parcelaContasPagarModel = new ParcelaContasPagar();
-			contasPagarController.merge(contasPagarModel);
-
-			// Seta como conta já lançada
-			contasPagarModel.setStatus("L");
-			contasPagarController.merge(contasPagarModel);
-			limpar();
-		}
-
-		if (parcelas == 2) {
-			for (int i = 1; i <= 2; i++) {
-				parcelaContasPagarModel = new ParcelaContasPagar();
-				parcelaContasPagarModel.setNumeroParcela(i);
-
-				if (i == 1) {
-					parcelaContasPagarModel.setDataVencimento(contasPagarModel.getDataVencimento());
-				}
-				if (i == 2) {
-					Date dataSegundaParcela = DatasUtils.addMonth(contasPagarModel.getDataVencimento(), 1);
-					parcelaContasPagarModel.setDataVencimento(dataSegundaParcela);
-				}
-
-				parcelaContasPagarModel.setValorBruto(contasPagarModel.getValorConta());
-				parcelaContasPagarModel.setContasPagar(new ContasPagar(contasPagarModel.getIdContasPagar()));
-
-				System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
-				// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
-				// junto
-				lstParcelaPagar.clear();
-				System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
-
-				// Adiciona os dados setados a lista
-				lstParcelaPagar.add(parcelaContasPagarModel);
-
-				// Percorre a lista e salva no banco cada parcela
-				for (ParcelaContasPagar parcelaPagar : lstParcelaPagar) {
-					parcelaContasPagarController.merge(parcelaPagar);
-				}
-				// Limpa a parcela e prepara para outra inserção
-				parcelaContasPagarModel = new ParcelaContasPagar();
-			}
-			// Pesquisa
-			// Seta como conta já lançada
-			contasPagarModel.setStatus("L");
-			contasPagarController.merge(contasPagarModel);
-			limpar();
-		}
-
-		if (parcelas == 3) {
-			for (int i = 1; i <= 3; i++) {
-				parcelaContasPagarModel = new ParcelaContasPagar();
-				parcelaContasPagarModel.setNumeroParcela(i);
-				if (i == 1) {
-					parcelaContasPagarModel.setDataVencimento(contasPagarModel.getDataVencimento());
-				}
-				if (i == 2) {
-					Date dataSegundaParcela = DatasUtils.addMonth(contasPagarModel.getDataVencimento(), 1);
-					parcelaContasPagarModel.setDataVencimento(dataSegundaParcela);
-				}
-				if (i == 3) {
-					Date dataTerceiraParcela = DatasUtils.addMonth(contasPagarModel.getDataVencimento(), 2);
-					parcelaContasPagarModel.setDataVencimento(dataTerceiraParcela);
-				}
-				parcelaContasPagarModel.setValorBruto(contasPagarModel.getValorConta());
-				parcelaContasPagarModel.setContasPagar(new ContasPagar(contasPagarModel.getIdContasPagar()));
-
-				System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
-				// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
-				// junto
-
-				lstParcelaPagar.clear();
-				System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
-
-				// Adiciona os dados setados a lista
-				lstParcelaPagar.add(parcelaContasPagarModel);
-
-				// Percorre a lista e salva no banco cada parcela
-				for (ParcelaContasPagar parcelaPagar : lstParcelaPagar) {
-					parcelaContasPagarController.merge(parcelaPagar);
-				}
-				// Limpa a parcela e prepara para outra inserção
-				parcelaContasPagarModel = new ParcelaContasPagar();
-			}
-			// Seta como conta já lançada
-			contasPagarModel.setStatus("L");
-			contasPagarController.merge(contasPagarModel);
-			limpar();
-		}
-		busca();
+		limpar();
 	}
 
 	public void limpar() {
@@ -495,12 +299,17 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			ContasPagar contaAtual = contasPagarController.findByPorId(ContasPagar.class,
 					contasPagarModel.getIdContasPagar());
 			System.out.println("Conta atual com pesquisa " + contaAtual.getIdContasPagar());
-			caixaModel.setFornecedor(contaAtual.getFornecedor());
+			if(contaAtual.getFornecedor() == null ) {
+				caixaModel.setFornecedor(contaAtual.getMaterial().getFornecedor());	
+			}else {
+				caixaModel.setFornecedor(contaAtual.getFornecedor());
+			}
 			caixaModel.setDataLancamento(new Date());
 			caixaModel.setContasPagar(new ContasPagar(contaAtual.getIdContasPagar()));
 			caixaModel.setValorRetirado(contaAtual.getValorConta());
 			caixaModel.setTipo("CP");
-
+			
+			contasPagarModel = new ContasPagar();
 		} catch (Exception e1) {
 			System.out.println("Erro ao busca conta para adicionar ao caixa");
 			e1.printStackTrace();
@@ -590,6 +399,9 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event) {
 		contasPagarModel = (ContasPagar) event.getObject();
+		System.out.println(contasPagarModel.getFornecedor().getNomeFornecedor());
+		System.out.println(contasPagarModel.getMaterial().getFornecedor().getNomeFornecedor());
+		System.out.println(contasPagarModel.getDataLancamento());
 	}
 
 	public void onRowSelectPedido(SelectEvent event) {

@@ -17,18 +17,19 @@
 }
 
 .ui-selectoneradio label {
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 16px 0 8px;
-    vertical-align: middle;
-    /*color: #2e6e9e !important;*/
-    font-size: medium;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
 }
 
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-    border: 1px solid #c5dbec;
-    font-weight: bold;
-    color: black;
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -101,7 +102,7 @@
 										color:white !important;
 										font-size:large; "
 										action="#{estoquistaBean.novo}" rendered="true"
-										immediate="true" />
+										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
@@ -112,7 +113,7 @@
 										immediate="true" action="#{estoquistaBean.edita}"
 										update="table, @form"
 										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }"
-										>
+										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{estoquistaBean.estoquistaModel}" />
@@ -126,7 +127,8 @@
 										   font-size:large;"
 										immediate="true" action="#{estoquistaBean.inativar}"
 										update="table, @form"
-										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }">
+										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }"
+										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
 								<div class="ui-g-12 ui-lg-3">
@@ -149,18 +151,15 @@
 							</div>
 
 							<div class="ui-g-12 ui-lg-2">
-								<p:inputText value="#{estoquistaBean.campoBuscaCPF}"
-									placeholder="Buscar pelo CPF" id="inputCPF"
-									style="height:40px; ">
-
-								</p:inputText>
-							</div>
-							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px; "
-									styleClass="btn btn-blue" icon="ui-icon-search"
-									id="btnBuscatxt" actionListener="#{estoquistaBean.busca}"
-									update=" inputNome,inputCPF, table" />
-								<p:defaultCommand target="btnBuscatxt" />
+								<div class="ui-inputgroup">
+									<p:inputText value="#{estoquistaBean.campoBuscaCPF}"
+										placeholder="Buscar pelo CPF" id="inputCPF"
+										style="height:40px; " />
+									<p:commandButton style="height:40px; "
+										styleClass="btn btn-blue" icon="ui-icon-search"
+										id="btnBuscatxt" actionListener="#{estoquistaBean.busca}"
+										update=" inputNome,inputCPF, table" />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -169,23 +168,27 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{estoquistaBean.lstEstoquista}" var="d"
-						emptyMessage="Não há dados"
-							styleClass="table.gridtable" rowKey="#{d.idEstoquista}"
-							selectionMode="single" id="table" rows="10" paginator="true"
+							emptyMessage="Não há dados" styleClass="table.gridtable"
+							rowKey="#{d.idEstoquista}" selectionMode="single" id="table"
+							rows="10" paginator="true"
 							selection="#{estoquistaBean.estoquistaModel}">
 
 							<p:ajax event="rowSelect"
 								listener="#{estoquistaBean.onRowSelect}"
 								update="table,:form:botoes" />
-
 							<p:column headerText="Estoquista" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
 								<br />
-								<p:outputLabel value=" CPF - #{d.pessoa.pessoaCPF}" />
-								<br />
 								<p:outputLabel
-									value="Telefone - #{d.pessoa.pessoaTelefonePrimario}" />
+									value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
+							</p:column>
+
+							<p:column headerText="Mais Informações" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.pessoa.pessoaEmail}" />
+								<br />
+								<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
 							</p:column>
 
 							<p:column headerText="Endereço" priority="5"

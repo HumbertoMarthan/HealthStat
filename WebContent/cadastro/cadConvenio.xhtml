@@ -83,9 +83,6 @@
 
 
 	<ui:define name="content">
-
-
-
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
@@ -120,32 +117,42 @@
 								<br />
 								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-4">
-
 										<h:outputLabel value="Convênio:*" />
-
-										<p:inputText  required="true" maxlength="150"
+										<p:inputText required="true" maxlength="150"
 											value="#{convenioBean.convenioModel.nomeConvenio}"
 											requiredMessage="Informe o Nome do Convenio" />
 									</div>
 									<div class="ui-g-12 ui-lg-2">
-										<h:outputLabel  value="Telefone:*" />
-
+										<h:outputLabel value="Cep:*" />
 										<p:inputText required="true" maxlength="150"
-											value="#{convenioBean.convenioModel.telefone}"/>
+											value="#{convenioBean.convenioModel.cep}" />
 									</div>
 
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Logradouro:*" />
+										<p:inputText required="true" maxlength="150"
+											value="#{convenioBean.convenioModel.logradouro}" />
 									</div>
-									<p:commandButton immediate="true" value="Lista Map" actionListener="#{convenioBean.teste}" />
-									<p:commandButton immediate="true" value="Number" actionListener="#{convenioBean.teste1}" />
+
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Bairro:*" />
+										<p:inputText required="true" maxlength="150"
+											value="#{convenioBean.convenioModel.bairro}" />
+									</div>
+
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Telefone:*" />
+										<p:inputMask required="true" 
+											mask="(999)9999-9999" value="#{convenioBean.convenioModel.telefone}" />
+									</div>
+
+								</div>
 							</p:panel>
 						</div>
-
-
 
 					</div>
 				</div>
 			</div>
-
 		</h:form>
 
 

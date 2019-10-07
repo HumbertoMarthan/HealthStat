@@ -11,30 +11,53 @@
 		<div class="content">
 			<div class="ui-fluid">
 				<div class="ui-g">
-						<div class="ui-g-12 ui-lg-3" >
-							<p:selectOneRadio 
-								value="#{contasReceberBean.campoBuscaTipoConta}">
-								<f:selectItem itemLabel="Pendente" itemValue="P" />
-								<f:selectItem itemLabel="Lançado" itemValue="L" />
-								<f:selectItem itemLabel="Pago" itemValue="PA" />
-								<p:ajax event="change" update="table"
-									listener="#{contasReceberBean.busca}" />
-							</p:selectOneRadio>
-						</div>
-						<div class="ui-g-12 ui-lg-4" align="center">
-							<p:inputText value="#{contasReceberBean.campoBuscaContasReceber}"
-								placeholder="Buscar pelo Nome do Paciente" id="inputNome"
-								style="height:40px; ">
-							</p:inputText>
-						</div>
+					<h:panelGroup id="botoes">
+						<!-- Botão Pagamento -->
+						<p:commandButton value="Pagamento"
+							actionListener="#{contasReceberBean.setarVariaveisNulas}"
+							rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and (
+						contasReceberBean.contasReceberModel.idContasReceber > 0)}"
+							style="height:40px;width:170px; 
+							background-color: darkcyan; background: darkcyan; color:white !important"
+							ajax="true" immediate="true" id="buttonPagamento"
+							icon="fa fa-info-circle" iconPos="right"
+							oncomplete="PF('relancarPagamento').show()" update=":formulario">
+							<f:setPropertyActionListener value="#{d}"
+								target="#{contasReceberBean.contasReceberModel}" />
+						</p:commandButton>
 
-						<div class="ui-g-12 ui-lg-1">
-							<p:commandButton style="height:40px; " styleClass="btn btn-blue"
-								icon="ui-icon-search" id="btnBuscatxt"
-								actionListener="#{contasReceberBean.busca}"
-								update=" inputNome,table" />
-							<p:defaultCommand target="btnBuscatxt" />
-						</div>
+						<p:commandButton
+							style="height:40px;width:170px; 
+						background-color: blue; background: blue; color:white !important"
+							value="Editar Pagamento"
+							rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and
+						(contasReceberBean.contasReceberModel.idContasReceber > 0)}"
+							onclick="PF('relancarPagamento').show()">
+						</p:commandButton>
+					</h:panelGroup>
+					<div class="ui-g-12 ui-lg-3">
+						<p:selectOneRadio value="#{contasReceberBean.campoBuscaTipoConta}">
+							<f:selectItem itemLabel="Pendente" itemValue="P" />
+							<f:selectItem itemLabel="Lançado" itemValue="L" />
+							<f:selectItem itemLabel="Pago" itemValue="PA" />
+							<p:ajax event="change" update="table"
+								listener="#{contasReceberBean.busca}" />
+						</p:selectOneRadio>
+					</div>
+					<div class="ui-g-12 ui-lg-4" align="center">
+						<p:inputText value="#{contasReceberBean.campoBuscaContasReceber}"
+							placeholder="Buscar pelo Nome do Paciente" id="inputNome"
+							style="height:40px; ">
+						</p:inputText>
+					</div>
+
+					<div class="ui-g-12 ui-lg-1">
+						<p:commandButton style="height:40px; " styleClass="btn btn-blue"
+							icon="ui-icon-search" id="btnBuscatxt"
+							actionListener="#{contasReceberBean.busca}"
+							update=" inputNome,table" />
+						<p:defaultCommand target="btnBuscatxt" />
+					</div>
 				</div>
 				<div class="ui-g">
 					<br />
@@ -46,7 +69,7 @@
 
 						<p:ajax event="rowSelect"
 							listener="#{contasReceberBean.onRowSelect}"
-							update="table, :formPai" />
+							update="table, formPai:botoes" />
 
 						<p:column headerText="Status" priority="1"
 							style="overflow: hidden;text-align: center; font-size: medium;width: 10%">

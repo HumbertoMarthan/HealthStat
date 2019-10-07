@@ -64,7 +64,7 @@
 			logout-success-url="/publico/login.jsf"
 			logout-url="/j_spring_security_logout" delete-cookies="JSESSIONID" />
 
-		<remember-me token-validity-seconds="1209600" />
+		<remember-me token-validity-seconds="3609600" />
 
 		<session-management
 			invalid-session-url="/publico/login.jsf"

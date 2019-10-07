@@ -128,7 +128,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		str.append("from Atendente a where 1=1");
 
 		if (!campoBuscaNome.equals("")) {
-			str.append(" and upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%')");
+			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
 		}
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
@@ -139,7 +139,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		}
 		if (campoBuscaAtivo.equals("T")) {
 			System.out.println("Entro no T");
-			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 		System.out.println("LISTA SELECT :> " + str);
 		lstAtendente = atendenteController.findListByQueryDinamica(str.toString());

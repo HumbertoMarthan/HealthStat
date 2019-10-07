@@ -7,7 +7,7 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
-	<ui:define name="title">Busca Pacientes</ui:define>
+	<ui:define name="title">Busca Paciente</ui:define>
 	<ui:define name="head">
 		<style>
 .ui-g label {
@@ -101,7 +101,8 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{pacienteBean.novo}" rendered="true" immediate="true" />
+										action="#{pacienteBean.novo}" rendered="true" immediate="true"
+										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
@@ -111,7 +112,8 @@
 										   font-size:large;"
 										immediate="true" action="#{pacienteBean.editar}"
 										update="table, @form"
-										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }">
+										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }"
+										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{pacienteBean.pacienteModel}" />
@@ -125,8 +127,8 @@
 										   font-size:large;"
 										immediate="true" action="#{pacienteBean.inativar}"
 										update="table, @form"
-										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }">
-
+										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }"
+											icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
 							</h:panelGroup>
@@ -156,7 +158,7 @@
 								</p:inputText>
 							</div>
 							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;" styleClass="btn btn-blue"
+								<p:commandButton style="height:40px;" 
 									icon="ui-icon-search" id="btnBuscatxt"
 									actionListener="#{pacienteBean.busca}"
 									update=" inputNome,inputCPF, table" />
@@ -169,31 +171,37 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{pacienteBean.lstPaciente}" var="d"
-						emptyMessage="Não há registros"
+							emptyMessage="Não há registros"
+							rows="10" paginator="true" 
 							rowKey="#{d.idPaciente}" selectionMode="single" id="table"
 							selection="#{pacienteBean.pacienteModel}">
 
 							<p:ajax event="rowSelect" listener="#{pacienteBean.onRowSelect}"
 								update="table,:form:botoes" />
 
-							<p:column headerText="Paciente" priority="1"
+						<p:column headerText="Paciente" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
 								<br />
-								<p:outputLabel value=" CPF - #{d.pessoa.pessoaCPF}" />
+								<p:outputLabel
+									value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
+							</p:column>
+
+							<p:column headerText="Mais Informações" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.pessoa.pessoaEmail}" />
 								<br />
 								<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
 							</p:column>
-
+							
 							<p:column headerText="Endereço" priority="5"
 								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.pessoa.logradouro}" />
+								<p:outputLabel value="#{d.pessoa.logradouro} - " />
+								<p:outputLabel value="#{d.pessoa.cep}" />
 								<br />
 								<p:outputLabel value="#{d.pessoa.bairro}" />
-								<br/>
-								<p:outputLabel value="#{d.pessoa.localidade} - " />
-								<p:outputLabel value="#{d.pessoa.uf}" />
 							</p:column>
+							
 							<p:column headerText="Status" priority="5"
 								style="overflow: hidden;text-align: center; font-size: large; width: 8%">
 								

@@ -72,18 +72,18 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		str.append("from Medico a where 1=1");
 
 		if (!campoBuscaNome.equals("")) {
-			str.append(" and upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%')");
+			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
 		}
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
 		}
-		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")  ) {
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
 			System.out.println("Entrou no A or I");
 			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
 		}
 		if (campoBuscaAtivo.equals("T")) {
 			System.out.println("Entro no T");
-			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 		
 		lstMedico=  medicoController.findListByQueryDinamica(str.toString());

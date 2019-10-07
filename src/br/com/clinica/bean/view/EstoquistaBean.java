@@ -60,7 +60,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		str.append("from Estoquista a where 1=1");
 
 		if (!campoBuscaNome.equals("")) {
-			str.append(" and upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%')");
+			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
 		}
 		if (!campoBuscaCPF.equals("")) {
 			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
@@ -71,7 +71,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		}
 		if (campoBuscaAtivo.equals("T")) {
 			System.out.println("Entro no T");
-			str.append(" and a.ativo = 'A' or a.ativo = 'I' ");
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 
 		lstEstoquista = estoquistaController.findListByQueryDinamica(str.toString());

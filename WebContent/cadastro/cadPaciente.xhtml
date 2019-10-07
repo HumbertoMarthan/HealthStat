@@ -98,7 +98,7 @@
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
-								<br /> 
+								<br />
 								<div align="center">
 									<p:outputLabel value="Cadastro de Paciente" styleClass="titulo" />
 								</div>
@@ -164,11 +164,11 @@
 											for="nascimento" value="Nascimento:*" />
 
 										<p:calendar id="nascimento" required="true" maxlength="10"
-											yearRange="c-100:c+100" autocomplete="true"  showOn="button"
+											yearRange="c-100:c+100" autocomplete="true" showOn="button"
 											pattern="dd/MM/yyyy" mask="true" navigator="true"
 											maxdate="today" mindate="01/01/1930" pagedate="1/1/80"
 											value="#{pacienteBean.pacienteModel.pessoa.pessoaDataNascimento}"
-											requiredMessage="Informe o Data de Nascimento" >
+											requiredMessage="Informe o Data de Nascimento">
 										</p:calendar>
 									</div>
 									<div class="ui-g-12 ui-lg-2">
@@ -222,43 +222,39 @@
 											value="#{pacienteBean.pacienteModel.pessoa.pessoaTelefoneSecundario}"
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
-									<div class="ui-g-12  ui-lg-3">
+									<div class="ui-g-12  ui-lg-4">
 										<h:outputLabel value="Convênio" />
-										<p:autoComplete id="convenio"
-											completeMethod="#{auxController.completeConvenio}"
-											forceSelection="true" converter="entityConverter" var="a"
-											itemLabel="#{a.nomeConvenio}" itemValue="#{a}"
-											value="#{pacienteBean.pacienteModel.convenio}"
-											minQueryLength="1" dropdown="true" maxResults="30"
-											required="true" requiredMessage="Informe um convenio">
-											<p:column id="p">
-												<h:outputText value="#{a.nomeConvenio}" />
-											</p:column>
-										</p:autoComplete>
-									</div>
-									<div class="ui-g-12  ui-lg-1">
-										<h:outputLabel value="Adicionar" />
-										<p:commandButton styleClass="width: 15px" icon="ui-icon-plus" immediate="true"
-											style="height: 40px"
-											action="#{convenioBean.redirecionarFindEntidade}">
-											<p:confirm
-												message="Você será redirecionado para tela de cadastro de paciente, deseja continuar?"
-												icon="ui-icon-mail-closed" />
+										<div class="ui-inputgroup">
+											<p:autoComplete id="convenio"
+												completeMethod="#{auxController.completeConvenio}"
+												forceSelection="true" converter="entityConverter" var="a"
+												itemLabel="#{a.nomeConvenio}" itemValue="#{a}"
+												value="#{pacienteBean.pacienteModel.convenio}"
+												minQueryLength="1" dropdown="true" maxResults="30"
+												required="true" requiredMessage="Informe um convenio">
+												<p:column id="p">
+													<h:outputText value="#{a.nomeConvenio}" />
+												</p:column>
+											</p:autoComplete>
+											<p:commandButton styleClass="width: 15px" icon="ui-icon-plus"
+												immediate="true" 
+												action="#{convenioBean.redirecionarFindEntidade}">
+												<p:confirm
+													message="Você será redirecionado para tela de cadastro de paciente, deseja continuar?"
+													icon="ui-icon-mail-closed" />
 
-											<p:confirmDialog global="true" showEffect="fade"
-												hideEffect="fade">
-												<div align="center">
-													<p:commandButton value="Sim" type="button"
-														styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+												<p:confirmDialog global="true" showEffect="fade"
+													hideEffect="fade">
+													<div align="center">
+														<p:commandButton value="Sim" type="button"
+															styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 
-													<p:commandButton value="Não" type="button"
-														styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
-												</div>
-
-											</p:confirmDialog>
-
-										</p:commandButton>
-
+														<p:commandButton value="Não" type="button"
+															styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+													</div>
+												</p:confirmDialog>
+											</p:commandButton>
+										</div>
 									</div>
 								</div>
 								<div class="ui-g">
@@ -331,7 +327,7 @@
 								</div>
 								<p:separator />
 
-								<p:panel id="panel" header="Acompanhante" 
+								<p:panel id="panel" header="Acompanhante"
 									style="margin-bottom:20px" rendered="false">
 									<div class="ui-g-12 ui-lg-4">
 										<h:outputLabel value="Nome : *" />
@@ -349,9 +345,7 @@
 										<h:outputLabel value="Parentesco : *" />
 										<p:selectOneMenu id="parentescos"
 											value="#{pacienteBean.acompaModel.parentescos}"
-											required="true"
-											requiredMessage="Informe um Parentesco"
-											>
+											required="true" requiredMessage="Informe um Parentesco">
 											<f:selectItem itemLabel="Selecione" itemValue=""
 												noSelectionOption="true" />
 											<f:selectItem itemLabel="Pai" itemValue="P" />
@@ -360,7 +354,7 @@
 											<f:selectItem itemLabel="Filho" itemValue="F" />
 											<f:selectItem itemLabel="Tio(a)" itemValue="T" />
 											<f:selectItem itemLabel="Sobrinho(a)" itemValue="S" />
-											
+
 										</p:selectOneMenu>
 									</div>
 									<div class="ui-g-12 ui-lg-4">
@@ -424,7 +418,6 @@
 										</p:column>
 									</p:dataTable>
 								</p:panel>
-
 							</p:panel>
 						</div>
 					</div>

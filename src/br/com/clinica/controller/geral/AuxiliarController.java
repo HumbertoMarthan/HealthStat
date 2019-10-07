@@ -61,6 +61,11 @@ public class AuxiliarController implements Serializable{
 				findListByQueryDinamica(" from FormaPagamento where nomePagamento like '%" + q.toUpperCase()  + "%' order by nomePagamento  ASC");
 	}
 	
+	public List<FormaPagamento>  completeFormaPagamentoSemCrediario(String q) throws Exception {
+		return formaPagamentoController.
+				findListByQueryDinamica(" from FormaPagamento where nomePagamento like '%" + q.toUpperCase()  + "%' and siglapagamento != 'CRE' order by nomePagamento  ASC");
+	}
+	
 	public List<Paciente>  completePaciente(String q) throws Exception {
 		return pacienteController.
 				findListByQueryDinamica(" from Paciente where ativo='A' and pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");

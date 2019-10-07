@@ -118,21 +118,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						update="@form">
 					</p:commandButton>
 
-					<!-- Botão Pagamento -->
-					<p:commandButton value="Pagamento"
-						actionListener="#{contasReceberBean.setarVariaveisNulas}"
-						rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and (
-						contasReceberBean.contasReceberModel.idContasReceber > 0)}"
-						style="height:40px;width:170px; 
-							background-color: darkcyan; background: darkcyan; color:white !important"
-						ajax="true" immediate="true" id="buttonPagamento"
-						icon="fa fa-info-circle" iconPos="right"
-						oncomplete="PF('relancarPagamento').show()" update=":formulario">
-						<f:setPropertyActionListener value="#{d}"
-							target="#{contasReceberBean.contasReceberModel}" />
-					</p:commandButton>
-
-					<p:commandButton
+<!-- 					<p:commandButton
 						style="height:40px;width:170px; 
 							background-color: blue; background: blue; color:white !important"
 						rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and
@@ -140,7 +126,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						value="Editar Pagamento" onclick="PF('relancarPagamento').show()">
 
 					</p:commandButton>
-
+ -->
 					<!--  Botão Estorno 
 					<p:commandButton value="Estorno"
 						rendered="#{contasReceberBean.contasReceberModel.status eq 'L' and

@@ -31,26 +31,42 @@ public class Convenio implements  EntityBase,Serializable {
 	private Long idConvenio;
 	
 	@Override
-		public Long getId() {
-			return idConvenio;
-		}
+	public Long getId() {
+		return idConvenio;
+	}
 	
 	@Column
 	private String nomeConvenio;
 	
-	
+	@Column
 	private String logradouro;
 	
+	@Column
+	private String bairro;
+	
+	@Column
+	private String cep;
+	
 	private String telefone;
-	
-	
-	//GETTERS E SETTERS----------------------------------------------
 	
 	public Long getIdConvenio() {
 		return idConvenio;
 	}
 	public void setIdConvenio(Long idConvenio) {
 		this.idConvenio = idConvenio;
+	}
+	
+	public String getBairro() {
+		return bairro;
+	}
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+	public String getCep() {
+		return cep;
+	}
+	public void setCep(String cep) {
+		this.cep = cep;
 	}
 	public String getNomeConvenio() {
 		return nomeConvenio;

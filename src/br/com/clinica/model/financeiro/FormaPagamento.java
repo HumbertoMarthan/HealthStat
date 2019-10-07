@@ -36,6 +36,8 @@ public class FormaPagamento  implements EntityBase,Serializable {
 	
 	private String nomePagamento;
 	
+	private String siglaPagamento;
+	
 	//GETTERS E SETTERS-------------------------
 	
 	public Long getIdFormaPagamento() {
@@ -44,6 +46,14 @@ public class FormaPagamento  implements EntityBase,Serializable {
 
 	public String getNomePagamento() {
 		return nomePagamento;
+	}
+
+	public String getSiglaPagamento() {
+		return siglaPagamento;
+	}
+
+	public void setSiglaPagamento(String siglaPagamento) {
+		this.siglaPagamento = siglaPagamento;
 	}
 
 	public void setNomePagamento(String nomePagamento) {
