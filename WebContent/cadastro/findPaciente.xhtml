@@ -151,18 +151,15 @@
 							</div>
 
 							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-inputgroup">
 								<p:inputText value="#{pacienteBean.campoBuscaCPF}"
 									placeholder="Buscar pelo CPF" id="inputCPF"
-									style="height:40px; ">
-
-								</p:inputText>
-							</div>
-							<div class="ui-g-12 ui-lg-1">
+									style="height:40px; "/>
 								<p:commandButton style="height:40px;" 
 									icon="ui-icon-search" id="btnBuscatxt"
 									actionListener="#{pacienteBean.busca}"
 									update=" inputNome,inputCPF, table" />
-								<p:defaultCommand target="btnBuscatxt" />
+									</div>
 							</div>
 						</div>
 					</div>

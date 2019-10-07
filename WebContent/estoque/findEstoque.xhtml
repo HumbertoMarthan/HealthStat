@@ -108,7 +108,8 @@
 										font-size:large; "
 										actionListener="#{pedidoBean.limparPedido}"
 										action="#{pedidoBean.geraPedido}" update=":forma"
-										onclick="PF('fazerPedido').show()" immediate="true" />
+										onclick="PF('fazerPedido').show()" immediate="true" 
+											icon="fa fa-plus" iconPos="right" />
 								</div>
 
 
@@ -191,8 +192,8 @@
 								<p:ajax event="rowSelect" listener="#{estoqueBean.onRowSelect}"
 									update="table,:form:botoes" />
 
-								<f:facet name="header">
-       								 Relação de Estoque
+								<f:facet name="header" >
+       								 <p:outputLabel value="Relação de Estoque" style="color: white !important ;font-size: large" />
  							   </f:facet>
 
 								<p:column headerText="Material" priority="1"
@@ -212,8 +213,8 @@
 								</p:column>
 
 								<p:column headerText="Valor" priority="1"
-									style="overflow: hidden;text-align: left; font-size: large">
-									<p:outputLabel value="#{d.valorUnitario}"
+									style="overflow: hidden;text-align: right; font-size: large">
+									<p:outputLabel value="R$ #{d.valorUnitario}"
 										rendered="#{d.valorUnitario != null}" />
 									<p:outputLabel value="Aguardando Lançamento do Financeiro"
 										rendered="#{d.valorUnitario == null}" style="color : blue" />
@@ -253,7 +254,8 @@
 								<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" />
 
 								<f:facet name="header">
-       								 Status do(s) Pedido(s)
+       								<p:outputLabel value="Status do(s) Pedido(s)" style="color: white !important ;font-size: large" />
+       								 
  							   </f:facet>
 
 								<p:column headerText="Nº Pedido" width="20%" style="text-align:center">
@@ -276,7 +278,7 @@
 			</div>
 		</h:form>
 
-		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
+		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true" position="top"
 			resizable="false" height="350" width="1100" responsive="true"
 			dynamic="true" appendToBody="@body" header="Fazer Novo Pedido">
 			<h:form id="forma">
@@ -288,7 +290,7 @@
 									<util:botoesCrud managedBeanView="#{pedidoBean}"
 										camposReload=":formTemplate:msg, form" botaoNovo="false"
 										botaoSalvar="false" botaoAtualizar="false"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="false"
 										botaoExcluir="false">
 									</util:botoesCrud>
 
@@ -324,8 +326,7 @@
 													background-color: red; 
 													background: red; 
 													color:white !important;
-													font-size:large;"
-										icon="fa fa-floppy-o fa" iconPos="rigth" />
+													font-size:large;"/>
 
 								</div>
 
@@ -339,7 +340,7 @@
 									<div class="ui-g-12 ui-lg-2">
 										<h:outputLabel value="Num Pedido:" />
 										<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
-											disabled="false" />
+											disabled="true" />
 									</div>
 
 									<div class="ui-g-12 ui-lg-4">

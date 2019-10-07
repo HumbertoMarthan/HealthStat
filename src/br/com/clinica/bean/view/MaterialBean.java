@@ -28,6 +28,7 @@ public class MaterialBean extends BeanManagedViewAbstract {
 	private List<Material> lstMaterial;
 	private String campoBuscaNome = "";
 	private String campoBuscaFornecedor = "";
+	private String campoBuscaAtivo = "A";
 
 	@Autowired
 	private MaterialController materialController; // Injeta o Material Controller
@@ -51,6 +52,14 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		}
 		if (!campoBuscaFornecedor.equals("")) {
 			str.append(" and upper(a.fornecedor.nomeFornecedor) like upper('%" + campoBuscaFornecedor + "%')");
+		}
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 
 		lstMaterial = materialController.findListByQueryDinamica(str.toString());
@@ -188,4 +197,20 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		this.materialController = materialController;
 	}
 
+	public String getCampoBuscaFornecedor() {
+		return campoBuscaFornecedor;
+	}
+
+	public void setCampoBuscaFornecedor(String campoBuscaFornecedor) {
+		this.campoBuscaFornecedor = campoBuscaFornecedor;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+	
 }

@@ -23,7 +23,6 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.FornecedorController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
-import br.com.clinica.model.cadastro.pessoa.Atendente;
 
 
 @Controller
