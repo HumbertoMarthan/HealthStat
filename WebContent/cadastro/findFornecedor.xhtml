@@ -11,9 +11,25 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: large;
+	font-size: medium;
 	color: black;
 	font-weight: bold
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -28,6 +44,7 @@
 	width: 100%;
 	height: 35px;
 	font-size: large;
+	text-align: center;
 	color: black;
 }
 
@@ -50,6 +67,21 @@
 	height: 33px;
 	font-size: 20px;
 	text-align: center;
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
 	color: black;
 }
 
@@ -78,7 +110,7 @@
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
@@ -87,86 +119,116 @@
 										action="#{fornecedorBean.novo}" rendered="true"
 										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
 										   color:white !important;
-										   font-size:large;" immediate="true"
-										   action="#{fornecedorBean.editar}"
+										   font-size:large;"
+										immediate="true" action="#{fornecedorBean.editar}"
 										update="table, @form"
 										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 }"
-										icon=" fa fa-pencil" iconPos="right" >
-										
-										<f:setPropertyActionListener value="#{d}" 
-								target="#{fornecedorBean.fornecedorModel}"/>
-										</p:commandButton>
+										icon=" fa fa-pencil" iconPos="right">
+
+										<f:setPropertyActionListener value="#{d}"
+											target="#{fornecedorBean.fornecedorModel}" />
+									</p:commandButton>
+								</div>
+
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
+										style="height:40px;background: tomato !important  ;
+										   background-color: tomato ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{fornecedorBean.inativar}"
+										update="table, @form"
+										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 }"
+										icon="fa fa-check" iconPos="right">
+									</p:commandButton>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-4">
-								<p:inputText value="#{fornecedorBean.campoBuscaFornecedor}"
-									placeholder="Buscar pelo Nome" id="inputNome"
-									style="height:40px; ">
-
-								</p:inputText>
+							<div class="ui-g-12 ui-lg-3">
+								<p:selectOneRadio value="#{fornecedorBean.campoBuscaAtivo}"
+									>
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<f:selectItem itemLabel="Ativo" itemValue="A" />
+									<f:selectItem itemLabel="Inativo" itemValue="I" />
+									<p:ajax event="change" listener="#{fornecedorBean.busca}" update="table" />
+								</p:selectOneRadio>
 							</div>
-
-						
-							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;width:130px; "
-									styleClass="btn btn-blue" icon="ui-icon-search"
-									id="btnBuscatxt" actionListener="#{fornecedorBean.busca}"
-									update=" inputNome,table" />
-								<p:defaultCommand target="btnBuscatxt" />
+							<div class="ui-g-12 ui-lg-4">
+								<div class="ui-inputgroup">
+									<p:inputText value="#{fornecedorBean.campoBuscaFornecedor}"
+										placeholder="Buscar pelo Nome" id="inputNome"
+										style="height:40px; " />
+									<p:commandButton
+										styleClass="btn btn-blue" icon="ui-icon-search"
+										id="btnBuscatxt" actionListener="#{fornecedorBean.busca}"
+										update=" inputNome,table" />
+								</div>
 							</div>
 						</div>
 					</div>
 				</p:panel>
-				<p:panel> 
+				<p:panel>
 					<div class="ui-g">
-					<br/>
+						<br />
 						<p:dataTable value="#{fornecedorBean.lstFornecedor}" var="d"
-							styleClass="table.gridtable" rowKey="#{d.idFornecedor}"
-							selectionMode="single" id="table" 
+							rowKey="#{d.idFornecedor}" selectionMode="single" id="table"
 							selection="#{fornecedorBean.fornecedorModel}">
 
 							<p:ajax event="rowSelect"
 								listener="#{fornecedorBean.onRowSelect}"
 								update="table,:form:botoes" />
 
-							<p:column headerText="Fornecedor" priority="1"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.nomeFornecedor.toUpperCase()}
-								<br/>
-								Inscrição Estadual - #{d.inscricaoEstadual.toUpperCase()}
-								<br/>
-								Razão Social - #{d.razaoSocial.toUpperCase()}
-								<br/>
-								CNPJ - #{d.cnpj}
-								<br/>
-								Telefone - #{d.telefone}
+							<p:column headerText="Atendente" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.nomeFornecedor.toUpperCase()}" />
+								<br />
+								<p:outputLabel
+									value="Inscrição Estadual - #{d.inscricaoEstadual.toUpperCase()}" />
+								<br />
+								<p:outputLabel
+									value="Razão Social - #{d.razaoSocial.toUpperCase()}" />
 							</p:column>
+
+							<p:column headerText="Mais Informações" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="CNPJ - #{d.cnpj}" />
+								<br />
+								<p:outputLabel value="#{d.telefone}" />
+								<br />
+								<p:outputLabel value="#{d.email}" />
+							</p:column>
+
 							<p:column headerText="Endereço" priority="5"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.logradouro}
-								<br/>
-								#{d.localidade}
-								<br/>
-								#{d.bairro}
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.logradouro} - " />
+								<p:outputLabel value="#{d.localidade}" />
+								<br />
+								<p:outputLabel value="#{d.cep}" />
+								<p:outputLabel value="#{d.bairro}" />
 							</p:column>
-							
-								<p:column style="width:50px" priority="4">
+							<p:column headerText="Status" priority="5"
+								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
+								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
+									style="color : green" />
+								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
+									style="color : red" />
+							</p:column>
+
+							<!-- <p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
 									<p:commandLink action="#{fornecedorBean.excluir}"
-										update="@form" id="excluir" ajax="true"
-										immediate="true">
+										update="@form" id="excluir" ajax="true" immediate="true">
 										<i class="fa fa-trash" aria-hidden="true"></i>
 										<f:setPropertyActionListener value="#{d}"
 											target="#{fornecedorBean.fornecedorModel}" />
 									</p:commandLink>
 								</center>
-							</p:column>
+							</p:column> -->
 						</p:dataTable>
 					</div>
 				</p:panel>

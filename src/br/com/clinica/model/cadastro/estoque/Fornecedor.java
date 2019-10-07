@@ -57,6 +57,9 @@ public class Fornecedor  implements EntityBase,Serializable {
 	@Column(name = "telefone")
 	private String telefone;
 	
+	@Column(name = "email")
+	private String email;
+	
 	@Column(name ="cep")
 	private String cep;
 	
@@ -80,6 +83,18 @@ public class Fornecedor  implements EntityBase,Serializable {
 	public Long getIdFornecedor() {
 		return idFornecedor;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
 
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;

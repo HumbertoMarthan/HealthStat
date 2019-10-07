@@ -23,6 +23,7 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.FornecedorController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import br.com.clinica.model.cadastro.pessoa.Atendente;
 
 
 @Controller
@@ -38,6 +39,7 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	private String urlFind = "/cadastro/findFornecedor.jsf?faces-redirect=true";
 	private List<Fornecedor> lstFornecedor;
 	private String campoBuscaFornecedor = "";
+	private String campoBuscaAtivo = "A";
 	
 	public FornecedorBean() {
 		fornecedorModel = new Fornecedor();
@@ -59,10 +61,41 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 		StringBuilder str = new StringBuilder();
 		str.append("from Fornecedor a where 1=1");
 		if (!campoBuscaFornecedor.equals("")) {
-			str.append(" and upper(a.nomeFornecedor) like upper('%" + campoBuscaFornecedor + "%')");
+			str.append(" and (upper(a.nomeFornecedor) like upper('%" + campoBuscaFornecedor + "%'))");
+		}
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+			System.out.println("Entrou no A or I");
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			System.out.println("Entro no T");
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 
 		lstFornecedor = fornecedorController.findListByQueryDinamica(str.toString());
+	}
+	
+	public void inativar() {
+
+		if (fornecedorModel.getAtivo().equals("I")) {
+			fornecedorModel.setAtivo("A");
+		} else {
+			fornecedorModel.setAtivo("I");
+		}
+
+		try {
+			fornecedorController.saveOrUpdate(fornecedorModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
+		this.fornecedorModel = new Fornecedor();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
 	}
 	
 	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
@@ -213,9 +246,12 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	public void setCampoBuscaFornecedor(String campoBuscaFornecedor) {
 		this.campoBuscaFornecedor = campoBuscaFornecedor;
 	}
-	
-	
-	
-	
-	
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
 }

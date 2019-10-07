@@ -88,9 +88,6 @@
 
 
 	<ui:define name="content">
-
-
-
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
@@ -127,7 +124,7 @@
 								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-6">
 										<h:outputLabel value="Fornecedor:*" />
-										<p:inputText required="true"
+										<p:inputText required="true" autocomplete="true"
 											value="#{fornecedorBean.fornecedorModel.nomeFornecedor}"
 											requiredMessage="Informe o Nome do Convenio" />
 									</div>

@@ -35,6 +35,8 @@ public class Especialidade implements EntityBase, Serializable {
 
 	private String nomeEspecialidade;
 
+	private String ativo = "A";
+	
 	@ManyToMany(mappedBy = "especialidades")
 	private List<Medico> medicos = new ArrayList<>();
 
@@ -50,6 +52,18 @@ public class Especialidade implements EntityBase, Serializable {
 	public Long getIdEspecialidade() {
 		return idEspecialidade;
 	}
+	
+	public String getAtivo() {
+		return ativo;
+	}
+
+
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
+
+
 
 	public List<Medico> getMedicos() {
 		return medicos;

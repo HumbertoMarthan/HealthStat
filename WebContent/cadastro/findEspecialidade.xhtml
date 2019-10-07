@@ -120,6 +120,16 @@
 									<!-- TROCAR BUSCA  -->
 								</div>
 							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-3">
+								<p:selectOneRadio value="#{especialidadeBean.campoBuscaAtivo}" 
+									style="padding-left: 10% !important">
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<f:selectItem itemLabel="Ativo" itemValue="A" />
+									<f:selectItem itemLabel="Inativo" itemValue="I" />
+									<p:ajax event="change" listener="#{especialidadeBean.busca}"
+										update="table" />
+								</p:selectOneRadio>
+							</div>
 							<div class="ui-g-12 ui-lg-4">
 								<div class="ui-inputgroup">
 									<p:inputText
@@ -146,18 +156,26 @@
 							<p:ajax event="rowSelect"
 								listener="#{especialidadeBean.onRowSelect}"
 								update="table,:form:botoes" />
-								
+
 							<p:column headerText="Especialidade" priority="5" width="30%"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.nomeEspecialidade}" />
 							</p:column>
 
+							<p:column headerText="Status" priority="5"
+								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
+								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
+									style="color : green" />
+								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
+									style="color : red" />
+							</p:column>
+
 							<p:column headerText="Observação" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.observacao}" /> 
+								<p:outputLabel value="#{d.observacao}" />
 							</p:column>
-							
-							
+
+
 							<!-- <p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>

@@ -27,6 +27,7 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	private String urlFind = "/cadastro/findEspecialidade.jsf?faces-redirect=true";
 	List<Especialidade> lstEspecialidade;
 	private String campoBuscaEspecialidade;
+	private String campoBuscaAtivo = "A";
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
@@ -42,7 +43,13 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 		str.append("from Especialidade a where 1=1");
 
 		if (!campoBuscaEspecialidade.equals("")) {
-			str.append(" and upper(a.nomeEspecialidade) like upper('%" + campoBuscaEspecialidade + "%')");
+			str.append(" and (upper(a.nomeEspecialidade) like upper('%" + campoBuscaEspecialidade + "%'))");
+		}
+		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+		}
+		if (campoBuscaAtivo.equals("T")) {
+			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 
 		lstEspecialidade = especialidadeController.findListByQueryDinamica(str.toString());
@@ -164,4 +171,13 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	public void setEspecialidadeController(EspecialidadeController especialidadeController) {
 		this.especialidadeController = especialidadeController;
 	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+	
 }
