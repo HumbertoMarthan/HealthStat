@@ -108,8 +108,8 @@
 										font-size:large; "
 										actionListener="#{pedidoBean.limparPedido}"
 										action="#{pedidoBean.geraPedido}" update=":forma"
-										onclick="PF('fazerPedido').show()" immediate="true" 
-											icon="fa fa-plus" iconPos="right" />
+										onclick="PF('fazerPedido').show()" immediate="true"
+										icon="fa fa-plus" iconPos="right" />
 								</div>
 
 
@@ -172,7 +172,8 @@
 
 							<div class="ui-g-12 ui-lg-1">
 								<p:commandButton style="height:40px; " styleClass="btn btn-blue"
-									icon="ui-icon-search" id="btnBuscatxt" update="table, tablePedido"
+									icon="ui-icon-search" id="btnBuscatxt"
+									update="table, tablePedido"
 									actionListener="#{estoqueBean.busca}"
 									action="#{pedidoBean.busca}" />
 
@@ -192,9 +193,10 @@
 								<p:ajax event="rowSelect" listener="#{estoqueBean.onRowSelect}"
 									update="table,:form:botoes" />
 
-								<f:facet name="header" >
-       								 <p:outputLabel value="Relação de Estoque" style="color: white !important ;font-size: large" />
- 							   </f:facet>
+								<f:facet name="header">
+									<p:outputLabel value="Relação de Estoque"
+										style="color: white !important ;font-size: large" />
+								</f:facet>
 
 								<p:column headerText="Material" priority="1"
 									style="overflow: hidden;text-align: left; font-size: large">
@@ -212,7 +214,7 @@
 									<p:outputLabel value="#{d.quantidade}" />
 								</p:column>
 
-								<p:column headerText="Valor" priority="1"
+								<p:column headerText="Valor" priority="1" width="10%"
 									style="overflow: hidden;text-align: right; font-size: large">
 									<p:outputLabel value="R$ #{d.valorUnitario}"
 										rendered="#{d.valorUnitario != null}" />
@@ -254,15 +256,18 @@
 								<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" />
 
 								<f:facet name="header">
-       								<p:outputLabel value="Status do(s) Pedido(s)" style="color: white !important ;font-size: large" />
-       								 
- 							   </f:facet>
+									<p:outputLabel value="Status do(s) Pedido(s)"
+										style="color: white !important ;font-size: large" />
 
-								<p:column headerText="Nº Pedido" width="20%" style="text-align:center">
+								</f:facet>
+
+								<p:column headerText="Nº Pedido" width="30%"
+									style="text-align:center; font-size: large">
 									<p:outputLabel value="#{d.numPedido}" />
 								</p:column>
 
-								<p:column headerText="Status" style="text-align:center">
+								<p:column headerText="Status"
+									style="text-align:center; font-size: large">
 									<p:outputLabel value="Em Análise"
 										rendered="#{d.status eq 'EM'}" style="color: gray" />
 									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
@@ -278,9 +283,10 @@
 			</div>
 		</h:form>
 
-		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true" position="top"
-			resizable="false" height="350" width="1100" responsive="true"
-			dynamic="true" appendToBody="@body" header="Fazer Novo Pedido">
+		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
+			position="top" resizable="false" height="350" width="800"
+			responsive="true" dynamic="true" appendToBody="@body"
+			header="Fazer Novo Pedido">
 			<h:form id="forma">
 				<div class="ui-fluid">
 					<div class="ui-g">
@@ -290,8 +296,7 @@
 									<util:botoesCrud managedBeanView="#{pedidoBean}"
 										camposReload=":formTemplate:msg, form" botaoNovo="false"
 										botaoSalvar="false" botaoAtualizar="false"
-										botaoRedirecionar="false"
-										botaoExcluir="false">
+										botaoRedirecionar="false" botaoExcluir="false">
 									</util:botoesCrud>
 
 									<p:commandButton value="Adicionar ao Pedido"
@@ -326,7 +331,7 @@
 													background-color: red; 
 													background: red; 
 													color:white !important;
-													font-size:large;"/>
+													font-size:large;" />
 
 								</div>
 
@@ -343,7 +348,7 @@
 											disabled="true" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-8">
 										<h:outputLabel value="Material*:" />
 										<p:autoComplete id="material"
 											completeMethod="#{auxController.completeMaterial}"
@@ -355,7 +360,7 @@
 										</p:autoComplete>
 									</div>
 
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-2">
 										<h:outputLabel value="Quantidade:" />
 										<p:inputText value="#{pedidoBean.pedidoModel.quantidade}"
 											requiredMessage="Informe uma quantidade" required="true" />
@@ -373,14 +378,18 @@
        								 Status do(s) Pedido(s)
  							   </f:facet>
 
-										<p:column headerText="Número do Pedido">
+										<p:column headerText="Nº Pedido"
+											style="text-align:center; font-size: large" width="20%">
 											<p:outputLabel value="#{d.numPedido}" />
 										</p:column>
-										<p:column headerText="Material">
+										<p:column headerText="Material"
+											style="text-align:left; font-size: large">
 											<p:outputLabel value="#{d.material.nomeMaterial}" />
 										</p:column>
-										<p:column headerText="Quantidade">
-											<p:outputLabel value="#{d.quantidade}" />
+										<p:column headerText="Quantidade"
+											style="text-align:left; font-size: large" width="20%">
+											<p:outputLabel value="#{d.quantidade}"
+												style="text-align:center; font-size: large" />
 										</p:column>
 									</p:dataTable>
 								</div>

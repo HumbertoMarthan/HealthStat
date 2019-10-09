@@ -34,19 +34,18 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	private Prontuario prontuarioModel;
 	private List<Prontuario> lstDadosPaciente;
 	private List<Prontuario> listaProntuario;
-	
+
 	String estado = "C";
-	String campoBusca ="";
+	String campoBusca = "";
 	private String url = "/prontuario/listaProntuario.jsf?faces-redirect=true";
 	private String urlGuia = "/prontuario/prontuarioMedico.jsf?faces-redirect=true";
 	private String campoBuscaAtivo = "T";
-	
+
 	@Autowired
 	private ProntuarioController prontuarioController; // Injeta o Prontuario Controller
 
 	@Autowired
 	private PacienteController pacienteController;
-
 
 	@Override
 	public StreamedContent getArquivoReport() throws Exception {
@@ -55,37 +54,41 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		super.setListDataBeanCollectionReport(prontuarioController.findList(getClassImp()));
 		return super.getArquivoReport();
 	}
-	
+
 	public void mudaEstadoHistorico() {
 		setEstado("H");
 	}
+
 	public void mudaEstadoAtestado() {
 		setEstado("A");
 	}
+
 	public void mudaEstadoEncaminhamento() {
 		setEstado("E");
 	}
+
 	public void mudaEstadoGuiaConsulta() {
 		setEstado("C");
 	}
 
 	public ProntuarioBean() {
-		lstDadosPaciente = new ArrayList<>(); 
+		lstDadosPaciente = new ArrayList<>();
 		listaProntuario = new ArrayList<>();
 		prontuarioModel = new Prontuario();
 		setEstado("C");
 	}
-	
-	public List<Paciente>  completePaciente(String q) throws Exception {
-		return pacienteController.  
-				findListByQueryDinamica(" from Paciente p where EXISTS( from Evento e where e.paciente.idPaciente = p.idPaciente) and p.status = 'P' and pessoa.pessoaNome like '%" + q.toUpperCase()  + "%' order by pessoa.pessoaNome ASC");
-		
+
+	public List<Paciente> completePaciente(String q) throws Exception {
+		return pacienteController.findListByQueryDinamica(
+				" from Paciente p where EXISTS( from Evento e where e.paciente.idPaciente = p.idPaciente) and p.status = 'P' and pessoa.pessoaNome like '%"
+						+ q.toUpperCase() + "%' order by pessoa.pessoaNome ASC");
+
 	}
-	
+
 	// Insere nome do Paciente em Tabela Prontuário
 	public void etiquetaNome() {
 		if (prontuarioModel.getPaciente().getId() != null) {
-			String tooltip = prontuarioModel.getPaciente().getPessoa().getPessoaNome() ;
+			String tooltip = prontuarioModel.getPaciente().getPessoa().getPessoaNome();
 			prontuarioModel.setNomePaciente(tooltip);
 		} else {
 			System.out.println("Sem Descricao");
@@ -93,63 +96,80 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	}
 
 	public void onRowSelect(SelectEvent event) throws IOException {
-		
 		prontuarioModel = (Prontuario) event.getObject();
-	
 	}
-	
-	public void busca() throws Exception {
-		listaProntuario = new ArrayList<Prontuario>();
-		StringBuilder str = new StringBuilder();
-		str.append("from Prontuario a where 1=1");
-		if (!campoBusca.equals("")) {
-			str.append(" and upper(a.paciente.pessoa.pessoaNome) like'%" + campoBusca.toUpperCase() + "%'");
-		}
-		if (campoBuscaAtivo.equals("P") || campoBuscaAtivo.equals("F")) {
-			System.out.println("Entrou no A or I");
-			str.append(" and a.status = '" + campoBuscaAtivo.toUpperCase() + "'");
-		}
-		if (campoBuscaAtivo.equals("T")) {
-			System.out.println("Entro no T");
-			str.append(" and a.status = 'A' or a.status = 'I' ");
-		}
-		listaProntuario = prontuarioController.findListByQueryDinamica(str.toString());
-	}
-	
-	public void buscaDadosPaciente() throws Exception {
-		lstDadosPaciente = new ArrayList<Prontuario>();
-		StringBuilder str = new StringBuilder();
-		str.append("from Prontuario a where 1=1");
-			str.append(" and a.paciente.idPaciente = " + prontuarioModel.getPaciente().getIdPaciente() );
-		lstDadosPaciente = prontuarioController.findListByQueryDinamica(str.toString());
-	}
-	
-    /*Persistência ---------------------------------*/
-	@Override
-	public String save() throws Exception {
-		/* Seta Paciente no Prontuário */
-		prontuarioModel = prontuarioController.merge(prontuarioModel);
-		prontuarioModel = new Prontuario();
 
+	public void busca() {
+		try {
+			listaProntuario = new ArrayList<Prontuario>();
+			StringBuilder str = new StringBuilder();
+			str.append("from Prontuario a where 1=1");
+			if (!campoBusca.equals("")) {
+				str.append(" and (upper(a.paciente.pessoa.pessoaNome) like upper('%" + campoBusca.toUpperCase() + "%'))");
+			}
+			if (campoBuscaAtivo.equals("P") || campoBuscaAtivo.equals("F")) {
+				str.append(" and a.status = '" + campoBuscaAtivo.toUpperCase() + "'");
+			}
+			if (campoBuscaAtivo.equals("T")) {
+				str.append(" and a.status = 'A' or a.status = 'I' ");
+			}
+			listaProntuario = prontuarioController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar Prontuario");
+			e.printStackTrace();
+		}
+	}
+
+	public void buscaDadosPaciente() throws Exception {
+		try {
+			lstDadosPaciente = new ArrayList<Prontuario>();
+			StringBuilder str = new StringBuilder();
+			str.append("from Prontuario a where 1=1");
+			str.append(" and a.paciente.idPaciente = " + prontuarioModel.getPaciente().getIdPaciente());
+			lstDadosPaciente = prontuarioController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar dados do Paciente");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String save() {
+		try {
+
+			prontuarioModel = prontuarioController.merge(prontuarioModel);
+			prontuarioModel = new Prontuario();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "";
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
-		System.out.println("Salvar Prontuario");
-		prontuarioModel.setStatus("F");
-		prontuarioModel = prontuarioController.merge(prontuarioModel);
-		sucesso();
-		prontuarioModel = new Prontuario();
-		
-		FacesContext.getCurrentInstance()
-		   .getExternalContext().redirect("/clinica/prontuario/listaProntuario.jsf");
-		return;
+	public void saveNotReturn() {
+		try {
+			System.out.println("Salvar Prontuario --------------------------------");
+			prontuarioModel.setStatus("F");
+			prontuarioModel = prontuarioController.merge(prontuarioModel);
+			sucesso();
+			prontuarioModel = new Prontuario();
+
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/prontuario/listaProntuario.jsf");
+			return;
+		} catch (Exception e) {
+			System.out.println("Erro ao salvar usuário");
+		}
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
-		saveNotReturn();
+	public void saveEdit() {
+		try {
+			saveNotReturn();
+		} catch (Exception e) {
+			System.out.println("Erro ao Atualizar Prontuario");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -160,13 +180,11 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void setarVariaveisNulas() throws Exception {
-		// list.clean();
 		prontuarioModel = new Prontuario();
 	}
 
 	@Override
 	public String editar() throws Exception {
-		// list.clean();
 		return getUrl();
 	}
 
@@ -175,7 +193,6 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		prontuarioModel = (Prontuario) prontuarioController.getSession().get(getClassImp(),
 				prontuarioModel.getIdProntuario());
 		prontuarioController.delete(prontuarioModel);
-		// list.remove(prontuarioModel);
 		prontuarioModel = new Prontuario();
 		sucesso();
 	}
@@ -190,9 +207,9 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		setarVariaveisNulas();
 		return getUrl();
 	}
-	
+
 	public String redirecionarGuia() throws Exception {
-		buscaDadosPaciente();	
+		buscaDadosPaciente();
 		return getUrlGuia();
 	}
 
@@ -206,16 +223,6 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		prontuarioModel = new Prontuario();
 	}
 
-	/*Persistência -------------------------------------------*/
-	
-	/*ENCAMINHAMENTO*/
-	
-	
-	
-	/*ENCAMINHAMENTO*/
-	
-	
-	/*GETTERS E SETTERS*/
 	public Prontuario getprontuarioModel() {
 		return prontuarioModel;
 	}
@@ -305,5 +312,4 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		this.lstDadosPaciente = lstDadosPaciente;
 	}
 
-	
 }

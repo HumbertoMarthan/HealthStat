@@ -462,7 +462,8 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	 */
 
 	/* Salva */
-	public void salvar() throws Exception {
+	public void salvar() {
+		try {
 		// Salva o construtor que implementa a interface (Custom) do Schedule com os
 		// atributos.
 		ScheduleEvent newEvent = new CustomScheduleEvent(this.evento.getTitulo(), this.evento.getDataInicio(),
@@ -512,6 +513,10 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		} else {
 			addMsg("Já existe um agendamento cadastrado neste horário para este paciente ou médico, Revise o calendário!");
 		}
+		}catch (Exception e) {
+			System.out.println("Erro Ao Fazer um agendamento");
+			e.printStackTrace();
+		}
 	}
 
 	public void remover() throws Exception {
@@ -534,6 +539,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 					"Há dependencias:" + evento.getTitulo());
 			addMessage(message);
 		}
+		
 
 	}
 

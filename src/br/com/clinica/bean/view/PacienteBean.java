@@ -68,11 +68,10 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		acompaModel = new Acompanhante();
 	}
 
-	// Responsável por fazer a lista de pacientes
-	public void busca() throws Exception {
+	public void busca() {
 		// lstAcompanhante = acompanhanteController.findListByQueryDinamica(" from
 		// Acompanhante");
-		
+		try {
 		lstPaciente = new ArrayList<Paciente>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Paciente a where 1=1");
@@ -93,7 +92,10 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		}
 		
 		lstPaciente = pacienteController.findListByQueryDinamica(str.toString());
-
+		}catch (Exception e) {
+			System.out.println("Erro ao buscar Paciente");
+			e.printStackTrace();
+		}
 	}
 	
 	public void inativar() {
@@ -254,6 +256,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
+		try {
 		//idadeMinimaPaciente();
 		if (ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
 			pacienteModel = pacienteController.merge(pacienteModel);
@@ -265,6 +268,10 @@ public class PacienteBean extends BeanManagedViewAbstract {
 					"Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF(), "");
 			addMessage(message);
 			System.out.println("ERRO CPF INVÁLIDO");
+		}
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar Paciente");
+			e.printStackTrace();
 		}
 	}
 

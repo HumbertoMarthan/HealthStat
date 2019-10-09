@@ -49,46 +49,50 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	private String campoBuscaAtivo = "T";
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
-	
+
 	@Autowired
 	private MedicoController medicoController; // Injetando o Controller do Médico
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
-	
+
 	public MedicoBean() {
 		medicoModel = new Medico();
 		lstMedico = new ArrayList<Medico>();
 	}
-	
+
 	public List<Especialidade> completeEspecialidade(String q) throws Exception {
-		return especialidadeController.
-				findListByQueryDinamica(" from Especialidade where nomeEspecialidade like '%" + q.toUpperCase()  + "%'");
+		return especialidadeController.findListByQueryDinamica(
+				" from Especialidade where nomeEspecialidade like '%" + q.toUpperCase() + "%'");
 	}
-	
-	public void busca() throws Exception {
+
+	public void busca() {
 		lstMedico = new ArrayList<Medico>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Medico a where 1=1");
+		try {
+			if (!campoBuscaNome.equals("")) {
+				str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
+			}
+			if (!campoBuscaCPF.equals("")) {
+				str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
+			}
+			if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+				System.out.println("Entrou no A or I");
+				str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+			}
+			if (campoBuscaAtivo.equals("T")) {
+				System.out.println("Entro no T");
+				str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
+			}
 
-		if (!campoBuscaNome.equals("")) {
-			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
+			lstMedico = medicoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar Médico");
+			e.printStackTrace();
 		}
-		if (!campoBuscaCPF.equals("")) {
-			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
-		}
-		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
-			System.out.println("Entrou no A or I");
-			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
-		}
-		if (campoBuscaAtivo.equals("T")) {
-			System.out.println("Entro no T");
-			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
-		}
-		
-		lstMedico=  medicoController.findListByQueryDinamica(str.toString());
 	}
-	
+
 	// Relatório
 	@Override
 	public StreamedContent getArquivoReport() throws Exception {
@@ -106,7 +110,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 			medicoModel.setAtivo("I");
 		}
 		try {
-		medicoController.saveOrUpdate(medicoModel);
+			medicoController.saveOrUpdate(medicoModel);
 		} catch (Exception e) {
 			System.out.println("Erro ao inativar/ativar");
 		}
@@ -117,13 +121,13 @@ public class MedicoBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao buscar médico");
 			e.printStackTrace();
 		}
-			
+
 	}
-	
+
 	private void addMessage(FacesMessage message) {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
-	
+
 	public void onRowSelect(SelectEvent event) {
 		medicoModel = (Medico) event.getObject();
 	}
@@ -173,7 +177,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		medicoModel.getPessoa().setPessoaObservacao("");
 		medicoModel.getPessoa().setPessoaTelefonePrimario("");
 		medicoModel.getPessoa().setPessoaTelefoneSecundario("");
-		//medicoModel.setDataInscricaoCrm(null);
+		// medicoModel.setDataInscricaoCrm(null);
 		medicoModel.setNumeroCrm("");
 
 		/* Endereço */
@@ -216,25 +220,30 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
-		if (idadeMinimaFuncionario() == true) {
-			if (ValidaCPF.isCPF(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
-				medicoModel = medicoController.merge(medicoModel);
-				medicoModel = new Medico();
-				sucesso();
-				//busca();
-				System.out.println("CPF Válido");
-			} else {
-				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, 
-						"Cpf Inválido: "+medicoModel.getPessoa().getPessoaCPF(), "");
-				addMessage(message);
-				System.out.println("ERRO CPF INVÁLIDO");
+		try {
+			if (idadeMinimaFuncionario() == true) {
+				if (ValidaCPF.isCPF(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
+					medicoModel = medicoController.merge(medicoModel);
+					medicoModel = new Medico();
+					sucesso();
+					// busca();
+					System.out.println("CPF Válido");
+				} else {
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
+							"Cpf Inválido: " + medicoModel.getPessoa().getPessoaCPF(), "");
+					addMessage(message);
+					System.out.println("ERRO CPF INVÁLIDO");
 
+				}
+			} else {
+				System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
 			}
-		} else {
-			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
+		} catch (Exception e) {
+			System.out.println("Erro ao Salvar Médico");
+			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void saveEdit() throws Exception {
 		saveNotReturn();
@@ -284,7 +293,6 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void consultarEntidade() throws Exception {
 		medicoModel = new Medico();
 	}
-
 
 	// Getter e Setters
 	public Medico getmedicoModel() {
@@ -343,7 +351,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void setMedicoController(MedicoController medicoController) {
 		this.medicoController = medicoController;
 	}
-	
+
 	public List<Medico> getLstMedico() {
 		return lstMedico;
 	}
@@ -375,7 +383,5 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
-	
-	
 
 }

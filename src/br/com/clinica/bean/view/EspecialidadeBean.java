@@ -37,22 +37,27 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 		lstEspecialidade = new ArrayList<Especialidade>();
 	}
 
-	public void busca() throws Exception {
-		lstEspecialidade = new ArrayList<Especialidade>();
-		StringBuilder str = new StringBuilder();
-		str.append("from Especialidade a where 1=1");
+	public void busca() {
+		try {
+			lstEspecialidade = new ArrayList<Especialidade>();
+			StringBuilder str = new StringBuilder();
+			str.append("from Especialidade a where 1=1");
 
-		if (!campoBuscaEspecialidade.equals("")) {
-			str.append(" and (upper(a.nomeEspecialidade) like upper('%" + campoBuscaEspecialidade + "%'))");
-		}
-		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
-			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
-		}
-		if (campoBuscaAtivo.equals("T")) {
-			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
-		}
+			if (!campoBuscaEspecialidade.equals("")) {
+				str.append(" and (upper(a.nomeEspecialidade) like upper('%" + campoBuscaEspecialidade + "%'))");
+			}
+			if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+				str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+			}
+			if (campoBuscaAtivo.equals("T")) {
+				str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
+			}
 
-		lstEspecialidade = especialidadeController.findListByQueryDinamica(str.toString());
+			lstEspecialidade = especialidadeController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar Especialidades");
+			e.printStackTrace();
+		}
 	}
 
 	public void onRowSelect(SelectEvent event) {
@@ -67,10 +72,16 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
-		especialidadeModel = especialidadeController.merge(especialidadeModel);
-		especialidadeModel = new Especialidade();
-		sucesso();
+	public void saveNotReturn() {
+		try {
+			especialidadeModel = especialidadeController.merge(especialidadeModel);
+			especialidadeModel = new Especialidade();
+			sucesso();
+		} catch (Exception e) {
+			System.out.println("Erro ao Salvar Especialidade");
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -179,5 +190,5 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
-	
+
 }

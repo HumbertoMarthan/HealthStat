@@ -42,7 +42,9 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		materialModel = (Material) event.getObject();
 	}
 
-	public void busca() throws Exception {
+	public void busca()  {
+		try {
+			
 		lstMaterial = new ArrayList<Material>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Material a where 1=1");
@@ -63,6 +65,10 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		}
 
 		lstMaterial = materialController.findListByQueryDinamica(str.toString());
+		}catch (Exception e) {
+			System.out.println("Erro ao buscar material");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -76,13 +82,17 @@ public class MaterialBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() throws Exception {
+		try {
 		if (materialModel == null) {
 			materialModel = new Material();
 		}
 		materialModel = materialController.merge(materialModel);
 		materialModel = new Material();
 		sucesso();
-
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar Material");
+			e.printStackTrace();
+		}
 	}
 
 	@Override

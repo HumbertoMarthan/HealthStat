@@ -39,8 +39,7 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private ConvenioController convenioController;
-	
-	
+
 	public List<Map<Object, Object>> getLstConvenioTeste() {
 		return lstConvenioTeste;
 	}
@@ -49,27 +48,13 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 		this.lstConvenioTeste = lstConvenioTeste;
 	}
 
-	public void teste() {
-		lstConvenioTeste =  convenioController.getSqlListMap("select nomeconvenio from convenio ");
-		System.out.println("TAMANHO DA LISTA" +lstConvenioTeste.size());
-		System.out.println("POSIÇÃO 1 "+lstConvenioTeste.get(0));
-		
-	
-	}
-
-	public void teste1() {
-		long number =  convenioController.getCountParam("from Convenio ");
-		System.out.println("QUANTIDADE "+number);
-		
-	
-	}
-	
 	public ConvenioBean() {
 		setLstConvenio(new ArrayList<>());
 		convenioModel = new Convenio();
 	}
-	
-	public void busca() throws Exception {
+
+	public void busca() {
+		try {
 		lstConvenio = new ArrayList<Convenio>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Convenio a where 1=1");
@@ -79,8 +64,12 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 		}
 		
 		lstConvenio =  convenioController.findListByQueryDinamica(str.toString());
+	}catch (Exception e) {
+		System.out.println("Erro ao buscar Convenio");
+		e.printStackTrace();
 	}
-	
+		}
+
 	@Override
 	public StreamedContent getArquivoReport() throws Exception {
 		super.setNomeRelatorioJasper("a");
@@ -88,53 +77,47 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 		super.setListDataBeanCollectionReport(convenioController.findListByQueryDinamica("from Convenio"));
 		return super.getArquivoReport();
 	}
-	
-	public void gerarRelatorio()  throws JRException, Exception {	
-		
-			System.out.println("Gerando relatório...");
-			List<Convenio> 
-			listaConvenio = convenioController.findListByQueryDinamica("from Convenio");
-			
-				System.out.println("LISTA CONVENIO"+listaConvenio.size());
-				
-			
-			System.out.println("NOME DO CONVENIO"+ listaConvenio.get(0).getNomeConvenio() );
-			
-			//JasperReport pathjrxml = JasperCompileManager
-			//.compileReport("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jrxml");
-			
-			JasperReport relatorioJasper = (JasperReport) 
-					JRLoader.loadObjectFromFile
-					("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jasper");	
-			
-			//Map<String, Object> parametros = new HashMap<>();
-			
-			JRBeanCollectionDataSource jrbcds = new JRBeanCollectionDataSource(listaConvenio, false);	
-			System.out.println("COLLECTION DATASOURCE>>>>>>>"+jrbcds);	
-			JasperPrint printReport = 
-					JasperFillManager.fillReport(relatorioJasper, 
-												 null, 
-												 jrbcds);
-			JasperExportManager.exportReportToPdfFile(
-					printReport, "C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.pdf");
-			System.out.println("Relatorio gerado");
+
+	public void gerarRelatorio() throws JRException, Exception {
+
+		System.out.println("Gerando relatório...");
+		List<Convenio> listaConvenio = convenioController.findListByQueryDinamica("from Convenio");
+
+		System.out.println("LISTA CONVENIO" + listaConvenio.size());
+
+		System.out.println("NOME DO CONVENIO" + listaConvenio.get(0).getNomeConvenio());
+
+		// JasperReport pathjrxml = JasperCompileManager
+		// .compileReport("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jrxml");
+
+		JasperReport relatorioJasper = (JasperReport) JRLoader
+				.loadObjectFromFile("C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.jasper");
+
+		// Map<String, Object> parametros = new HashMap<>();
+
+		JRBeanCollectionDataSource jrbcds = new JRBeanCollectionDataSource(listaConvenio, false);
+		System.out.println("COLLECTION DATASOURCE>>>>>>>" + jrbcds);
+		JasperPrint printReport = JasperFillManager.fillReport(relatorioJasper, null, jrbcds);
+		JasperExportManager.exportReportToPdfFile(printReport,
+				"C:\\Users\\Humberto\\workspace-tcc\\clinica\\src\\relatorio\\a.pdf");
+		System.out.println("Relatorio gerado");
 	}
-	
-	public String edita()  throws Exception {
+
+	public String edita() throws Exception {
 		return getUrl();
 	}
-	
+
 	public void onRowSelect(SelectEvent event) {
 		convenioModel = (Convenio) event.getObject();
 	}
-	
+
 	@Override
 	public String save() throws Exception {
 		convenioModel = convenioController.merge(convenioModel);
 
 		return "";
 	}
-	
+
 	public Convenio getConvenioModel() {
 		return convenioModel;
 	}
@@ -144,10 +127,15 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn()  {
+		try {
 		convenioModel = convenioController.merge(convenioModel);
 		convenioModel = new Convenio();
 		sucesso();
+		}catch (Exception e) {
+			System.out.println("Erro ao Salvar Convênio");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -200,7 +188,6 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	public void consultarEntidade() throws Exception {
 		convenioModel = new Convenio();
 	}
-
 
 	public Convenio getObjetoSelecionado() {
 		return convenioModel;

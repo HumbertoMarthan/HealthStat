@@ -20,10 +20,10 @@ import br.com.clinica.converters.EntityBase;
  *
  */
 
-@Audited
-@Entity
-@Table(name = "pedidomaterial")
-@SequenceGenerator(name = "pedidomaterial_seq", sequenceName = "pedidomaterial_seq", initialValue = 1, allocationSize = 1)
+//@Audited
+//@Entity
+//@Table(name = "pedidomaterial")
+//@SequenceGenerator(name = "pedidomaterial_seq", sequenceName = "pedidomaterial_seq", initialValue = 1, allocationSize = 1)
 public class PedidoMaterial  implements EntityBase,Serializable {
 
 	private static final long serialVersionUID = 1L;

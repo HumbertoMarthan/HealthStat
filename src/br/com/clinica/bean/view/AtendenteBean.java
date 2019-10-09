@@ -159,12 +159,17 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isCPF(atendenteModel.getPessoa().getPessoaCPF())) {
+				try {
 				atendenteModel = atendenteController.merge(atendenteModel);
 				atendenteModel = new Atendente();
-				sucesso();
+					sucesso();
+				} catch (Exception e) {
+					System.out.println("Erro ao salvar Atendente");
+					e.printStackTrace();
+				}
 			} else {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
 						"Cpf Inválido: " + atendenteModel.getPessoa().getPessoaCPF(), "");
@@ -173,6 +178,12 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 			}
 		} else {
 			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
+		}
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao Buscar Atendente");
+			e.printStackTrace();
 		}
 
 	}

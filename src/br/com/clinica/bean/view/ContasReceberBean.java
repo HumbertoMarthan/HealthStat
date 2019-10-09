@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -14,12 +15,14 @@ import org.springframework.stereotype.Controller;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.ContasReceberController;
+import br.com.clinica.controller.geral.PagamentoEspecialController;
 import br.com.clinica.controller.geral.ParcelaPagarController;
 import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasReceber;
 import br.com.clinica.model.financeiro.FormaPagamento;
+import br.com.clinica.model.financeiro.PagamentoEspecial;
 import br.com.clinica.model.financeiro.ParcelaPagar;
 import br.com.clinica.utils.DatasUtils;
 
@@ -31,7 +34,9 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private static final long serialVersionUID = 1L;
 
 	private ContasReceber contasReceberModel;
+	private FormaPagamento formaPagamentoModel;
 	private ParcelaPagar parcelaPagarModel;
+	private PagamentoEspecial pagamentoEspecialModel;
 	private Caixa caixaModel;
 	private String url = "/financeiro/receber/contasReceber.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/receber/receberConsulta.jsf?faces-redirect=true";
@@ -40,6 +45,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private List<ParcelaPagar> lstParcelaPersonalizada;
 	private List<ParcelaPagar> lstContaParcela;
 	private List<ParcelaPagar> lstParcelaPagarPendentes;
+	private List<PagamentoEspecial> lstPagamentoEspecial;
 	private String campoBuscaContasReceber = "";
 	private String campoBuscaTipoConta = "P";
 	String estado = "P";
@@ -51,10 +57,18 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private ContasReceberController contasReceberController;
 
 	@Autowired
+	private PagamentoEspecialController pagamentoEspecialController;
+
+	@Autowired
 	private ParcelaPagarController parcelaPagarController;
 
 	@Autowired
 	private CaixaController caixaController;
+
+	@PostConstruct
+	public void init() {
+		lstPagamentoEspecial = new ArrayList<>();
+	}
 
 	public ContasReceberBean() {
 		parcelaPagarModel = new ParcelaPagar();
@@ -62,6 +76,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		lstContasReceber = new ArrayList<ContasReceber>();
 		lstParcelaPagar = new ArrayList<ParcelaPagar>();
 		lstParcelaPagarPendentes = new ArrayList<ParcelaPagar>();
+		lstPagamentoEspecial = new ArrayList<>();
 		caixaModel = new Caixa();
 		try {
 			busca();
@@ -88,6 +103,24 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		setEstado("PA");
 	}
 
+	public void addForma() {
+		if (lstPagamentoEspecial.size() == 2) {
+			try {
+				addMsg("Só é possivel adicionar duas formas de pagamento ao mesmo tempo!");
+			} catch (Exception e) {
+				System.out.println("Erro no metodo addForma");
+				e.printStackTrace();
+			}
+		} else {
+			lstPagamentoEspecial.add(new PagamentoEspecial());
+			lstPagamentoEspecial.add(new PagamentoEspecial());
+		}
+	}
+
+	public void remForma(int index) {
+		lstPagamentoEspecial.remove(index);
+	}
+
 	public void busca() {
 		limpar();
 		try {
@@ -110,11 +143,11 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void buscaParcelas() throws Exception {
+	public void buscaParcelas() {
 		try {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
-			str.append( //acrescimodesconto
+			str.append( // acrescimodesconto
 					"select idparcela, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
 							+ " idcontasreceber from parcelapagar   where 1=1 and idcontasreceber = "
 							+ contasReceberModel.getIdContasReceber());
@@ -127,110 +160,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			System.out.println("LISTA COM 0");
 			e.printStackTrace();
 		}
-	}
-	
-	public void pagamentoPersonalizado() {
-		ParcelaPagar pAtual = parcelaPagarModel;
-		Long conta = parcelaPagarModel.getContasReceber().getIdContasReceber();
-		// select a conta pelo id do parcelapagar
-		try {
-			lstContaParcela = parcelaPagarController
-					.findListByQueryDinamica("from ParcelaPagar where contasReceber.idContasReceber = " + conta);
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar Parcelas pagamento persolinado ");
-			e.printStackTrace();
-		}
-		ParcelaPagar p1 = new ParcelaPagar();
-		ParcelaPagar p2 = new ParcelaPagar();
-		ParcelaPagar p3 = new ParcelaPagar();
-		Double somando = 0.0;
-		try {
-			if (lstContaParcela.get(0) != null) {
-				p1 = lstContaParcela.get(0);
-				somando += lstContaParcela.get(0).getValorBruto();
-			}
-			if (lstContaParcela.get(1) != null) {
-				p2 = lstContaParcela.get(1);
-				somando += lstContaParcela.get(1).getValorBruto();
-			}
-			if (lstContaParcela.get(2) != null) {
-				p3 = lstContaParcela.get(2);
-				somando += lstContaParcela.get(2).getValorBruto();
-			}
-		} catch (Exception e) {
-			e.getMessage();
-			e.printStackTrace();
-		}
-		Double totalRestante = pAtual.getPagamentoEspecial();
-
-		if (totalRestante <= somando) {
-			if (totalRestante > p1.getValorBruto() && totalRestante != 0.0) {
-				try {
-					totalRestante = somando - totalRestante;
-					p1.setDataPagamento(new Date());
-					p1.setSituacao("PA");
-				} catch (Exception e) {
-					e.printStackTrace();
-					e.getMessage();
-				}
-				try {
-					parcelaPagarController.merge(p1);
-				} catch (Exception e) {
-					e.getMessage();
-					e.printStackTrace();
-				}
-			}
-			if (totalRestante != 0.0 && p2 != null) {
-				try {
-					if (totalRestante > p2.getValorBruto() || totalRestante < p2.getValorBruto() ) {
-						totalRestante = somando - totalRestante;
-						p2.setDataPagamento(new Date());
-						p2.setSituacao("PA");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					e.getMessage();
-				}
-				try {
-					parcelaPagarController.merge(p2);
-				} catch (Exception e) {
-					e.getMessage();
-					e.printStackTrace();
-				}
-			}
-			if (totalRestante != 0.0 && p3 != null) {
-				try {
-					if (totalRestante > p3.getValorBruto()) {
-						
-						totalRestante = somando - totalRestante;
-						p3.setDataPagamento(new Date());
-						p3.setSituacao("PA");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					e.getMessage();
-				}
-				try {
-					parcelaPagarController.merge(p3);
-				} catch (Exception e) {
-					e.getMessage();
-					e.printStackTrace();
-				}
-			}
-		} else {
-			try {
-				addMsg("Valor que está sendo pago é maior que o total da consulta devida!");
-			} catch (Exception e) {
-				e.getMessage();
-				e.printStackTrace();
-			}
-		}
-
-		// parcela 2 tbm
-		// troca o status da conta para PA
-		// seta a datapagamento para hora atual
-		// se as parcelas da lista com o id da conta corrente for PA
-		// troca o status da conta para PA
 	}
 
 	/**
@@ -517,58 +446,14 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	 * @throws Exception
 	 */
 	public void fazerPagamento() throws Exception {
+
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
-		if (parcelas == 1) {
-			parcelaPagarModel = new ParcelaPagar();
-			parcelaPagarModel.setNumeroParcela(1);
-			parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
-			parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
-			parcelaPagarModel.setValorBruto(contasReceberModel.getValorParcelado());
-			parcelaPagarModel.setContasReceber(new ContasReceber(contasReceberModel.getIdContasReceber()));
-
-			System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
-			// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
-			// junto
-			lstParcelaPagar.clear();
-			System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
-
-			// Adiciona os dados setados a lista
-			lstParcelaPagar.add(parcelaPagarModel);
-
-			// Percorre a lista e salva no banco cada parcela
-			for (ParcelaPagar parcelaPagar : lstParcelaPagar) {
-				parcelaPagarController.merge(parcelaPagar);
-			}
-			// Pesquisa
-			contasReceberModel = contasReceberController.findByPorId(ContasReceber.class, idContaReceber);
-			// Seta como conta já lançada
-			contasReceberModel.setStatus("L");
-
-			// Limpa a parcela e prepara para outra inserção
-			parcelaPagarModel = new ParcelaPagar();
-			contasReceberController.merge(contasReceberModel);
-
-			// Seta como conta já lançada
-			contasReceberModel.setStatus("L");
-			contasReceberController.merge(contasReceberModel);
-			limpar();
-		}
-
-		if (parcelas == 2) {
-			for (int i = 1; i <= 2; i++) {
+		try {
+			if (parcelas == 1) {
 				parcelaPagarModel = new ParcelaPagar();
-				parcelaPagarModel.setNumeroParcela(i);
+				parcelaPagarModel.setNumeroParcela(1);
 				parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
-
-				if (i == 1) {
-					parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
-				}
-				if (i == 2) {
-					Date dataSegundaParcela = DatasUtils.addMonth(contasReceberModel.getDataVencimentoContasReceber(),
-							1);
-					parcelaPagarModel.setDataVencimento(dataSegundaParcela);
-				}
-
+				parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
 				parcelaPagarModel.setValorBruto(contasReceberModel.getValorParcelado());
 				parcelaPagarModel.setContasReceber(new ContasReceber(contasReceberModel.getIdContasReceber()));
 
@@ -585,60 +470,148 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				for (ParcelaPagar parcelaPagar : lstParcelaPagar) {
 					parcelaPagarController.merge(parcelaPagar);
 				}
+				// Pesquisa
+				contasReceberModel = contasReceberController.findByPorId(ContasReceber.class, idContaReceber);
+				// Seta como conta já lançada
+				contasReceberModel.setStatus("L");
+
 				// Limpa a parcela e prepara para outra inserção
 				parcelaPagarModel = new ParcelaPagar();
+				contasReceberController.merge(contasReceberModel);
+
+				// Seta como conta já lançada
+				contasReceberModel.setStatus("L");
+				contasReceberController.merge(contasReceberModel);
+				limpar();
 			}
-			// Pesquisa
-			// Seta como conta já lançada
-			contasReceberModel.setStatus("L");
-			contasReceberController.merge(contasReceberModel);
-			limpar();
-		}
 
-		if (parcelas == 3) {
-			for (int i = 1; i <= 3; i++) {
-				parcelaPagarModel = new ParcelaPagar();
-				parcelaPagarModel.setNumeroParcela(i);
-				parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
-				if (i == 1) {
-					parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
+			if (parcelas == 2) {
+				for (int i = 1; i <= 2; i++) {
+					parcelaPagarModel = new ParcelaPagar();
+					parcelaPagarModel.setNumeroParcela(i);
+					parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
+
+					if (i == 1) {
+						parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
+					}
+					if (i == 2) {
+						Date dataSegundaParcela = DatasUtils
+								.addMonth(contasReceberModel.getDataVencimentoContasReceber(), 1);
+						parcelaPagarModel.setDataVencimento(dataSegundaParcela);
+					}
+
+					parcelaPagarModel.setValorBruto(contasReceberModel.getValorParcelado());
+					parcelaPagarModel.setContasReceber(new ContasReceber(contasReceberModel.getIdContasReceber()));
+
+					System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
+					// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
+					// junto
+					lstParcelaPagar.clear();
+					System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
+
+					// Adiciona os dados setados a lista
+					lstParcelaPagar.add(parcelaPagarModel);
+
+					// Percorre a lista e salva no banco cada parcela
+					for (ParcelaPagar parcelaPagar : lstParcelaPagar) {
+						parcelaPagarController.merge(parcelaPagar);
+					}
+					// Limpa a parcela e prepara para outra inserção
+					parcelaPagarModel = new ParcelaPagar();
 				}
-				if (i == 2) {
-					Date dataSegundaParcela = DatasUtils.addMonth(contasReceberModel.getDataVencimentoContasReceber(),
-							1);
-					parcelaPagarModel.setDataVencimento(dataSegundaParcela);
-				}
-				if (i == 3) {
-					Date dataTerceiraParcela = DatasUtils.addMonth(contasReceberModel.getDataVencimentoContasReceber(),
-							2);
-					parcelaPagarModel.setDataVencimento(dataTerceiraParcela);
-				}
-				parcelaPagarModel.setValorBruto(contasReceberModel.getValorParcelado());
-				parcelaPagarModel.setContasReceber(new ContasReceber(contasReceberModel.getIdContasReceber()));
-
-				System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
-				// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
-				// junto
-
-				lstParcelaPagar.clear();
-				System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
-
-				// Adiciona os dados setados a lista
-				lstParcelaPagar.add(parcelaPagarModel);
-
-				// Percorre a lista e salva no banco cada parcela
-				for (ParcelaPagar parcelaPagar : lstParcelaPagar) {
-					parcelaPagarController.merge(parcelaPagar);
-				}
-				// Limpa a parcela e prepara para outra inserção
-				parcelaPagarModel = new ParcelaPagar();
+				// Pesquisa
+				// Seta como conta já lançada
+				contasReceberModel.setStatus("L");
+				contasReceberController.merge(contasReceberModel);
+				limpar();
 			}
-			// Seta como conta já lançada
-			contasReceberModel.setStatus("L");
-			contasReceberController.merge(contasReceberModel);
-			limpar();
+
+			if (parcelas == 3) {
+				for (int i = 1; i <= 3; i++) {
+					parcelaPagarModel = new ParcelaPagar();
+					parcelaPagarModel.setNumeroParcela(i);
+					parcelaPagarModel.setValorDesconto(contasReceberModel.getValorDesconto());
+					if (i == 1) {
+						parcelaPagarModel.setDataVencimento(contasReceberModel.getDataVencimentoContasReceber());
+					}
+					if (i == 2) {
+						Date dataSegundaParcela = DatasUtils
+								.addMonth(contasReceberModel.getDataVencimentoContasReceber(), 1);
+						parcelaPagarModel.setDataVencimento(dataSegundaParcela);
+					}
+					if (i == 3) {
+						Date dataTerceiraParcela = DatasUtils
+								.addMonth(contasReceberModel.getDataVencimentoContasReceber(), 2);
+						parcelaPagarModel.setDataVencimento(dataTerceiraParcela);
+					}
+					parcelaPagarModel.setValorBruto(contasReceberModel.getValorParcelado());
+					parcelaPagarModel.setContasReceber(new ContasReceber(contasReceberModel.getIdContasReceber()));
+
+					System.out.println(" LISTA PARCELAS ANTES DO CLEAN " + lstParcelaPagar);
+					// Limpa a lista, pois se não ela armazena os resultados anteriores e salva
+					// junto
+
+					lstParcelaPagar.clear();
+					System.out.println(" LISTA PARCELAS DEPOIS DO CLEAN " + lstParcelaPagar);
+
+					// Adiciona os dados setados a lista
+					lstParcelaPagar.add(parcelaPagarModel);
+
+					// Percorre a lista e salva no banco cada parcela
+					for (ParcelaPagar parcelaPagar : lstParcelaPagar) {
+						parcelaPagarController.merge(parcelaPagar);
+					}
+					// Limpa a parcela e prepara para outra inserção
+					parcelaPagarModel = new ParcelaPagar();
+				}
+				// Seta como conta já lançada
+				contasReceberModel.setStatus("L");
+				contasReceberController.merge(contasReceberModel);
+				limpar();
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao fazer pagamentos");
+			e.printStackTrace();
 		}
 		busca();
+	}
+
+	public void fazerPagamentoDuasFormas() throws Exception {
+		Long idContaReceber = contasReceberModel.getIdContasReceber();
+		try {
+			System.out.println("Entrou no fazerPagamentoDuasFormas() ");
+			List<PagamentoEspecial> lstPagamento = new ArrayList<PagamentoEspecial>();
+			lstPagamento = pagamentoEspecialController.findListByQueryDinamica(
+					"from PagamentoEspecial where contasReceber.idContasReceber = " + idContaReceber);
+
+			for (PagamentoEspecial pa : lstPagamento) {
+				if (pa.getContasReceber().getIdContasReceber() == idContaReceber
+						&& contasReceberModel.getStatus().equals("L") // Se o status da conta for Lançadp
+						&& pa.getSituacao().equals("P")) { // Se as parcelas estiverem pendentes
+					pagamentoEspecialController.delete(pa); // Deleta as parcelas e relançam
+				}
+			}
+
+			for (PagamentoEspecial pe : lstPagamentoEspecial) {
+				pagamentoEspecialModel = new PagamentoEspecial();
+
+				pagamentoEspecialModel.setValorBruto(pe.getValorBruto());
+				pagamentoEspecialModel.setDataVencimento(pe.getDataVencimento());
+				System.out.println("id FORMA DE PAGAMENTOS" + pe.getFormaPagamento().getId());
+				System.out.println("objecto FORMA DE PAGAMENTOS" + pe.getFormaPagamento());
+				pagamentoEspecialModel.setFormaPagamento(pe.getFormaPagamento());
+				pagamentoEspecialModel.setDataLancamento(new Date());
+				pagamentoEspecialModel.setContasReceber(new ContasReceber(idContaReceber));
+
+				pagamentoEspecialController.merge(pagamentoEspecialModel);
+			}
+			contasReceberModel.setStatus("L");
+			contasReceberController.merge(contasReceberModel);
+			addMsg("Operação realizada com sucesso");
+		} catch (Exception e) {
+			System.out.println("Erro ao fazer pagamento duas formas");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -648,37 +621,47 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	 */
 	public void editarPagamento() {
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
-		// Deleta a parcela referente a conta, para que eu possa relancar parcelas novas
-		try {
-			List<ParcelaPagar> lstParcelas = new ArrayList<ParcelaPagar>();
-			lstParcelas = parcelaPagarController.findListByQueryDinamica("from ParcelaPagar");
-			for (ParcelaPagar parcelas : lstParcelas) {
-				if (parcelas.getContasReceber().getIdContasReceber() == idContaReceber
-						&& contasReceberModel.getStatus().equals("L") // Se o status da conta for Lançadp
-						&& parcelas.getSituacao().equals("P")) { // Se as parcelas estiverem pendentes
-					parcelaPagarController.delete(parcelas); // Deleta as parcelas e relançam
+		if (contasReceberModel.getMaisForma().equals("N")) {
+			// Deleta a parcela referente a conta, para que eu possa relancar parcelas novas
+			try {
+				List<ParcelaPagar> lstParcelas = new ArrayList<ParcelaPagar>();
+				lstParcelas = parcelaPagarController.findListByQueryDinamica(
+						"from ParcelaPagar where contasReceber.idContasReceber = " + idContaReceber);
+				for (ParcelaPagar parcelas : lstParcelas) {
+					if (parcelas.getContasReceber().getIdContasReceber() == idContaReceber
+							&& contasReceberModel.getStatus().equals("L") // Se o status da conta for Lançadp
+							&& parcelas.getSituacao().equals("P")) { // Se as parcelas estiverem pendentes
+						parcelaPagarController.delete(parcelas); // Deleta as parcelas e relançam
+					}
 				}
+			} catch (Exception e) {
+				System.out.println("Erro ao executar Delete");
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			System.out.println("Erro ao executar Delete");
-			e.printStackTrace();
-		}
 
-		try {
-			
-			fazerPagamento();
-			busca();
-			buscaParcelas();
-		} catch (Exception e) {
-			System.out.println("Erro ao salvar parcelas!");
-			e.printStackTrace();
-		}
+			try {
+				fazerPagamento();
+				busca();
+				buscaParcelas();
+			} catch (Exception e) {
+				System.out.println("Erro ao salvar parcelas!");
+				e.printStackTrace();
+			}
 
-		try {
-			addMsg("Operação Realizada Com Sucesso!");
-		} catch (Exception e) {
-			e.getMessage();
-			e.printStackTrace();
+			try {
+				addMsg("Operação Realizada Com Sucesso!");
+			} catch (Exception e) {
+				e.getMessage();
+				e.printStackTrace();
+			}
+		} else { // se for igual a 'S'
+			System.out.println("Entrou no igual a S ");
+			try {
+				fazerPagamentoDuasFormas();
+			} catch (Exception e) {
+				System.out.println("Erro ao fazer Pagamento Duas Formas");
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -752,7 +735,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		contasReceberModel = new ContasReceber();
 	}
 
-	// ---------------------------- GET SET
 	public String getUrl() {
 		return url;
 	}
@@ -913,4 +895,35 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		this.lstParcelaPersonalizada = lstParcelaPersonalizada;
 	}
 
+	public FormaPagamento getFormaPagamentoModel() {
+		return formaPagamentoModel;
+	}
+
+	public void setFormaPagamentoModel(FormaPagamento formaPagamentoModel) {
+		this.formaPagamentoModel = formaPagamentoModel;
+	}
+
+	public List<PagamentoEspecial> getLstPagamentoEspecial() {
+		return lstPagamentoEspecial;
+	}
+
+	public void setLstPagamentoEspecial(List<PagamentoEspecial> lstPagamentoEspecial) {
+		this.lstPagamentoEspecial = lstPagamentoEspecial;
+	}
+
+	public PagamentoEspecial getPagamentoEspecialModel() {
+		return pagamentoEspecialModel;
+	}
+
+	public void setPagamentoEspecialModel(PagamentoEspecial pagamentoEspecialModel) {
+		this.pagamentoEspecialModel = pagamentoEspecialModel;
+	}
+
+	public PagamentoEspecialController getPagamentoEspecialController() {
+		return pagamentoEspecialController;
+	}
+
+	public void setPagamentoEspecialController(PagamentoEspecialController pagamentoEspecialController) {
+		this.pagamentoEspecialController = pagamentoEspecialController;
+	}
 }

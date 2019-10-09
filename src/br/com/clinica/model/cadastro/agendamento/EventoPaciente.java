@@ -20,7 +20,7 @@ import br.com.clinica.model.cadastro.pessoa.Paciente;
  */
 
 //@Audited
-@Entity
+//@Entity
 //@Table(name = "eventopaciente")
 //@SequenceGenerator(name = "eventopaciente_seq", sequenceName = "eventopaciente_seq", initialValue = 1, allocationSize = 1)
 public class EventoPaciente implements EntityBase, Serializable {

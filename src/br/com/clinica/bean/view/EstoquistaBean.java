@@ -54,11 +54,11 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		lstEstoquista = new ArrayList<Estoquista>();
 	}
 
-	public void busca() throws Exception {
+	public void busca(){
 		lstEstoquista = new ArrayList<Estoquista>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Estoquista a where 1=1");
-
+		try {
 		if (!campoBuscaNome.equals("")) {
 			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
 		}
@@ -75,6 +75,11 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		}
 
 		lstEstoquista = estoquistaController.findListByQueryDinamica(str.toString());
+		
+		}catch (Exception e) {
+			System.out.println("Erro ao buscar o Estoquista");
+			e.printStackTrace();
+		}
 	}
 
 	public void inativar() {
@@ -213,7 +218,8 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
+		try {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isCPF(estoquistaModel.getPessoa().getPessoaCPF())) {
 				estoquistaModel = estoquistaController.merge(estoquistaModel);
@@ -230,6 +236,10 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 			// Inválido", "");
 			// addMessage(message);
 			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
+		}
+		}catch (Exception e) {
+			System.out.println("Erro ao Salvar Estoquista");
+			e.printStackTrace();
 		}
 	}
 
