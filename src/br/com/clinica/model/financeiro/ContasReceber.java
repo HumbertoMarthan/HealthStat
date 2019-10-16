@@ -61,6 +61,8 @@ public class ContasReceber implements EntityBase, Serializable {
 	
 	private String maisForma = "N";
 	
+	private String tipoPagamento; //PAR OU ESP
+	
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "idFormaPagamento")
 	private FormaPagamento formaPagamento;
@@ -231,6 +233,14 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	public void setValorEntrada(Double valorEntrada) {
 		this.valorEntrada = valorEntrada;
+	}
+
+	public String getTipoPagamento() {
+		return tipoPagamento;
+	}
+
+	public void setTipoPagamento(String tipoPagamento) {
+		this.tipoPagamento = tipoPagamento;
 	}
 
 }

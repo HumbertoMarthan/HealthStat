@@ -299,23 +299,11 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	}
 
-	/**
-	 * Verifica se data de vencimento do pagamento da consulta é anterior a Data
-	 * Atual
-	 */
-	public void verificaDataVencimentoContasReceber() {
-		System.out.println("DATA VENCIMENTO DO AGENDAMENTO>>>>>>>>>>" + evento.getDataVencimentoContasReceber());
-		if (evento.getDataVencimentoContasReceber().before(new Date())) {
-			contasReceber.setDataVencimentoContasReceber(new Date());
-		} else {
-			contasReceber.setDataVencimentoContasReceber(evento.getDataVencimentoContasReceber());
-		}
-	}
-	
 	public void geraProntuario() {
 		Prontuario prontuarioModel = new Prontuario();
 		prontuarioModel.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		prontuarioModel.setMedico(new Medico(evento.getMedico().getIdMedico()));
+		prontuarioModel.setDataConsulta(evento.getDataInicio());
 		try {
 			prontuarioController.merge(prontuarioModel);
 		} catch (Exception e) {
@@ -332,7 +320,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
 		contasReceber.setLogin(new Login(usuarioSessaoId));
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
@@ -350,11 +337,9 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
 
 		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-		// verificaDataVencimentoContasReceber();
 
 		contasReceber.setLogin(new Login(usuarioSessaoId));
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
 		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
@@ -370,7 +355,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
 
 		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-		verificaDataVencimentoContasReceber();
 		contasReceber.setLogin(new Login(usuarioSessaoId));
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		// verificaDataVencimentoContasReceber();
@@ -390,10 +374,8 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
 
 		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-		verificaDataVencimentoContasReceber();
 		contasReceber.setLogin(new Login(usuarioSessaoId));
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
 		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
@@ -445,22 +427,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	/*
-	 * private void persistirEventoPaciente() throws Exception {
-	 * System.out.println("Entrou no Persiste Evento>>>>>>");
-	 * eventoPacienteModel.setIdEvento(evento.getId());
-	 * eventoPacienteModel.setPaciente(new Paciente(evento.getPaciente().getId()));
-	 * System.out.println("ID PERSISTE EVENTO" + eventoPacienteModel.getId());
-	 * eventoPacienteController.persist(eventoPacienteModel); }
-	 * 
-	 * private void atualizarEventoPaciente() throws Exception {
-	 * System.out.println("Entrou no Att Evento>>>>>>");
-	 * eventoPacienteModel.setIdEvento(evento.getId());
-	 * eventoPacienteModel.setPaciente(new Paciente(evento.getPaciente().getId()));
-	 * System.out.println("ID ATUALIZA EVENTO" + eventoPacienteModel.getId());
-	 * eventoPacienteController.merge(eventoPacienteModel); }
-	 */
-
 	/* Salva */
 	public void salvar() {
 		try {
@@ -470,10 +436,13 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				this.evento.getDataFim(), this.evento.getTipoEvento().getCss(), this.evento.isDiaInteiro(),
 				this.evento.getDescricao(), this.evento.getMedico(), this.evento.getPaciente(),
 				this.evento.getConfirmaConsulta(), this.evento);
-
-		/* Verifica se a Datafim está vindo antes da DataInicio */
-		if (evento.getDataFim().before(evento.getDataInicio())) {
+		Date dataHoje = new Date();
+		System.out.println("DATA><HOJE "+ dataHoje);
+		if(evento.getDataInicio().before(dataHoje) || evento.getDataFim().before(dataHoje)) {
+			addMsg("O Agendamento tem que ser feito com data/hora superior a de hoje ");
+		}else if (evento.getDataFim().before(evento.getDataInicio())) {/* Verifica se a Datafim está vindo antes da DataInicio */
 			addMsg("Data Final do agendamento  não pode ser maior que a Data Inicial do mesmo");
+			
 		} else if (validarMedico() && validarPaciente()) { /* Se o Evento for novo */
 			if (evento.getId() == null) {
 				model.addEvent(newEvent);
@@ -508,8 +477,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 			}
 
-			addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome() + "Agendamento para: "
-					+ evento.getTitulo());
+			addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome() + "Agendamento para: " + evento.getTitulo());
 		} else {
 			addMsg("Já existe um agendamento cadastrado neste horário para este paciente ou médico, Revise o calendário!");
 		}
@@ -576,8 +544,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 		long codigoPaciente = t.getPaciente().getIdPaciente();
 
-		List<Evento> emails = eventoController
-				.findListByQueryDinamica("from Evento where paciente.idPaciente =" + codigoPaciente);
+		List<Evento> emails = eventoController.findListByQueryDinamica("from Evento where paciente.idPaciente =" + codigoPaciente);
 		String email = "";
 
 		for (Evento e : emails) {

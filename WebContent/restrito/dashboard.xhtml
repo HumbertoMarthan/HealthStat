@@ -10,14 +10,78 @@
 	<ui:define name="head">
 
 		<style type="text/css">
-.emp1 {
-	background: yellow !important;
-	border-color: #932c39 !important;
+.ui-g label {
+	font-size: medium;
+	color: black;
+	font-weight: bold
 }
 
-.campo {
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
+}
+
+.ui-fluid .ui-inputmask {
+	font-size: 20px;
+	width: 100%;
 	text-align: center;
-	width: 60px !important;
+	height: 35px;
+	color: black;
+}
+
+.ui-fluid .ui-inputtext {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
+}
+
+.ui-fluid .ui-inputtextarea {
+	width: 100%;
+	height: 35px !important;
+	color: black;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+	width: 100%;
+	height: 35px;
+	/*font-size: 20px !important;*/
+	text-align: center;
+	color: black;
+}
+
+.ui-selectonemenu label.ui-selectonemenu-label {
+	cursor: pointer;
+	height: 33px;
+	font-size: 20px;
+	text-align: center;
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+	padding-right: 2.4em;
+	height: 35px;
+	text-align: center;
 }
 
 .consulta {
@@ -32,75 +96,35 @@
 	background-color: blue !important;
 }
 
-.main-content {
-	padding: 0;
-}
-
-.inputAgenda {
-	width: 380px;
-}
-
-.ui-g label {
-	font-size: medium;
-	color: #2e6e9e;
+.value {
 	font-weight: bold;
 }
 
-.ui-selectonemenu label.ui-selectonemenu-label {
-	cursor: pointer;
-	height: 30px;
-	/*font-size: 20px;*/
-	text-align: center;
-	color: #2e6e9e;
+.ui-carousel {
+	margin-bottom: 20px;
 }
 
-.ui-fluid .ui-inputtext {
-	width: 100%;
-	height: 35px;
-	font-size: large;
-	text-align: center;
-	color: black;
-}
-
-.ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
-	font-weight: normal;
-	height: 35px;
+.tituloCard {
+	background: none;
+	padding: 0.5em 1em;
+	background-color: darkblue;
+	color: white;
 	text-align: center;
 }
 
-.ui-autocomplete-input.ui-autocomplete-dd-input {
-	padding-right: 2.4em;
-	height: 30px;
+.subEspecialidade {
+	background: none;
+	padding: 0.5em 1em;
+	color: white;
+	text-align: left;
 }
 
-.fc-time-grid .fc-slats .ui-widget-content {
-	/*background-color: cornsilk !important;*/
-	
-}
-
-.ui-state-highlight, .ui-widget-content .ui-state-highlight,
-	.ui-widget-header .ui-state-highlight {
-	border: 1px solid #fad42e;
-	/* background: #fbec88 url(/paradise-theme-clinica/javax.faces.resource/images/ui-bg_flat_55_fbec88_40x100.png.xhtml?ln=primefaces-redmond) 50% 50% repeat-x; */
-	color: #363636;
-}
-
-.ui-tabmenu  .ui-tabmenu-nav .ui-tabmenuitem {
-	list-style: none;
-	float: left;
-	position: sticky;
-	margin: 0 .2em 1px 0;
-	padding: 0;
-	white-space: nowrap;
-	display: block;
-	border-bottom: 0;
-	top: 1px;
-	width: 100%;
-}
-
-.
-esti {
-	background-color: green !important;
+.valorConsulta {
+	background: none;
+	padding: 0.5em 1em;
+	background-color: darkblue;
+	color: white;
+	text-align: center;
 }
 </style>
 		<script type="text/javascript">
@@ -117,7 +141,8 @@ esti {
 	<ui:define name="content">
 		<h:form id="formAgendamento">
 			<p:tabView id="tabView">
-				<p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}" update="@form" />
+				<p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}"
+					update="@form" />
 				<p:tab id="tabAgenda" title="Agendamento">
 					<div align="center">
 						<div align="center" style="width: 1200px">
@@ -148,224 +173,203 @@ esti {
 					</div>
 				</p:tab>
 				<p:tab title="Tabela de Preços">
-					<p:dataTable value="#{scheduleBean.lstPrecos}" var="d"
-						emptyMessage="Não Há Registros Lançados" id="table"
-						rows="10" paginator="true">
-						
-						<p:column headerText="Médico" style="font-size: medium">
-							<p:outputLabel value="#{d.pessoa.pessoaNome}" />
-						</p:column>
-						
-						<p:column headerText="Especialidade" style="font-size: medium;">
-							<p:outputLabel value="#{d.especialidades}" />
-						</p:column>
-						
-						<p:column headerText="Telefone" style="font-size: medium;">
-							<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
-						</p:column>
-						
-						<p:column headerText="Valor da Consulta" style="font-size: medium;">
-							<p:outputLabel value="#{d.valorConsulta}" />
-						</p:column>
-
-					</p:dataTable>
+					<div class="ui-fluid">
+						<div class="ui-g">
+							<div class="ui-g-12 ui-md-12 ui-lg-12 ui-sm-12">
+								<p:carousel value="#{scheduleBean.lstPrecos}" var="d" footerText="Total de Médicos #{scheduleBean.lstPrecos.size()}"
+								circular="true"
+									responsive="true">
+									<p:outputPanel styleClass="tituloCard">
+										<p:outputLabel value="#{d.pessoa.pessoaNome.toUpperCase()}"
+											style="font-size: large; font-weight:bold;color :white" />
+									</p:outputPanel>
+									<p:outputPanel styleClass="subEspecialidade">
+										<p:outputLabel value="Especialidades: " style="font-size: large; font-weight:bold"  />
+										<p:outputLabel value="#{d.especialidades}"
+											style="font-size: large; font-weight:bold" />
+									</p:outputPanel>
+									<p:outputPanel styleClass="valorConsulta">
+										<p:outputLabel value="VALOR DA CONSULTA R$ #{d.valorConsulta}"
+											style="font-size: large; font-weight:bold;color:white  " />
+									</p:outputPanel>
+								</p:carousel>
+							</div>
+						</div>
+					</div>
 				</p:tab>
 			</p:tabView>
 
 		</h:form>
 
-		<h:form id="formScheduleDialog">
-			<p:growl id="avisosGrowl" />
-			<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
-				dynamic="true" resizable="true" closable="true" showEffect="true"
-				modal="true" width="580"
-				header="Atendente/Usuario : #{loginBean.usuarioLogadoSecurity}">
-				<p:hotkey bind="esc" handler="PF('eventDialog').hide();" />
-				<p:panelGrid columns="1" layout="grid"
-					styleClass="ui-panelgrid-blank">
+		<p:growl id="avisosGrowl" />
+		<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
+			dynamic="true" resizable="false" closable="true" showEffect="true"
+			modal="true" width="580" header="Agendamento">
+			<h:form id="formScheduleDialog">
+				<div class="ui-fluid">
+					<p:hotkey bind="esc" handler="PF('eventDialog').hide();" />
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<p:outputLabel value="Titulo:" rendered="false" />
+							<p:inputText id="titulo" value="#{scheduleBean.evento.titulo}"
+								rendered="false"
+								requiredMessage="Informar Titulo do Agendamento"
+								placeholder="Titulo do Agendamento" size="30" />
+							<p:outputLabel value="Descrição" rendered="false" />
+							<p:inputTextarea id="descricao" rows="2" autoResize="true"
+								rendered="false" value="#{scheduleBean.evento.descricao}"
+								style="width: 242px" />
 
-					<p:outputLabel value="Titulo:" rendered="false" />
-					<p:inputText id="titulo" value="#{scheduleBean.evento.titulo}"
-						rendered="false" requiredMessage="Informar Titulo do Agendamento"
-						placeholder="Titulo do Agendamento" size="30" />
-					<p:outputLabel value="Descrição" rendered="false" />
-					<p:inputTextarea id="descricao" rows="2" autoResize="true"
-						rendered="false" value="#{scheduleBean.evento.descricao}"
-						style="width: 242px" />
-
-					<!-- <p:panelGrid columns="1" columnClasses="ui-g-6">
-						<p:column>
-							<p:outputLabel value="Data de Pagamento" />
-							<p:calendar mindate="today"
-								value="#{scheduleBean.evento.dataVencimentoContasReceber}"
-								locale="pt_BR" autocomplete="true" popupIconOnly="true"
-								required="true"
-								requiredMessage="Informe uma data Fim para o Agendamento"
-								showButtonPanel="true" showTodayButton="false" timeZone="GMT-3"
-								pattern="dd/MM/yyyy" />
-						</p:column>
-					</p:panelGrid> -->
-					<p:outputLabel value="Paciente" />
-					<p:column>
-						<p:autoComplete id="paciente"
-							completeMethod="#{auxController.completePaciente}"
-							forceSelection="true" converter="entityConverter" var="a"
-							itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
-							value="#{scheduleBean.evento.paciente}" minQueryLength="2"
-							dropdown="true" maxResults="30" required="false" size="56"
-							requiredMessage="Informe um paciente">
-							<p:column id="p">
-								<h:outputText value="#{a.pessoa.pessoaNome.toUpperCase()}" />
-							</p:column>
-							<p:ajax event="change"
-								listener="#{scheduleBean.pacienteEtiqueta}" update="titulo" />
-							<p:ajax event="itemSelect"
-								listener="#{scheduleBean.pacienteEtiqueta}" update="titulo" />
-						</p:autoComplete>
-						<p:commandButton icon="ui-icon-plus" immediate="true"
-							style="height: 40px"
-							action="#{pacienteBean.redirecionarFindEntidade}">
-							<p:confirm
-								message="Você será redirecionado para tela de cadastro de paciente, deseja continuar?"
-								icon="ui-icon-mail-closed" />
-
-							<p:confirmDialog global="true" showEffect="fade"
-								hideEffect="fade">
-								<div align="center">
-									<p:commandButton value="Sim" type="button"
-										styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-
-									<p:commandButton value="Não" type="button"
-										styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+							<div class="ui-g">
+								<p:outputLabel value="Paciente" />
+								<div class="ui-inputgroup">
+									<p:autoComplete id="paciente"
+										completeMethod="#{auxController.completePaciente}"
+										forceSelection="true" converter="entityConverter" var="a"
+										itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
+										value="#{scheduleBean.evento.paciente}" minQueryLength="2"
+										dropdown="true" maxResults="30" required="false" size="56"
+										requiredMessage="Informe um paciente">
+										<p:column id="p">
+											<h:outputText value="#{a.pessoa.pessoaNome.toUpperCase()}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{scheduleBean.pacienteEtiqueta}" update="titulo" />
+										<p:ajax event="itemSelect"
+											listener="#{scheduleBean.pacienteEtiqueta}" update="titulo" />
+									</p:autoComplete>
+									<p:commandButton icon="ui-icon-plus" immediate="true"
+										action="#{pacienteBean.redirecionarFindEntidade}">
+										<p:confirm icon="ui-icon-mail-closed"
+											message="Você será redirecionado para tela de cadastro de paciente, deseja continuar?" />
+										<p:confirmDialog global="true" showEffect="fade"
+											hideEffect="fade">
+											<div align="center">
+												<p:commandButton value="Sim" type="button"
+													styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+												<p:commandButton value="Não" type="button"
+													styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+											</div>
+										</p:confirmDialog>
+									</p:commandButton>
 								</div>
-
-							</p:confirmDialog>
-
-						</p:commandButton>
-
-					</p:column>
-					<p:outputLabel value="Medico" />
-					<p:autoComplete id="medico"
-						completeMethod="#{auxController.completeMedico}"
-						forceSelection="true" converter="entityConverter" var="a"
-						itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
-						value="#{scheduleBean.evento.medico}" minQueryLength="1"
-						dropdown="true" maxResults="30" required="true" size="60"
-						requiredMessage="Informe um médico">
-						<p:column>
-							<h:outputText
-								value="#{a.pessoa.pessoaNome.toUpperCase()} | #{a.especialidades}" />
-						</p:column>
-						<p:ajax event="change" listener="#{scheduleBean.medicoEtiqueta}"
-							update="descricao" />
-
-						<p:ajax event="itemSelect"
-							listener="#{scheduleBean.medicoEtiqueta}" update="descricao" />
-					</p:autoComplete>
-
-					<p:column style="text-align:center">
-
-						<p:outputLabel value="Agendamento:" />
-						<br />
-						<p:selectOneRadio value="#{scheduleBean.evento.tipoEvento}"
-							styleClass="inputAgenda" required="true" style="width : 100%"
-							requiredMessage="Informe um tipo de agendamento">
-							<f:selectItems value="#{scheduleBean.tiposEventos}"
-								var="tipoEvento" itemLabel="#{tipoEvento.descricao}" />
-						</p:selectOneRadio>
-						<p:outputLabel />
-
-					</p:column>
-					<p:separator></p:separator>
-					<br />
-					<p:panelGrid columns="2" styleClass="ui-panelgrid-blank"
-						columnClasses="campo, campo">
-
-						<p:column>
-							<p:outputLabel value="Inicio"
-								style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
+							</div>
 							<br />
-							<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
-								popupIconOnly="true" alt="Agendamento Inicio"
-								mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
-								required="true" size="30"
-								requiredMessage="Informe uma data Inicio para o Agendamento"
-								autocomplete="true" showButtonPanel="true" maxHour="17"
-								timeZone="GMT-3" minHour="8" showTodayButton="false"
-								value="#{scheduleBean.evento.dataInicio}">
-								<p:ajax event="blur"
-									listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-								<p:ajax event="change"
-									listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-							</p:calendar>
-						</p:column>
-						<p:column>
-							<p:outputLabel value="Fim"
-								style="font-size: medium;	color: #2e6e9e;	font-weight: bold;" />
+							<div class="ui-g">
+								<p:outputLabel value="Medico" />
+								<p:autoComplete id="medico"
+									completeMethod="#{auxController.completeMedico}"
+									forceSelection="true" converter="entityConverter" var="a"
+									itemLabel="#{a.pessoa.pessoaNome}" itemValue="#{a}"
+									value="#{scheduleBean.evento.medico}" minQueryLength="1"
+									dropdown="true" maxResults="30" required="true" size="60"
+									requiredMessage="Informe um médico">
+									<p:column>
+										<h:outputText
+											value="#{a.pessoa.pessoaNome.toUpperCase()} | #{a.especialidades}" />
+									</p:column>
+									<p:ajax event="change"
+										listener="#{scheduleBean.medicoEtiqueta}" update="descricao" />
+
+									<p:ajax event="itemSelect"
+										listener="#{scheduleBean.medicoEtiqueta}" update="descricao" />
+								</p:autoComplete>
+							</div>
 							<br />
-							<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
-								locale="pt_BR" autocomplete="true" popupIconOnly="true"
-								required="true" size="30"
-								requiredMessage="Informe uma data Fim para o Agendamento"
-								showButtonPanel="true" showTodayButton="false" maxHour="17"
-								timeZone="GMT-3" minHour="8" pattern="dd/MM/yyyy HH:mm">
-							</p:calendar>
-						</p:column>
-					</p:panelGrid>
-					<br />
-					<br />
-					<f:facet name="footer">
-						<div align="center">
-							<p:commandButton value="Fechar"
-								style="height:40px;
-								width:130px; 
-								background-color: gray; 
-								background: gray; 
-								color:white !important;
-								font-size:large;"
-								onclick="PF('eventDialog').hide(); return false;" />
+							<div class="ui-g">
+								<p:outputLabel value="Tipo de Agendamento" />
+								<br /> <br />
+								<p:selectOneButton value="#{scheduleBean.evento.tipoEvento}"
+									styleClass="inputAgenda" required="true" style="width : 100%"
+									requiredMessage="Informe um tipo de agendamento">
+									<f:selectItems value="#{scheduleBean.tiposEventos}"
+										var="tipoEvento" itemLabel="#{tipoEvento.descricao}" />
+								</p:selectOneButton>
+							</div>
 
-							<p:commandButton value="Salvar"
-								style="height:40px;
-								width:130px; 
-								background-color: green; 
-								background: green; 
-								color:white !important;
-								font-size:large;"
-								update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf"
-								oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
-								actionListener="#{scheduleBean.salvar()}">
-							</p:commandButton>
+							<div class="ui-g">
 
-							<p:commandButton value="Remover" action="#{scheduleBean.remover}"
-								rendered="#{scheduleBean.evento.id != null}"
-								style="height:40px;
-								width:130px; 
-								background-color: red; 
-								background: red; 
-								color:white !important;
-								font-size:large;"
-								update="avisosGrowl,@form,:formAgendamento:tabView:scheduleAgendamento">
-								<p:confirm
-									message="Confirmar Remoção do Agendamento Selecionado?"
-									icon="ui-icon-mail-closed" />
-							</p:commandButton>
-
-							<p:confirmDialog global="true" showEffect="fade"
-								hideEffect="fade">
-								<div align="center">
-									<p:commandButton value="Sim" type="button"
-										styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-
-									<p:commandButton value="Não" type="button"
-										styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+								<div class="ui-g-12 ui-lg-6">
+									<p:outputLabel value="Inicio" />
+									<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
+										popupIconOnly="true" alt="Agendamento Inicio"
+										mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
+										required="true" disabledWeekends="true"
+										requiredMessage="Informe uma data Inicio para o Agendamento"
+										autocomplete="true" showButtonPanel="true" maxHour="17"
+										timeZone="GMT-3" minHour="8" showTodayButton="false"
+										value="#{scheduleBean.evento.dataInicio}">
+										<p:ajax event="blur"
+											listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+										<p:ajax event="change"
+											listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+									</p:calendar>
 								</div>
-							</p:confirmDialog>
+								<div class="ui-g-12 ui-lg-6">
+									<p:outputLabel value="Fim" />
+									<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
+										locale="pt_BR" autocomplete="true" popupIconOnly="true"
+										required="true" disabledWeekends="true"
+										requiredMessage="Informe uma data Fim para o Agendamento"
+										showButtonPanel="true" showTodayButton="false" maxHour="17"
+										timeZone="GMT-3" minHour="8" pattern="dd/MM/yyyy HH:mm">
+									</p:calendar>
+								</div>
+							</div>
+							<div class="ui-g">
+								<p:commandButton value="Salvar"
+									style="height:40px;  margin: 0 auto; 
+									width:130px; 
+									background-color: green; 
+									background: green; 
+									color:white !important;
+									font-size:large;"
+									update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf"
+									oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
+									actionListener="#{scheduleBean.salvar()}">
+								</p:commandButton>
+
+								<p:commandButton value="Fechar"
+									style="height:40px;  margin: 0 auto; 
+									width:130px; 
+									background-color: gray; 
+									background: gray; 
+									color:white !important;
+									font-size:large;"
+									onclick="PF('eventDialog').hide(); return false;" />
+
+								<p:commandButton value="Remover"
+									action="#{scheduleBean.remover}"
+									rendered="#{scheduleBean.evento.id != null}"
+									style="height:40px;  margin: 0 auto; 
+									width:130px; 
+									background-color: red; 
+									background: red; 
+									color:white !important;
+									font-size:large;"
+									update="avisosGrowl,@form,:formAgendamento:tabView:scheduleAgendamento">
+									<p:confirm
+										message="Confirmar Remoção do Agendamento Selecionado?"
+										icon="ui-icon-mail-closed" />
+								</p:commandButton>
+
+								<p:confirmDialog global="true" showEffect="fade"
+									hideEffect="fade">
+									<div align="center">
+										<p:commandButton value="Sim" type="button"
+											styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+										<p:commandButton value="Não" type="button"
+											styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+									</div>
+								</p:confirmDialog>
+
+							</div>
 						</div>
-					</f:facet>
-				</p:panelGrid>
-			</p:dialog>
-		</h:form>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 
 </ui:composition>

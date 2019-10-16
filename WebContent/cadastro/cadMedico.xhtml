@@ -179,7 +179,9 @@
 										<p:inputMask id="cpf"
 											value="#{medicoBean.medicoModel.pessoa.pessoaCPF}"
 											mask="999.999.999-99" required="true"
-											requiredMessage="Informe o Cpf" />
+											requiredMessage="Informe o Cpf" >
+											<p:ajax event="change" listener="#{medicoBean.verificaCPFExiste}" update="@this" />
+											</p:inputMask>
 									</div>
 									<div class="ui-g-12 ui-lg-2 ">
 										<h:outputLabel id="labelTelefonePrimarioEstoquista"

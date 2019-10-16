@@ -65,6 +65,24 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		return especialidadeController.findListByQueryDinamica(
 				" from Especialidade where nomeEspecialidade like '%" + q.toUpperCase() + "%'");
 	}
+	
+	public void verificaCPFExiste() {
+		List<Medico> lstCPF = new ArrayList<Medico>();
+		try {
+			lstCPF = medicoController.findListByQueryDinamica("from Medico where pessoa.pessoaCPF = '" + medicoModel.getPessoa().getPessoaCPF()+"'");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>CPFCPF " +lstCPF.size());
+		if(!lstCPF.isEmpty()) {
+			try {
+				addMsg("O CPF já foi cadastrado");
+				medicoModel.getPessoa().setPessoaCPF("");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}	
+	}
 
 	public void busca() {
 		lstMedico = new ArrayList<Medico>();

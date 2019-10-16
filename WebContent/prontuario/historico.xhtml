@@ -35,8 +35,7 @@
 					value="#{prontuarioBean.listaProntuario}" 
 					rows="10" paginator="true">
 
-					<p:column headerText="Paciente" style="text-align:left"
-						priority="1">
+					<p:column headerText="Paciente" style="text-align:left" priority="1">
 						<p:outputLabel
 							value="#{a.paciente.pessoa.pessoaNome.toUpperCase()}" />
 						<br />
@@ -55,14 +54,6 @@
 					<p:column headerText="Prescrição Médica" style="text-align:left"
 						priority="3">
 						<p:outputLabel value="#{a.prescricao}" />
-					</p:column>
-
-					<p:column headerText="Data Consulta" priority="5"
-						style="width: 13%; text-align:center">
-						<p:outputLabel value="#{a.dataConsulta}">
-							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
-								timeZone="America/Sao_Paulo" />
-						</p:outputLabel>
 					</p:column>
 				</p:dataTable>
 			</div>

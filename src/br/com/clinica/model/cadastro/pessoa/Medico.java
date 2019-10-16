@@ -168,7 +168,8 @@ public class Medico  implements EntityBase ,Serializable {
 
 	@Override
 	public String toString() {
-		return "especialidades=" + especialidades + ",";
+		System.out.println("><><><><><><><><><><><><><><><>< "+especialidades);
+		return  especialidades + ",";
 	}
 	
 

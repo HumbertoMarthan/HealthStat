@@ -11,9 +11,25 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: large;
+	font-size: medium;
 	color: black;
 	font-weight: bold
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -24,19 +40,12 @@
 	color: black;
 }
 
-.ui-state-default, .ui-widget-content .ui-state-default,
-	.ui-widget-header .ui-state-default {
-	border: 1px solid #c5dbec;
-	font-weight: bold;
-	color: black;
-}
-
 .ui-fluid .ui-inputtext {
 	width: 100%;
 	height: 35px;
 	font-size: large;
-	color: black;
 	text-align: center;
+	color: black;
 }
 
 .ui-fluid .ui-inputtextarea {
@@ -58,7 +67,6 @@
 	height: 33px;
 	font-size: 20px;
 	text-align: center;
-	color: black;
 }
 
 .ui-selectoneradio label {
@@ -67,25 +75,16 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium !important;
-}
-
-}
-/*CAMPOS OBRIGATÓRIOS(*) */
-.obrigatorio {
-	font-weight: bold !important;
-	font-size: 10px !important;
-	color: red !important;
-}
-
-.ui-panel {
-	padding: 0.2em;
-	border-radius: 15px;
-}
-
-.ui-panel .ui-panel-title {
 	font-size: medium;
 }
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
+}
+
 </style>
 	</ui:define>
 	<ui:define name="content">
@@ -105,7 +104,7 @@
 										   font-size:large;"
 												immediate="true" action="#{prontuarioBean.redirecionarGuia}"
 												update="table, @form"
-												rendered="#{prontuarioBean.prontuarioModel.idProntuario> 0 }">
+												rendered="#{prontuarioBean.prontuarioModel.idProntuario > 0 and (prontuarioBean.prontuarioModel.status eq 'P') }">
 
 												<f:setPropertyActionListener value="#{d}"
 													target="#{prontuarioBean.prontuarioModel}" />
@@ -122,28 +121,21 @@
 										</div>
 									</h:panelGroup>
 									<div class="ui-g-12 ui-lg-3">
+									 <div class="ui-inputgroup">
 										<p:inputText value="#{prontuarioBean.campoBusca}"
-											placeholder="Buscar pelo Nome" id="inputNome"
-											style="height:40px; ">
-
-										</p:inputText>
-									</div>
-
-									<div class="ui-g-12 ui-lg-1">
-										<p:commandButton style="height:40px;"
+											placeholder="Buscar pelo Nome" id="inputNome"/>
+										<p:commandButton
 											styleClass="btn btn-blue" icon="ui-icon-search"
 											actionListener="#{prontuarioBean.busca}"
 											update=" inputNome, tablea" />
-										<p:defaultCommand target="btnBuscatxt" />
-									</div>
-								</div>
+									</div></div></div>
 							</div>
 						</p:panel>
 						<p:panel>
 							<div class="ui-g">
 								<br />
 								<p:dataTable value="#{prontuarioBean.listaProntuario}" var="d"
-									emptyMessage="Não há registros"
+									emptyMessage="Não há registros" rows="10" paginator="true" 
 									rowKey="#{d.idProntuario}" selectionMode="single" id="tablea"
 									selection="#{prontuarioBean.prontuarioModel}">
 
@@ -151,8 +143,8 @@
 										listener="#{prontuarioBean.onRowSelect}"
 										update="tablea,form:tabView:botoes " />
 
-									<p:column headerText="Data da Consulta" priority="1"
-										style="overflow: hidden;text-align: center; font-size: medium; width: 15%">
+									<p:column headerText="Data da Agendada" priority="1"
+										style="overflow: hidden;text-align: center; font-size: large; width: 15%">
 										<p:outputLabel value="#{d.dataConsulta}" style="color:green">
 											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
 												timeZone="America/Sao_Paulo" />
@@ -160,21 +152,21 @@
 									</p:column>
 
 									<p:column headerText="Paciente" priority="1"
-										style="overflow: hidden;text-align: left; font-size: medium">
+										style="overflow: hidden;text-align: left; font-size: large">
 										<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
 										<br />
 										<p:outputLabel value="CPF - #{d.paciente.pessoa.pessoaCPF}" />
 									</p:column>
 
 									<p:column headerText="Médico" priority="1"
-										style="overflow: hidden;text-align: left; font-size: medium">
+										style="overflow: hidden;text-align: left; font-size: large">
 										<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
 										<br />
 										<p:outputLabel value="#{d.medico.especialidades}" />
 									</p:column>
 
 									<p:column headerText="Endereço" priority="5"
-										style="overflow: hidden;text-align: left; font-size: medium">
+										style="overflow: hidden;text-align: left; font-size: large">
 										<p:outputLabel value="#{d.paciente.pessoa.logradouro}" />
 										<br />
 										<p:outputLabel value="#{d.paciente.pessoa.bairro}" />

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -24,6 +25,7 @@ import br.com.clinica.model.prontuario.Prontuario;
  * @author Humberto
  *
  */
+
 @Controller
 @ViewScoped
 @ManagedBean(name = "prontuarioBean")
@@ -77,6 +79,11 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 		prontuarioModel = new Prontuario();
 		setEstado("C");
 	}
+	
+	@PostConstruct
+	public void init() {
+		busca();
+	}
 
 	public List<Paciente> completePaciente(String q) throws Exception {
 		return pacienteController.findListByQueryDinamica(
@@ -111,7 +118,7 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 				str.append(" and a.status = '" + campoBuscaAtivo.toUpperCase() + "'");
 			}
 			if (campoBuscaAtivo.equals("T")) {
-				str.append(" and a.status = 'A' or a.status = 'I' ");
+				str.append(" and (a.status = 'P' or a.status = 'F') ");
 			}
 			listaProntuario = prontuarioController.findListByQueryDinamica(str.toString());
 		} catch (Exception e) {

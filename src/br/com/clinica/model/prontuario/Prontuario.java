@@ -130,7 +130,6 @@ public class Prontuario implements EntityBase, Serializable {
 	}
 
 	public Date getDataConsulta() {
-		dataConsulta = new Date();
 		return dataConsulta;
 	}
 

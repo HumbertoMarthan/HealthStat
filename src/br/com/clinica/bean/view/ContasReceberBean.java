@@ -25,6 +25,7 @@ import br.com.clinica.model.financeiro.FormaPagamento;
 import br.com.clinica.model.financeiro.PagamentoEspecial;
 import br.com.clinica.model.financeiro.ParcelaPagar;
 import br.com.clinica.utils.DatasUtils;
+import br.com.clinica.utils.DialogUtils;
 
 @Controller
 @ViewScoped
@@ -45,6 +46,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private List<ParcelaPagar> lstParcelaPersonalizada;
 	private List<ParcelaPagar> lstContaParcela;
 	private List<ParcelaPagar> lstParcelaPagarPendentes;
+	private List<PagamentoEspecial> lstEspecialPagarPendentes;
 	private List<PagamentoEspecial> lstPagamentoEspecial;
 	private String campoBuscaContasReceber = "";
 	private String campoBuscaTipoConta = "P";
@@ -53,6 +55,17 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	// É valor de quantas parcelas sera feita o valor total
 	Long parcelas;
 
+	private FormaPagamento formaUm;
+	
+	private Double valorUm;
+	private Date vencimentoUm;
+	
+	private FormaPagamento formaDois;
+	private Double valorDois;
+	private Date vencimentoDois;
+	
+	
+	
 	@Autowired
 	private ContasReceberController contasReceberController;
 
@@ -68,6 +81,13 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	@PostConstruct
 	public void init() {
 		lstPagamentoEspecial = new ArrayList<>();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar listas de contas pendentes (lista principal)");
+
+			e.printStackTrace();
+		}
 	}
 
 	public ContasReceberBean() {
@@ -76,15 +96,11 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		lstContasReceber = new ArrayList<ContasReceber>();
 		lstParcelaPagar = new ArrayList<ParcelaPagar>();
 		lstParcelaPagarPendentes = new ArrayList<ParcelaPagar>();
+		lstEspecialPagarPendentes = new ArrayList<>();
 		lstPagamentoEspecial = new ArrayList<>();
 		caixaModel = new Caixa();
-		try {
-			busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar listas de contas pendentes (lista principal)");
-
-			e.printStackTrace();
-		}
+		pagamentoEspecialModel = new PagamentoEspecial();
+		
 	}
 
 	public void mudaEstadoPendencia() {
@@ -104,17 +120,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	}
 
 	public void addForma() {
-		if (lstPagamentoEspecial.size() == 2) {
-			try {
-				addMsg("Só é possivel adicionar duas formas de pagamento ao mesmo tempo!");
-			} catch (Exception e) {
-				System.out.println("Erro no metodo addForma");
-				e.printStackTrace();
-			}
-		} else {
-			lstPagamentoEspecial.add(new PagamentoEspecial());
-			lstPagamentoEspecial.add(new PagamentoEspecial());
-		}
+		System.out.println(pagamentoEspecialModel.getValorBruto());	
+		lstPagamentoEspecial.add(pagamentoEspecialModel);
 	}
 
 	public void remForma(int index) {
@@ -142,22 +149,51 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
+	
+	public void selecionarBusca(ContasReceber contas)  {
+		try {
+			System.out.println("Contas -> "+contas.getIdContasReceber());
+			System.out.println("Tipo -> "+ contas.getTipoPagamento());
+			if(contas.getTipoPagamento().equals("PAR")) {
+				
+				System.out.println("Entrou no Par");
+				buscaParcelas(contas);
+				DialogUtils.openDialog("mostraParcelas");
+			
+			} else if(contas.getTipoPagamento().equals("ESP")) {
+				
+				System.out.println("Entrou no Esp");
+				buscaPagamentoEspecial(contas);
+				DialogUtils.openDialog("mostraPagamentoEspecial");
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	public void buscaParcelas() {
+	public void buscaParcelas(ContasReceber contas) {
 		try {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
-			str.append( // acrescimodesconto
-					"select idparcela, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
+			str.append( "	select idparcela, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
 							+ " idcontasreceber from parcelapagar   where 1=1 and idcontasreceber = "
-							+ contasReceberModel.getIdContasReceber());
-
-			lstParcelaPagarPendentes = (List<ParcelaPagar>) parcelaPagarController.getSQLListParam(str.toString(),
-					ParcelaPagar.class);
+							+ contas.getIdContasReceber());
+			lstParcelaPagarPendentes = (List<ParcelaPagar>) parcelaPagarController.getSQLListParam(str.toString(), ParcelaPagar.class);
 
 		} catch (Exception e) {
-
-			System.out.println("LISTA COM 0");
+			e.printStackTrace();
+		}
+	}
+	
+	public void buscaPagamentoEspecial(ContasReceber contas) {
+		try {
+			StringBuilder str = new StringBuilder();
+			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber() );
+			str.append( " from PagamentoEspecial where contasReceber.idContasReceber = "+ contas.getIdContasReceber());
+			lstEspecialPagarPendentes = (List<PagamentoEspecial>) pagamentoEspecialController.findListByQueryDinamica(str.toString());
+			System.out.println("LISTA PAGAMENTO ESPECIAL > "+ lstEspecialPagarPendentes.size());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -228,6 +264,26 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			System.out.println("Problema ao pagar parcela");
 		}
 	}
+	
+	public void recalcularDuasFormas() {
+		try {
+		Double restante = 0.0D;
+		setValorDois(0.0D);
+		if(getValorUm() > contasReceberModel.getValorComDesconto() ) {
+			addMsg("Valor Digitado é maior que a conta atual");
+		}else {
+			restante = contasReceberModel.getValorComDesconto() - getValorUm();
+		}
+		if(getValorDois() > restante ) {
+			addMsg("Valor Digitado é maior que a conta atual2");
+		}else {
+			System.out.println("RESTANTE <>> "+restante);
+			setValorDois(restante);
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Seta o valor do desconto na label ValorComDesconto
@@ -239,6 +295,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			System.out.println(" O Valor do Desconto" + contasReceberModel.getValorDesconto());
 			Double total = contasReceberModel.getValorConsulta()
 					- (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
+			
 			if (total < 0 || total > contasReceberModel.getValorComDesconto()) {
 				addMsg("Impossível atribuir um Desconto mair que o total da consulta");
 			} else {
@@ -481,6 +538,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 				// Seta como conta já lançada
 				contasReceberModel.setStatus("L");
+				// Seta como conta PARCELADA - PAR
+				contasReceberModel.setTipoPagamento("PAR");
 				contasReceberController.merge(contasReceberModel);
 				limpar();
 			}
@@ -522,6 +581,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				// Pesquisa
 				// Seta como conta já lançada
 				contasReceberModel.setStatus("L");
+				// Seta como conta PARCELADA - PAR
+				contasReceberModel.setTipoPagamento("PAR");
 				contasReceberController.merge(contasReceberModel);
 				limpar();
 			}
@@ -566,6 +627,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				}
 				// Seta como conta já lançada
 				contasReceberModel.setStatus("L");
+				// Seta como conta PARCELADA - PAR
+				contasReceberModel.setTipoPagamento("PAR");
 				contasReceberController.merge(contasReceberModel);
 				limpar();
 			}
@@ -575,6 +638,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 		busca();
 	}
+	
 
 	public void fazerPagamentoDuasFormas() throws Exception {
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
@@ -591,6 +655,21 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 					pagamentoEspecialController.delete(pa); // Deleta as parcelas e relançam
 				}
 			}
+			PagamentoEspecial pgUm = new PagamentoEspecial();
+			PagamentoEspecial pgDois = new PagamentoEspecial();
+			
+			pgUm.setFormaPagamento(formaUm);
+			pgUm.setValorBruto(valorUm);
+			pgUm.setDataVencimento(vencimentoUm);
+			
+			
+			pgDois.setFormaPagamento(formaDois);
+			pgDois.setValorBruto(valorDois);
+			pgDois.setDataVencimento(vencimentoDois);
+
+			
+			lstPagamentoEspecial.add(pgUm); 
+			lstPagamentoEspecial.add(pgDois); 
 
 			for (PagamentoEspecial pe : lstPagamentoEspecial) {
 				pagamentoEspecialModel = new PagamentoEspecial();
@@ -606,6 +685,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				pagamentoEspecialController.merge(pagamentoEspecialModel);
 			}
 			contasReceberModel.setStatus("L");
+			// Seta como conta ESPECIAL - ESP
+			contasReceberModel.setTipoPagamento("ESP");
 			contasReceberController.merge(contasReceberModel);
 			addMsg("Operação realizada com sucesso");
 		} catch (Exception e) {
@@ -622,27 +703,28 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void editarPagamento() {
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
 		if (contasReceberModel.getMaisForma().equals("N")) {
-			// Deleta a parcela referente a conta, para que eu possa relancar parcelas novas
-			try {
-				List<ParcelaPagar> lstParcelas = new ArrayList<ParcelaPagar>();
-				lstParcelas = parcelaPagarController.findListByQueryDinamica(
-						"from ParcelaPagar where contasReceber.idContasReceber = " + idContaReceber);
-				for (ParcelaPagar parcelas : lstParcelas) {
-					if (parcelas.getContasReceber().getIdContasReceber() == idContaReceber
-							&& contasReceberModel.getStatus().equals("L") // Se o status da conta for Lançadp
-							&& parcelas.getSituacao().equals("P")) { // Se as parcelas estiverem pendentes
-						parcelaPagarController.delete(parcelas); // Deleta as parcelas e relançam
-					}
+			
+			try { //deleta os lancamentos do pagamento especial
+				if(contasReceberModel.getStatus().equals("L")) {
+					pagamentoEspecialController.setExecuteParam("delete from pagamentoespecial where idcontasreceber = " + idContaReceber +" and situacao = 'P' ");
 				}
 			} catch (Exception e) {
-				System.out.println("Erro ao executar Delete");
+				System.out.println("Erro ao Deletar Pagamento Especial");
+				e.printStackTrace();
+			}
+			
+			try { //deleta os parcelas/pagar do pagamento parcelado 
+				if(contasReceberModel.getStatus().equals("L")) {
+					parcelaPagarController.setExecuteParam("delete from parcelapagar where idcontasreceber = " + idContaReceber +" and situacao = 'P' ");
+				}
+			} catch (Exception e) {
+				System.out.println("Erro ao Deletar Pagamento Parcelado");
 				e.printStackTrace();
 			}
 
 			try {
 				fazerPagamento();
 				busca();
-				buscaParcelas();
 			} catch (Exception e) {
 				System.out.println("Erro ao salvar parcelas!");
 				e.printStackTrace();
@@ -654,16 +736,43 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				e.getMessage();
 				e.printStackTrace();
 			}
+			
 		} else { // se for igual a 'S'
 			System.out.println("Entrou no igual a S ");
+			
+			try { //deleta os lancamentos do pagamento especial
+				if(contasReceberModel.getStatus().equals("L")) {
+					pagamentoEspecialController.setExecuteParam("delete from pagamentoespecial where idcontasreceber = " + idContaReceber +" and situacao = 'P' ");
+				}
+			} catch (Exception e) {
+				System.out.println("Erro ao Deletar Pagamento Especial");
+				e.printStackTrace();
+			}
+			
+			try { //deleta os parcelas/pagar do pagamento parcelado 
+				if(contasReceberModel.getStatus().equals("L")) {
+					parcelaPagarController.setExecuteParam("delete from parcelapagar where idcontasreceber = " + idContaReceber +" and situacao = 'P' ");
+				}
+			} catch (Exception e) {
+				System.out.println("Erro ao Deletar Pagamento Parcelado");
+				e.printStackTrace();
+			}
+		
 			try {
 				fazerPagamentoDuasFormas();
+				busca();
 			} catch (Exception e) {
 				System.out.println("Erro ao fazer Pagamento Duas Formas");
 				e.printStackTrace();
 			}
 		}
 
+	}
+	
+	public void limparPedido() {
+		new ContasReceberBean();
+		setValorUm(0.0);
+		setValorDois(0.0);
 	}
 
 	@Override
@@ -672,7 +781,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		contasReceberModel = contasReceberController.merge(contasReceberModel);
 		contasReceberModel = new ContasReceber();
 		return "";
-	}
+	} 
 
 	@Override
 	public void saveNotReturn() throws Exception {
@@ -926,4 +1035,61 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	public void setPagamentoEspecialController(PagamentoEspecialController pagamentoEspecialController) {
 		this.pagamentoEspecialController = pagamentoEspecialController;
 	}
+
+	public FormaPagamento getFormaUm() {
+		return formaUm;
+	}
+
+	public void setFormaUm(FormaPagamento formaUm) {
+		this.formaUm = formaUm;
+	}
+
+	public Double getValorUm() {
+		return valorUm;
+	}
+
+	public void setValorUm(Double valorUm) {
+		this.valorUm = valorUm;
+	}
+
+	public Date getVencimentoUm() {
+		return vencimentoUm;
+	}
+
+	public void setVencimentoUm(Date vencimentoUm) {
+		this.vencimentoUm = vencimentoUm;
+	}
+
+	public FormaPagamento getFormaDois() {
+		return formaDois;
+	}
+
+	public void setFormaDois(FormaPagamento formaDois) {
+		this.formaDois = formaDois;
+	}
+
+	public Double getValorDois() {
+		return valorDois;
+	}
+
+	public void setValorDois(Double valorDois) {
+		this.valorDois = valorDois;
+	}
+
+	public Date getVencimentoDois() {
+		return vencimentoDois;
+	}
+
+	public void setVencimentoDois(Date vencimentoDois) {
+		this.vencimentoDois = vencimentoDois;
+	}
+
+	public List<PagamentoEspecial> getLstEspecialPagarPendentes() {
+		return lstEspecialPagarPendentes;
+	}
+
+	public void setLstEspecialPagarPendentes(List<PagamentoEspecial> lstEspecialPagarPendentes) {
+		this.lstEspecialPagarPendentes = lstEspecialPagarPendentes;
+	}
+	
 }
