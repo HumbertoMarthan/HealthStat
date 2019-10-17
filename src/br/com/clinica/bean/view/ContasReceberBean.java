@@ -375,7 +375,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 						+ contasReceberModel.getIdContasReceber() + " and situacao = 'P' ");
 			}
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
 

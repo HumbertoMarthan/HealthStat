@@ -83,6 +83,12 @@
 											icon="fa fa-glass"
 											action="#{materialBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
+									
+									<sec:ifAnyGranted roles="ATE, ADMIN">
+										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"
+											icon="fa fa-glass"
+											action="#{precoConsultaBean.redirecionarFindEntidade}" />
+									</sec:ifAnyGranted>
 								</p:submenu>
 							</sec:ifAnyGranted>
 

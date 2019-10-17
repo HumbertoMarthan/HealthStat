@@ -131,7 +131,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 		<!-- DIALOG -->
 		<p:dialog widgetVar="mostraParcelas" id="mostraParcelas" modal="true"
-			resizable="false" height="150" width="800" dynamic="true"
+			resizable="false" height="150" width="800" dynamic="true" responsive="true"
 			onHide="atualizarAoSair()" appendToBody="@body" header="Parcelas">
 			<h:form id="formulario">
 				<p:remoteCommand name="atualizarAoSair" update="@form"
@@ -215,11 +215,11 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<div class="card card-w-title">
-							<div class="ui-g-12 ui-lg-12">
+							<div class="ui-g-12 ui-lg-12 ui-sm-12">
 								<h:form id="pagamentoEspecial">
 									<p:dataTable value="#{contasReceberBean.lstEspecialPagarPendentes}"
 										var="d"  rowKey="#{d.idPagamentoEspecial}"
-										selectionMode="single" id="tableEspecial"
+										selectionMode="single" id="tableEspecial" reflow="true"
 										selection="#{contasReceberBean.pagamentoEspecialModel}">
 											<p:column headerText="Lancamento" style="text-align:center;font-size: large">
 												<p:outputLabel value="#{d.dataLancamento}"  >

@@ -77,6 +77,8 @@ public class ContasPagar implements EntityBase, Serializable {
 	
 	private Integer quantidade;
 	
+	private Integer parcelas;
+	
 	public ContasPagar(Long cod) {
 		this.idContasPagar = cod;
 	}
@@ -187,6 +189,15 @@ public class ContasPagar implements EntityBase, Serializable {
 
 	public void setValorTotalConta(Double valorTotalConta) {
 		this.valorTotalConta = valorTotalConta;
+	}
+	
+
+	public Integer getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(Integer parcelas) {
+		this.parcelas = parcelas;
 	}
 
 	@Override

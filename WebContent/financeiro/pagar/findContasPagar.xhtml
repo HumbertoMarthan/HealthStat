@@ -107,6 +107,23 @@
 	/* with the exported variables from Nova and Luna Themes*/
 	border-color: var(- -input-hover-border-color, #ccc);
 }
+
+.painelFornecedor{
+	background-color: #5c9ccc;
+	width: 100%; 
+	padding: 2%;
+	padding-left: 8%;
+}
+
+
+.ui-dialog .ui-dialog-content {
+    position: relative;
+    border: 0;
+    padding: 0 !important;
+    background: none;
+    overflow: auto;
+    zoom: 1;
+}
 </style>
 	</ui:define>
 	<ui:define name="content">
@@ -355,7 +372,6 @@
 								</div>
 								<div class="ui-g-12 ui-lg-3">
 									<p:outputLabel value="Valor Total do Pedido : " />
-									<br />
 									<p:outputLabel value="R$ #{contasPagarBean.valorPedido}" />
 								</div>
 							</h:panelGroup>
@@ -413,7 +429,7 @@
 		</p:dialog>
 
 		<p:dialog widgetVar="contaFixa" id="contaFixa" modal="true"
-			resizable="false" responsive="true" width="450" header="Fixa">
+			resizable="false" responsive="true" width="550" header="Fixa">
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">
@@ -423,7 +439,7 @@
 									<div class="ui-g-12 ui-lg-12 ui-sm-12 ">
 										<h:outputLabel value="Fornecedor:*" />
 										<p:autoComplete id="fornecedor"
-											completeMethod="#{contasPagarBean.completeFornecedor}"
+											completeMethod="#{auxController.completeFornecedor}"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomeFornecedor}" itemValue="#{a}"
 											value="#{contasPagarBean.contasPagarModel.fornecedor}"
@@ -433,7 +449,7 @@
 									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-12 ui-sm-12">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
 											completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
@@ -445,14 +461,8 @@
 											requiredMessage="Informe uma uma forma de pagamento">
 										</p:autoComplete>
 									</div>
-								</div>
-								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-4 ui-sm-12 ">
-										<h:outputLabel value="Qtd:" />
-										<p:inputNumber
-											value="#{contasPagarBean.contasPagarModel.quantidade}" />
-									</div>
-									<div class="ui-g-12 ui-lg-8 ui-sm-12 ">
+									
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ">
 										<h:outputLabel value="Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
 											popupIconOnly="true" required="true"
@@ -462,19 +472,23 @@
 											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
 										</p:calendar>
 									</div>
-
-
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-12 ui-sm-12 ">
+										<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
+											<h:outputLabel value="Parcelas" />
+											<p:inputNumber decimalPlaces="2" 
+												symbolPosition="p" required="true"
+												value="#{contasPagarBean.contasPagarModel.parcelas}">
+											</p:inputNumber>
+										</div>
+									
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ">
 										<h:outputLabel value="Valor Total" />
 										<p:inputNumber decimalPlaces="2" symbol="R$"
 											symbolPosition="p" required="true"
 											value="#{contasPagarBean.contasPagarModel.valorTotalConta}">
-											<p:ajax event="keyup" />
 										</p:inputNumber>
 									</div>
-
 								</div>
 
 								<div class="ui-g" align="center">
@@ -498,29 +512,34 @@
 			header="Fixa">
 			<div class="ui-fluid">
 				<div class="ui-g">
+					<p:outputPanel styleClass="painelFornecedor" >
+						<div class="ui-g">
+							<div class="ui-g-12 ui-lg-6">
+								<h:outputLabel value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor.toUpperCase()}" style="font-size: large;color:white" />
+							</div>
+
+							<div class="ui-g-12 ui-lg-3">
+								<h:outputLabel value="Valor Total: R$ #{contasPagarBean.contasPagarModel.valorTotalConta}" style="font-size: large;color:white"  />
+							</div>
+
+						</div>
+					</p:outputPanel>
+				</div>
+			
+				<div class="ui-g">
 					<div class="ui-g-12">
 						<div class="ui-g-12 ui-lg-12">
 							<h:form id="formDialogContasPagar">
-
-								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
-										<h:outputLabel value="Fornecedor: " />
-										<h:outputLabel
-											value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor}" />
-									</div>
-
-									<div class="ui-g-12 ui-lg-3">
-										<h:outputLabel value="Valor Total" />
-										<br />
-										<p:outputLabel required="true" style="font-size: medium;"
-											value="#{contasPagarBean.contasPagarModel.valorTotalConta}" />
-									</div>
-
-								</div>
-								<p:separator />
-
 								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
+										<h:outputLabel value="Valor Total" />
+										<p:inputNumber decimalPlaces="2" symbol="R$"
+											symbolPosition="p" required="true"
+											value="#{contasPagarBean.contasPagarModel.valorTotalConta}">
+										</p:inputNumber>
+									</div>
+								
+										<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
 										<h:outputLabel value="Data de Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
 											popupIconOnly="true" required="true"
@@ -530,19 +549,8 @@
 											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
 										</p:calendar>
 									</div>
-
-
-								</div>
-								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
-										<h:outputLabel value="Valor Total" />
-										<p:inputNumber decimalPlaces="2" symbol="R$"
-											symbolPosition="p" required="true"
-											value="#{contasPagarBean.contasPagarModel.valorTotalConta}">
-											<p:ajax event="keyup" />
-										</p:inputNumber>
-									</div>
-									<div class="ui-g-12 ui-lg-4 ui-sm-12">
+								
+									<div class="ui-g-12 ui-lg-6 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
 											completeMethod="#{auxController.completeFormaPagamento}"
@@ -565,7 +573,7 @@
 								<div class="ui-g" align="center">
 									<div class="ui-g-12 ui-lg-12">
 										<p:commandButton value="Lançar"
-											actionListener="#{contasPagarBean.editarPagamento}"
+											actionListener="#{contasPagarBean.editarPagamento}" oncomplete="PF(editarContaPagar).hide()"
 											style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important" />
 									</div>
 								</div>
@@ -574,7 +582,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+				</div>
 		</p:dialog>
 
 

@@ -62,6 +62,9 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	private Evento selectedEvento;
 	private List<Evento> listaEvento;
 	String campoBusca;
+	String campoBuscaNome ="";
+	String campoBuscaEspecialidade = ""; 
+	String campoBuscaAtivo = "T";
 
 	@Autowired
 	private EventoController eventoController; /* Injetando */
@@ -84,7 +87,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ContextoBean contextoBean;
 
-	public ScheduleBean() throws Exception {
+	public ScheduleBean() {
 		event = new CustomScheduleEvent();
 		model = new DefaultScheduleModel();
 		eventoPacienteModel = new EventoPaciente();
@@ -97,9 +100,33 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	}
 	
 	public void buscaPreco(){
-		lstPrecos = new ArrayList<>();
 		StringBuilder str = new StringBuilder();
-		str.append("from Medico a where 1=1");
+		try {
+			lstPrecos = new ArrayList<>();
+			str.append("from Medico a where 1=1");
+			
+			if(!campoBuscaNome.equals("")) {
+				str.append(" and a.pessoa.pessoaNome LIKE '%"+ campoBuscaNome +"%'");
+			}
+			
+			if(campoBuscaAtivo.equals("A")) {
+				str.append(" and a.ativo = 'A'");
+			}
+			
+			if(campoBuscaAtivo.equals("I")) {
+				str.append(" and a.ativo = 'I'");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+		}
+
+		/*
+		 * if(!campoBuscaEspecialidade.equals("")) {
+		 * str.append(" and a.especialidades.nomeEspecialidade LIKE '%"+
+		 * campoBuscaEspecialidade +"%'"); }
+		 */
+		
 		try {
 			lstPrecos = (ArrayList<Medico>) medicoController.findListByQueryDinamica(str.toString());
 		} catch (Exception e) {
@@ -112,10 +139,14 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	 * Lista agendamentos (eventos)
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	public List<Evento> busca() throws Exception {
+	public List<Evento> busca(){
+	try {
 		listaEvento = eventoController.listarEventos();
+	}catch(Exception e) {
+		e.printStackTrace();
+		e.getMessage();
+	}
 		return listaEvento;
 	}
 
@@ -131,8 +162,15 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	 */
 
 	@PostConstruct
-	public void init() throws Exception {
-
+	public void init() {
+		try {
+		buscaPreco();
+		}catch (Exception e) {
+			System.out.println("Erro no Busca Preço do DashBoard");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		try {
 		if (this.model != null) {
 			List<Evento> eventos = this.eventoController.listarEventos();
 			if (this.scheduleEvents == null) {
@@ -148,6 +186,11 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 					this.model.addEvent(newEvent);
 				}
 			}
+		}
+		}catch (Exception e) {
+			System.out.println("Erro ao popular calendário no dashboar");
+			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 
@@ -219,27 +262,32 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void buscaRegistro() throws Exception {
-		listaEvento = eventoController
-				.findListByQueryDinamica(" FROM Evento WHERE upper(titulo) like upper('%" + campoBusca + "%')");
-		campoBusca = "";
+	public void buscaRegistro() {
+		try {
+			listaEvento = eventoController
+					.findListByQueryDinamica(" FROM Evento WHERE upper(titulo) like upper('%" + campoBusca + "%')");
+			campoBusca = "";
+		}catch (Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+		}
 	}
 
 	/**
 	 * Verifica se o Médico contém duas consultas agendadas no mesmo horário
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	public boolean validarMedico() throws Exception {
+	public boolean validarMedico() {
 		String[] param = new String[] { "idMedico", "dataInicio", "dataFim" };
 		String hql = "FROM Evento e WHERE e.medico.idMedico = "
 				+ ":idMedico AND (e.dataInicio BETWEEN :dataInicio AND :dataFim "
 				+ "OR e.dataFim BETWEEN :dataInicio AND :dataFim)";
 
+		try {
 		List<Evento> lista = eventoController.findListByQueryDinamica(hql, Arrays.asList(param),
 				evento.getMedico().getIdMedico(), evento.getDataInicio(), evento.getDataFim());
-
+		
 		if (!lista.isEmpty()) {
 			if (evento.getId() == null) {
 				return false;
@@ -257,6 +305,11 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				}
 			}
 		}
+		}catch (Exception e) {
+			System.out.println("Erro ao validar Médico");
+			e.printStackTrace();
+			e.getMessage();
+		}
 
 		return true;
 
@@ -266,14 +319,14 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	 * Verifica se o Paciente contém duas consultas agendadas no mesmo horário
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	public boolean validarPaciente() throws Exception {
+	public boolean validarPaciente(){
 		String[] param = new String[] { "idPaciente", "dataInicio", "dataFim" };
 		String hql = "FROM Evento e WHERE e.paciente.idPaciente = "
 				+ ":idPaciente AND (e.dataInicio BETWEEN :dataInicio AND :dataFim "
 				+ "OR e.dataFim BETWEEN :dataInicio AND :dataFim)";
-
+		
+		try {
 		List<Evento> lista = eventoController.findListByQueryDinamica(hql, Arrays.asList(param),
 				evento.getPaciente().getIdPaciente(), evento.getDataInicio(), evento.getDataFim());
 
@@ -294,6 +347,11 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 				}
 			}
 		}
+		}catch (Exception e) {
+			System.out.println("Erro ao validar Paciente");
+			e.printStackTrace();
+			e.getMessage();
+		}
 
 		return true;
 
@@ -313,86 +371,162 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		
 	}
 
-	public void convenioUnimed() throws Exception {
-		Long usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
-		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
 
-		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
+	public void convenioUnimed()  {
+		Long usuarioSessaoId = 0L;
+		try {
+			usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar usuario na sessao Unimed");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		
 		contasReceber.setLogin(new Login(usuarioSessaoId));
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		contasReceber.setStatus("P");
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
-		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
+		contasReceber.setValorConsulta(evento.getMedico().getPrecoConsulta().getValor());
 		contasReceber.setObservacao("Recolher Assinatura de Paciente!");
-		contasReceberController.merge(contasReceber);
+		
+		try {
+			contasReceberController.merge(contasReceber);
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar convenio unimed na contas a pagar");
+			e.printStackTrace();
+			e.getMessage();
+		}
 		
 		//Gera um Prontuario 
 		geraProntuario();
 
 	}
 
-	public void convenioPrever() throws Exception {
-		Long usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
-		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
-
-		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-
-		contasReceber.setLogin(new Login(usuarioSessaoId));
+	public void convenioPrever() {
+		Long usuarioSessaoId = 0L; 
+		
+		try {
+			 usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar usuario no convenio prever na contas a pagar");
+			e.printStackTrace();
+			e.getMessage();
+		}	
+		
+		try {
+			contasReceber.setLogin(new Login(usuarioSessaoId));
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar convenio unimed na sessao");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
+		contasReceber.setValorConsulta(evento.getMedico().getPrecoConsulta().getValor());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
-		contasReceberController.merge(contasReceber);
 		
+		try {
+			contasReceberController.merge(contasReceber);
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar convenio prever na contas a pagar");
+			e.printStackTrace();
+			e.getMessage();
+		}
 		//Gera um Prontuario 
 				geraProntuario();
 	}
 
-	public void convenioParticular() throws Exception {
-		Long usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
-		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
-
-		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-		contasReceber.setLogin(new Login(usuarioSessaoId));
+	public void convenioParticular() {
+		Long usuarioSessaoId = 0L;
+		try {
+			usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar usuario na sessaao");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		try {
+			contasReceber.setLogin(new Login(usuarioSessaoId));
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar usuario na sessao");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
-		// verificaDataVencimentoContasReceber();
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
+		contasReceber.setValorConsulta(evento.getMedico().getPrecoConsulta().getValor());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
-		contasReceberController.merge(contasReceber);
 		
+		try{
+			contasReceberController.merge(contasReceber);
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar convenio prever na contas a pagar");
+			e.printStackTrace();
+			e.getMessage();
+		}
 		//Gera um Prontuario 
 				geraProntuario();
 		
 	}
 
-	public void convenioSas() throws Exception {
-		Long usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
-		String usuarioSessaoNome = contextoBean.getEntidadeLogada().getLogin();
-
-		System.out.println("Usuario para ser gravado id :" + usuarioSessaoId + " Nome " + usuarioSessaoNome);
-		contasReceber.setLogin(new Login(usuarioSessaoId));
+	public void convenioSas() {
+		Long usuarioSessaoId = 0L;
+		
+		try {
+			usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar da sessao");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		
+		try {
+			contasReceber.setLogin(new Login(usuarioSessaoId));
+		}catch (Exception e) {
+			System.out.println("Erro ao recuperar usuario da sessao");
+			e.printStackTrace();
+			e.getMessage();
+		}
+		
 		contasReceber.setPaciente(new Paciente(evento.getPaciente().getIdPaciente()));
 		contasReceber.setStatus("P");
-		contasReceber.setValorConsulta(evento.getMedico().getValorConsulta());
+		contasReceber.setValorConsulta(evento.getMedico().getPrecoConsulta().getValor());
 		contasReceber.setDataInicioAgendamento(evento.getDataInicio());
 		contasReceber.setDataFimAgendamento(evento.getDataFim());
-		contasReceberController.merge(contasReceber);
-
+		
+		try {
+			contasReceberController.merge(contasReceber);
+		}catch (Exception e) {
+			System.out.println("Erro ao salvar convenio Sas na contas a pagar");
+			e.printStackTrace();
+			e.getMessage();
+		}
 		//Gera um Prontuario 
 				geraProntuario();
 	}
 
-	public void adicionarContasReceber() throws Exception {
+	public void adicionarContasReceber() {
 		if (evento.getTipoEvento().getDescricao() == "Confirmar") {
-			lstContas = contasReceberController.findListByQueryDinamica("from ContasReceber");
+			try {
+				lstContas = contasReceberController.findListByQueryDinamica("from ContasReceber");
+			}catch (Exception e) {
+				e.getMessage();
+				e.printStackTrace();
+			}
 			for (ContasReceber contas : lstContas) {
 				if (contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente()
 						&& evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0) {
-					contasReceberController.delete(contas);
+					try {
+						contasReceberController.delete(contas);
+					}catch (Exception e) {
+						e.getMessage();
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -487,7 +621,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void remover() throws Exception {
+	public void remover(){
 		try {
 			/* Deleta evento do agendamento do banco de dados */
 			evento = (Evento) eventoController.getSession().get(getClassImp(), evento.getId());
@@ -521,14 +655,19 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	}
 
 	// EVENTO DE SELEÇÃO DOS HORARIOS AGENDADOS
-	public void onEventSelect(SelectEvent selectEvent) throws Exception {
+	public void onEventSelect(SelectEvent selectEvent)  {
 		System.out.println("Entrou no evento selecionado");
 		this.evento = new Evento();
 		event = (CustomScheduleEvent) selectEvent.getObject();
 		this.evento = (Evento) event.getData();
 		Long id = this.evento.getId();
 		System.out.println("Evento Selecionado" + id);
-		this.evento = eventoController.findByPorId(Evento.class, id);
+		try {	
+			this.evento = eventoController.findByPorId(Evento.class, id);
+		}catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+		}
 		System.out.println("Evento vindo do banco" + evento);
 	}
 
@@ -540,11 +679,18 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return TipoEvento.values();
 	}
 
-	public void sendEmailAgendamento(Evento t) throws Exception {
+	public void sendEmailAgendamento(Evento t)  {
 
 		long codigoPaciente = t.getPaciente().getIdPaciente();
-
-		List<Evento> emails = eventoController.findListByQueryDinamica("from Evento where paciente.idPaciente =" + codigoPaciente);
+		List<Evento> emails = new ArrayList<>();
+		
+		try {	
+			emails = eventoController.findListByQueryDinamica("from Evento where paciente.idPaciente =" + codigoPaciente);
+		}catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+		}
+		
 		String email = "";
 
 		for (Evento e : emails) {
@@ -765,4 +911,27 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		this.medicoController = medicoController;
 	}
 
+	public String getCampoBuscaNome() {
+		return campoBuscaNome;
+	}
+
+	public void setCampoBuscaNome(String campoBuscaNome) {
+		this.campoBuscaNome = campoBuscaNome;
+	}
+
+	public String getCampoBuscaEspecialidade() {
+		return campoBuscaEspecialidade;
+	}
+
+	public void setCampoBuscaEspecialidade(String campoBuscaEspecialidade) {
+		this.campoBuscaEspecialidade = campoBuscaEspecialidade;
+	}
+
+	public String getCampoBuscaAtivo() {
+		return campoBuscaAtivo;
+	}
+
+	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
+		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
 }

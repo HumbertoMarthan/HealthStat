@@ -38,6 +38,7 @@
 		<mapping class="br.com.clinica.model.cadastro.outro.Doenca" />
 		<mapping class="br.com.clinica.model.cadastro.outro.Convenio" />
 		<mapping class="br.com.clinica.model.cadastro.outro.Especialidade" />
+		<mapping class="br.com.clinica.model.cadastro.outro.PrecoConsulta" />
 		
 		<!-- Prontuário Médico  -->
 		<mapping class="br.com.clinica.model.prontuario.Prontuario" />

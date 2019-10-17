@@ -107,7 +107,7 @@
 .tituloCard {
 	background: none;
 	padding: 0.5em 1em;
-	background-color: darkblue;
+	background-color: #5c9ccc;
 	color: white;
 	text-align: center;
 }
@@ -122,7 +122,7 @@
 .valorConsulta {
 	background: none;
 	padding: 0.5em 1em;
-	background-color: darkblue;
+	background-color: #5c9ccc;
 	color: white;
 	text-align: center;
 }
@@ -174,10 +174,39 @@
 				</p:tab>
 				<p:tab title="Tabela de Preços">
 					<div class="ui-fluid">
+						<p:panel header="Tabela de Preços" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botoes">
+								<div class="ui-g-12 ui-lg-3">
+									<p:selectOneRadio value="#{scheduleBean.campoBuscaAtivo}"
+										style="padding-left: 10% !important">
+										<f:selectItem itemLabel="Todos" itemValue="T" />
+										<f:selectItem itemLabel="Ativo" itemValue="A" />
+										<f:selectItem itemLabel="Inativo" itemValue="I" />
+										<p:ajax event="change" listener="#{scheduleBean.buscaPreco}" update="carousel" />
+									</p:selectOneRadio>
+								</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-2">
+								<div class="ui-inputgroup">
+									<p:inputText value="#{scheduleBean.campoBuscaNome}"
+									placeholder="Buscar pelo Nome" id="inputMedico"
+									style="height:40px; "/>
+									<p:commandButton style="height:40px;" icon="ui-icon-search"
+										id="btnBuscatxt" actionListener="#{scheduleBean.buscaPreco}"
+										update=" inputMedico,carousel" />
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</p:panel>
+						<p:panel >
 						<div class="ui-g">
 							<div class="ui-g-12 ui-md-12 ui-lg-12 ui-sm-12">
-								<p:carousel value="#{scheduleBean.lstPrecos}" var="d" footerText="Total de Médicos #{scheduleBean.lstPrecos.size()}"
-								circular="true"
+								<p:carousel id="carousel" value="#{scheduleBean.lstPrecos}" var="d" footerText="Total de Médicos #{scheduleBean.lstPrecos.size()}"
+								circular="true" 
 									responsive="true">
 									<p:outputPanel styleClass="tituloCard">
 										<p:outputLabel value="#{d.pessoa.pessoaNome.toUpperCase()}"
@@ -189,12 +218,13 @@
 											style="font-size: large; font-weight:bold" />
 									</p:outputPanel>
 									<p:outputPanel styleClass="valorConsulta">
-										<p:outputLabel value="VALOR DA CONSULTA R$ #{d.valorConsulta}"
+										<p:outputLabel value="VALOR DA CONSULTA R$ #{d.precoConsulta.valor}"
 											style="font-size: large; font-weight:bold;color:white  " />
 									</p:outputPanel>
 								</p:carousel>
 							</div>
 						</div>
+						</p:panel>
 					</div>
 				</p:tab>
 			</p:tabView>

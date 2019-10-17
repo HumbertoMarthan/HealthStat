@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -25,6 +26,7 @@ import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
 import br.com.clinica.model.cadastro.outro.Especialidade;
+import br.com.clinica.model.cadastro.outro.PrecoConsulta;
 
 /**
  * @author Humberto
@@ -69,6 +71,11 @@ public class Medico  implements EntityBase ,Serializable {
 	inverseJoinColumns={
 			@JoinColumn(name="especialidadeId",	referencedColumnName="idEspecialidade")}) 
 	private List<Especialidade>  especialidades = new ArrayList<>();
+	
+	@ManyToOne
+	@JoinColumn(name = "idPrecoConsulta")
+	PrecoConsulta precoConsulta;
+
 	
 	public Medico(Long idMedico) {
 		this.idMedico = idMedico;
@@ -138,6 +145,14 @@ public class Medico  implements EntityBase ,Serializable {
 
 	public void setValorConsulta(Double valorConsulta) {
 		this.valorConsulta = valorConsulta;
+	}
+	
+	public PrecoConsulta getPrecoConsulta() {
+		return precoConsulta;
+	}
+
+	public void setPrecoConsulta(PrecoConsulta precoConsulta) {
+		this.precoConsulta = precoConsulta;
 	}
 
 	// HASH CODE & EQUALS

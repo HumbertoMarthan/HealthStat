@@ -85,9 +85,20 @@
     height: 35px;
 }
 
-.ui-panel .ui-panel-title {
-	
+ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+	width: 100%;
+	height: 35px;
+	font-size: large;
+	text-align: center;
+	color: black;
 }
+
+.ui-autocomplete-token-label {
+    display: block;
+    padding: 0em 2.1em 0em 0.5em;
+    font-size: large;
+}
+
 </style>
 }
 	</ui:define>
@@ -200,11 +211,40 @@
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
 									
-									<div class="ui-g-12 ui-lg-2">
-										<h:outputLabel 
-											value="Valor da Consulta:*" />
-										<p:inputNumber required="true" requiredMessage="Valor da Consulta" emptyValue="0" decimalPlaces="2" 
-											value="#{medicoBean.medicoModel.valorConsulta}"  symbol="R$" />
+									<div class="ui-g-12 ui-lg-4">
+										<h:outputLabel value="Grupo Preço" />
+										<div class="ui-inputgroup">
+										<p:autoComplete id="grpPreco"
+											completeMethod="#{auxController.completePrecoConsulta}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.categoria}" itemValue="#{a}"
+											value="#{medicoBean.medicoModel.precoConsulta}" minQueryLength="1"
+											dropdown="true" maxResults="30" required="true"
+											requiredMessage="Informe um Grupo de preço">
+											<p:column>
+												<p:outputLabel value=" #{a.categoria} | R$ #{a.valor}" style="font-size: large" />
+											</p:column>
+										</p:autoComplete>
+										<p:commandButton  icon="ui-icon-plus"
+												immediate="true" 
+												action="#{precoConsultaBean.redirecionarFindEntidade}">
+												<p:confirm
+													message="Você será redirecionado para tela de cadastro de grupos de preços, deseja continuar?"
+													icon="ui-icon-mail-closed" />
+
+												<p:confirmDialog global="true" showEffect="fade"
+													hideEffect="fade">
+													<div align="center">
+														<p:commandButton value="Sim" type="button"
+															styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+
+														<p:commandButton value="Não" type="button"
+															styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+													</div>
+												</p:confirmDialog>
+											</p:commandButton>
+
+										</div>
 									</div>
 									
 									<div class="ui-g-12 ui-lg-6">

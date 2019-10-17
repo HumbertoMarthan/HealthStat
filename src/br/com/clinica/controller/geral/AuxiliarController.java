@@ -10,6 +10,7 @@ import javax.faces.bean.RequestScoped;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.outro.Convenio;
+import br.com.clinica.model.cadastro.outro.PrecoConsulta;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.financeiro.FormaPagamento;
@@ -44,6 +45,9 @@ public class AuxiliarController implements Serializable{
 	
 	@ManagedProperty("#{formaPagamentoController}")
 	private FormaPagamentoController formaPagamentoController;
+	
+	@ManagedProperty("#{precoConsultaController}")
+	private PrecoConsultaController precoConsultaController;
 	
 	
 	public List<Convenio>  completeConvenio(String q) throws Exception {
@@ -85,12 +89,18 @@ public class AuxiliarController implements Serializable{
 			return materialController.findListByQueryDinamica(" from Material where ativo='A' and nomeMaterial like '%" + q.toUpperCase()+ "%' order by nomeMaterial ASC");
 	}
 	
+	public List<PrecoConsulta> completePrecoConsulta(String q) throws Exception {
+		return precoConsultaController.findListByQueryDinamica(" from PrecoConsulta where ativo='A' and categoria like '%" + q.toUpperCase()+ "%' order by categoria ASC");
+	}
+	
 	public MedicoController getMedicoController() {
 		return medicoController;
 	}
+	
 	public FornecedorController getFornecedorController() {
 		return fornecedorController;
 	}
+
 	public void setFornecedorController(FornecedorController fornecedorController) {
 		this.fornecedorController = fornecedorController;
 	}
@@ -107,8 +117,14 @@ public class AuxiliarController implements Serializable{
 		this.pacienteController = pacienteController;
 	}
 
-	
-	
+	public PrecoConsultaController getPrecoConsultaController() {
+		return precoConsultaController;
+	}
+
+	public void setPrecoConsultaController(PrecoConsultaController precoConsultaController) {
+		this.precoConsultaController = precoConsultaController;
+	}
+
 	public FormaPagamentoController getFormaPagamentoController() {
 		return formaPagamentoController;
 	}

@@ -58,6 +58,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private Fornecedor fornecedorSelecionado;
 	private Double valorPedido = 0.0D;
 	Long parcelas;
+	String temParcela = "N";
 	private List<ParcelaContasPagar> lstParcelaPagar;
 
 	@Autowired
@@ -240,6 +241,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	public void editarPagamento() {
 		try {
 			contasPagarModel.setStatus("L");
+			contasPagarModel.setDataLancamento(new Date());
 			contasPagarController.merge(contasPagarModel);
 			busca();
 			addMsg("Operação Realizada Com Sucesso!");
@@ -399,9 +401,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event) {
 		contasPagarModel = (ContasPagar) event.getObject();
-		System.out.println(contasPagarModel.getFornecedor().getNomeFornecedor());
-		System.out.println(contasPagarModel.getMaterial().getFornecedor().getNomeFornecedor());
-		System.out.println(contasPagarModel.getDataLancamento());
 	}
 
 	public void onRowSelectPedido(SelectEvent event) {
@@ -622,4 +621,11 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		this.estoqueModel = estoqueModel;
 	}
 
+	public String getTemParcela() {
+		return temParcela;
+	}
+
+	public void setTemParcela(String temParcela) {
+		this.temParcela = temParcela;
+	}
 }
