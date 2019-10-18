@@ -56,7 +56,11 @@ public class PagamentoEspecial implements EntityBase, Serializable {
 	@ManyToOne
 	@JoinColumn(name = "idFormaPagamento")
 	private FormaPagamento formaPagamento;
-
+	
+	public PagamentoEspecial() {};
+	
+	public PagamentoEspecial(Long cod) {this.idPagamentoEspecial = cod;};
+	
 	public Long getIdPagamentoEspecial() {
 		return idPagamentoEspecial;
 	}

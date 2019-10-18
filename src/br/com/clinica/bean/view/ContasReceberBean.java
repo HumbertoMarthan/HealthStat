@@ -64,8 +64,6 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	private Double valorDois;
 	private Date vencimentoDois;
 	
-	
-	
 	@Autowired
 	private ContasReceberController contasReceberController;
 
@@ -232,6 +230,65 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 
 	}
+	
+	public void verificaPagamentoEspecialPendentes() {
+		List<PagamentoEspecial> total = new ArrayList<>();
+		try {
+			total = (List<PagamentoEspecial>) pagamentoEspecialController
+					.findListByQueryDinamica("from PagamentoEspecial where contasReceber.idContasReceber = "+ pagamentoEspecialModel.getContasReceber().getIdContasReceber());
+			List<PagamentoEspecial> paga = new ArrayList<>();
+
+			paga = (List<PagamentoEspecial>) pagamentoEspecialController
+					.findListByQueryDinamica("from PagamentoEspecial where contasReceber.idContasReceber = " + pagamentoEspecialModel.getContasReceber().getIdContasReceber() + " and situacao = 'PA' ");
+
+			System.out.println("QUANTIDADE DE PARCELAS " + total.size());
+			System.out.println("QUANTIDADE DE PARCELAS PAGAS " + paga.size());
+
+			if (total.size() == paga.size()) {
+				ContasReceber contaAtualModel = new ContasReceber();
+				contaAtualModel = (ContasReceber) contasReceberController.findById(ContasReceber.class, pagamentoEspecialModel.getContasReceber().getIdContasReceber());
+
+				contaAtualModel.setStatus("PA");
+				contaAtualModel.setDataPagamento(new Date());
+				contasReceberController.merge(contaAtualModel);
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao verificar parcelas ");
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void pagarEspecial() {
+		try {
+			ContasReceber conta = (ContasReceber) contasReceberController.findById(ContasReceber.class, pagamentoEspecialModel.getContasReceber().getIdContasReceber());
+			// Muda a situação da parcela para paga
+			pagamentoEspecialModel.setSituacao("PA");
+			// Muda da
+			pagamentoEspecialModel.setDataPagamento(new Date());
+
+			// adiciona valor da parcela ao CAIXA DA EMPRESA
+			// ----------------------------------------------------------
+			caixaModel.setPaciente(new Paciente(conta.getPaciente().getIdPaciente()));
+			caixaModel.setContasReceber(new ContasReceber(pagamentoEspecialModel.getContasReceber().getIdContasReceber()));
+			caixaModel.setPagamentoEspecial(new PagamentoEspecial(pagamentoEspecialModel.getIdPagamentoEspecial()));
+			caixaModel.setDataLancamento(new Date());
+			caixaModel.setTipo("CR");
+			caixaModel.setValorInserido(pagamentoEspecialModel.getValorBruto());
+			caixaController.merge(caixaModel);
+			// adiciona valor da parcela ao CAIXA DA EMPRESA
+			// ----------------------------------------------------------
+
+			// salva
+			pagamentoEspecialController.merge(pagamentoEspecialModel);
+
+			verificaPagamentoEspecialPendentes();
+			busca();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Problema ao pagar especial");
+		}
+	}
 
 	public void pagarParcela() {
 		try {
@@ -379,7 +436,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 
 	}
-
+	
 	public void estornarParcelas() {
 		// Selecionar a parcela
 		// Trocar status para Pendente
@@ -413,9 +470,15 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			if (contaAtual.getStatus().equals("P")) {
 				contaAtual.setStatus("P");
 			}
+			contaAtual.setDataPagamento(null);
 			contasReceberController.merge(contaAtual);
 			parcelaPagarController.merge(parcelaPagarModel);
 			busca();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			addMsg("Operação Realizada com sucesso");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -447,9 +510,15 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			if (contaAtual.getStatus().equals("PA")) {
 				contaAtual.setStatus("L");
 			}
+			contaAtual.setDataPagamento(null);
 			contasReceberController.merge(contaAtual);
 			parcelaPagarController.merge(parcelaPagarModel);
 			busca();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			addMsg("Operação Realizada com Sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -501,7 +570,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	 *
 	 * @throws Exception
 	 */
-	public void fazerPagamento() throws Exception {
+	public void fazerPagamento() {
 
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
 		try {
@@ -639,7 +708,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	}
 	
 
-	public void fazerPagamentoDuasFormas() throws Exception {
+	public void fazerPagamentoDuasFormas()  {
 		Long idContaReceber = contasReceberModel.getIdContasReceber();
 		try {
 			System.out.println("Entrou no fazerPagamentoDuasFormas() ");
@@ -969,6 +1038,10 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	public void onRowSelectParcelas(SelectEvent event) {
 		parcelaPagarModel = (ParcelaPagar) event.getObject();
+	}
+	
+	public void onRowSelectEspecial(SelectEvent event) {
+		pagamentoEspecialModel = (PagamentoEspecial) event.getObject();
 	}
 
 	public Caixa getCaixaModel() {

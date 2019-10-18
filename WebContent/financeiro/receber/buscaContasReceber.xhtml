@@ -74,7 +74,7 @@
 								update="table, formPai:botoes" />
 
 							<p:column headerText="Status" priority="1"
-								style="overflow: hidden;text-align: center; font-size: medium;width: 10%">
+								style="overflow: hidden;text-align: center; font-size: medium;width: 8%">
 								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
 									style="color : red" />
 								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
@@ -95,8 +95,8 @@
 								<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
 								<p:outputLabel value=" | #{d.paciente.convenio.nomeConvenio}" />
 							</p:column>
-							<p:column headerText="Data de Pagamento"
-								style="text-align: center; font-size: large" width="15%">
+							<p:column headerText="Pagamento"
+								style="text-align: center; font-size: large" width="10%">
 								<p:outputLabel value="#{d.dataPagamento}"
 									rendered="#{d.dataPagamento != null}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt_BR"
@@ -106,8 +106,19 @@
 								<p:outputLabel value="Consulta não quitada"
 									rendered="#{d.dataPagamento == null}" style="color:red" />
 							</p:column>
+							
+							<p:column headerText="Entrada"
+								style="text-align: right; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ #{d.valorEntrada}" />
+							</p:column>
+							
+							<p:column headerText="Desconto"
+								style="text-align: right; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ #{d.valorDesconto}" />
+							</p:column>
+							
 							<p:column headerText="Valor"
-								style="text-align: right; font-size: large" width="10%">
+								style="text-align: right; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="R$ #{d.valorConsulta}" />
 							</p:column>
 
