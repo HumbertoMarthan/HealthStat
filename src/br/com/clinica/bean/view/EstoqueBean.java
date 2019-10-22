@@ -4,20 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EstoqueController;
 import br.com.clinica.controller.geral.MaterialController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
@@ -28,13 +24,17 @@ import br.com.clinica.model.cadastro.estoque.Pedido;
 public class EstoqueBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
-	private Estoque estoqueModel;
-	private Material materialModel;
-	private Pedido pedidoModel;
-	private List<Estoque> lstEstoque;
-	List<Map<Object, Object>> lstEstoqueMap;
+	
+	private Estoque estoqueModel = new Estoque();
+	private Material materialModel = new Material();
+	private Pedido 	pedidoModel = new Pedido();
+	
+	private List<Estoque> lstEstoque = new ArrayList<Estoque>();
+	private List<Map<Object, Object>> lstEstoqueMap;
+	
 	private String url = "/estoque/gereciadorEstoque.jsf?faces-redirect=true";
 	private String urlFind = "/estoque/findEstoque.jsf?faces-redirect=true";
+	
 	private String campoBusca = "";
 	private String campoBuscaAtivo = "EM";
 
@@ -46,13 +46,6 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 
 	// @Autowired
 	// private PedidoControllerpedidoController;
-
-	public EstoqueBean() {
-		estoqueModel = new Estoque();
-		materialModel = new Material();
-		pedidoModel = new Pedido();
-		lstEstoque = new ArrayList<Estoque>();
-	}
 
 	public void busca() throws Exception {
 
@@ -117,10 +110,6 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	 * System.out.println("Erro ao buscar"); e.printStackTrace(); } }
 	 */
 	
-	public void limpar() {
-		this.estoqueModel = new Estoque();
-	}
-
 	public void onRowSelect(SelectEvent event) {
 		estoqueModel = (Estoque) event.getObject();
 	}
@@ -129,32 +118,27 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 		return estoqueController;
 	}
 
-	// Gera o Relatório
 	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_estoquista");
-		super.setNomeRelatorioSaida("report_estoquista");
-		super.setListDataBeanCollectionReport(estoqueController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
+	public String save() {
 
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
-	}
-
-	@Override
-	public String save() throws Exception {
-
-		estoqueModel = estoqueController.merge(estoqueModel);
+		try {
+			estoqueModel = estoqueController.merge(estoqueModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		estoqueModel = new Estoque();
 		return "";
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn(){
 		System.out.println("Entrou no saveNotReturn()");
-		estoqueController.merge(estoqueModel); // salvar estoque
-		materialModel = new Material();
+		try {
+			estoqueController.merge(estoqueModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} // salvar estoque
+		limpar();
 		sucesso();
 	}
 
@@ -167,53 +151,54 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit()  {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo(){
+		limpar();
 		return getUrl();
 	}
 
-	public String edita() throws Exception {
+	public void limpar() {
+		estoqueModel = new Estoque();
+	}
+	
+	@Override
+	public String editar(){
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		estoqueModel = new Estoque();
-	}
+	public void excluir() {
+		try {
+			estoqueModel = (Estoque) estoqueController.getSession().get(Estoque.class, estoqueModel.getIdEstoque());
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 
-	public String editar() throws Exception {
-		return getUrl();
-	}
-
-	@Override
-	public void excluir() throws Exception {
-		estoqueModel = (Estoque) estoqueController.getSession().get(getClassImp(), estoqueModel.getIdEstoque());
-		estoqueController.delete(estoqueModel);
-		estoqueModel = new Estoque();
+		try {
+			estoqueController.delete(estoqueModel);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		limpar();
 		sucesso();
-		busca();
+		
+		try {
+			busca();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	protected Class<Estoque> getClassImp() {
-		return Estoque.class;
+	public String redirecionarFindEntidade() {
+		limpar();
+			return getUrlFind();
 	}
 
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
-		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<Estoque> getController() {
-		return estoqueController;
-	}
 
 	public Estoque getEstoqueModel() {
 		return estoqueModel;

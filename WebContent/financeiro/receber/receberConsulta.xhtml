@@ -115,6 +115,17 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	width: 100%;
 	padding: 2%;
 }
+.ui-confirm-dialog-message {
+    display: inline-block;
+    margin-top: 1px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.ui-button-text-icon-left .ui-button-text {
+    padding: .3em 1em .3em 2.1em;
+    font-size: large;
+}
 </style>
 
 	</ui:define>
@@ -376,7 +387,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 														<p:column id="p">
 															<h:outputText value="#{a.nomePagamento.toUpperCase()}" />
 														</p:column>
-														<p:ajax event="itemSelect" update="parcelass"
+														<p:ajax event="itemSelect" update="parcelass ,par"
 															listener="#{contasReceberBean.fazerValorAvista}" />
 													</p:autoComplete>
 												</div>
@@ -388,6 +399,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 														<p:selectOneMenu style="height: 35px"
 															value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
 															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}">
+															<f:selectItem itemLabel="Selecione" noSelectionOption="true"/>
 															<f:selectItem itemLabel="1x" itemValue="1" />
 															<f:selectItem itemLabel="2x" itemValue="2" />
 															<f:selectItem itemLabel="3x" itemValue="3" />
@@ -404,7 +416,6 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 												</div>
 												<div class="ui-g-12 ui-lg-2">
 													<h:outputLabel value="Valor" />
-													<br />
 													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
 														symbol="R$" symbolPosition="p"
 														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
@@ -441,6 +452,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 														<h:outputLabel value="Vencimento" />
 														<p:calendar value="#{contasReceberBean.vencimentoUm}"
 															mindate="today" pattern="dd/MM/yyyy">
+															<p:ajax event="change" listener="#{calculaVencimento}"/>
 														</p:calendar>
 													</div>
 												</div>
@@ -478,7 +490,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									<div class="ui-g" align="center">
 										<div class="ui-g-12 ui-lg-12">
 											<p:commandButton value="Lançar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important"
+												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
 												oncomplete="PF('relancarPagamento').hide()"
 												actionListener="#{contasReceberBean.editarPagamento}" />
 										</div>

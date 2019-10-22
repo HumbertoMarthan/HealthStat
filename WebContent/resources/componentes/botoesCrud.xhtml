@@ -40,7 +40,7 @@
 	</p:commandButton>
 
 	<!-- Botão Novo -->
-	<p:commandButton value="Novo" styleClass="botaoNovoCadastro"
+	<p:commandButton value="Limpar" styleClass="botaoNovoCadastro"
 		style="	height: 40px !important;
 		width: 130px !important;
 		background-color: gray !important;
@@ -49,11 +49,11 @@
 		font-size: large !important;"
 		rendered="#{cc.attrs.botaoNovo}"
 		action="#{cc.attrs.managedBeanView.novo}" ajax="true" immediate="true"
-		id="buttonNovo" update="#{cc.attrs.camposReload}" icon="fa fa-plus"
+		id="buttonNovo" update="#{cc.attrs.camposReload}" icon="fa fa-eraser"
 		iconPos="right">
 
 		<p:confirm
-			message="Ao Clicar em sim um novo formulário de cadastro será criado, as informações atuais serão perdidas, senão salvas!"
+			message="Tem Certeza?"
 			icon="ui-icon-mail-closed" />
 
 	</p:commandButton>

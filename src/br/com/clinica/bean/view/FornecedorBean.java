@@ -8,12 +8,12 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -21,8 +21,10 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.FornecedorController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -31,31 +33,36 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Fornecedor fornecedorModel;
+	private Fornecedor fornecedorModel = new Fornecedor();
+
 	private String url = "/cadastro/cadFornecedor.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findFornecedor.jsf?faces-redirect=true";
-	private List<Fornecedor> lstFornecedor;
+	
+	private List<Fornecedor> lstFornecedor = new ArrayList<>();
+	
 	private String campoBuscaFornecedor = "";
 	private String campoBuscaAtivo = "A";
 
-	public FornecedorBean() {
-		fornecedorModel = new Fornecedor();
+	@PostConstruct
+	public void init() {
+		busca();
 	}
 
 	@Autowired
 	private FornecedorController fornecedorController;
 
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_convenio");
-		super.setNomeRelatorioSaida("report_convenio");
-		super.setListDataBeanCollectionReport(fornecedorController.findList(getClassImp()));
-		return super.getArquivoReport();
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstFornecedor, "fornecedor.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
-
+	
 	public void busca() {
 		try {
-			lstFornecedor = new ArrayList<Fornecedor>();
 			StringBuilder str = new StringBuilder();
 			str.append("from Fornecedor a where 1=1");
 			if (!campoBuscaFornecedor.equals("")) {
@@ -89,7 +96,7 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao ativar/inativar");
 			e.printStackTrace();
 		}
-		this.fornecedorModel = new Fornecedor();
+		limpar();
 		try {
 			busca();
 		} catch (Exception e) {
@@ -98,7 +105,7 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
+	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
 			URL url = new URL("https://viacep.com.br/ws/" + fornecedorModel.getCep() + "/json/");
 			URLConnection connection = url.openConnection();
@@ -131,80 +138,79 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String save() throws Exception {
-		fornecedorModel = fornecedorController.merge(fornecedorModel);
-		fornecedorModel = new Fornecedor();
+	public String save()  {
+		try {
+			fornecedorModel = fornecedorController.merge(fornecedorModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		return "";
 	}
 
+	private void limpar() {
+		fornecedorModel = new Fornecedor();
+	}
+
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
 		try {
 			fornecedorModel = fornecedorController.merge(fornecedorModel);
-			fornecedorModel = new Fornecedor();
+			limpar();
 			sucesso();
 		} catch (Exception e) {
 			System.out.println("Erro ao salvar Fornecedor");
 			e.printStackTrace();
 		}
+		busca();
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		fornecedorModel = new Fornecedor();
-	}
-
-	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		fornecedorModel = (Fornecedor) fornecedorController.getSession().get(getClassImp(),
-				fornecedorModel.getIdFornecedor());
-		fornecedorController.delete(fornecedorModel);
-		fornecedorModel = new Fornecedor();
+	public void excluir() {
+		try {
+			fornecedorModel = (Fornecedor) fornecedorController.getSession().get(Fornecedor.class,fornecedorModel.getIdFornecedor());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			fornecedorController.delete(fornecedorModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<Fornecedor> getClassImp() {
-		return Fornecedor.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<Fornecedor> getController() {
-		return fornecedorController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		fornecedorModel = new Fornecedor();
 	}
 
 	public void onRowSelect(SelectEvent event) {
 		fornecedorModel = (Fornecedor) event.getObject();
 	}
 
+	
+	
 	public Fornecedor getFornecedorModel() {
 		return fornecedorModel;
 	}

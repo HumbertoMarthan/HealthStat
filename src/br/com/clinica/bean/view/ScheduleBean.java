@@ -7,10 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -18,7 +16,6 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -29,7 +26,6 @@ import br.com.clinica.controller.geral.EventoPacienteController;
 import br.com.clinica.controller.geral.MedicoController;
 import br.com.clinica.controller.geral.PacienteController;
 import br.com.clinica.controller.geral.ProntuarioController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.agendamento.CustomScheduleEvent;
 import br.com.clinica.model.cadastro.agendamento.Evento;
 import br.com.clinica.model.cadastro.agendamento.EventoPaciente;
@@ -48,20 +44,24 @@ import br.com.clinica.utils.EmailUtils;
 public class ScheduleBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
-
-	private ScheduleModel model;
-	private Evento evento;
-	private ContasReceber contasReceber;
-	private EventoPaciente eventoPacienteModel;
-	private List<ContasReceber> lstContas;
-	private ScheduleEvent event;
-	private ArrayList<Medico> lstPrecos; 
-	private List<ScheduleEvent> scheduleEvents;
-	private Date dataAtual;
-	private Calendar dataAtualSchedule;
+	
+	private ScheduleModel model = new DefaultScheduleModel();
+	private Evento evento = new Evento();
+	private ContasReceber contasReceber = new ContasReceber();
+	private EventoPaciente eventoPacienteModel = new EventoPaciente();
 	private Evento selectedEvento;
-	private List<Evento> listaEvento;
-	String campoBusca;
+	
+	private ScheduleEvent event = new CustomScheduleEvent();
+	private List<ScheduleEvent> scheduleEvents;
+	
+	private List<ContasReceber> lstContas = new ArrayList<ContasReceber>();
+	private ArrayList<Medico> lstPrecos = new ArrayList<Medico>(); 
+	private List<Evento> listaEvento = new ArrayList<Evento>();
+	
+	private Date dataAtual = new Date();
+	private Calendar dataAtualSchedule;
+	
+	String campoBusca = "";
 	String campoBuscaNome ="";
 	String campoBuscaEspecialidade = ""; 
 	String campoBuscaAtivo = "T";
@@ -87,18 +87,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ContextoBean contextoBean;
 
-	public ScheduleBean() {
-		event = new CustomScheduleEvent();
-		model = new DefaultScheduleModel();
-		eventoPacienteModel = new EventoPaciente();
-		setDataAtual(new Date());
-		evento = new Evento();
-		listaEvento = new ArrayList<Evento>();
-		contasReceber = new ContasReceber();
-		lstContas = new ArrayList<ContasReceber>();
-		lstPrecos = new ArrayList<Medico>();
-	}
-	
 	public void buscaPreco(){
 		StringBuilder str = new StringBuilder();
 		try {
@@ -194,25 +182,32 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_calendario");
-		super.setNomeRelatorioSaida("report_calendario");
+	/*
+	 * @Override public StreamedContent getArquivoReport() throws Exception {
+	 * super.setNomeRelatorioJasper("report_calendario");
+	 * super.setNomeRelatorioSaida("report_calendario");
+	 * 
+	 * String[] parametros = new String[] { "dataInicio", "dataFim" }; String hql =
+	 * "FROM Evento e WHERE e.dataInicio BETWEEN :dataInicio AND :dataFim  " +
+	 * "AND e.dataFim BETWEEN :dataInicio AND :dataFim)";
+	 * 
+	 * List<Evento> lista = eventoController.findListByQueryDinamica(hql,
+	 * Arrays.asList(parametros), evento.getDataInicioRelatorio(),
+	 * evento.getDataFimRelatorio());
+	 * 
+	 * super.setListDataBeanCollectionReport(lista); return
+	 * super.getArquivoReport(); }
+	 */
 
-		String[] parametros = new String[] { "dataInicio", "dataFim" };
-		String hql = "FROM Evento e WHERE e.dataInicio BETWEEN :dataInicio AND :dataFim  "
-				+ "AND e.dataFim BETWEEN :dataInicio AND :dataFim)";
-
-		List<Evento> lista = eventoController.findListByQueryDinamica(hql, Arrays.asList(parametros),
-				evento.getDataInicioRelatorio(), evento.getDataFimRelatorio());
-
-		super.setListDataBeanCollectionReport(lista);
-		return super.getArquivoReport();
-	}
-
-	public List<Paciente> completePaciente(String q) throws Exception {
-		return pacienteController.findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%"
-				+ q.toUpperCase() + "%' order by pessoa.pessoaNome ASC");
+	public List<Paciente> completePaciente(String q)  {
+		try {
+			return pacienteController.findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%"
+					+ q.toUpperCase() + "%' order by pessoa.pessoaNome ASC");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -624,22 +619,17 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 	public void remover(){
 		try {
 			/* Deleta evento do agendamento do banco de dados */
-			evento = (Evento) eventoController.getSession().get(getClassImp(), evento.getId());
+			evento = (Evento) eventoController.getSession().get(Evento.class, evento.getId());
 			eventoController.delete(evento);
 
 			/* Deleta etiqueta do Schedule */
 			model.deleteEvent(event);
 
 			/* Adiciona Mensagem para o usuario do agendamento removido */
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Agendamento Removido: " + evento.getPaciente().getPessoa().getPessoaNome(),
-					"Agendamento Removido :" + evento.getTitulo());
-			addMessage(message);
+			addMsg(	"Agendamento Removido: " + evento.getPaciente().getPessoa().getPessoaNome());
 		} catch (Exception e) {
 			/* Lança erro ao remover etiqueta */
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Impossivel remover",
-					"Há dependencias:" + evento.getTitulo());
-			addMessage(message);
+			addMsg("Impossivel remover" +	"Há dependencias:" + evento.getTitulo());
 		}
 		
 
@@ -669,10 +659,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 		System.out.println("Evento vindo do banco" + evento);
-	}
-
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
 	public TipoEvento[] getTiposEventos() {
@@ -796,16 +782,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void setCampoBusca(String campoBusca) {
 		this.campoBusca = campoBusca;
-	}
-
-	@Override
-	protected Class<Evento> getClassImp() {
-		return Evento.class;
-	}
-
-	@Override
-	protected InterfaceCrud<Evento> getController() {
-		return eventoController;
 	}
 
 	public ScheduleModel getModel() {

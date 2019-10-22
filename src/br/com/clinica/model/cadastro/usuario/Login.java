@@ -39,6 +39,14 @@ public class Login implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date ultimoAcesso;
+
+	@ManyToOne
+	@JoinColumn(name ="idPerfil")
+	Perfil perfil;
+
+	private String ativo;
+	
+	//GETTERS E SETTERS -----------------------------------------
 	
 	public Perfil getPerfil() {
 		return perfil;
@@ -47,13 +55,12 @@ public class Login implements Serializable {
 		this.perfil = perfil;
 	}
 
-	@ManyToOne
-	@JoinColumn(name ="idPerfil")
-	Perfil perfil;
-	
-	//GETTERS E SETTERS -----------------------------------------
-
-	
+	public String getAtivo() {
+		return ativo;
+	}
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

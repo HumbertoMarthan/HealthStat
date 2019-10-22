@@ -41,11 +41,6 @@
 	text-align: center;
 }
 
-.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
-	width: 100%;
-	height: 35px;
-}
-
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
 	width: 100%;
 	height: 35px;
@@ -85,12 +80,7 @@
 </style>
 }
 	</ui:define>
-
-
 	<ui:define name="content">
-
-
-
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
@@ -128,14 +118,14 @@
 										<div class="ui-g-12 ui-lg-2">
 											<h:outputLabel value="Usuario:*" />
 											<p:inputText required="true"
-												value="#{loginBean.loginModel.login}"
+												value="#{loginBean.loginModel.login}" autocomplete="true"
 												requiredMessage="Informe o Nome do Usuário" />
 										</div>
 
 										<div class="ui-g-12 ui-lg-2">
 											<h:outputLabel value="Senha:*" />
-											<p:password style="text-align: center; height: 35px"
-												autocomplete="false" feedback="true"
+											<p:password style="text-align: center; height: 35px" 
+												autocomplete="false" feedback="true"  
 												weakLabel="Senha Fraca!" goodLabel="Senha Boa!"
 												strongLabel="Senha Forte!" promptLabel="Insira sua Senha!"
 												required="true" value="#{loginBean.loginModel.senha}"
@@ -143,13 +133,16 @@
 										</div>
 
 										<div class="ui-g-12 ui-lg-2">
-											<p:outputLabel value="Acessos" />
-											<p:selectOneMenu value="#{loginBean.selecionado}">
-												<f:selectItem itemLabel="ADMIN" itemValue="1" />
-												<f:selectItem itemLabel="ATENDENTE" itemValue="2" />
-												<f:selectItem itemLabel="ESTOQUISTA" itemValue="3" />
-												<f:selectItem itemLabel="MEDICO" itemValue="4" />
-											</p:selectOneMenu>
+											<p:outputLabel value="Perfis" />
+											<p:autoComplete 
+												completeMethod="#{auxController.completePerfil}"
+												forceSelection="true" converter="entityConverter" var="a"
+												itemLabel="#{a.perfilNome}" itemValue="#{a}"
+												value="#{loginBean.perfilModel}"
+												minQueryLength="2" dropdown="true" maxResults="30"
+												required="false"
+												requiredMessage="Informe um Perfil">
+											</p:autoComplete>
 										</div>
 									</h:panelGrid>
 								</div>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.bean.geral.LoginAtualizaSenha;
 import br.com.clinica.controller.geral.LoginController;
-import br.com.clinica.hibernate.InterfaceCrud;
+import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 
@@ -28,22 +29,26 @@ public class LoginBean extends BeanManagedViewAbstract {
 	@Autowired
 	private ContextoBean contextoBean;
 
-	private Login loginModel;
-	private LoginAtualizaSenha loginAtualizaSenha;
+	private Login loginModel = new Login();
+	private Perfil perfilModel;
+	private Pessoa pessoaModel;
+
+	private LoginAtualizaSenha loginAtualizaSenha = new LoginAtualizaSenha();
+	
 	private String url = "/cadastro/cadUsuario.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findUsuario.jsf?faces-redirect=true";
-	private List<Login> lstLogin;
+	
+	private List<Login> lstLogin = new ArrayList<>();
+	
 	private String campoBuscaNome = "";
 	private String campoBuscaLogin = "";
-	private Long selecionado;
 
 	@Autowired
 	private LoginController loginController;
 
-	public LoginBean() {
-		loginAtualizaSenha = new LoginAtualizaSenha();
-		loginModel = new Login();
-		lstLogin = new ArrayList<>();
+	@PostConstruct
+	public void init() {
+		busca();
 	}
 
 	public void updateSenha() throws Exception {
@@ -73,48 +78,108 @@ public class LoginBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade()  {
+		limpar();
 		return getUrlFind();
 	}
 
+	private void limpar() {
+		loginModel = new Login();
+	}
+
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo()  {
+		limpar();
 		return getUrl();
 	}
 
-	public void busca() throws Exception {
+	public void busca()  {
 		StringBuilder str = new StringBuilder();
 		str.append("from Login a where 1=1");
 
 		if (!campoBuscaLogin.equals("")) {
-			str.append(" and upper(a.login) like upper('%" + campoBuscaNome + "%')");
+			str.append(" and upper(a.login) like upper('%" + campoBuscaLogin + "%')");
 		}
 
-		lstLogin = loginController.findListByQueryDinamica(str.toString());
+		try {
+			lstLogin = loginController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void inativar() {
+
+		if (loginModel.getAtivo().equals("I")) {
+			loginModel.setAtivo("A");
+			loginModel.setInativo(false);
+		} else {
+			loginModel.setAtivo("I");
+			loginModel.setInativo(true);
+		}
+
+		try {
+			loginController.saveOrUpdate(loginModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
+		limpar();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		loginModel = (Login) loginController.getSession().get(getClassImp(), loginModel.getIdLogin());
-		loginController.delete(loginModel);
-		loginModel = new Login();
+	public void excluir() {
+		try {
+			loginModel = (Login) loginController.getSession().get(Login.class, loginModel.getIdLogin());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			loginController.delete(loginModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		sucesso();
 		busca();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		loginModel = new Login();
+	public void saveNotReturn() {
+
+		loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
+		loginModel.setPessoa(new Pessoa(pessoaModel.getIdPessoa()));
+		try {
+			loginModel = loginController.merge(loginModel);
+		} catch (Exception e) {
+			error();
+			e.printStackTrace();
+		}
+		sucesso();
+		busca();
+		limpar();
+		
 	}
 
+	@Override
+	public void saveEdit(){
+		saveNotReturn();
+	}
+	
+
 	// GETTERS E SETTERS
+
 	public String getUsuarioLogadoSecurity() {
 		return contextoBean.getAuthentication().getName();
 	}
@@ -129,44 +194,6 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public Date getUltimoAcesso() throws Exception {
 		return contextoBean.getEntidadeLogada().getUltimoAcesso();
-	}
-
-	@Override
-	protected Class<Login> getClassImp() {
-		return Login.class;
-	}
-
-	@Override
-	protected InterfaceCrud<Login> getController() {
-		return loginController;
-	}
-
-	@Override
-	public void saveNotReturn() throws Exception {
-
-		if (selecionado == 1) {
-			loginModel.setPerfil(new Perfil(getSelecionado()));
-		}
-		if (selecionado == 2) {
-			loginModel.setPerfil(new Perfil(getSelecionado()));
-		}
-		if (selecionado == 3) {
-			loginModel.setPerfil(new Perfil(getSelecionado()));
-		}
-		if (selecionado == 4) {
-			loginModel.setPerfil(new Perfil(getSelecionado()));
-		}
-
-		loginModel = loginController.merge(loginModel);
-		sucesso();
-		loginModel = new Login();
-
-	}
-
-	@Override
-	public void saveEdit() throws Exception {
-		saveNotReturn();
-		busca();
 	}
 
 	public ContextoBean getContextoBean() {
@@ -205,6 +232,14 @@ public class LoginBean extends BeanManagedViewAbstract {
 		return campoBuscaLogin;
 	}
 
+	public Perfil getPerfilModel() {
+		return perfilModel;
+	}
+
+	public void setPerfilModel(Perfil perfilModel) {
+		this.perfilModel = perfilModel;
+	}
+
 	public void setCampoBuscaLogin(String campoBuscaLogin) {
 		this.campoBuscaLogin = campoBuscaLogin;
 	}
@@ -233,11 +268,11 @@ public class LoginBean extends BeanManagedViewAbstract {
 		this.loginController = loginController;
 	}
 
-	public Long getSelecionado() {
-		return selecionado;
+	public Pessoa getPessoaModel() {
+		return pessoaModel;
 	}
 
-	public void setSelecionado(Long selecionado) {
-		this.selecionado = selecionado;
+	public void setPessoaModel(Pessoa pessoaModel) {
+		this.pessoaModel = pessoaModel;
 	}
 }

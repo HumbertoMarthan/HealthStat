@@ -61,7 +61,7 @@ public class ContasReceber implements EntityBase, Serializable {
 	
 	private String maisForma = "N";
 	
-	private String tipoPagamento; //PAR OU ESP
+	private String tipoPagamento; //PAR OU ESP //AV - CD - CC
 	
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "idFormaPagamento")

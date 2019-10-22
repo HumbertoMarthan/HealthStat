@@ -91,10 +91,6 @@ public class Pessoa implements  EntityBase,Serializable {
 	@Column(name="bairro")
 	private String bairro;
 	
-	/*
-	 * @Column(name="ibge") private String ibge;
-	 */
-	
 	@Column(name="complemento")
 	private String complemento;
 
@@ -103,6 +99,13 @@ public class Pessoa implements  EntityBase,Serializable {
 	
 	@Column(name="localidade")
 	private String localidade;
+	
+	@Column(name="tipoPessoa")
+	private String tipoPessoa;
+	
+	public Pessoa() {}
+	
+	public Pessoa(Long cod) {this.idPessoa = cod;}
 	
 	// GETTERS E SETTERS
 
@@ -142,14 +145,6 @@ public class Pessoa implements  EntityBase,Serializable {
 		this.bairro = bairro;
 	}
 
-	/*
-	 * public String getIbge() { return ibge; }
-	 * 
-	 * public void setIbge(String ibge) {
-	 
-		this.ibge = ibge;
-	}*/
-
 	public void setCep(String cep) {
 		this.cep = cep;
 	}
@@ -162,21 +157,23 @@ public class Pessoa implements  EntityBase,Serializable {
 		return pessoaTelefoneSecundario;
 	}
 
-	public void setPessoaTelefoneSecundario(String pessoaTelefoneSecundario) {
-		this.pessoaTelefoneSecundario = pessoaTelefoneSecundario.replace(".", "").replace("-", "").replace("/", "")
-				.replace("(", "").replace(")", "");
-		// this.pessoaTelefoneSecundario = pessoaTelefoneSecundario;
-	}
+	/*
+	 * public void setPessoaTelefoneSecundario(String pessoaTelefoneSecundario) {
+	 * this.pessoaTelefoneSecundario = pessoaTelefoneSecundario.replace(".",
+	 * "").replace("-", "").replace("/", "") .replace("(", "").replace(")", ""); //
+	 * this.pessoaTelefoneSecundario = pessoaTelefoneSecundario; }
+	 */
 
 	public String getPessoaTelefonePrimario() {
 		return pessoaTelefonePrimario;
 	}
 
-	public void setPessoaTelefonePrimario(String pessoaTelefonePrimario) {
-		this.pessoaTelefonePrimario = pessoaTelefonePrimario.replace(".", "").replace("-", "").replace("/", "")
-				.replace("(", "").replace(")", "");
-		// this.pessoaTelefonePrimario = pessoaTelefonePrimario;
-	}
+	/*
+	 * public void setPessoaTelefonePrimario(String pessoaTelefonePrimario) {
+	 * this.pessoaTelefonePrimario = pessoaTelefonePrimario.replace(".",
+	 * "").replace("-", "").replace("/", "") .replace("(", "").replace(")", ""); //
+	 * this.pessoaTelefonePrimario = pessoaTelefonePrimario; }
+	 */
 
 	public void setPessoaNome(String pessoaNome) {
 		this.pessoaNome = pessoaNome;
@@ -202,19 +199,21 @@ public class Pessoa implements  EntityBase,Serializable {
 		return pessoaCPF;
 	}
 
-	public void setPessoaCPF(String pessoaCPF) {
-		this.pessoaCPF = pessoaCPF.replace(".", "").replace("-", "").replace("/", "");
-		// this.pessoaCPF = pessoaCPF;
-	}
+	/*
+	 * public void setPessoaCPF(String pessoaCPF) { this.pessoaCPF =
+	 * pessoaCPF.replace(".", "").replace("-", "").replace("/", ""); //
+	 * this.pessoaCPF = pessoaCPF; }
+	 */
 
 	public String getPessoaRG() {
 		return pessoaRG;
 	}
 
-	public void setPessoaRG(String pessoaRG) {
-		this.pessoaRG = pessoaRG.replace(".", "").replace("-", "").replace("/", "");
-		// this.pessoaRG = pessoaRG;
-	}
+	/*
+	 * public void setPessoaRG(String pessoaRG) { this.pessoaRG =
+	 * pessoaRG.replace(".", "").replace("-", "").replace("/", ""); // this.pessoaRG
+	 * = pessoaRG; }
+	 */
 
 	public Date getPessoaDataNascimento() {
 		return pessoaDataNascimento;
@@ -259,7 +258,21 @@ public class Pessoa implements  EntityBase,Serializable {
 	}
 	
 	
-	// HASH E EQUALS
+	public void setPessoaCPF(String pessoaCPF) {
+		this.pessoaCPF = pessoaCPF;
+	}
+
+	public void setPessoaRG(String pessoaRG) {
+		this.pessoaRG = pessoaRG;
+	}
+
+	public void setPessoaTelefonePrimario(String pessoaTelefonePrimario) {
+		this.pessoaTelefonePrimario = pessoaTelefonePrimario;
+	}
+
+	public void setPessoaTelefoneSecundario(String pessoaTelefoneSecundario) {
+		this.pessoaTelefoneSecundario = pessoaTelefoneSecundario;
+	}
 
 	public Login getPessoaUsuario() {
 		return pessoaUsuario;
@@ -283,6 +296,14 @@ public class Pessoa implements  EntityBase,Serializable {
 
 	public void setPessoaPeso(String pessoaPeso) {
 		this.pessoaPeso = pessoaPeso;
+	}
+	
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
 	}
 
 	@Override

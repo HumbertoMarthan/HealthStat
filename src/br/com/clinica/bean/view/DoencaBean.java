@@ -1,62 +1,112 @@
 package br.com.clinica.bean.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.DoencaController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.outro.Doenca;
-
 
 @Controller
 @ViewScoped
 @ManagedBean(name = "doencaBean")
 public class DoencaBean extends BeanManagedViewAbstract {
-	
+
 	private static final long serialVersionUID = 1L;
+
+	private Doenca doencaModel = new Doenca();
 	
-	private Doenca objetoSelecionado = new Doenca();
+	private List<Doenca> lstDoenca = new ArrayList<>();
 	
 	private String url = "/cadastro/cadDoenca.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findDoenca.jsf?faces-redirect=true";
-	
-	 
+
 	@Autowired
 	private DoencaController doencaController;
-	
-	//IMPRIMIR OS RELATÓRIOS
-	
+
 	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_doenca");
-		super.setNomeRelatorioSaida("report_doenca");
-		super.setListDataBeanCollectionReport(doencaController.findList(getClassImp()));
-		return super.getArquivoReport();
+	public String save(){
+		try {
+			doencaModel = doencaController.merge(doencaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
 	}
-	
-	/**
-	 * Metodos Getter E Setters dos objetos
-	 * @return
-	 */
+
+	@Override
+	public void saveNotReturn() {
+		try {
+			doencaModel = doencaController.merge(doencaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
+		sucesso();
+	}
+
+	@Override
+	public void saveEdit() {
+		saveNotReturn();
+	}
+
+	@Override
+	public String novo(){
+		limpar();
+		return getUrl();
+	}
+
+	public void limpar() {
+		doencaModel = new Doenca();
+	}
+
+	@Override
+	public String editar() {
+		return getUrl();
+	}
+
+	@Override
+	public void excluir() {
+		try {
+			doencaModel = (Doenca) doencaController.getSession().get(Doenca.class, doencaModel.getIdDoenca());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			doencaController.delete(doencaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
+		sucesso();
+	}
+
+	@Override
+	public String redirecionarFindEntidade() {
+		limpar();
+		return getUrlFind();
+	}
 	
 	public Doenca getObjetoSelecionado() {
-		return objetoSelecionado;
+		return doencaModel;
 	}
 
-	public void setObjetoSelecionado(Doenca objetoSelecionado) {
+	public void setObjetoSelecionado(Doenca doencaModel) {
 
-		this.objetoSelecionado = objetoSelecionado;
+		this.doencaModel = doencaModel;
 	}
-	
+
 	public String getUrl() {
 		return url;
 	}
-	
+
 	public String getUrlFind() {
 		return urlFind;
 	}
@@ -65,71 +115,31 @@ public class DoencaBean extends BeanManagedViewAbstract {
 		this.urlFind = urlFind;
 	}
 
-
-	/**
-	 * Metodos para manipular salvamento, exclusões, editar, novo 
-	 */
-	
-	@Override
-	public String save() throws Exception {
-	    objetoSelecionado = doencaController.merge(objetoSelecionado);
-	   
-		return "";
-	}
-	
-	@Override
-	public void saveNotReturn() throws Exception {
-		objetoSelecionado = doencaController.merge(objetoSelecionado);
-		objetoSelecionado = new Doenca();
-		sucesso();
-	}
-	
-	@Override
-	public void saveEdit() throws Exception {
-		saveNotReturn();
-	}
-	
-	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
-		return getUrl();
-	}
-	
-	@Override
-	public void setarVariaveisNulas() throws Exception {
-		objetoSelecionado = new Doenca();
-	}
-	
-	@Override
-	public String editar() throws Exception {
-		return getUrl();
-	}
-	
-	@Override
-	public void excluir() throws Exception {
-		objetoSelecionado = (Doenca) doencaController.getSession().get(getClassImp(),  objetoSelecionado.getIdDoenca());
-		doencaController.delete(objetoSelecionado);	
-		objetoSelecionado = new Doenca();
-		sucesso();
+	public Doenca getDoencaModel() {
+		return doencaModel;
 	}
 
-	@Override
-	protected Class<Doenca> getClassImp() {
-		return Doenca.class;
-	}
-	
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
-		return getUrlFind();
+	public void setDoencaModel(Doenca doencaModel) {
+		this.doencaModel = doencaModel;
 	}
 
-	@Override
-	protected InterfaceCrud<Doenca> getController() {
+	public List<Doenca> getLstDoenca() {
+		return lstDoenca;
+	}
+
+	public void setLstDoenca(List<Doenca> lstDoenca) {
+		this.lstDoenca = lstDoenca;
+	}
+
+	public DoencaController getDoencaController() {
 		return doencaController;
 	}
-	@Override
-	public void consultarEntidade() throws Exception {
+
+	public void setDoencaController(DoencaController doencaController) {
+		this.doencaController = doencaController;
 	}
-	
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

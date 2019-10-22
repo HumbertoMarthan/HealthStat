@@ -122,14 +122,39 @@
 								<p:outputLabel style="color: red" value="R$ #{d.valorConsulta}" />
 							</p:column>
 
-							<p:column headerText="Resumo" width="10%">
+							<p:column headerText="Ações" width="10%">
 								<p:commandButton
+									rendered="#{d.tipoPagamento eq 'PAR' or (d.tipoPagamento eq 'ESP')}"
 									action="#{contasReceberBean.selecionarBusca(contasReceberBean.contasReceberModel)}"
 									update=":formulario:tableParcelas,:pagamentoEspecial:tableEspecial"
-									ajax="true" value="ITEMS" immediate="true">
+									ajax="true" value="Parcelas" immediate="true" icon="ui-icon-transferthick-e-w" iconPos="left"
+									style="color:white; background: green; font-weight: bold ;font-size:large" >
+									 
 									<f:setPropertyActionListener value="#{d}"
 										target="#{contasReceberBean.contasReceberModel}" />
 								</p:commandButton>
+
+
+								<p:commandButton
+									rendered="#{d.tipoPagamento eq 'AV' or (!d.tipoPagamento eq 'CC') or (!d.tipoPagamento eq 'CD')}" 
+									action="#{contasReceberBean.pagamentoUnico}"
+									update=":formulario:tableParcelas,:pagamentoEspecial:tableEspecial"
+									ajax="true" value="Pagar" immediate="true" icon="fa fa-usd"
+									style="color:white; background: green; font-weight: bold ;font-size:large">
+									<f:setPropertyActionListener value="#{d}"
+										target="#{contasReceberBean.contasReceberModel}" />
+										<p:confirm message="Deseja fazer o pagamento ?" icon="ui-icon-mail-closed" />
+								</p:commandButton>
+								
+								<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+									<div align="center">
+										<p:commandButton value="Sim" type="button"
+											styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							
+										<p:commandButton value="Não" type="button"
+											styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
+									</div>
+								</p:confirmDialog>
 							</p:column>
 						</p:dataTable>
 					</div>

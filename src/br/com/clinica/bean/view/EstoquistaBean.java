@@ -12,14 +12,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -27,10 +25,12 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EstoquistaController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.pessoa.Estoquista;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -38,8 +38,9 @@ import br.com.clinica.utils.ValidaCPF;
 public class EstoquistaBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
-	private Estoquista estoquistaModel;
-	private List<Estoquista> lstEstoquista;
+
+	private Estoquista estoquistaModel = new Estoquista();
+	private List<Estoquista> 	lstEstoquista = new ArrayList<Estoquista>();
 	private String url = "/cadastro/cadEstoquista.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findEstoquista.jsf?faces-redirect=true";
 	private String campoBuscaNome = "";
@@ -49,11 +50,21 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	@Autowired
 	private EstoquistaController estoquistaController;
 
-	public EstoquistaBean() {
-		estoquistaModel = new Estoquista();
-		lstEstoquista = new ArrayList<Estoquista>();
+	@PostConstruct
+	public void init() {
+		busca();
 	}
-
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstEstoquista, "estoquista.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void busca(){
 		lstEstoquista = new ArrayList<Estoquista>();
 		StringBuilder str = new StringBuilder();
@@ -106,7 +117,6 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	}
 
 	public void limpar() {
-
 		this.estoquistaModel = new Estoquista();
 	}
 
@@ -114,20 +124,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		estoquistaModel = (Estoquista) event.getObject();
 	}
 
-	public EstoquistaController getEstoquistaController() {
-		return estoquistaController;
-	}
-
-	// Gera o Relatório
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_estoquista");
-		super.setNomeRelatorioSaida("report_estoquista");
-		super.setListDataBeanCollectionReport(estoquistaController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
-
-	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
+	public void pesquisarCep(AjaxBehaviorEvent event)  {
 		try {
 			URL url = new URL("https://viacep.com.br/ws/" + estoquistaModel.getPessoa().getCep() + "/json/");
 			URLConnection connection = url.openConnection();
@@ -162,27 +159,6 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void limpa() {
-
-		/* Dados */
-		estoquistaModel.getPessoa().setPessoaNome("");
-		estoquistaModel.getPessoa().setPessoaDataNascimento(null);
-		estoquistaModel.getPessoa().setPessoaSexo("");
-		estoquistaModel.getPessoa().setPessoaEmail("");
-		estoquistaModel.getPessoa().setPessoaRG("");
-		estoquistaModel.getPessoa().setPessoaCPF("");
-		estoquistaModel.getPessoa().setPessoaObservacao("");
-		estoquistaModel.getPessoa().setPessoaTelefonePrimario("");
-		estoquistaModel.getPessoa().setPessoaTelefoneSecundario("");
-		/* Endereço */
-		estoquistaModel.getPessoa().setCep("");
-		estoquistaModel.getPessoa().setBairro("");
-		estoquistaModel.getPessoa().setUf("");
-		estoquistaModel.getPessoa().setLogradouro("");
-		estoquistaModel.getPessoa().setComplemento("");
-		estoquistaModel.getPessoa().setLocalidade("");
-	}
-
 	public boolean idadeMinimaFuncionario() {
 		Calendar dateOfBirth = new GregorianCalendar();
 		dateOfBirth.setTime(estoquistaModel.getPessoa().getPessoaDataNascimento());
@@ -193,10 +169,8 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 			age--;
 		}
 		if (age < 16) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"A idade informada deve ser maior/igual que 16 Anos", "");
+			addMsg("A idade informada deve ser maior/igual que 16 Anos");
 			System.out.println("TRUE IDADE ATENDENTE:>>>" + age);
-			addMessage(message);
 			return false;
 		} else {
 			System.out.println("FALSE IDADE ATENDENTE:>>>" + age);
@@ -205,14 +179,15 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 
 	}
 
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
-	}
 
 	@Override
-	public String save() throws Exception {
+	public String save() {
 
-		estoquistaModel = estoquistaController.merge(estoquistaModel);
+		try {
+			estoquistaModel = estoquistaController.merge(estoquistaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		estoquistaModel = new Estoquista();
 		return "";
 	}
@@ -222,79 +197,64 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		try {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isCPF(estoquistaModel.getPessoa().getPessoaCPF())) {
+				estoquistaModel.getPessoa().setTipoPessoa("EST");
 				estoquistaModel = estoquistaController.merge(estoquistaModel);
-				estoquistaModel = new Estoquista();
+				limpar();
 				sucesso();
 			} else {
-				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-						"Cpf Inválido: " + estoquistaModel.getPessoa().getPessoaCPF(), "");
-				addMessage(message);
+				addMsg("Cpf Inválido: " + estoquistaModel.getPessoa().getPessoaCPF());
 				System.out.println("ERRO CPF INVÁLIDO");
 			}
 		} else {
-			// FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Cpf
-			// Inválido", "");
-			// addMessage(message);
 			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
 		}
 		}catch (Exception e) {
 			System.out.println("Erro ao Salvar Estoquista");
 			e.printStackTrace();
 		}
+		busca();
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit()  {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
-	public String edita() throws Exception {
-		return getUrl();
-	}
-
-	@Override
-	public void setarVariaveisNulas() throws Exception {
-		estoquistaModel = new Estoquista();
-	}
-
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		estoquistaModel = (Estoquista) estoquistaController.getSession().get(getClassImp(),
-				estoquistaModel.getIdEstoquista());
-		estoquistaController.delete(estoquistaModel);
+	public void excluir() {
+		try {
+			estoquistaModel = (Estoquista) estoquistaController.getSession().get(Estoquista.class,estoquistaModel.getIdEstoquista());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			estoquistaController.delete(estoquistaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		estoquistaModel = new Estoquista();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<Estoquista> getClassImp() {
-		return Estoquista.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
 	}
 
-	@Override
-	protected InterfaceCrud<Estoquista> getController() {
+	public EstoquistaController getEstoquistaController() {
 		return estoquistaController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
 	}
 
 	public List<Estoquista> getLstEstoquista() {

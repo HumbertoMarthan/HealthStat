@@ -1,10 +1,10 @@
 package br.com.clinica.relatorio;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DateUtils implements Serializable {
 

@@ -9,19 +9,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -30,11 +26,13 @@ import com.google.gson.Gson;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.AcompanhanteController;
 import br.com.clinica.controller.geral.PacienteController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.pessoa.Acompanhante;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -43,14 +41,17 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Paciente pacienteModel;
-	private Acompanhante acompaModel;
-	private List<Acompanhante> lstAcompanhante;
-	private List<Paciente> lstPaciente;
+	private Paciente pacienteModel = new Paciente();
+	private Acompanhante acompaModel = new Acompanhante();
+	
+	private List<Acompanhante> lstAcompanhante = new ArrayList<Acompanhante>();
+	private List<Paciente> 	lstPaciente = new ArrayList<Paciente>();
+	
 	private String url = "/cadastro/cadPaciente.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findPaciente.jsf?faces-redirect=true";
-	private String campoBuscaNome;
-	private String campoBuscaAtivo = "A";
+	
+	private String campoBuscaNome = "";
+	private String campoBuscaAtivo = "T";
 	private String campoBuscaCPF;
 	private int idade = 20;
 
@@ -61,18 +62,25 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	private AcompanhanteController acompanhanteController;
 
 	@PostConstruct
-	public void init() throws Exception {
-		lstAcompanhante = new ArrayList<Acompanhante>();
-		lstPaciente = new ArrayList<Paciente>();
-		pacienteModel = new Paciente();
-		acompaModel = new Acompanhante();
+	public void init(){
+		busca();
 	}
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstPaciente, "paciente.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	public void busca() {
 		// lstAcompanhante = acompanhanteController.findListByQueryDinamica(" from
 		// Acompanhante");
 		try {
-		lstPaciente = new ArrayList<Paciente>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Paciente a where 1=1");
 
@@ -122,26 +130,38 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	}
 
 
-	public void buscaAcompanhante() throws Exception {
+	public void buscaAcompanhante()  {
 		StringBuilder str = new StringBuilder();
 		str.append("from Acompanhante a where 1=1");
 		str.append(" AND a.idPacienteFK = " + pacienteModel.getIdPaciente());
 
-		lstAcompanhante = acompanhanteController.findListByQueryDinamica(str.toString());
+		try {
+			lstAcompanhante = acompanhanteController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void onRowSelect(SelectEvent event) throws Exception {
+	public void onRowSelect(SelectEvent event){
+		try {
 		pacienteModel = (Paciente) event.getObject();
 		buscaAcompanhante();
 		/*
 		 * FacesContext.getCurrentInstance().getExternalContext()
 		 * .redirect("cadastro/e/" + pacienteModel.getIdPaciente());
 		 */
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void removerAcompanhante() throws Exception {
+	public void removerAcompanhante() {
 		for (Acompanhante item : lstAcompanhante) {
-			acompanhanteController.merge(item);
+			try {
+				acompanhanteController.merge(item);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -157,18 +177,13 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		idade = age;
 		System.out.println("IDADE RESULTADO DO IDADE MINIMA>>>>" + age);
 		if (age < 18) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"O paciente deve ser acompanhado por um Responsável que tenha idade maior que 18 anos ", "");
+			addMsg("O paciente deve ser acompanhado por um Responsável que tenha idade maior que 18 anos ");
 			System.out.println(" de menor false IDADE PACIENTE:>>>" + age);
-			addMessage(message);
-
 			return false;
 		}
 		if (age >= 60) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"O paciente deve ser acompanhado por um Responsável ", "");
+			addMsg("O paciente deve ser acompanhado por um Responsável ");
 			System.out.println(" de menor false IDADE PACIENTE:>>>" + age);
-			addMessage(message);
 			return false;
 		} else {
 			System.out.println(" de maior true IDADE ATENDENTE:>>>" + age);
@@ -177,17 +192,8 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	}
 
-	// RELATORIO
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_paciente");
-		super.setNomeRelatorioSaida("report_paciente");
-		super.setListDataBeanCollectionReport(pacienteController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
-
 	// PESQUISA CEP
-	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
+	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
 			URL url = new URL("https://viacep.com.br/ws/" + pacienteModel.getPessoa().getCep() + "/json/");
 			URLConnection connection = url.openConnection();
@@ -221,52 +227,35 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void limpa() {
-
-		/* Dados */
-		pacienteModel.getPessoa().setPessoaNome("");
-		pacienteModel.getPessoa().setPessoaDataNascimento(new Date());
-		pacienteModel.getPessoa().setPessoaSexo("");
-		pacienteModel.getPessoa().setPessoaEmail("");
-		pacienteModel.getPessoa().setPessoaRG("");
-		pacienteModel.getPessoa().setPessoaCPF("");
-		pacienteModel.getPessoa().setPessoaObservacao("");
-		pacienteModel.getPessoa().setPessoaTelefonePrimario("");
-		pacienteModel.getPessoa().setPessoaTelefoneSecundario("");
-		/* Endereço */
-		pacienteModel.getPessoa().setCep("");
-		pacienteModel.getPessoa().setBairro("");
-		pacienteModel.getPessoa().setUf("");
-		pacienteModel.getPessoa().setLogradouro("");
-		pacienteModel.getPessoa().setComplemento("");
-		pacienteModel.getPessoa().setLocalidade("");
-	}
-
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
-	}
 
 	@Override
-	public String save() throws Exception {
+	public String save() {
 
-		pacienteModel = pacienteController.merge(pacienteModel);
-		pacienteModel = new Paciente();
+		try {
+			pacienteModel = pacienteController.merge(pacienteModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		return "";
 	}
 
+	private void limpar() {
+		pacienteModel = new Paciente();
+	}
+
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
 		try {
 		//idadeMinimaPaciente();
 		if (ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
-			pacienteModel = pacienteController.merge(pacienteModel);
 			System.out.println("CPF Válido");
-			pacienteModel = new Paciente();
+			pacienteModel.getPessoa().setTipoPessoa("PAC");
+			pacienteModel = pacienteController.merge(pacienteModel);
+			limpar();
 			sucesso();
 		} else {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF(), "");
-			addMessage(message);
+			addMsg("Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF());
 			System.out.println("ERRO CPF INVÁLIDO");
 		}
 		}catch (Exception e) {
@@ -275,7 +264,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void salvarAcompanhante() throws Exception {
+	public void salvarAcompanhante() {
 		/*
 		 * idadeMinimaPaciente(); Acompanhante acompanhante = new Acompanhante();
 		 * acompanhante = acompaModel; if (pacienteModel.getId() != null) { if
@@ -288,9 +277,17 @@ public class PacienteBean extends BeanManagedViewAbstract {
 		 */
 
 		if (pacienteModel.getId() == null) {
-			pacienteController.persist(pacienteModel);
+			try {
+				pacienteController.persist(pacienteModel);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else if (pacienteModel.getId() != null) {
-			pacienteController.merge(pacienteModel);
+			try {
+				pacienteController.merge(pacienteModel);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		Acompanhante a = new Acompanhante();
 		a = acompaModel;
@@ -306,64 +303,57 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		pacienteModel = new Paciente();
-	}
-
-	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		pacienteModel = (Paciente) pacienteController.getSession().get(getClassImp(), pacienteModel.getIdPaciente());
-		pacienteController.delete(pacienteModel);
+	public void excluir() {
+		try {
+			pacienteModel = (Paciente) pacienteController.getSession().get(Paciente.class, pacienteModel.getIdPaciente());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			pacienteController.delete(pacienteModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		pacienteModel = new Paciente();
 		sucesso();
 		busca();
 	}
 
-	public void excluirAcompanhante(long cod) throws Exception {
+	public void excluirAcompanhante(long cod) {
 		System.out.println(">>>>>>>>>>>" + cod);
 		acompaModel.setIdAcompanhante(cod);
-		acompanhanteController.delete(acompaModel);
+		try {
+			acompanhanteController.delete(acompaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// acompaModel = new Acompanhante();
 		buscaAcompanhante();
 	}
 
 	@Override
-	protected Class<Paciente> getClassImp() {
-		return Paciente.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade(){
+		limpar();
 		return getUrlFind();
 	}
-
-	@Override
-	protected InterfaceCrud<Paciente> getController() {
-		return pacienteController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		pacienteModel = new Paciente();
-	}
-
+	
 	public Paciente getPacienteModel() {
 		return pacienteModel;
 	}

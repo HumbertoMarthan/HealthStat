@@ -10,14 +10,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.CaixaMensalController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.CaixaMensal;
 
@@ -28,24 +26,27 @@ public class CaixaBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Caixa caixaModel;
-	private CaixaMensal caixaMensalModel;
+	private Caixa caixaModel = new Caixa();
+	private CaixaMensal caixaMensalModel = new CaixaMensal();
+
 	private String url = "/cadastro/cadCaixa.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/caixa.jsf?faces-redirect=true";
-	private List<Caixa> lstContasReceber;
-	private List<Caixa> lstContasPagar;
-	private List<Caixa> lstCaixa;
-	private List<CaixaMensal> lstCaixaMensal;
+	
+	private List<Caixa> lstContasReceber = new ArrayList<Caixa>();
+	private List<Caixa> lstContasPagar = new ArrayList<Caixa>();
+	private List<Caixa> lstCaixa = new ArrayList<>();
+	private List<CaixaMensal> lstCaixaMensal = new ArrayList<>();
 	private List<Map<Object, Object>> lstFinanceiroMap;
 	private List<Map<Object, Object>> lstDespesaMap;
 	private List<Map<Object, Object>> lstTotalReceber;
 	private List<Map<Object, Object>> lstTotalPagar;
+	
 	private Double total = 0.0;
 	private Date campoDataInicio;
 	private Date campoDataFim;
 	private int valorStatus;
-	private String campoBuscaFornecedor;
-	private String campoBuscaPaciente;
+	private String campoBuscaFornecedor ="";
+	private String campoBuscaPaciente="";
 
 	@Autowired
 	private CaixaController caixaController;
@@ -53,23 +54,6 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	@Autowired
 	private CaixaMensalController caixaMensalController;
 
-
-
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_atendente");
-		super.setNomeRelatorioSaida("report_atendente");
-		// super.setListDataBeanCollectionReport(caixaController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
-
-	public CaixaBean() {
-		caixaModel = new Caixa();
-		caixaMensalModel = new CaixaMensal();
-		lstContasReceber = new ArrayList<Caixa>();
-		lstContasPagar = new ArrayList<Caixa>();
-		lstCaixa = new ArrayList<>();
-		lstCaixaMensal = new ArrayList<>();
-	}
 
 	@PostConstruct
 	public void init() {
@@ -99,6 +83,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	public void resultadoAnual() {
+		//Despesas
 		StringBuilder str = new StringBuilder();
 		str.append("select ");
 		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroP, ");
@@ -113,6 +98,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') as outubroP, ");
 		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') as novembroP, ");
 		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') as dezembroP, ");
+	
 		//Receita
 		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroR, ");
 		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') as fevereiroR, ");
@@ -228,28 +214,40 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String save() throws Exception {
-		caixaModel = caixaController.merge(caixaModel);
-		caixaModel = new Caixa();
+	public String save() {
+		try {
+			caixaModel = caixaController.merge(caixaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		return "";
 	}
 
-	@Override
-	public void saveNotReturn() throws Exception {
-		caixaModel = caixaController.merge(caixaModel);
+	private void limpar() {
 		caixaModel = new Caixa();
+	}
+
+	@Override
+	public void saveNotReturn() {
+		try {
+			caixaModel = caixaController.merge(caixaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit(){
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
@@ -258,46 +256,36 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		caixaModel = (Caixa) caixaController.getSession().get(getClassImp(), caixaModel.getIdCaixa());
-		caixaController.delete(caixaModel);
-		caixaModel = new Caixa();
+	public void excluir()  {
+		try {
+			caixaModel = (Caixa) caixaController.getSession().get(Caixa.class, caixaModel.getIdCaixa());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			caixaController.delete(caixaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 	}
 
 	@Override
-	protected Class<Caixa> getClassImp() {
-		return Caixa.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
-		return getUrlFind();
-	}
-
-	@Override
-	public void setarVariaveisNulas() throws Exception {
-		caixaModel = new Caixa();
-	}
-
-	@Override
-	protected InterfaceCrud<Caixa> getController() {
-		return caixaController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		caixaModel = new Caixa();
+	public String redirecionarFindEntidade(){
+		limpar();
+			return getUrlFind();
 	}
 
 	// GETTERS E SETTERS
-
+	
+	
+	
 	public String getUrl() {
 		return url;
 	}

@@ -22,26 +22,23 @@ public class MedicamentoBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Medicamento medicamentoModel;
+	private Medicamento medicamentoModel = new Medicamento();
+
+	private List<Medicamento> lstMedicamento = new ArrayList<Medicamento>();;
+	
 	private String url = "/cadastro/cadMedicamento.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findMedicamento.jsf?faces-redirect=true";
-	private List<Medicamento> lstMedicamento;
+	
 	private String campoBuscaNome = "";
 
 	@Autowired
 	private MedicamentoController medicamentoController; // Injeta o Medicamento Controller
 
-	public MedicamentoBean() {
-		medicamentoModel = new Medicamento();
-		lstMedicamento = new ArrayList<Medicamento>();
-	}
-
 	public void onRowSelect(SelectEvent event) {
 		medicamentoModel = (Medicamento) event.getObject();
 	}
 
-	public void busca() throws Exception {
-		lstMedicamento = new ArrayList<Medicamento>();
+	public void busca() {
 		StringBuilder str = new StringBuilder();
 		str.append("from Medicamento a where 1=1");
 
@@ -49,89 +46,85 @@ public class MedicamentoBean extends BeanManagedViewAbstract {
 			str.append(" and upper(a.nomeMedicamento) like upper('%" + campoBuscaNome + "%')");
 		}
 
-		lstMedicamento = medicamentoController.findListByQueryDinamica(str.toString());
+		try {
+			lstMedicamento = medicamentoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public String save() throws Exception {
-
-		medicamentoModel = medicamentoController.merge(medicamentoModel);
+	public String save()  {
+		try {
+			medicamentoModel = medicamentoController.merge(medicamentoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		medicamentoModel = new Medicamento();
 
 		return "";
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
 		if (medicamentoModel == null) {
 			medicamentoModel = new Medicamento();
 		}
-		medicamentoModel = medicamentoController.merge(medicamentoModel);
-		medicamentoModel = new Medicamento();
+		try {
+			medicamentoModel = medicamentoController.merge(medicamentoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit()  {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
-		return getUrl();
-	}
-
-	public void limpa() throws Exception {
-		medicamentoModel = new Medicamento();
-	}
-
-	public String edita() throws Exception {
+	public String novo(){
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar(){
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		medicamentoModel = (Medicamento) 
-				medicamentoController.getSession().get(getClassImp(), 
-						medicamentoModel.getIdMedicamento());
-		medicamentoController.delete(medicamentoModel);
-		medicamentoModel = new Medicamento();
+	public void excluir() {
+		try {
+			medicamentoModel = (Medicamento) 
+					medicamentoController.getSession().get(Medicamento.class, 
+							medicamentoModel.getIdMedicamento());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			medicamentoController.delete(medicamentoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<Medicamento> getClassImp() {
-		return Medicamento.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
 	}
 
-	@Override
-	public void setarVariaveisNulas() throws Exception {
+	public void limpar() {
 		medicamentoModel = new Medicamento();
 	}
 
-	@Override
-	protected MedicamentoController getController() {
-		return medicamentoController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		medicamentoModel = new Medicamento();
-	}
 
 
 	// GETTERS E SETTERS
@@ -176,5 +169,19 @@ public class MedicamentoBean extends BeanManagedViewAbstract {
 		this.campoBuscaNome = campoBuscaNome;
 	}
 
+	public Medicamento getMedicamentoModel() {
+		return medicamentoModel;
+	}
 
+	public void setMedicamentoModel(Medicamento medicamentoModel) {
+		this.medicamentoModel = medicamentoModel;
+	}
+
+	public MedicamentoController getMedicamentoController() {
+		return medicamentoController;
+	}
+
+	public void setMedicamentoController(MedicamentoController medicamentoController) {
+		this.medicamentoController = medicamentoController;
+	}
 }

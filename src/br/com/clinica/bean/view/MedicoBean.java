@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -19,7 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -28,11 +28,13 @@ import com.google.gson.Gson;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EspecialidadeController;
 import br.com.clinica.controller.geral.MedicoController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.outro.Especialidade;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -41,11 +43,13 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Medico medicoModel;
+	private Medico medicoModel = new Medico();
 	private Especialidade espeModel;
+	private List<Medico> lstMedico = new ArrayList<Medico>();
+	
 	private String url = "/cadastro/cadMedico.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findMedico.jsf?faces-redirect=true";
-	List<Medico> lstMedico;
+
 	private String campoBuscaAtivo = "T";
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
@@ -55,10 +59,20 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
-
-	public MedicoBean() {
-		medicoModel = new Medico();
-		lstMedico = new ArrayList<Medico>();
+	
+	@PostConstruct
+	public void init() {
+		busca();
+	}
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstMedico, "medico.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<Especialidade> completeEspecialidade(String q) throws Exception {
@@ -111,15 +125,6 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	// Relatório
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_medico");
-		super.setNomeRelatorioSaida("report_medico");
-		super.setListDataBeanCollectionReport(medicoController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
-
 	public void inativar() {
 
 		if (medicoModel.getAtivo().equals("I")) {
@@ -150,7 +155,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		medicoModel = (Medico) event.getObject();
 	}
 
-	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
+	public void pesquisarCep(AjaxBehaviorEvent event)  {
 		try {
 			URL url = new URL("https://viacep.com.br/ws/" + medicoModel.getPessoa().getCep() + "/json/");
 			URLConnection connection = url.openConnection();
@@ -184,34 +189,19 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void limpa() {
-		/* Dados */
-		medicoModel.getPessoa().setPessoaNome("");
-		medicoModel.getPessoa().setPessoaDataNascimento(null);
-		medicoModel.getPessoa().setPessoaSexo("");
-		medicoModel.getPessoa().setPessoaEmail("");
-		medicoModel.getPessoa().setPessoaRG("");
-		medicoModel.getPessoa().setPessoaCPF("");
-		medicoModel.getPessoa().setPessoaObservacao("");
-		medicoModel.getPessoa().setPessoaTelefonePrimario("");
-		medicoModel.getPessoa().setPessoaTelefoneSecundario("");
-		// medicoModel.setDataInscricaoCrm(null);
-		medicoModel.setNumeroCrm("");
-
-		/* Endereço */
-		medicoModel.getPessoa().setCep("");
-		medicoModel.getPessoa().setBairro("");
-		medicoModel.getPessoa().setUf("");
-		medicoModel.getPessoa().setLogradouro("");
-		medicoModel.getPessoa().setComplemento("");
-		medicoModel.getPessoa().setLocalidade("");
+	@Override
+	public String save()  {
+		try {
+			medicoModel = medicoController.merge(medicoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
+		return "";
 	}
 
-	@Override
-	public String save() throws Exception {
-		medicoModel = medicoController.merge(medicoModel);
+	private void limpar() {
 		medicoModel = new Medico();
-		return "";
 	}
 
 	public boolean idadeMinimaFuncionario() {
@@ -224,10 +214,8 @@ public class MedicoBean extends BeanManagedViewAbstract {
 			age--;
 		}
 		if (age <= 24) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"A idade informada deve ser maior que 24 Anos", "");
+			addMsg("A idade informada deve ser maior que 24 Anos");
 			System.out.println("TRUE IDADE ATENDENTE:>>>" + age);
-			addMessage(message);
 			return false;
 		} else {
 			System.out.println("FALSE IDADE ATENDENTE:>>>" + age);
@@ -237,12 +225,13 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn(){
 		try {
 			if (idadeMinimaFuncionario() == true) {
 				if (ValidaCPF.isCPF(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
+					medicoModel.getPessoa().setTipoPessoa("MED");
 					medicoModel = medicoController.merge(medicoModel);
-					medicoModel = new Medico();
+					limpar();
 					sucesso();
 					// busca();
 					System.out.println("CPF Válido");
@@ -260,57 +249,48 @@ public class MedicoBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao Salvar Médico");
 			e.printStackTrace();
 		}
+		busca();
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit(){
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		medicoModel = new Medico();
-	}
-
-	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		medicoModel = (Medico) medicoController.getSession().get(getClassImp(), medicoModel.getIdMedico());
-		medicoController.delete(medicoModel);
-		medicoModel = new Medico();
+	public void excluir() {
+		try {
+			medicoModel = (Medico) medicoController.getSession().get(Medico.class, medicoModel.getIdMedico());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			medicoController.delete(medicoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 	}
 
 	@Override
-	protected Class<Medico> getClassImp() {
-		return Medico.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade()  {
+		limpar();
 		return getUrlFind();
 	}
 
-	@Override
-	protected InterfaceCrud<Medico> getController() {
-		return medicoController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		medicoModel = new Medico();
-	}
 
 	// Getter e Setters
 	public Medico getmedicoModel() {

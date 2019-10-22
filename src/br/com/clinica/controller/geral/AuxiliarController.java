@@ -13,6 +13,7 @@ import br.com.clinica.model.cadastro.outro.Convenio;
 import br.com.clinica.model.cadastro.outro.PrecoConsulta;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.model.financeiro.FormaPagamento;
 import br.com.clinica.model.prontuario.Medicamento;
 
@@ -49,6 +50,13 @@ public class AuxiliarController implements Serializable{
 	@ManagedProperty("#{precoConsultaController}")
 	private PrecoConsultaController precoConsultaController;
 	
+	@ManagedProperty("#{perfilController}")
+	private PerfilController perfilController;
+	
+	public List<Perfil>  completePerfil(String q) throws Exception {
+		return perfilController.
+				findListByQueryDinamica(" from Perfil where perfilNome like '%" + q.toUpperCase()  + "%' order by perfilNome  ASC");
+	}
 	
 	public List<Convenio>  completeConvenio(String q) throws Exception {
 		return convenioController.
@@ -93,6 +101,14 @@ public class AuxiliarController implements Serializable{
 		return precoConsultaController.findListByQueryDinamica(" from PrecoConsulta where ativo='A' and categoria like '%" + q.toUpperCase()+ "%' order by categoria ASC");
 	}
 	
+	public PerfilController getPerfilController() {
+		return perfilController;
+	}
+
+	public void setPerfilController(PerfilController perfilController) {
+		this.perfilController = perfilController;
+	}
+
 	public MedicoController getMedicoController() {
 		return medicoController;
 	}

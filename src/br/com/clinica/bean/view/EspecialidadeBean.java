@@ -3,17 +3,21 @@ package br.com.clinica.bean.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.hibernate.HibernateException;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EspecialidadeController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.outro.Especialidade;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -22,19 +26,32 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private Especialidade especialidadeModel;
+	private Especialidade especialidadeModel = new Especialidade();
+	
 	private String url = "/cadastro/cadEspecialidade.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findEspecialidade.jsf?faces-redirect=true";
-	List<Especialidade> lstEspecialidade;
-	private String campoBuscaEspecialidade;
-	private String campoBuscaAtivo = "A";
+	
+	private List<Especialidade> lstEspecialidade = new ArrayList<Especialidade>();
+	
+	private String campoBuscaEspecialidade = "";
+	private String campoBuscaAtivo = "T";
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
 
-	public EspecialidadeBean() {
-		especialidadeModel = new Especialidade();
-		lstEspecialidade = new ArrayList<Especialidade>();
+	@PostConstruct
+	public void init() {
+		busca();
+	}
+	
+
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstEspecialidade, "especialidades.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void busca() {
@@ -59,15 +76,23 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
+	
+	public void limpar() {
+		especialidadeModel = new Especialidade();
+	}
 
 	public void onRowSelect(SelectEvent event) {
 		especialidadeModel = (Especialidade) event.getObject();
 	}
 
 	@Override
-	public String save() throws Exception {
-		especialidadeModel = especialidadeController.merge(especialidadeModel);
-		especialidadeModel = new Especialidade();
+	public String save()  {
+		try {
+			especialidadeModel = especialidadeController.merge(especialidadeModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		return "";
 	}
 
@@ -75,64 +100,55 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	public void saveNotReturn() {
 		try {
 			especialidadeModel = especialidadeController.merge(especialidadeModel);
-			especialidadeModel = new Especialidade();
+			limpar();
 			sucesso();
 		} catch (Exception e) {
 			System.out.println("Erro ao Salvar Especialidade");
 			e.printStackTrace();
 		}
-
+		busca();
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
+		return getUrl();
+	}
+
+
+	@Override
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		especialidadeModel = new Especialidade();
-	}
-
-	@Override
-	public String editar() throws Exception {
-		return getUrl();
-	}
-
-	@Override
-	public void excluir() throws Exception {
-		especialidadeModel = (Especialidade) especialidadeController.getSession().get(getClassImp(),
-				especialidadeModel.getIdEspecialidade());
-		especialidadeController.delete(especialidadeModel);
-		especialidadeModel = new Especialidade();
+	public void excluir() {
+		try {
+			especialidadeModel = (Especialidade) especialidadeController.getSession().get(Especialidade.class,
+					especialidadeModel.getIdEspecialidade());
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			especialidadeController.delete(especialidadeModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 	}
 
 	@Override
-	protected Class<Especialidade> getClassImp() {
-		return Especialidade.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<Especialidade> getController() {
-		return especialidadeController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		especialidadeModel = new Especialidade();
 	}
 
 	public Especialidade getEspecialidadeModel() {

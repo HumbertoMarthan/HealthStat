@@ -2,6 +2,7 @@ package br.com.clinica.hibernate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Component
 @Transactional
@@ -385,4 +392,36 @@ public class ImplementacaoCrud<T> implements InterfaceCrud<T>, Serializable {
 		return lista;
 	}
 
+
+	public void imprimir(List<?> lista, String relatorioCompilado, Map<String, Object> parameters ) throws Exception {
+		try {
+			//Map<String, Object> parameters = new HashMap<String, Object>();
+			String caminho = "C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\src\\relatorio\\"+relatorioCompilado;
+
+			JRBeanCollectionDataSource collection = new JRBeanCollectionDataSource(lista);
+			
+			JasperPrint relatorio = JasperFillManager.fillReport(caminho, parameters, collection);
+			
+			JasperPrintManager.printReport(relatorio, true);
+		
+		} catch (JRException erro) {
+			erro.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		/*
+		 * File f = new File(
+		 * "C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\WebContent\\resources\\paradise-layout\\images\\loginHealthStat.png"
+		 * ); BufferedImage logo = ImageIO.read(f); BufferedImage convertedImg = new
+		 * BufferedImage(logo.getWidth(), logo.getHeight(),
+		 * BufferedImage.TYPE_USHORT_565_RGB);
+		 * convertedImg.getGraphics().drawImage(logo, 0, 0, null);
+		 * parameters.put("LOGO", convertedImg);
+		 */			
+		//JasperExportManager.exportReportToPdfFile("C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\src\\relatorio\\convenio.jrprint");
+	
+	}
+	
+	
 }

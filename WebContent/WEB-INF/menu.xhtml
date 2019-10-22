@@ -26,36 +26,36 @@
 							<sec:ifAnyGranted roles="ATE,ADMIN">
 								<p:submenu id="pm_hierarchy_cadastros" label="Cadastros"
 									icon="fa fa-plus-circle">
-									<p:submenu id="submenu_colaboradores" label="Colaboradores"
+									<p:submenu id="submenu_colaboradores" label="Colaboradores"  style="font-size:large"
 										icon="fa fa-group">
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem value="Atendente"
+											<p:menuitem value="Atendente" style="font-size:large"
 												action="#{atendenteBean.redirecionarFindEntidade}"
 												icon="fa fa-user-o" immediate="true" ajax="false" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem id="item_menu_estoquista" value="Estoquista"
-												icon="fa fa-user-o"
+											<p:menuitem id="item_menu_estoquista" value="Estoquista"  style="font-size:large" 
+												icon="fa fa-cubes"
 												action="#{estoquistaBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem id="item_menu_medico" value="Médico"
-												icon="fa fa-user-o"
+											<p:menuitem id="item_menu_medico" value="Médico"  style="font-size:large"
+												icon="fa fa-user-md"
 												action="#{medicoBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 									</p:submenu>
 
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_paciente" value="Paciente"
-											icon="fa fa-user-o"
+										<p:menuitem id="item_menu_paciente" value="Paciente"  style="font-size:large"
+											icon="fa fa-user-o" 
 											action="#{pacienteBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_convenio" value="Convênio"
+										<p:menuitem id="item_menu_convenio" value="Convênio"  style="font-size:large"
 											icon="fa fa-medkit"
 											action="#{convenioBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
@@ -67,25 +67,25 @@
 									</sec:ifAnyGranted>
 									 -->
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_especialidade" value="Especialidade"
+										<p:menuitem id="item_menu_especialidade" value="Especialidade"  style="font-size:large"
 											icon="fa fa-glass"
 											action="#{especialidadeBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="EST, ATE, ADMIN">
-										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"
+										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"  style="font-size:large"
 											icon="fa fa-building"
 											action="#{fornecedorBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="EST, ADMIN">
-										<p:menuitem id="item_menu_material" value="Material"
+										<p:menuitem id="item_menu_material" value="Material"  style="font-size:large"
 											icon="fa fa-glass"
 											action="#{materialBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 									
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"
+										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"  style="font-size:large"
 											icon="fa fa-glass"
 											action="#{precoConsultaBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
@@ -93,44 +93,44 @@
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="EST, ADMIN">
-								<p:submenu id="pm_hierarchy_movimentação" label="Movimentação"
+								<p:submenu id="pm_hierarchy_movimentação" label="Estoque"  style="font-size:large"
 									icon="fa fa-refresh">
-									<p:menuitem id="submenu_estoque" value="Estoque"
+									<p:menuitem id="submenu_estoque" value="Estoque/Pedidos" style="font-size:large"
 										action="#{estoqueBean.redirecionarFindEntidade}" 
 										icon="fa fa-archive"/>
 								</p:submenu>
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="MED, ADMIN">
-								<p:submenu id="pm_hierarchy_medico" label="Movimentação"
-									icon="fa fa-medkit">
-									<p:menuitem id="item_menu_prontuario" value="Prontuário"
+								<p:submenu id="pm_hierarchy_medico" label="Prontuário"  style="font-size:large"
+									icon="fa fa-medkit"> 
+									<p:menuitem id="item_menu_prontuario" value="Prontuário"  style="font-size:large"
 										action="#{prontuarioBean.redirecionarFindEntidade}"
 										icon="fa fa-heartbeat" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="ATE ,ADMIN">
-								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"
+								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"  style="font-size:large"
 									icon="fa fa-money">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"
+											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"  style="font-size:large"
 												action="#{caixaBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro" value="Pagamento de Contas"
+											<p:menuitem id="item_menu_financeiro" value="Pagamento"  style="font-size:large"
 												action="#{contasPagarBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
-										<p:menuitem id="item_menu_receber_consultas"
-											action="#{contasReceberBean.redirecionarFindEntidade}"
-											value="Receber Consultas" icon="fa fa-glass" />
+										<p:menuitem id="item_menu_receber_consultas"  style="font-size:large"
+											action="#{contasReceberBean.redirecionarFindEntidade}" 
+											value="Receber" icon="fa fa-glass" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<p:submenu id="pm_hierarchy_temas" label="Alterar Tema"
+							<p:submenu id="pm_hierarchy_temas" label="Alterar Tema"  style="font-size:large"
 								icon="fa fa-dashboard">
 
 

@@ -11,9 +11,25 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: large;
+	font-size: medium;
 	color: black;
 	font-weight: bold
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
+	color: black;
 }
 
 .ui-fluid .ui-inputmask {
@@ -28,6 +44,7 @@
 	width: 100%;
 	height: 35px;
 	font-size: large;
+	text-align: center;
 	color: black;
 }
 
@@ -50,6 +67,21 @@
 	height: 33px;
 	font-size: 20px;
 	text-align: center;
+}
+
+.ui-selectoneradio label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 16px 0 8px;
+	vertical-align: middle;
+	/*color: #2e6e9e !important;*/
+	font-size: medium;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c5dbec;
+	font-weight: bold;
 	color: black;
 }
 
@@ -78,7 +110,7 @@
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
@@ -87,7 +119,7 @@
 										action="#{loginBean.novo}" rendered="true" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-1">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -102,20 +134,29 @@
 											target="#{loginBean.loginModel}" />
 									</p:commandButton>
 								</div>
-							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-4">
-								<p:inputText value="#{loginBean.campoBuscaNome}"
-									placeholder="Buscar pelo Nome" id="inputNome"
-									style="height:40px; ">
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
+										style="height:40px;background: tomato !important  ;
+										   background-color: tomato ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{loginBean.inativar}"
+										update="table, @form"
+										rendered="#{loginBean.loginModel.idLogin > 0 }"
+										icon="fa fa-check" iconPos="right">
 
-								</p:inputText>
-							</div>
-							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px;width:130px; "
-									styleClass="btn btn-blue" icon="ui-icon-search"
+									</p:commandButton>
+								</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-3">
+								<div class="ui-inputgroup">
+								<p:inputText value="#{loginBean.campoBuscaNome}"
+									placeholder="Buscar pelo Nome" id="inputNome"/>
+								<p:commandButton
+									icon="ui-icon-search"
 									id="btnBuscatxt" actionListener="#{loginBean.busca}"
 									update=" inputNome,table" />
-								<p:defaultCommand target="btnBuscatxt" />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -124,26 +165,35 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{loginBean.lstLogin}" var="d"
-							styleClass="table.gridtable" rowKey="#{d.idLogin}"
-							selectionMode="single" id="table"
+							emptyMessage="Não Há Registros Lançados"
+							rowKey="#{d.idLogin}"
+							selectionMode="single" id="table"  rows="10" paginator="true" 
 							selection="#{loginBean.loginModel}">
 
 							<p:ajax event="rowSelect" listener="#{loginBean.onRowSelect}"
 								update="table,:form:botoes" />
 
 							<p:column headerText="Login" priority="1"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.login} 
+								style="text-align: left; font-size: large">
+									<p:outputLabel value="#{d.login}"/> 
 							</p:column>
 
 							<p:column headerText="Login" priority="1"
-								style="overflow: hidden;text-align: left; font-size: medium">
-								#{d.perfil.perfilNome} 
+								style="text-align: left; font-size: large">
+									<p:outputLabel value="#{d.perfil.perfilNome}" />
+							</p:column>
+							
+							<p:column headerText="Status" 
+								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
+								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
+									style="color : green" />
+								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
+									style="color : red" />
 							</p:column>
 
+							
 
-
-							<p:column style="width:50px" priority="4">
+						<!-- 	<p:column style="width:50px" priority="4">
 								<center>
 									<f:facet name="header">Excluir</f:facet>
 									<p:commandLink action="#{loginBean.excluir}" update="table"
@@ -153,7 +203,7 @@
 											target="#{loginBean.loginModel}" />
 									</p:commandLink>
 								</center>
-							</p:column>
+							</p:column> -->
 						</p:dataTable>
 					</div>
 				</p:panel>

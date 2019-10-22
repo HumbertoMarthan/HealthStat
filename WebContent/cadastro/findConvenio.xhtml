@@ -95,7 +95,7 @@
 										   background-color: lightskyblue ;
 										   color:white !important;
 										   font-size:large;"
-										immediate="true" action="#{convenioBean.edita}"
+										immediate="true" action="#{convenioBean.editar}"
 										update="table, @form"
 										rendered="#{convenioBean.convenioModel.idConvenio > 0 }"
 										icon=" fa fa-pencil" iconPos="right">
@@ -115,6 +115,12 @@
 										actionListener="#{convenioBean.busca}"
 										update=" inputNome,table" />
 								</div>
+							</div>
+							<div class="ui-g-12 ui-lg-1">
+									<p:commandLink rendered="#{convenioBean.lstConvenio.size() > 0}"	
+									actionListener="#{convenioBean.geraRelatorio}">
+									<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+									</p:commandLink>
 							</div>
 						</div>
 					</div>

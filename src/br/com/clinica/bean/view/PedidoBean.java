@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,7 +16,6 @@ import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EstoqueController;
 import br.com.clinica.controller.geral.PedidoController;
 import br.com.clinica.controller.geral.PedidoMaterialController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
@@ -29,16 +27,16 @@ import br.com.clinica.model.cadastro.estoque.PedidoMaterial;
 public class PedidoBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
-	private Pedido pedidoModel;
-	private PedidoMaterial pedidoMaterialModel;
-	private Estoque estoqueModel;
-	private Material materialModel;
-	private List<Pedido> lstPedido;
-	private List<Pedido> lstPedidoCarrinho;
+	private Pedido pedidoModel = new Pedido();
+	private PedidoMaterial pedidoMaterialModel = new PedidoMaterial();;
+	private Estoque estoqueModel = new Estoque();;
+	private Material materialModel; // materialModel = new Material();
+	private List<Pedido> lstPedido = new ArrayList<Pedido>();
+	private List<Pedido> lstPedidoCarrinho = new ArrayList<>();
 	private String url = "/estoque/gereciadorPedido.jsf?faces-redirect=true";
 	private String urlFind = "/estoque/findPedido.jsf?faces-redirect=true";
 	private String campoBuscaAtivo = "T";
-
+	
 	@Autowired
 	private PedidoController pedidoController;
 
@@ -48,23 +46,10 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	@Autowired
 	private PedidoMaterialController pedidoMaterialController;
 
-	// @Autowired
-	// private PedidoControllerpedidoController;
 
 	@PostConstruct
 	public void init() {
-		// materialModel = new Material();
-		pedidoModel = new Pedido();
-		lstPedido = new ArrayList<Pedido>();
-		lstPedidoCarrinho = new ArrayList<>();
-		pedidoMaterialModel = new PedidoMaterial();
-		estoqueModel = new Estoque();
-		try {
 			busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar Pedidos");
-			e.printStackTrace();
-		}
 	}
 
 	public void geraPedido() {
@@ -81,11 +66,15 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void busca() throws Exception {
+	public void busca() {
 		lstPedido = new ArrayList<Pedido>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Pedido a where 1=1");
-		lstPedido = pedidoController.findListByQueryDinamica(str.toString());
+		try {
+			lstPedido = pedidoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void limpar() {
@@ -96,27 +85,26 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		pedidoModel = (Pedido) event.getObject();
 	}
 
-	// Gera o Relatório
 	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_estoquista");
-		super.setNomeRelatorioSaida("report_estoquista");
-		super.setListDataBeanCollectionReport(pedidoController.findList(getClassImp()));
-		return super.getArquivoReport();
-	}
+	public String save() {
 
-	@Override
-	public String save() throws Exception {
-
-		pedidoModel = pedidoController.merge(pedidoModel);
+		try {
+			pedidoModel = pedidoController.merge(pedidoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		pedidoModel = new Pedido();
 		return "";
 	}
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn()  {
 		System.out.println("Entrou no saveNotReturn()");
-		pedidoController.merge(pedidoModel); // salvar estoque
+		try {
+			pedidoController.merge(pedidoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} // salvar estoque
 		pedidoModel = new Pedido();
 		sucesso();
 	}
@@ -218,52 +206,46 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit()  {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
+	public String novo()  {
 		setarVariaveisNulas();
 		return getUrl();
 	}
 
-	public String edita() throws Exception {
+	public String edita()  {
+		return getUrl();
+	}
+
+	public String editar()  {
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		pedidoModel = new Pedido();
-	}
-
-	public String editar() throws Exception {
-		return getUrl();
-	}
-
-	@Override
-	public void excluir() throws Exception {
-		pedidoModel = (Pedido) pedidoController.getSession().get(getClassImp(), pedidoModel.getIdPedido());
-		pedidoController.delete(pedidoModel);
-		pedidoModel = new Pedido();
+	public void excluir()  {
+		try {
+			pedidoModel = (Pedido) pedidoController.getSession().get(Pedido.class, pedidoModel.getIdPedido());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			pedidoController.delete(pedidoModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 		busca();
 	}
 
-	@Override
-	protected Class<Pedido> getClassImp() {
-		return Pedido.class;
-	}
 
 	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade()  {
+		limpar();
 		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<Pedido> getController() {
-		return pedidoController;
 	}
 
 	public Pedido getPedidoModel() {

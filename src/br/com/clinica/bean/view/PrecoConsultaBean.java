@@ -3,17 +3,17 @@ package br.com.clinica.bean.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.hibernate.HibernateException;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.PrecoConsultaController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.outro.PrecoConsulta;
 
 @Controller
@@ -22,19 +22,18 @@ import br.com.clinica.model.cadastro.outro.PrecoConsulta;
 public class PrecoConsultaBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
-	private PrecoConsulta precoConsultaModel;
+	private PrecoConsulta precoConsultaModel = new PrecoConsulta();
 	private String url = "/cadastro/cadPrecoConsulta.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findPrecoConsulta.jsf?faces-redirect=true";
-	private List<PrecoConsulta> lstPrecoConsulta;
+	private List<PrecoConsulta> lstPrecoConsulta = new ArrayList<PrecoConsulta>();
 	private String campoCategoria = "";
 
 	@Autowired
 	private PrecoConsultaController precoConsultaController;
 
-
-	public PrecoConsultaBean() {
-		lstPrecoConsulta = new ArrayList<PrecoConsulta>();
-		precoConsultaModel = new PrecoConsulta();
+	@PostConstruct
+	public void init() {
+		busca();
 	}
 
 	public void busca() {
@@ -54,14 +53,6 @@ public class PrecoConsultaBean extends BeanManagedViewAbstract {
 	}
 		}
 
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("a");
-		super.setNomeRelatorioSaida("a");
-		super.setListDataBeanCollectionReport(precoConsultaController.findListByQueryDinamica("from PrecoConsulta"));
-		return super.getArquivoReport();
-	}
-
 	public String edita() {
 		return getUrl();
 	}
@@ -71,8 +62,12 @@ public class PrecoConsultaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String save() throws Exception {
-		precoConsultaModel = precoConsultaController.merge(precoConsultaModel);
+	public String save()  {
+		try {
+			precoConsultaModel = precoConsultaController.merge(precoConsultaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return "";
 	}
@@ -96,49 +91,44 @@ public class PrecoConsultaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String novo() throws Exception {
+	public String novo()  {
 		setarVariaveisNulas();
 		return getUrl();
 	}
 
-	@Override
-	public void setarVariaveisNulas() throws Exception {
+	public void limpar()  {
 		precoConsultaModel = new PrecoConsulta();
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar()  {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		precoConsultaModel = (PrecoConsulta) precoConsultaController.getSession().get(getClassImp(), precoConsultaModel.getIdPrecoConsulta());
-		precoConsultaController.delete(precoConsultaModel);
-		precoConsultaModel = new PrecoConsulta();
+	public void excluir()  {
+		try {
+			precoConsultaModel = (PrecoConsulta) precoConsultaController.getSession().get(PrecoConsulta.class, precoConsultaModel.getIdPrecoConsulta());
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			precoConsultaController.delete(precoConsultaModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<PrecoConsulta> getClassImp() {
-		return PrecoConsulta.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade()  {
+		limpar();
 		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<PrecoConsulta> getController() {
-		return precoConsultaController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		precoConsultaModel = new PrecoConsulta();
 	}
 
 	public PrecoConsulta getPrecoConsultaModel() {

@@ -7,85 +7,98 @@ public abstract class BeanViewAbstract implements ActionViewPadrao {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void limpaLista() throws Exception {
+	public void limpaLista() {
 
 	}
 
 	@Override
-	public String save() throws Exception {
+	public String save() {
 		return null;
 	}
 	
 
 	@Override
-	public void saveNotReturn() throws Exception {
+	public void saveNotReturn() {
 
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 
 	}
 
 	@Override
-	public void excluir() throws Exception {
+	public void excluir() {
 
 	}
 
 	@Override
-	public String ativar() throws Exception {
+	public String ativar() {
 		return null;
 	}
 
 	@Override
-	public String novo() throws Exception {
+	public String novo() {
 		return null;
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return null;
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
+	public void setarVariaveisNulas() {
 
 	}
 
 	@Override
-	public void consultarEntidade() throws Exception {
+	public void consultarEntidade() {
 
 	}
 
 	@Override
-	public void StatusOperation(EstatusPersistencia a) throws Exception {
+	public void StatusOperation(EstatusPersistencia a) {
 			Mensagens.responseOperation(a);
 	}
 
 	@Override
-	public String redirecionarNewEntidade() throws Exception {
+	public String redirecionarNewEntidade() {
 		return null;
 
 	}
 
 	@Override
-	public String redirecionarFindEntidade() throws Exception {
+	public String redirecionarFindEntidade() {
 		return null;
 
 	}
 	
-	protected void sucesso() throws Exception{
-		StatusOperation((EstatusPersistencia.SUCESSO));
+	protected void sucesso(){
+		try {
+			StatusOperation((EstatusPersistencia.SUCESSO));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	protected void error() throws Exception{
+	protected void error(){
+		try {
 		StatusOperation((EstatusPersistencia.ERRO));
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 
 	@Override
-	public void addMsg(String msg) throws Exception {
+	public void addMsg(String msg) {
+		try {
 		Mensagens.msg(msg);
+	}catch (Exception e) {
+		e.printStackTrace();
+		e.getMessage();
+	}
 	}
 
 }

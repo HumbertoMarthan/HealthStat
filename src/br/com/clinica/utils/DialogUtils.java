@@ -1,6 +1,5 @@
 package br.com.clinica.utils;
 
-import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.context.RequestContext;
 
 public class DialogUtils {

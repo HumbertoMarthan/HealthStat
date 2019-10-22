@@ -9,18 +9,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -28,10 +25,12 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.AtendenteController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -51,52 +50,34 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		this.contextoBean = contextoBean;
 	}
 
-	private Atendente atendenteModel;
+	private Atendente atendenteModel = new Atendente();;
 	private String url = "/cadastro/cadAtendente.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findAtendente.jsf?faces-redirect=true";
-	private List<Atendente> lstAtendente;
+	private List<Atendente> lstAtendente = new ArrayList<Atendente>();;
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
 	private String campoBuscaAtivo = "A";
+
 	@Autowired
 	private AtendenteController atendenteController; // Injeta o Atendente Controller
 
-	@Override
-	public StreamedContent getArquivoReport() throws Exception {
-		super.setNomeRelatorioJasper("report_atendente");
-		super.setNomeRelatorioSaida("report_atendente");
-		super.setListDataBeanCollectionReport(atendenteController.findList(getClassImp()));
-		return super.getArquivoReport();
+	@PostConstruct
+	public void init() {
+		busca();
 	}
-
-	public AtendenteBean() {
-		atendenteModel = new Atendente();
-		lstAtendente = new ArrayList<Atendente>();
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstAtendente, "atendente.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onRowSelect(SelectEvent event) {
 		atendenteModel = (Atendente) event.getObject();
-	}
-
-	public void limpa() {
-		/* Dados */
-		atendenteModel.getPessoa().setPessoaNome("");
-		atendenteModel.getPessoa().setPessoaDataNascimento(new Date());
-		atendenteModel.getPessoa().setPessoaSexo("");
-		atendenteModel.getPessoa().setPessoaEmail("");
-		atendenteModel.getPessoa().setPessoaRG("");
-		atendenteModel.getPessoa().setPessoaCPF("");
-		atendenteModel.getPessoa().setPessoaObservacao("");
-		atendenteModel.getPessoa().setPessoaTelefonePrimario("");
-		atendenteModel.getPessoa().setPessoaTelefoneSecundario("");
-
-		/* Endereço */
-		atendenteModel.getPessoa().setCep("");
-		atendenteModel.getPessoa().setBairro("");
-		atendenteModel.getPessoa().setUf("");
-		atendenteModel.getPessoa().setLogradouro("");
-		atendenteModel.getPessoa().setComplemento("");
-		atendenteModel.getPessoa().setLocalidade("");
 	}
 
 	public void inativar() {
@@ -122,7 +103,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void busca() throws Exception {
+	public void busca() {
 		lstAtendente = new ArrayList<Atendente>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Atendente a where 1=1");
@@ -142,19 +123,21 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
 		System.out.println("LISTA SELECT :> " + str);
-		lstAtendente = atendenteController.findListByQueryDinamica(str.toString());
-	}
-
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
+		try {
+			lstAtendente = atendenteController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public String save() throws Exception {
-
-		atendenteModel = atendenteController.merge(atendenteModel);
+	public String save() {
+		try {
+			atendenteModel = atendenteController.merge(atendenteModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		atendenteModel = new Atendente();
-
 		return "";
 	}
 
@@ -163,17 +146,16 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isCPF(atendenteModel.getPessoa().getPessoaCPF())) {
 				try {
-				atendenteModel = atendenteController.merge(atendenteModel);
-				atendenteModel = new Atendente();
+					atendenteModel.getPessoa().setTipoPessoa("ATE");
+					atendenteModel = atendenteController.merge(atendenteModel);
+					limpar();
 					sucesso();
 				} catch (Exception e) {
 					System.out.println("Erro ao salvar Atendente");
 					e.printStackTrace();
 				}
 			} else {
-				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-						"Cpf Inválido: " + atendenteModel.getPessoa().getPessoaCPF(), "");
-				addMessage(message);
+				addMsg("Cpf Inválido: " + atendenteModel.getPessoa().getPessoaCPF());
 				System.out.println("ERRO CPF INVÁLIDO");
 			}
 		} else {
@@ -189,54 +171,48 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
-		return getUrl();
-	}
-
-	public String edita() throws Exception {
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		atendenteModel = (Atendente) atendenteController.getSession().get(getClassImp(),
-				atendenteModel.getIdAtendente());
-		atendenteController.delete(atendenteModel);
+	public void excluir() {
+		try {
+			atendenteModel = (Atendente) atendenteController.getSession().get(Atendente.class,
+					atendenteModel.getIdAtendente());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			atendenteController.delete(atendenteModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		atendenteModel = new Atendente();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<Atendente> getClassImp() {
-		return Atendente.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
 	}
 
-	@Override
-	public void setarVariaveisNulas() throws Exception {
+	public void limpar() {
 		atendenteModel = new Atendente();
-	}
-
-	@Override
-	protected InterfaceCrud<Atendente> getController() {
-		return atendenteController;
 	}
 
 	// PESQUISA CEP
@@ -288,10 +264,8 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 			age--;
 		}
 		if (age < 16) {
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"A idade informada deve ser maior/igual que 16 Anos", "");
+			addMsg("A idade informada deve ser maior/igual que 16 Anos");
 			System.out.println("TRUE IDADE ATENDENTE:>>>" + age);
-			addMessage(message);
 			return false;
 		} else {
 			System.out.println("FALSE IDADE ATENDENTE:>>>" + age);
@@ -300,20 +274,10 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 
 	}
 
-	@Override
-	public void consultarEntidade() throws Exception {
-		atendenteModel = new Atendente();
-	}
-
 	// GETTERS E SETTERS
 
-	public Atendente getatendenteModel() {
+	public Atendente getAtendenteModel() {
 		return atendenteModel;
-	}
-
-	public void setatendenteModel(Atendente atendenteModel) {
-
-		this.atendenteModel = atendenteModel;
 	}
 
 	public String getUrl() {
@@ -326,10 +290,6 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 
 	public void setUrlFind(String urlFind) {
 		this.urlFind = urlFind;
-	}
-
-	public Atendente getAtendenteModel() {
-		return atendenteModel;
 	}
 
 	public void setAtendenteModel(Atendente atendenteModel) {

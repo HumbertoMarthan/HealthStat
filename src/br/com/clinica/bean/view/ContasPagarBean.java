@@ -22,7 +22,6 @@ import br.com.clinica.controller.geral.FornecedorController;
 import br.com.clinica.controller.geral.MaterialController;
 import br.com.clinica.controller.geral.ParcelaContasPagarController;
 import br.com.clinica.controller.geral.PedidoController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
 import br.com.clinica.model.cadastro.estoque.Material;
@@ -30,7 +29,6 @@ import br.com.clinica.model.cadastro.estoque.Pedido;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasPagar;
 import br.com.clinica.model.financeiro.ParcelaContasPagar;
-import br.com.clinica.utils.DatasUtils;
 import br.com.clinica.utils.DialogUtils;
 
 @Controller
@@ -40,26 +38,31 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
-	private ContasPagar contasPagarModel;
-	private ParcelaContasPagar parcelaContasPagarModel;
-	private Caixa caixaModel;
-	private Pedido pedidoModel;
-	private Estoque estoqueModel;
+	private ContasPagar contasPagarModel = new ContasPagar();
+	private ParcelaContasPagar parcelaContasPagarModel = new ParcelaContasPagar();
+	private Caixa caixaModel = new Caixa();
+	private Pedido pedidoModel = new Pedido();
+	private Estoque estoqueModel = new Estoque();
+	
 	private String url = "/financeiro/pagar/contasPagar.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/pagar/findContasPagar.jsf?faces-redirect=true";
-	private List<ContasPagar> lstContasPagar;
+	
+	private List<ContasPagar> lstContasPagar = new ArrayList<ContasPagar>();
+	private List<ParcelaContasPagar>  lstParcelaPagar = new ArrayList<>();
 	private List<ParcelaContasPagar> lstParcelaPagarPendentes;
 	private List<Pedido> lstPedido;
-	private List<Estoque> lstEstoque;
-	List<Map<Object, Object>> lstTotalPedido;
+	private List<Estoque> lstEstoque = new ArrayList<Estoque>();
+	private List<Map<Object, Object>> lstTotalPedido;
+	
 	private String campoBuscaFornecedor = "";
 	private String campoBuscaStatus = "P";
 	private String tipoConta = "";
+	
 	private Fornecedor fornecedorSelecionado;
 	private Double valorPedido = 0.0D;
+	
 	Long parcelas;
 	String temParcela = "N";
-	private List<ParcelaContasPagar> lstParcelaPagar;
 
 	@Autowired
 	private ContasPagarController contasPagarController;
@@ -83,14 +86,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private EstoqueController estoqueController;
 
 	public ContasPagarBean() {
-		lstParcelaPagar = new ArrayList<>();
-		parcelaContasPagarModel = new ParcelaContasPagar();
-		contasPagarModel = new ContasPagar();
-		lstContasPagar = new ArrayList<ContasPagar>();
-		lstEstoque = new ArrayList<Estoque>();
-		caixaModel = new Caixa();
-		pedidoModel = new Pedido();
-		estoqueModel = new Estoque();
 		try {
 			busca();
 		} catch (Exception e) {
@@ -210,7 +205,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		DialogUtils.closeDialog("pedidosDialog");
 	}
 
-	public void busca() throws Exception {
+	public void busca()  {
 		lstContasPagar = new ArrayList<ContasPagar>();
 		StringBuilder str = new StringBuilder();
 		str.append("from ContasPagar a where 1=1");
@@ -222,7 +217,11 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			str.append(" and a.fornecedor.nomeFornecedor = '" + campoBuscaFornecedor.toUpperCase() + "'");
 		}
 
-		lstContasPagar = contasPagarController.findListByQueryDinamica(str.toString());
+		try {
+			lstContasPagar = contasPagarController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void buscaPedido() throws Exception {
@@ -246,7 +245,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			busca();
 			addMsg("Operação Realizada Com Sucesso!");
 		} catch (Exception e) {
-			contasPagarModel = new ContasPagar();
 			e.printStackTrace();
 		}
 
@@ -285,9 +283,13 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String save() throws Exception {
-		contasPagarModel = contasPagarController.merge(contasPagarModel);
-		contasPagarModel = new ContasPagar();
+	public String save() {
+		try {
+			contasPagarModel = contasPagarController.merge(contasPagarModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		return "";
 	}
 
@@ -311,7 +313,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			caixaModel.setValorRetirado(contaAtual.getValorConta());
 			caixaModel.setTipo("CP");
 			
-			contasPagarModel = new ContasPagar();
+			limpar();
 		} catch (Exception e1) {
 			System.out.println("Erro ao busca conta para adicionar ao caixa");
 			e1.printStackTrace();
@@ -344,59 +346,48 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao salvar contas a pagar ");
 			e.printStackTrace();
 		}
-		contasPagarModel = new ContasPagar();
+		limpar();
 	}
 
 	@Override
-	public void saveEdit() throws Exception {
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
 	@Override
-	public String novo() throws Exception {
-		setarVariaveisNulas();
+	public String novo() {
+		limpar();
 		return getUrl();
 	}
 
 	@Override
-	public void setarVariaveisNulas() throws Exception {
-		contasPagarModel = new ContasPagar();
-	}
-
-	@Override
-	public String editar() throws Exception {
+	public String editar() {
 		return getUrl();
 	}
 
 	@Override
-	public void excluir() throws Exception {
-		contasPagarModel = (ContasPagar) contasPagarController.getSession().get(getClassImp(),
-				contasPagarModel.getIdContasPagar());
-		contasPagarController.delete(contasPagarModel);
-		contasPagarModel = new ContasPagar();
+	public void excluir() {
+		try {
+			contasPagarModel = (ContasPagar) contasPagarController.getSession().get(ContasPagar.class,
+					contasPagarModel.getIdContasPagar());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			contasPagarController.delete(contasPagarModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
 		sucesso();
 		busca();
 	}
 
 	@Override
-	protected Class<ContasPagar> getClassImp() {
-		return ContasPagar.class;
-	}
-
-	@Override
-	public String redirecionarFindEntidade() throws Exception {
-		setarVariaveisNulas();
+	public String redirecionarFindEntidade() {
+		limpar();
 		return getUrlFind();
-	}
-
-	@Override
-	protected InterfaceCrud<ContasPagar> getController() {
-		return contasPagarController;
-	}
-
-	@Override
-	public void consultarEntidade() throws Exception {
-		contasPagarModel = new ContasPagar();
 	}
 
 	public void onRowSelect(SelectEvent event) {

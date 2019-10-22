@@ -81,8 +81,24 @@ public class Paciente implements EntityBase, Serializable {
 		this.pessoa = pessoa;
 	}
 
+	/*
+	 * private String path; //Caminho base
+	 * 
+	 * private String pathToReportPackage; // Caminho para o package onde estão
+	 * armazenados os relatorios Jarper
+	 */
+	/*
+	 * public Paciente() { this.path =
+	 * this.getClass().getClassLoader().getResource("").getPath();
+	 * this.pathToReportPackage = this.path + "relatorio/";
+	 * System.out.println(path); }
+	 * 
+	 * public String getPathToReportPackage() { return this.pathToReportPackage; }
+	 * 
+	 * public String getPath() { return this.path; }
+	 */
+	
 	public Paciente() {}
-
 	public Paciente(Long cod) {
 		this.idPaciente = cod;
 	}

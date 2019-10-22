@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.SessionController;
-import br.com.clinica.hibernate.InterfaceCrud;
 import br.com.clinica.service.interfaces.SrvLogin;
 
 
@@ -68,7 +67,6 @@ public class LoginInvalidarBean extends BeanManagedViewAbstract {
 			FacesContext.getCurrentInstance().addMessage("msg", message);
 		}
 		
-		
 		context.ajax().addCallbackParam("loggedIn", loggedIn);
 	}
 	
@@ -84,16 +82,4 @@ public class LoginInvalidarBean extends BeanManagedViewAbstract {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	@Override
-	protected Class<?> getClassImp() {
-		return null;
-	}
-
-	@Override
-	protected InterfaceCrud<?> getController() {
-		return null;
-	}
-
-
 }
