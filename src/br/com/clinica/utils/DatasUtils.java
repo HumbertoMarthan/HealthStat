@@ -147,6 +147,30 @@ public class DatasUtils {
 		return null;
 	}
 	
+	public static String formatDateTimeSql(Date data){
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");  
+
+		try {
+			return format.format(data);
+		} catch (Exception e) {
+			
+		} 
+		return null;
+	}
+	
+	public static String formatDateSql(Date data){
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");  
+
+		try {
+			return format.format(data);
+		} catch (Exception e) {
+			
+		} 
+		return null;
+	}
+	
 	public static String formatTime(Date data){
 		
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");  
@@ -177,7 +201,7 @@ public class DatasUtils {
 	
 	
 	
-	public static String formatDateDb(String dataStr){
+	public static String formatDateSQL(String dataStr){
 		
 		SimpleDateFormat formatIn = new SimpleDateFormat("dd/MM/yyyy");  //Jan 6, 2012 12:00:00 AM
 		SimpleDateFormat formatOut = new SimpleDateFormat("yyyy-MM-dd");  //Jan 6, 2012 12:00:00 AM

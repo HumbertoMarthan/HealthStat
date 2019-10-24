@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,7 +34,7 @@ public class Login implements Serializable {
 	private String senha = null;
 	private boolean inativo = false;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idPessoa")
 	private Pessoa pessoa;
 	
@@ -44,7 +45,7 @@ public class Login implements Serializable {
 	@JoinColumn(name ="idPerfil")
 	Perfil perfil;
 
-	private String ativo;
+	private String ativo = "A";
 	
 	//GETTERS E SETTERS -----------------------------------------
 	
@@ -58,9 +59,11 @@ public class Login implements Serializable {
 	public String getAtivo() {
 		return ativo;
 	}
+	
 	public void setAtivo(String ativo) {
 		this.ativo = ativo;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -150,12 +150,12 @@
 							</h:panelGroup>
 							<div class="ui-g-12 ui-lg-3">
 								<div class="ui-inputgroup">
-								<p:inputText value="#{loginBean.campoBuscaNome}"
-									placeholder="Buscar pelo Nome" id="inputNome"/>
+								<p:inputText value="#{loginBean.campoBuscaLogin}"
+									placeholder="Buscar pelo Nome" id="inputLogin"/>
 								<p:commandButton
 									icon="ui-icon-search"
 									id="btnBuscatxt" actionListener="#{loginBean.busca}"
-									update=" inputNome,table" />
+									update=" inputLogin,table" />
 								</div>
 							</div>
 						</div>
@@ -178,7 +178,12 @@
 									<p:outputLabel value="#{d.login}"/> 
 							</p:column>
 
-							<p:column headerText="Login" priority="1"
+							<p:column headerText="Nome" priority="1"
+								style="text-align: left; font-size: large">
+									<p:outputLabel value="#{d.pessoa.pessoaNome}" />
+							</p:column>
+
+							<p:column headerText="Perfil" priority="1"
 								style="text-align: left; font-size: large">
 									<p:outputLabel value="#{d.perfil.perfilNome}" />
 							</p:column>

@@ -227,6 +227,107 @@
 						</p:panel>
 					</div>
 				</p:tab>
+				<p:tab title="Lista">
+					<p:panel>
+			<div class="ui-fluid">
+				<p:panel header="Pesquisa de Agendamentos" style="text-align:center">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botao">
+							
+							<div class="ui-g-12 ui-lg-4">
+								<p:selectOneRadio value="#{scheduleBean.campoBuscaTipoAgendamento}"
+									style="padding-left: 10% !important">
+									<f:selectItem itemLabel="Agendada" itemValue="CA" />
+									<f:selectItem itemLabel="Confirmada" itemValue="CC" />
+									<f:selectItem itemLabel="Retorno" itemValue="RE" />
+									<p:ajax event="change" listener="#{scheduleBean.buscaEvento}"
+										update="table" />
+								</p:selectOneRadio>
+							</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-1">
+								<p:calendar id="inicio"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataInicio}"
+									placeholder="Buscar pelo Paciente" />
+							</div>
+							
+							<div class="ui-g-12 ui-lg-1">
+								<p:calendar id="fim"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataFim}"
+									placeholder="Buscar pelo Paciente" />
+							</div>		
+	
+
+							<div class="ui-g-12 ui-lg-2">
+								<p:inputText value="#{scheduleBean.campoBuscaPaciente}"
+									placeholder="Buscar pelo Paciente" id="inputNome"
+									style="height:40px; ">
+
+								</p:inputText>
+							</div>
+
+							<div class="ui-g-12 ui-lg-2 ">
+								<div class="ui-inputgroup">
+									<p:inputText value="#{scheduleBean.campoBuscaMedico}"
+										placeholder="Buscar pelo Médico" id="inputCPF"
+										style="height:40px; " />
+									<p:commandButton style="height:40px;" icon="ui-icon-search"
+										 actionListener="#{scheduleBean.buscaEvento}"
+										update="table" />
+								</div>
+							</div>
+							<div class="ui-g-12 ui-lg-1">
+									<p:commandLink	rendered="#{scheduleBean.lstEvento.size() > 0}"
+										actionListener="#{scheduleBean.geraRelatorio}">
+										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+									</p:commandLink>
+							</div>
+						</div>
+					</div>
+				</p:panel>
+				<p:panel>
+					<div class="ui-g">
+						<br />
+						<p:dataTable value="#{scheduleBean.lstEvento}" var="d"
+							emptyMessage="Não Há Registros Lançados"
+							 rowKey="#{d.id}"
+							selectionMode="single" id="table" rows="10" paginator="true" 
+							selection="#{scheduleBean.evento}">
+
+							<p:ajax event="rowSelect" listener="#{scheduleBean.onRowSelect}"
+								update="table" />
+
+							<p:column headerText="Paciente" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel
+									value="#{d.paciente.pessoa.pessoaNome}"/>
+							</p:column>
+							
+							<p:column headerText="Data Inicio" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel
+									value="#{d.dataInicio}">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+									</p:outputLabel>
+							</p:column>
+
+							<p:column headerText="Data Inicio" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.dataFim}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+								</p:outputLabel>
+							</p:column>
+
+							<p:column headerText="Médico" priority="1"
+								style="overflow: hidden;text-align: left; font-size: large">
+								<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
+							</p:column>
+
+						</p:dataTable>
+					</div>
+				</p:panel>
+			</div>
+					</p:panel>
+				</p:tab>
 			</p:tabView>
 
 		</h:form>

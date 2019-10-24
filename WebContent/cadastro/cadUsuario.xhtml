@@ -50,11 +50,11 @@
 }
 
 .ui-selectonemenu label.ui-selectonemenu-label {
-	cursor: pointer;
-	height: 33px;
-	font-size: 20px;
-	text-align: center;
-	color: black;
+    cursor: pointer;
+    height: 35px;
+    font-size: 20px;
+    text-align: center;
+    color: black;
 }
 
 .subtitulo {
@@ -76,6 +76,15 @@
 
 .ui-panel .ui-panel-title {
 	
+}
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+}
+
+.ui-fluid .ui-password {
+    width: 100%;
+    height: 35px;
 }
 </style>
 }
@@ -112,39 +121,97 @@
 									styleClass="obrigatorio" />
 								<p:separator />
 								<br />
-								<div align="center">
-									<h:panelGrid columns="1">
+								<div class="ui-g">
+									
+								<div class="ui-g-12 ui-lg-2">
+									<h:outputLabel value="Novo Usuário?" />
+									<p:selectOneRadio required="true" value="#{loginBean.novo}" style="padding-left: 60px;"
+										requiredMessage="Informe o se é novo">
+										<f:selectItem itemLabel="Sim" itemValue="S" />
+										<f:selectItem itemLabel="Não" itemValue="N" />
+										<p:ajax update="@form" />
+									</p:selectOneRadio>
+								</div>
 
-										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Usuario:*" />
-											<p:inputText required="true"
-												value="#{loginBean.loginModel.login}" autocomplete="true"
-												requiredMessage="Informe o Nome do Usuário" />
-										</div>
+								<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Tipo de Pessoa:*" />
+										<p:selectOneMenu required="true"
+											value="#{loginBean.pessoaModel.tipoPessoa}"
+											requiredMessage="Informe o Nome da Pessoa">
+											<f:selectItem itemLabel="Selecione" noSelectionOption="true"
+												itemValue="" />
+											<f:selectItem itemLabel="Atendente" itemValue="ATE" />
+											<f:selectItem itemLabel="Estoquista" itemValue="EST" />
+											<f:selectItem itemLabel="Médico" itemValue="MED" />
+											<p:ajax process="@this" update="@form" />
+										</p:selectOneMenu>
+								</div>		
+								
+								<ui:fragment  rendered="#{loginBean.novo eq 'S'}">
+									<div class="ui-g-12 ui-lg-3">
+										<h:outputLabel value="Nome :*" />
+										<p:inputText required="true"
+											value="#{loginBean.pessoaModel.pessoaNome}"
+											autocomplete="true"
+											requiredMessage="Informe o Nome da Pessoa" />
+									</div>
+								</ui:fragment>
 
-										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Senha:*" />
-											<p:password style="text-align: center; height: 35px" 
-												autocomplete="false" feedback="true"  
-												weakLabel="Senha Fraca!" goodLabel="Senha Boa!"
-												strongLabel="Senha Forte!" promptLabel="Insira sua Senha!"
-												required="true" value="#{loginBean.loginModel.senha}"
-												requiredMessage="Informe o Senha do usuário" />
-										</div>
+								<ui:fragment rendered="#{loginBean.novo eq 'N'}">
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="Pessoa" />
+										<p:autoComplete id="pessoa"
+											completeMethod="#{loginBean.completePessoa}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.pessoaNome}" itemValue="#{a}"
+											value="#{loginBean.pessoaAux}" minQueryLength="2"
+											dropdown="true" maxResults="30" required="true"
+											requiredMessage="Informe uma pessoa" style="height: 35px">
+										</p:autoComplete>
+									</div>
+								</ui:fragment>
+								<ui:fragment rendered="#{loginBean.novo eq 'S'}">
+									<div class="ui-g-12 ui-lg-2">
+										<h:outputLabel value="CPF:*" />
+										<p:inputMask mask="999.999.999-99" required="true"
+											value="#{loginBean.pessoaModel.pessoaCPF}"
+											autocomplete="true"
+											requiredMessage="Informe o Nome da Pessoa" >
+											<p:ajax process="@this" />
+											</p:inputMask>
+									</div>
+								</ui:fragment>
 
-										<div class="ui-g-12 ui-lg-2">
-											<p:outputLabel value="Perfis" />
-											<p:autoComplete 
-												completeMethod="#{auxController.completePerfil}"
-												forceSelection="true" converter="entityConverter" var="a"
-												itemLabel="#{a.perfilNome}" itemValue="#{a}"
-												value="#{loginBean.perfilModel}"
-												minQueryLength="2" dropdown="true" maxResults="30"
-												required="false"
-												requiredMessage="Informe um Perfil">
-											</p:autoComplete>
-										</div>
-									</h:panelGrid>
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="Login:*" />
+										<p:inputText required="true"
+											value="#{loginBean.loginModel.login}" autocomplete="true"
+											requiredMessage="Informe o Nome do Usuário" >
+											<p:ajax process="@this" />
+											</p:inputText>
+									</div>
+
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="Senha:*" />
+										<p:password 
+											autocomplete="true" required="true"
+											value="#{loginBean.loginModel.senha}"
+											requiredMessage="Informe o Senha do usuário" >
+											<p:ajax process="@this" />
+											</p:password>
+									</div>
+
+									<div class="ui-g-12 ui-lg-1">
+										<p:outputLabel value="Perfis" />
+										<p:autoComplete
+											completeMethod="#{auxController.completePerfil}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.perfilNome}" itemValue="#{a}"
+											value="#{loginBean.perfilModel}" minQueryLength="2"
+											dropdown="true" maxResults="30" required="false"
+											requiredMessage="Informe um Perfil">
+										</p:autoComplete>
+									</div>
 								</div>
 							</p:panel>
 						</div>

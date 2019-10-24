@@ -17,6 +17,9 @@ import br.com.clinica.controller.geral.MaterialController;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -43,9 +46,15 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private MaterialController materialController;
-
-	// @Autowired
-	// private PedidoControllerpedidoController;
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstEstoque, "estoque.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void busca() throws Exception {
 

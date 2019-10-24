@@ -158,11 +158,11 @@
 								<p:commandButton style="height:40px;" 
 									icon="ui-icon-search" id="btnBuscatxt"
 									actionListener="#{pacienteBean.busca}"
-									update=" inputNome,inputCPF, table" />
+									update=" inputNome,impressao,inputCPF, table" />
 									</div>
 							</div>
 							<div class="ui-g-12 ui-lg-1">
-									<p:commandLink	rendered="#{pacienteBean.lstPaciente.size() > 0}"
+									<p:commandLink id="impressao"	rendered="#{pacienteBean.lstPaciente.size() > 0}"
 										actionListener="#{pacienteBean.geraRelatorio}">
 										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
 									</p:commandLink>

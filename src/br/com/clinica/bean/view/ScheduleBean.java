@@ -37,6 +37,9 @@ import br.com.clinica.model.financeiro.ContasReceber;
 import br.com.clinica.model.prontuario.Prontuario;
 import br.com.clinica.utils.DatasUtils;
 import br.com.clinica.utils.EmailUtils;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @ManagedBean(name = "scheduleBean")
 @Controller
@@ -151,6 +154,8 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	@PostConstruct
 	public void init() {
+		buscaEvento();
+		
 		try {
 		buscaPreco();
 		}catch (Exception e) {
@@ -182,29 +187,11 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	/*
-	 * @Override public StreamedContent getArquivoReport() throws Exception {
-	 * super.setNomeRelatorioJasper("report_calendario");
-	 * super.setNomeRelatorioSaida("report_calendario");
-	 * 
-	 * String[] parametros = new String[] { "dataInicio", "dataFim" }; String hql =
-	 * "FROM Evento e WHERE e.dataInicio BETWEEN :dataInicio AND :dataFim  " +
-	 * "AND e.dataFim BETWEEN :dataInicio AND :dataFim)";
-	 * 
-	 * List<Evento> lista = eventoController.findListByQueryDinamica(hql,
-	 * Arrays.asList(parametros), evento.getDataInicioRelatorio(),
-	 * evento.getDataFimRelatorio());
-	 * 
-	 * super.setListDataBeanCollectionReport(lista); return
-	 * super.getArquivoReport(); }
-	 */
-
 	public List<Paciente> completePaciente(String q)  {
 		try {
 			return pacienteController.findListByQueryDinamica(" from Paciente where pessoa.pessoaNome like '%"
 					+ q.toUpperCase() + "%' order by pessoa.pessoaNome ASC");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -713,11 +700,107 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		// Enviar Email com o dados coletados dentro desse método
 		EmailUtils.enviarEmail(email, emailTitulo, emailConteudo, true);
 	}
+	
+	//-------------------------LISTA
+	private List<Evento> lstEvento = new ArrayList<>();
+	private String campoBuscaPaciente = "";
+	private String campoBuscaMedico = "";
+	private String campoBuscaTipoAgendamento = "CA";
+	private Date campoDataInicio;
+	private Date campoDataFim;
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstEvento, "agendamento.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void buscaEvento() {
+		lstEvento = new ArrayList<Evento>();
+		StringBuilder str = new StringBuilder();
+		str.append("from Evento a where 1=1");
+
+		if (!campoBuscaPaciente.equals("")) {
+			str.append(" and upper(a.paciente.pessoa.pessoaNome) like upper('%" + campoBuscaPaciente + "%')");
+		}
+		if (!campoBuscaMedico.equals("")) {
+			str.append(" and upper(a.medico.pessoa.pessoaNome) like upper('%" + campoBuscaMedico + "%')");
+		}
+		if (campoBuscaTipoAgendamento.equals("CA") ) { //Agendada
+			str.append(" and a.tipoEvento = 0 ");
+		}
+		if (campoBuscaTipoAgendamento.equals("CC") ) { //Agendada Confirmada
+			str.append(" and a.tipoEvento = 2 ");
+		}
+		if (campoBuscaTipoAgendamento.equals("RE") ) { //Retornada
+			str.append(" and a.tipoEvento = 1 ");
+		}
+		
+		if (campoDataInicio != null) { 
+			String aux = "";
+			
+			if(campoDataFim != null) { aux =  DatasUtils.formatDateSql(campoDataFim);} else { aux =  DatasUtils.formatDateSql(DatasUtils.addDays(campoDataFim, 2));}
+			 str.append(" and a.dataInicio BETWEEN '"+DatasUtils.formatDateSql(campoDataInicio) +" 00:00:00' AND '"+ aux +" 23:59:59'");
+		}
+		if (campoDataFim != null) {
+			String aux = "";
+			if(campoDataInicio != null) { aux =  DatasUtils.formatDateSql(campoDataInicio);}// else { aux =  DatasUtils.formatDateSql(campoDataInicio = new Date());}
+			str.append(" and a.dataFim BETWEEN '"+ aux   +" 00:00:00'  AND '"+  DatasUtils.formatDateSql(campoDataFim) +" 23:59:59'" );
+			System.out.println("Calendário >>>>>>"+str);
+		}
+		
+	
+		try {
+			lstEvento = eventoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+		  
+		  
 
 	// GETTERS E SETTERS
+	
+	
 
 	public void onRowSelect(SelectEvent event) {
 		evento = (Evento) event.getObject();
+	}
+	
+	public List<Evento> getLstEvento() {
+		return lstEvento;
+	}
+
+	public void setLstEvento(List<Evento> lstEvento) {
+		this.lstEvento = lstEvento;
+	}
+
+	public String getCampoBuscaPaciente() {
+		return campoBuscaPaciente;
+	}
+
+	public void setCampoBuscaPaciente(String campoBuscaPaciente) {
+		this.campoBuscaPaciente = campoBuscaPaciente;
+	}
+
+	public String getCampoBuscaMedico() {
+		return campoBuscaMedico;
+	}
+
+	public void setCampoBuscaMedico(String campoBuscaMedico) {
+		this.campoBuscaMedico = campoBuscaMedico;
+	}
+
+	public String getCampoBuscaTipoAgendamento() {
+		return campoBuscaTipoAgendamento;
+	}
+
+	public void setCampoBuscaTipoAgendamento(String campoBuscaTipoAgendamento) {
+		this.campoBuscaTipoAgendamento = campoBuscaTipoAgendamento;
 	}
 
 	public ContextoBean getContextoBean() {
@@ -909,5 +992,21 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
 		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+
+	public Date getCampoDataInicio() {
+		return campoDataInicio;
+	}
+
+	public void setCampoDataInicio(Date campoDataInicio) {
+		this.campoDataInicio = campoDataInicio;
+	}
+
+	public Date getCampoDataFim() {
+		return campoDataFim;
+	}
+
+	public void setCampoDataFim(Date campoDataFim) {
+		this.campoDataFim = campoDataFim;
 	}
 }

@@ -152,7 +152,7 @@
  -->
 							</h:panelGroup>
 
-							<div class="ui-g-12 ui-lg-5">
+							<div class="ui-g-12 ui-lg-4">
 								<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
 									style="padding-left: 10% !important">
 									<f:selectItem itemLabel="Aprovado" itemValue="A" />
@@ -164,19 +164,22 @@
 							</div>
 
 							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-inputgroup">
 								<p:inputText value="#{estoqueBean.campoBusca}"
 									placeholder="Buscar Material" style="height:40px; ">
-
 								</p:inputText>
-							</div>
-
-							<div class="ui-g-12 ui-lg-1">
-								<p:commandButton style="height:40px; " styleClass="btn btn-blue"
+								<p:commandButton 
 									icon="ui-icon-search" id="btnBuscatxt"
-									update="table, tablePedido"
+									update="table,impressao, tablePedido"
 									actionListener="#{estoqueBean.busca}"
 									action="#{pedidoBean.busca}" />
-
+								</div>
+							</div>
+								<div class="ui-g-12 ui-lg-1">
+									<p:commandLink id="impressao"	rendered="#{estoqueBean.lstEstoque.size() > 0}"
+										actionListener="#{estoqueBean.geraRelatorio}">
+										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+									</p:commandLink>
 							</div>
 						</div>
 					</div>

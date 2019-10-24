@@ -101,6 +101,8 @@
 .ui-panel .ui-panel-title {
 	font-size: medium;
 }
+
+
 </style>
 	</ui:define>
 	<ui:define name="content">
@@ -153,8 +155,7 @@
 										<f:selectItem itemLabel="Todos" itemValue="T" />
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
 										<f:selectItem itemLabel="Inativo" itemValue="I" />
-										<p:ajax event="change" listener="#{atendenteBean.busca}"
-											update="table" />
+										<p:ajax event="change" listener="#{atendenteBean.busca}" update="table" />
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
@@ -175,6 +176,12 @@
 										id="btnBuscatxt" actionListener="#{atendenteBean.busca}"
 										update=" inputNome,inputCPF,table" />
 								</div>
+							</div>
+								<div class="ui-g-12 ui-lg-1">
+									<p:commandLink id="impressao"	rendered="#{atendenteBean.lstAtendente.size() > 0}"
+										actionListener="#{atendenteBean.geraRelatorio}">
+										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+									</p:commandLink>
 							</div>
 						</div>
 					</div>

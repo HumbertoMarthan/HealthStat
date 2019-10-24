@@ -40,6 +40,8 @@ public class Pessoa implements  EntityBase,Serializable {
 		return idPessoa;
 	}
 	
+	private String ativo = "A";
+	
 	@Column(name = "pessoaNome")
 	private String pessoaNome;
 
@@ -100,12 +102,14 @@ public class Pessoa implements  EntityBase,Serializable {
 	@Column(name="localidade")
 	private String localidade;
 	
-	@Column(name="tipoPessoa")
+	@Column(name="tipoPessoa") // ATE , MED , EST , PAC
 	private String tipoPessoa;
 	
 	public Pessoa() {}
 	
 	public Pessoa(Long cod) {this.idPessoa = cod;}
+	
+	public Pessoa(String tipoPessoa) {this.tipoPessoa = tipoPessoa;}
 	
 	// GETTERS E SETTERS
 
@@ -304,6 +308,14 @@ public class Pessoa implements  EntityBase,Serializable {
 
 	public void setTipoPessoa(String tipoPessoa) {
 		this.tipoPessoa = tipoPessoa;
+	}
+	
+	public String getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(String ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

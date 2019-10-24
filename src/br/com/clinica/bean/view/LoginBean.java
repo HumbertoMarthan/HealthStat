@@ -15,6 +15,10 @@ import org.springframework.stereotype.Controller;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.bean.geral.LoginAtualizaSenha;
 import br.com.clinica.controller.geral.LoginController;
+import br.com.clinica.controller.geral.PessoaController;
+import br.com.clinica.model.cadastro.pessoa.Atendente;
+import br.com.clinica.model.cadastro.pessoa.Estoquista;
+import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
@@ -31,20 +35,29 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	private Login loginModel = new Login();
 	private Perfil perfilModel;
-	private Pessoa pessoaModel;
+	private Pessoa pessoaModel = new Pessoa();
+	private Pessoa pessoaAux;
+	private Atendente atendenteModel;// = new Atendente();
+	private Estoquista estoquistaModel;// = new Estoquista();
+	private Medico medicoModel;// = new Medico();
 
 	private LoginAtualizaSenha loginAtualizaSenha = new LoginAtualizaSenha();
-	
+
 	private String url = "/cadastro/cadUsuario.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findUsuario.jsf?faces-redirect=true";
-	
+
 	private List<Login> lstLogin = new ArrayList<>();
-	
+
 	private String campoBuscaNome = "";
 	private String campoBuscaLogin = "";
 
+	private String novo = "N";
+
 	@Autowired
 	private LoginController loginController;
+
+	@Autowired
+	private PessoaController pessoaController;
 
 	@PostConstruct
 	public void init() {
@@ -63,9 +76,9 @@ public class LoginBean extends BeanManagedViewAbstract {
 		 * getConfirmaSenha())) { addMsg("A nova senha e a confirmação não conferem.");
 		 * } else {
 		 */
-			entidadeLogada.setSenha(loginAtualizaSenha.getNovaSenha());
-			loginController.saveOrUpdate(entidadeLogada);
-			entidadeLogada = loginController.findByPorId(Login.class, entidadeLogada.getIdLogin());
+		entidadeLogada.setSenha(loginAtualizaSenha.getNovaSenha());
+		loginController.saveOrUpdate(entidadeLogada);
+		entidadeLogada = loginController.findByPorId(Login.class, entidadeLogada.getIdLogin());
 		/*
 		 * if (entidadeLogada.getSenha().equals(loginAtualizaSenha.getNovaSenha())) {
 		 * sucesso(); entidadeLogada = new Login(); } else {
@@ -78,7 +91,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String redirecionarFindEntidade()  {
+	public String redirecionarFindEntidade() {
 		limpar();
 		return getUrlFind();
 	}
@@ -88,15 +101,15 @@ public class LoginBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String novo()  {
+	public String novo() {
 		limpar();
 		return getUrl();
 	}
 
-	public void busca()  {
+	public void busca() {
 		StringBuilder str = new StringBuilder();
 		str.append("from Login a where 1=1");
-
+		
 		if (!campoBuscaLogin.equals("")) {
 			str.append(" and upper(a.login) like upper('%" + campoBuscaLogin + "%')");
 		}
@@ -107,7 +120,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void inativar() {
 
 		if (loginModel.getAtivo().equals("I")) {
@@ -128,7 +141,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 		try {
 			busca();
 		} catch (Exception e) {
-			System.out.println("Erro ao buscar atendente");
+			System.out.println("Erro ao buscar S");
 			e.printStackTrace();
 		}
 	}
@@ -150,33 +163,79 @@ public class LoginBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		sucesso();
 		busca();
 	}
 
 	@Override
 	public void saveNotReturn() {
-
-		loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
-		loginModel.setPessoa(new Pessoa(pessoaModel.getIdPessoa()));
-		try {
-			loginModel = loginController.merge(loginModel);
-		} catch (Exception e) {
-			error();
-			e.printStackTrace();
-		}
-		sucesso();
-		busca();
-		limpar();
 		
+		// Seta o Perfil
+		loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
+
+		if (novo.equals("N")) {
+			try {
+				if (!pessoaModel.getTipoPessoa().equals("PAC")) {
+					loginModel.setPessoa(new Pessoa(pessoaAux.getIdPessoa()));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				e.getMessage();
+			}
+
+			try {
+				loginModel = loginController.merge(loginModel);
+				addMsg("Salvou o Login");
+			} catch (Exception e) {
+				error();
+				e.printStackTrace();
+			}
+
+			limpar();
+			pessoaModel = new Pessoa();
+			pessoaAux = new Pessoa();
+
+		} else {
+
+			// Seta TipoPessoa
+			loginModel.setPessoa(new Pessoa(pessoaModel.getTipoPessoa()));
+
+			try {
+				pessoaController.persist(pessoaModel);
+				addMsg("Salvou a Pessoa!");
+			} catch (Exception e) {
+				e.getMessage();
+				error();
+				e.printStackTrace();
+			}
+
+			try {
+				loginController.persist(loginModel);
+				addMsg("Salvou o Login");
+			} catch (Exception e) {
+				e.getMessage();
+				error();
+				e.printStackTrace();
+			}
+
+			limpar();
+			pessoaModel = new Pessoa();
+			pessoaAux = new Pessoa();
+
+		}
+
+	}
+
+	public List<Pessoa> completePessoa(String q) throws Exception {
+		return pessoaController.findListByQueryDinamica(" from Pessoa where pessoaNome like '%" + q.toUpperCase()
+				+ "%' and tipoPessoa = '" + pessoaModel.getTipoPessoa() + "'  order by pessoaNome ASC");
 	}
 
 	@Override
-	public void saveEdit(){
+	public void saveEdit() {
 		saveNotReturn();
 	}
-	
 
 	// GETTERS E SETTERS
 
@@ -274,5 +333,53 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void setPessoaModel(Pessoa pessoaModel) {
 		this.pessoaModel = pessoaModel;
+	}
+
+	public String getNovo() {
+		return novo;
+	}
+
+	public void setNovo(String novo) {
+		this.novo = novo;
+	}
+
+	public PessoaController getPessoaController() {
+		return pessoaController;
+	}
+
+	public void setPessoaController(PessoaController pessoaController) {
+		this.pessoaController = pessoaController;
+	}
+
+	public Atendente getAtendenteModel() {
+		return atendenteModel;
+	}
+
+	public void setAtendenteModel(Atendente atendenteModel) {
+		this.atendenteModel = atendenteModel;
+	}
+
+	public Estoquista getEstoquistaModel() {
+		return estoquistaModel;
+	}
+
+	public void setEstoquistaModel(Estoquista estoquistaModel) {
+		this.estoquistaModel = estoquistaModel;
+	}
+
+	public Medico getMedicoModel() {
+		return medicoModel;
+	}
+
+	public void setMedicoModel(Medico medicoModel) {
+		this.medicoModel = medicoModel;
+	}
+
+	public Pessoa getPessoaAux() {
+		return pessoaAux;
+	}
+
+	public void setPessoaAux(Pessoa pessoaAux) {
+		this.pessoaAux = pessoaAux;
 	}
 }
