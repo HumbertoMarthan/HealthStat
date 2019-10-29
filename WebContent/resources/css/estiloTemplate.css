@@ -117,3 +117,23 @@
         /* with the exported variables from Nova and Luna Themes*/
         border-color: var(--input-hover-border-color, #ccc);
     }
+    
+    
+ .direita{
+ 
+ 	text-align: right !important;
+ }
+ .esquerda{
+ 
+ 	text-align: left !important;
+ }
+
+.centro{
+ 
+ 	text-align: center !important;
+ }
+  
+ 
+ .large{
+ 	    font-size: large !important;
+ }

@@ -196,7 +196,7 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	public void saveNotReturn() {
 		try {
 		if (idadeMinimaFuncionario() == true) {
-			if (ValidaCPF.isCPF(estoquistaModel.getPessoa().getPessoaCPF())) {
+			if (ValidaCPF.isValid(estoquistaModel.getPessoa().getPessoaCPF())) {
 				estoquistaModel.getPessoa().setTipoPessoa("EST");
 				estoquistaModel = estoquistaController.merge(estoquistaModel);
 				limpar();

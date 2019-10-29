@@ -26,36 +26,36 @@
 							<sec:ifAnyGranted roles="ATE,ADMIN">
 								<p:submenu id="pm_hierarchy_cadastros" label="Cadastros"
 									icon="fa fa-plus-circle">
-									<p:submenu id="submenu_colaboradores" label="Colaboradores"  style="font-size:large"
+									<p:submenu id="submenu_colaboradores" label="Colaboradores"  style="font-size:14px"
 										icon="fa fa-group">
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem value="Atendente" style="font-size:large"
+											<p:menuitem value="Atendente" style="font-size:14px"
 												action="#{atendenteBean.redirecionarFindEntidade}"
 												icon="fa fa-user-o" immediate="true" ajax="false" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem id="item_menu_estoquista" value="Estoquista"  style="font-size:large" 
+											<p:menuitem id="item_menu_estoquista" value="Estoquista"  style="font-size:14px" 
 												icon="fa fa-cubes"
 												action="#{estoquistaBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE, ADMIN">
-											<p:menuitem id="item_menu_medico" value="Médico"  style="font-size:large"
+											<p:menuitem id="item_menu_medico" value="Médico"  style="font-size:14px"
 												icon="fa fa-user-md"
 												action="#{medicoBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 									</p:submenu>
 
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_paciente" value="Paciente"  style="font-size:large"
+										<p:menuitem id="item_menu_paciente" value="Paciente"  style="font-size:14px"
 											icon="fa fa-user-o" 
 											action="#{pacienteBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_convenio" value="Convênio"  style="font-size:large"
+										<p:menuitem id="item_menu_convenio" value="Convênio"  style="font-size:14px"
 											icon="fa fa-medkit"
 											action="#{convenioBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
@@ -67,25 +67,25 @@
 									</sec:ifAnyGranted>
 									 -->
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_especialidade" value="Especialidade"  style="font-size:large"
+										<p:menuitem id="item_menu_especialidade" value="Especialidade"  style="font-size:14px"
 											icon="fa fa-glass"
 											action="#{especialidadeBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="EST, ATE, ADMIN">
-										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"  style="font-size:large"
+										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"  style="font-size:14px"
 											icon="fa fa-building"
 											action="#{fornecedorBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
 									<sec:ifAnyGranted roles="EST, ADMIN">
-										<p:menuitem id="item_menu_material" value="Material"  style="font-size:large"
+										<p:menuitem id="item_menu_material" value="Material"  style="font-size:14px"
 											icon="fa fa-glass"
 											action="#{materialBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 									
 									<sec:ifAnyGranted roles="ATE, ADMIN">
-										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"  style="font-size:large"
+										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"  style="font-size:14px"
 											icon="fa fa-glass"
 											action="#{precoConsultaBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
@@ -93,115 +93,115 @@
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="EST, ADMIN">
-								<p:submenu id="pm_hierarchy_movimentação" label="Estoque"  style="font-size:large"
+								<p:submenu id="pm_hierarchy_movimentação" label="Estoque"  style="font-size:14px"
 									icon="fa fa-refresh">
-									<p:menuitem id="submenu_estoque" value="Estoque/Pedidos" style="font-size:large"
+									<p:menuitem id="submenu_estoque" value="Estoque/Pedidos" style="font-size:14px"
 										action="#{estoqueBean.redirecionarFindEntidade}" 
 										icon="fa fa-archive"/>
 								</p:submenu>
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="MED, ADMIN">
-								<p:submenu id="pm_hierarchy_medico" label="Prontuário"  style="font-size:large"
+								<p:submenu id="pm_hierarchy_medico" label="Prontuário"  style="font-size:14px"
 									icon="fa fa-medkit"> 
-									<p:menuitem id="item_menu_prontuario" value="Prontuário"  style="font-size:large"
+									<p:menuitem id="item_menu_prontuario" value="Prontuário"  style="font-size:14px"
 										action="#{prontuarioBean.redirecionarFindEntidade}"
 										icon="fa fa-heartbeat" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 
 							<sec:ifAnyGranted roles="ATE ,ADMIN">
-								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"  style="font-size:large"
+								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"  style="font-size:14px"
 									icon="fa fa-money">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"  style="font-size:large"
+											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"  style="font-size:14px"
 												action="#{caixaBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro" value="Pagamento"  style="font-size:large"
+											<p:menuitem id="item_menu_financeiro" value="Pagamento"  style="font-size:14px"
 												action="#{contasPagarBean.redirecionarFindEntidade}"
 												icon="fa fa-glass" />
 										</sec:ifAnyGranted>
-										<p:menuitem id="item_menu_receber_consultas"  style="font-size:large"
+										<p:menuitem id="item_menu_receber_consultas"  style="font-size:14px"
 											action="#{contasReceberBean.redirecionarFindEntidade}" 
 											value="Receber" icon="fa fa-glass" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<p:submenu id="pm_hierarchy_temas" label="Alterar Tema"  style="font-size:large"
+							<p:submenu id="pm_hierarchy_temas" label="Alterar Tema"  style="font-size:14px"
 								icon="fa fa-dashboard">
 
 
 								<p:menuitem id="pm_layout_default" value="Default"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('default')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_blue" value="Blue"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('blue')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_green" value="Green"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('green')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_turquoise" value="Turquoise"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('turquoise')}"
-									ajax="false" />
+									ajax="false" /> 
 								<p:menuitem id="pm_layout_purple" value="Purple"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('purple')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_orange" value="Orange"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('orange')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_deeppurple" value="Deep Purple"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('deeppurple')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_lime" value="Lime"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('lime')}"
 									ajax="false" />
 
 
-								<p:menuitem id="pm_layout_horizon" value="Horizon"
-									icon="fa fa-paint-brush"
+								<p:menuitem id="pm_layout_horizon" value="Horizon" 
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('horizon')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_bliss" value="Bliss"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('bliss')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_crimson" value="Crimson"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('crimson')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_disco" value="Disco"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('disco')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_sunset" value="Sunset"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('sunset')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_deepsea" value="Deep Sea"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('deepsea')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_opa" value="Opa"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('opa')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_cheer" value="Cheer"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('cheer')}"
 									ajax="false" />
 								<p:menuitem id="pm_layout_smoke" value="Smoke"
-									icon="fa fa-paint-brush"
+									icon="fa fa-paint-brush" style="font-size:14px"
 									actionListener="#{guestPreferences.setLayout('smoke')}"
 									ajax="false" />
 

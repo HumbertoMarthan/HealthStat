@@ -114,47 +114,24 @@
 
 
 								<div class="ui-g-12 ui-lg-2">
-									<p:commandButton id="botaoEditar" value="Alocar Material"
+									<p:commandButton id="alocar" value="Alocar Material"
 										style="height:40px; background: lightskyblue !important  ;
-										   background-color: lightskyblue ;
-										   color:white !important;
-										   font-size:large;"
-										immediate="true" update="table, @form"
+							 		    background-color: lightskyblue ;
+										color:white !important;
+										font-size:large;"
+										immediate="true"
+										update=":formAlocacao"
+										oncomplete="PF('alocarMaterial').show()"
 										rendered="#{estoqueBean.estoqueModel.idEstoque > 0 and (estoqueBean.estoqueModel.status eq 'A') }">
 
-										<f:setPropertyActionListener value="#{d}"
-											target="#{estoqueBean.estoqueModel}" />
 									</p:commandButton>
 								</div>
-
-								<!-- <div class="ui-g-12 ui-lg-2">
-									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
-										style="height:40px;background: tomato !important  ;
-										   background-color: tomato ;
-										   color:white !important;
-										   font-size:large;"
-										immediate="true" action="#{estoqueBean.inativar}"
-										update="table, @form"
-										rendered="#{estoqueBean.estoqueModel.idEstoque > 0 }">
-									</p:commandButton>
-								</div> -->
-								<!-- 
-								<div class="ui-g-12 ui-lg-3">
-									<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
-										style="    padding-left: 10% !important;">
-										<f:selectItem itemLabel="Todos" itemValue="T" />
-										<f:selectItem itemLabel="Ativo" itemValue="A" />
-										<f:selectItem itemLabel="Inativo" itemValue="I" />
-										<p:ajax event="change" listener="#{estoqueBean.busca}"
-											update="table" />
-									</p:selectOneRadio>
-								</div>
- -->
 							</h:panelGroup>
 
 							<div class="ui-g-12 ui-lg-4">
 								<p:selectOneRadio value="#{estoqueBean.campoBuscaAtivo}"
 									style="padding-left: 10% !important">
+									<f:selectItem itemLabel="Alocados" itemValue="AL" />
 									<f:selectItem itemLabel="Aprovado" itemValue="A" />
 									<f:selectItem itemLabel="Em Análise" itemValue="EM" />
 									<f:selectItem itemLabel="Reprovado" itemValue="R" />
@@ -164,22 +141,23 @@
 							</div>
 
 							<div class="ui-g-12 ui-lg-2">
-							<div class="ui-inputgroup">
-								<p:inputText value="#{estoqueBean.campoBusca}"
-									placeholder="Buscar Material" style="height:40px; ">
-								</p:inputText>
-								<p:commandButton 
-									icon="ui-icon-search" id="btnBuscatxt"
-									update="table,impressao, tablePedido"
-									actionListener="#{estoqueBean.busca}"
-									action="#{pedidoBean.busca}" />
+								<div class="ui-inputgroup">
+									<p:inputText value="#{estoqueBean.campoBusca}"
+										placeholder="Buscar Material" style="height:40px; ">
+									</p:inputText>
+									<p:commandButton icon="ui-icon-search" id="btnBuscatxt"
+										update="table,impressao, tablePedido"
+										actionListener="#{estoqueBean.busca}"
+										action="#{pedidoBean.busca}" />
 								</div>
 							</div>
-								<div class="ui-g-12 ui-lg-1">
-									<p:commandLink id="impressao"	rendered="#{estoqueBean.lstEstoque.size() > 0}"
-										actionListener="#{estoqueBean.geraRelatorio}">
-										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
-									</p:commandLink>
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandLink id="impressao"
+									rendered="#{estoqueBean.lstEstoque.size() > 0}"
+									actionListener="#{estoqueBean.geraRelatorio}">
+									<h:graphicImage library="img" name="pdf-icon.png" height="40"
+										width="40" />
+								</p:commandLink>
 							</div>
 						</div>
 					</div>
@@ -212,16 +190,16 @@
 									<p:outputLabel value="#{d.material.fornecedor.nomeFornecedor}" />
 								</p:column>
 
-								<p:column headerText="Quantidade" priority="1" width="10%"
+								<p:column headerText="Qtd" priority="1" width="5%"
 									style="overflow: hidden;text-align: center; font-size: large">
 									<p:outputLabel value="#{d.quantidade}" />
 								</p:column>
 
-								<p:column headerText="Valor" priority="1" width="10%"
-									style="overflow: hidden;text-align: right; font-size: large">
+								<p:column headerText="Valor" priority="1" width="15%"
+									style="overflow: hidden;text-align: center; font-size: large">
 									<p:outputLabel value="R$ #{d.valorUnitario}"
 										rendered="#{d.valorUnitario != null}" />
-									<p:outputLabel value="Aguardando Lançamento do Financeiro"
+									<p:outputLabel value="Aguardando Financeiro" 
 										rendered="#{d.valorUnitario == null}" style="color : blue" />
 								</p:column>
 
@@ -233,6 +211,21 @@
 										rendered="#{d.status eq 'EM'}" style="color : blue" />
 									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
 										style="color : green" />
+									<p:outputLabel value="Alocado" rendered="#{d.status eq 'AL'}"
+										style="color : darkblue" />	
+										
+								</p:column>
+								
+								<p:column headerText="Setor Alocado" priority="5" width="10%" 
+									style="overflow: hidden;text-align: center; font-size: large;">
+									<p:outputLabel value="Médico" rendered="#{d.setor eq 'ME' and (d.status eq 'AL')}"
+										style="color : red" />
+									<p:outputLabel value="Estoque"
+										rendered="#{d.setor eq 'ES' and (d.status eq 'AL')}" style="color : blue" />
+									<p:outputLabel value="Recepção" rendered="#{d.setor eq 'RC' and (d.status eq 'AL')}"
+										style="color : green" />
+									<p:outputLabel value="Não Alocado" rendered="#{d.setor == null}"
+										style="color : gray" />	
 								</p:column>
 								<!--  <p:column style="width:50px" priority="4">
 								<center>
@@ -285,123 +278,157 @@
 				</p:panel>
 			</div>
 		</h:form>
-
-		<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
-			position="top" resizable="false" height="350" width="800"
+		<p:dialog widgetVar="alocarMaterial" id="alocarMaterial"
+			modal="true" resizable="false"  width="400"
 			responsive="true" dynamic="true" appendToBody="@body"
-			header="Fazer Novo Pedido">
-			<h:form id="forma">
-				<div class="ui-fluid">
+			header="Local e Quantidade para Alocar">
+			<div class="ui-fluid">
+				<h:form id="formAlocacao">
 					<div class="ui-g">
-						<div class="ui-g-12">
-							<div class="card card-w-title">
-								<div align="center">
-									<util:botoesCrud managedBeanView="#{pedidoBean}"
-										camposReload=":formTemplate:msg, form" botaoNovo="false"
-										botaoSalvar="false" botaoAtualizar="false"
-										botaoRedirecionar="false" botaoExcluir="false">
-									</util:botoesCrud>
+						<div class="ui-g-12 ui-lg-8">
+							<h:outputLabel value="Setor*:" />
+							<p:selectOneMenu value="#{estoqueBean.estoqueModel.setor}"  >
+								<f:selectItem itemLabel="Médico" itemValue="ME" />
+								<f:selectItem itemLabel="Estoque" itemValue="ES" />
+								<f:selectItem itemLabel="Recepção" itemValue="RC" />
+							</p:selectOneMenu>
+						</div>
+	 
+						<div class="ui-g-12 ui-lg-4">
+							<h:outputLabel value="Quantidade:" />
+							 <p:spinner  value="#{estoqueBean.alocado}"
+								requiredMessage="Informe uma quantidade" required="true" />
+						</div>
+						
+					</div>
+					<div class="ui-g" align="center">
+						<div class="ui-g-12 ui-lg-12">
+							<p:commandButton value="Alocar"
+								style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+								 update=":form:table"
+								actionListener="#{estoqueBean.alocarMaterial}" />
+						</div>
+					</div>
+				</h:form>
+			</div>
+			</p:dialog>
 
-									<p:commandButton value="Adicionar ao Pedido"
-										rendered="#{pedidoBean.pedidoModel.idPedido == null}"
-										actionListener="#{pedidoBean.addLista}" update="@form"
-										style="height:40px;
+			<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
+				position="top" resizable="false" height="350" width="800"
+				responsive="true" dynamic="true" appendToBody="@body"
+				header="Fazer Novo Pedido">
+				<h:form id="forma">
+					<div class="ui-fluid">
+						<div class="ui-g">
+							<div class="ui-g-12">
+								<div class="card card-w-title">
+									<div align="center">
+										<util:botoesCrud managedBeanView="#{pedidoBean}"
+											camposReload=":formTemplate:msg, form" botaoNovo="false"
+											botaoSalvar="false" botaoAtualizar="false"
+											botaoRedirecionar="false" botaoExcluir="false">
+										</util:botoesCrud>
+
+										<p:commandButton value="Adicionar ao Pedido"
+											rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+											actionListener="#{pedidoBean.addLista}" update="@form"
+											style="height:40px;
 													width: 240px;
 													background-color: black; 
 													background: black; 
 													color:white !important;
 													font-size:large;"
-										action="#{pedidoBean.geraPedido}" icon="fa fa-plus"
-										iconPos="rigth">
-									</p:commandButton>
+											action="#{pedidoBean.geraPedido}" icon="fa fa-plus"
+											iconPos="rigth">
+										</p:commandButton>
 
-									<p:commandButton value="Finalizar Pedido" immediate="true"
-										rendered="#{pedidoBean.pedidoModel.idPedido == null}"
-										actionListener="#{pedidoBean.salvarLista}" update="@form"
-										oncomplete="PF('fazerPedido').hide()"
-										style="height:40px;
+										<p:commandButton value="Finalizar Pedido" immediate="true"
+											rendered="#{pedidoBean.pedidoModel.idPedido == null}"
+											actionListener="#{pedidoBean.salvarLista}" update="@form"
+											oncomplete="PF('fazerPedido').hide()"
+											style="height:40px;
 													width: 200px !important;
 													background-color: green; 
 													background: green; 
 													color:white !important;
 													font-size:large;"
-										icon="fa fa-floppy-o fa" iconPos="rigth" />
+											icon="fa fa-floppy-o fa" iconPos="rigth" />
 
-									<p:commandButton value="Limpar Pedido" immediate="true"
-										actionListener="#{pedidoBean.limparLista}" update="@form"
-										style="height:40px;
+										<p:commandButton value="Limpar Pedido" immediate="true"
+											actionListener="#{pedidoBean.limparLista}" update="@form"
+											style="height:40px;
 													width: 200px !important;
 													background-color: red; 
 													background: red; 
 													color:white !important;
 													font-size:large;" />
 
-								</div>
-
-								<br />
-								<p:outputLabel value="Campos Obrigatórios()"
-									styleClass="obrigatorio" />
-								<p:separator />
-
-								<br />
-								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2">
-										<h:outputLabel value="Num Pedido:" />
-										<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
-											disabled="true" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-8">
-										<h:outputLabel value="Material*:" />
-										<p:autoComplete id="material"
-											completeMethod="#{auxController.completeMaterial}"
-											forceSelection="true" converter="entityConverter" var="a"
-											itemLabel="#{a.nomeMaterial}" itemValue="#{a}"
-											value="#{pedidoBean.materialModel}" minQueryLength="2"
-											dropdown="true" maxResults="30" required="true"
-											requiredMessage="Informe o Material">
-										</p:autoComplete>
+									<br />
+									<p:outputLabel value="Campos Obrigatórios()"
+										styleClass="obrigatorio" />
+									<p:separator />
+
+									<br />
+									<div class="ui-g">
+										<div class="ui-g-12 ui-lg-2">
+											<h:outputLabel value="Num Pedido:" />
+											<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
+												disabled="true" />
+										</div>
+
+										<div class="ui-g-12 ui-lg-8">
+											<h:outputLabel value="Material*:" />
+											<p:autoComplete id="material"
+												completeMethod="#{auxController.completeMaterial}"
+												forceSelection="true" converter="entityConverter" var="a"
+												itemLabel="#{a.nomeMaterial}" itemValue="#{a}"
+												value="#{pedidoBean.materialModel}" minQueryLength="2"
+												dropdown="true" maxResults="30" required="true"
+												requiredMessage="Informe o Material">
+											</p:autoComplete>
+										</div>
+
+										<div class="ui-g-12 ui-lg-2">
+											<h:outputLabel value="Quantidade:" />
+											<p:inputText value="#{pedidoBean.pedidoModel.quantidade}"
+												requiredMessage="Informe uma quantidade" required="true" />
+										</div>
+
+
 									</div>
 
-									<div class="ui-g-12 ui-lg-2">
-										<h:outputLabel value="Quantidade:" />
-										<p:inputText value="#{pedidoBean.pedidoModel.quantidade}"
-											requiredMessage="Informe uma quantidade" required="true" />
-									</div>
 
+									<div class="ui-g">
+										<p:dataTable value="#{pedidoBean.lstPedidoCarrinho}" var="d"
+											emptyMessage="Não há dados">
 
-								</div>
-
-
-								<div class="ui-g">
-									<p:dataTable value="#{pedidoBean.lstPedidoCarrinho}" var="d"
-										emptyMessage="Não há dados">
-
-										<f:facet name="header">
+											<f:facet name="header">
        								 Status do(s) Pedido(s)
  							   </f:facet>
 
-										<p:column headerText="Nº Pedido"
-											style="text-align:center; font-size: large" width="20%">
-											<p:outputLabel value="#{d.numPedido}" />
-										</p:column>
-										<p:column headerText="Material"
-											style="text-align:left; font-size: large">
-											<p:outputLabel value="#{d.material.nomeMaterial}" />
-										</p:column>
-										<p:column headerText="Quantidade"
-											style="text-align:left; font-size: large" width="20%">
-											<p:outputLabel value="#{d.quantidade}"
-												style="text-align:center; font-size: large" />
-										</p:column>
-									</p:dataTable>
+											<p:column headerText="Nº Pedido"
+												style="text-align:center; font-size: large" width="20%">
+												<p:outputLabel value="#{d.numPedido}" />
+											</p:column>
+											<p:column headerText="Material"
+												style="text-align:left; font-size: large">
+												<p:outputLabel value="#{d.material.nomeMaterial}" />
+											</p:column>
+											<p:column headerText="Quantidade"
+												style="text-align:left; font-size: large" width="20%">
+												<p:outputLabel value="#{d.quantidade}"
+													style="text-align:center; font-size: large" />
+											</p:column>
+										</p:dataTable>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</h:form>
-		</p:dialog>
+				</h:form>
+			</p:dialog>
 	</ui:define>
 </ui:composition>
 

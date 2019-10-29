@@ -206,7 +206,7 @@
 						<div class="ui-g">
 							<div class="ui-g-12 ui-md-12 ui-lg-12 ui-sm-12">
 								<p:carousel id="carousel" value="#{scheduleBean.lstPrecos}" var="d" footerText="Total de Médicos #{scheduleBean.lstPrecos.size()}"
-								circular="true" 
+								circular="true"  
 									responsive="true">
 									<p:outputPanel styleClass="tituloCard">
 										<p:outputLabel value="#{d.pessoa.pessoaNome.toUpperCase()}"
@@ -246,14 +246,14 @@
 								</p:selectOneRadio>
 							</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-2">
 								<p:calendar id="inicio"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataInicio}"
-									placeholder="Buscar pelo Paciente" />
+									placeholder="Data Inicio" />
 							</div>
 							
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-2">
 								<p:calendar id="fim"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataFim}"
-									placeholder="Buscar pelo Paciente" />
+									placeholder="Data Fim" />
 							</div>		
 	
 

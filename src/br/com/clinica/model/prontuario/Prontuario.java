@@ -58,6 +58,9 @@ public class Prontuario implements EntityBase, Serializable {
 	@Column
 	private String nomePaciente;
 	
+	@Column
+	private String tipoEncaminhamento;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataConsulta;
 
@@ -215,5 +218,13 @@ public class Prontuario implements EntityBase, Serializable {
 
 	public void setPosologia(String posologia) {
 		this.posologia = posologia;
+	}
+
+	public String getTipoEncaminhamento() {
+		return tipoEncaminhamento;
+	}
+
+	public void setTipoEncaminhamento(String tipoEncaminhamento) {
+		this.tipoEncaminhamento = tipoEncaminhamento;
 	}
 }

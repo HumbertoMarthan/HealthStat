@@ -228,7 +228,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void saveNotReturn(){
 		try {
 			if (idadeMinimaFuncionario() == true) {
-				if (ValidaCPF.isCPF(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
+				if (ValidaCPF.isValid(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
 					medicoModel.getPessoa().setTipoPessoa("MED");
 					medicoModel = medicoController.merge(medicoModel);
 					limpar();

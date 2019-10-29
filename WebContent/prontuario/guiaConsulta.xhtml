@@ -11,27 +11,29 @@
 				<div class="ui-g-12 ui-lg-6 ui-sm-12">
 					<p:tabView>
 						<p:tab title="Paciente">
-							<div class="ui-g" align="center">
 								<div class="ui-g-12 ui-lg-12 ui-sm-12">
-									<p:outputLabel style="font-size:22px ; text-align:center"
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaNome.toUpperCase()}" />
+									<h2 style="font-size:22px ; text-align:center; color: #2e6e9e">
+										#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaNome.toUpperCase()}
+									</h2>
 								</div>
-							</div>
-							<br />
+								<h4>Dados</h4>
 							<p:separator />
 							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 esquerda">
 									<p:outputLabel value="Nascimento:" />
-									<br />
 									<p:outputLabel
 										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaDataNascimento}">
 										<f:convertDateTime pattern="dd/MM/yyyy"
 											timeZone="America_Sao_Paulo" locale="pt_BR" />
 									</p:outputLabel>
 								</div>
-								<div class="ui-g-12 ui-lg-3 ui-sm-12">
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 direita">
+									<p:outputLabel value="Convênio: "  />
+									<p:outputLabel
+										value="#{prontuarioBean.prontuarioModel.paciente.convenio.nomeConvenio}" />
+								</div>
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 direita" >
 									<p:outputLabel value="Sexo:" />
-									<br />
 									<p:outputLabel
 										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaSexo eq 'M'}"
 										value="Masculino" />
@@ -39,48 +41,15 @@
 										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaSexo eq 'F'}"
 										value="Feminino" />
 								</div>
-								<div class="ui-g-12 ui-lg-3 ui-sm-12">
-									<p:outputLabel value="Altura:" />
-									<br />
-									<p:outputLabel value="Não Específ"
-										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaAltura == null}" />
-								</div>
-								<div class="ui-g-12 ui-lg-3 ui-sm-12">
-									<p:outputLabel value="Peso:" />
-									<br />
-									<p:outputLabel value="Não Específ"
-										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaPeso == null}" />
-								</div>
 							</div>
 							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
-									<p:outputLabel value="Convênio: " />
-									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.convenio.nomeConvenio}" />
-								</div>
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+								
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 esquerda">
 									<p:outputLabel value="RG: " />
 									<p:outputLabel
 										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaRG}" />
 								</div>
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
-									<p:outputLabel value="CPF: " />
-									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaCPF}" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
-									<p:outputLabel value="Registro:  " />
-									<br />
-									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaDataRegistro}">
-										<f:convertDateTime pattern="dd/MM/yyyy"
-											timeZone="America_Sao_Paulo" locale="pt_BR" />
-									</p:outputLabel>
-								</div>
-
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 direita">
 									<p:outputLabel value="Contato 1:  " />
 									<p:outputLabel
 										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefonePrimario}">
@@ -88,46 +57,32 @@
 											timeZone="America_Sao_Paulo" locale="pt_BR" />
 									</p:outputLabel>
 								</div>
-
-								<div class="ui-g-12 ui-lg-4 ui-sm-12">
-									<p:outputLabel value="Contato 2:  " />
-									<p:outputLabel value="Sem Registro"
-										rendered="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefoneSecundario == null}" />
+								<div class="ui-g-12 ui-lg-4 ui-sm-12 direita">
+									<p:outputLabel value="CPF: " />
 									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaTelefoneSecundario}">
-										<f:convertDateTime pattern="dd/MM/yyyy"
-											timeZone="America_Sao_Paulo" locale="pt_BR" />
-									</p:outputLabel>
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaCPF}" />
 								</div>
 							</div>
+							<br/>
 							<h4>Endereço</h4>
 							<p:separator />
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-12 ui-sm-12">
-									<p:outputLabel value="Endereço" />
-									<br />
+									<p:outputLabel value="Endereço: " />
 									<p:outputLabel
 										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.logradouro}" />
 								</div>
 							</div>
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-8 ui-sm-12">
-									<p:outputLabel value="Bairro:" />
-									<br />
+									<p:outputLabel value="Bairro: " />
 									<p:outputLabel
 										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.bairro}" />
 								</div>
-								<div class="ui-g-12 ui-lg-3 ui-sm-12">
-									<p:outputLabel value="Localidade:" />
-									<br />
+								<div class="ui-g-12 ui-lg-4 ui-sm-12">
+									<p:outputLabel value="Localidade: " />
 									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.localidade}" />
-								</div>
-								<div class="ui-g-12 ui-lg-1 ui-sm-12">
-									<p:outputLabel value="UF:" />
-									<br />
-									<p:outputLabel
-										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.uf}" />
+										value="#{prontuarioBean.prontuarioModel.paciente.pessoa.localidade} - #{prontuarioBean.prontuarioModel.paciente.pessoa.uf}" />
 								</div>
 							</div>
 						</p:tab>
@@ -141,24 +96,24 @@
 									<p:outputLabel value="Qual o problema relatado pelo paciente?" />
 									<br />
 									<p:inputTextarea title="Relato do paciente" autoResize="true"
-										rows="17" cols="50" maxlength="2000"
+										rows="7" cols="50" maxlength="2000"
 										value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
-										required="true"
+										required="false"
 										requiredMessage="Informe o problema relatado pelo paciente" />
 								</div>
-							</div>
-						</p:tab>
-						<p:tab title="Diagnóstico">
-							<div class="ui-g">
+								
 								<div class="ui-g-12 ui-lg-12">
 									<p:outputLabel
 										value="Qual o diagnóstico que irá apresentar para o Paciente?" />
 									<br />
 									<p:inputTextarea title="Diagnóstico" autoResize="true"
-										rows="17" maxlength="2000" cols="50"
+										rows="6" maxlength="2000" cols="50"
 										value="#{prontuarioBean.prontuarioModel.diagnostico}"
-										required="true" requiredMessage="Informe um dignóstico" />
+										required="false" requiredMessage="Informe um dignóstico" />
 								</div>
+							</div>
+							
+							<div class="ui-g">
 							</div>
 						</p:tab>
 						<p:tab title="Medicamento">
@@ -172,7 +127,7 @@
 										itemLabel="#{a.nomeMedicamento}" itemValue="#{a}"
 										value="#{prontuarioBean.prontuarioModel.medicamento}"
 										style="text-align:center" minQueryLength="2" dropdown="true"
-										maxResults="30" required="true" size="60"
+										maxResults="30" required="false" size="60"
 										requiredMessage="Informe um medicamento">
 										<p:column>
 											<h:outputText value="#{a.nomeMedicamento}" />
@@ -183,7 +138,7 @@
 									<p:outputLabel value="Posologia" />
 									<p:selectOneMenu title="Posologia"
 										value="#{prontuarioBean.prontuarioModel.posologia}"
-										required="true" requiredMessage="Informe uma posologia">
+										required="false" requiredMessage="Informe uma posologia">
 										<f:selectItem itemLabel="6/6h" itemValue="8" />
 										<f:selectItem itemLabel="8/8h" itemValue="8" />
 										<f:selectItem itemLabel="12/12h" itemValue="12" />
@@ -192,28 +147,9 @@
 									</p:selectOneMenu>
 								</div>
 							</div>
-
-							<!-- Botão Salvar -->
-							<div class="ui-g" align="center">
-								<div class="ui-g-12 ui-lg-12">
-									<p:commandButton value="Salvars"
-										style="height:40px;width:130px; background-color: green; background: green; color:white !important"
-										rendered="#{prontuarioBean.estado eq 'C'}"
-										actionListener="#{prontuarioBean.saveNotReturn}"
-										id="buttonSalvar" immediate="false" iconPos="rigth">
-									</p:commandButton>
-
-									<util:botoesCrud managedBeanView="#{prontuarioBean}"
-										camposReload=":formTemplate:msg, @form" botaoNovo="false"
-										botaoSalvar="false"
-										botaoAtualizar="prontuarioBean.prontuarioModel.idProntuario != null}"
-										botaoRedirecionar="false" botaoExcluir="false">
-									</util:botoesCrud>
-								</div>
-							</div>
 						</p:tab>
-						<p:tab title="Atestado">
-							<div class="ui-g">
+						<!--<p:tab title="Atestado">
+						 	<div class="ui-g">
 								<div class="ui-g-12 ui-lg-12">
 									<ui:include src="/prontuario/atestado.xhtml" />
 								</div>
@@ -225,9 +161,9 @@
 									<ui:include src="/prontuario/encaminhamento.xhtml" />
 								</div>
 							</div>
-						</p:tab>
+						</p:tab> -->
 					</p:tabView>
-					<div align="right">
+					<!-- <div align="right">
 						<h:outputText value="Data da Consulta: "
 							style="color:#2e6e9e !important; font-weight: bold" />
 						<h:outputText pattern="dd/MM/yyyy HH:mm"
@@ -236,11 +172,33 @@
 							<f:convertDateTime pattern="dd/MM/yyyy"
 								timeZone="America/Sao_Paulo" locale="pt_BR" />
 						</h:outputText>
-					</div>
+					</div> -->
 				</div>
+			</div>
+			<div class="ui-g" align="center" style="padding-left: 40%;">
+					<p:commandButton value="Salvar"
+						style="  height:40px;width:130px; background-color: green; background: green; color:white !important"
+						rendered="#{prontuarioBean.estado eq 'C'}"
+						actionListener="#{prontuarioBean.saveNotReturn}"
+						id="buttonSalvar" immediate="false" iconPos="rigth">
+					</p:commandButton>
+					
+					<p:commandButton value="Atestado"
+						style="height:40px;width:130px; background-color: green; background: green; color:white !important"
+						actionListener="#{prontuarioBean.geraAtestado}"
+						 immediate="true" iconPos="rigth">
+					</p:commandButton>
+					
+					<p:commandButton value="Encaminhamento"
+						style=" height:40px;width:160px; background-color: green; background: green; color:white !important"
+						oncomplete="PF('tipoEncaminhamento').show()" update=":formTipoEncaminhamento"
+						immediate="false" iconPos="rigth">
+					</p:commandButton>
 			</div>
 		</p:panel>
 	</div>
+	
+	
 
 </body>
 </html>

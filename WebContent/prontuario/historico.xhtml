@@ -14,7 +14,8 @@
 			<br /> -->
 			<div class="ui-g">
 				<div class="ui-g-12" style="text-align: center;">
-					<p:inputText size="45" value="#{prontuarioBean.campoBusca}"
+					 <div class="ui-inputgroup">
+					<p:inputText value="#{prontuarioBean.campoBusca}"
 						style="margin: 0;
 								outline: medium none;
 								padding: 4px;
@@ -23,37 +24,44 @@
 								font-size: medium !important;
 								text-align: center;"
 						placeholder="Buscar pelo Nome" id="inputCampo" />
-					<span> <p:commandButton icon="ui-icon-search"
+					 <p:commandButton icon="ui-icon-search"
 							style="height:45px; width: 50px;" id="btnBuscatxt"
 							action="#{prontuarioBean.busca}" update="table, inputCampo" />
-					</span>
+						</div>
 				</div>
 			</div>
 			<div class="ui-g">
 				<p:dataTable id="table" var="a" widgetVar="table"
 					emptyMessage="Não há Agendamentos" rowKey="#{a.idProntuario}"
-					value="#{prontuarioBean.listaProntuario}" 
-					rows="10" paginator="true">
+					value="#{prontuarioBean.listaProntuario}" rows="10"
+					paginator="true">
 
-					<p:column headerText="Paciente" style="text-align:left" priority="1">
+					<p:column headerText="Data da Agendada" priority="1"
+						style="overflow: hidden;text-align: center; font-size: large; width: 15%">
+						<p:outputLabel value="#{a.dataConsulta}" style="color:green">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+								timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+
+
+					<p:column headerText="Paciente"
+						style="text-align:left;font-size:large" priority="1">
 						<p:outputLabel
 							value="#{a.paciente.pessoa.pessoaNome.toUpperCase()}" />
 						<br />
 						<p:outputLabel value="CPF - #{a.paciente.pessoa.pessoaCPF}" />
 					</p:column>
-					<p:column headerText="Relato - Diagnóstico" style="text-align:left"
-						priority="1">
-						<p:outputLabel value="RELATO DO PACIENTE - "
-							style="font-style: italic" />
+
+					<p:column headerText="Relato do Paciente"
+						style="text-align:left;font-size:large" priority="1">
 						<p:outputLabel value="#{a.problemaPaciente.toUpperCase()}" />
-						<br />
-						<p:outputLabel value="DIAGNÓSTICO - " style="font-style: italic" />
-						<p:outputLabel value="#{a.diagnostico.toUpperCase()}" />
 					</p:column>
 
-					<p:column headerText="Prescrição Médica" style="text-align:left"
-						priority="3">
-						<p:outputLabel value="#{a.prescricao}" />
+					<p:column headerText="Diagnóstico"
+						style="text-align:left;font-size:large" priority="3">
+						<p:outputLabel value="#{a.diagnostico.toUpperCase()}" />
+						<!-- <p:outputLabel value="#{a.prescricao}" /> -->
 					</p:column>
 				</p:dataTable>
 			</div>

@@ -181,6 +181,7 @@
 					<div class="ui-g">
 						<br />
 						<p:dataTable value="#{fornecedorBean.lstFornecedor}" var="d"
+							paginator="true" rows="8"
 							rowKey="#{d.idFornecedor}" selectionMode="single" id="table"
 							selection="#{fornecedorBean.fornecedorModel}">
 

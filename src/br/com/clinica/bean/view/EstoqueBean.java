@@ -17,6 +17,7 @@ import br.com.clinica.controller.geral.MaterialController;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
+import br.com.clinica.utils.DialogUtils;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
@@ -40,6 +41,8 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	
 	private String campoBusca = "";
 	private String campoBuscaAtivo = "EM";
+	
+	Integer alocado;
 
 	@Autowired
 	private EstoqueController estoqueController;
@@ -56,7 +59,7 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void busca() throws Exception {
+	public void busca() {
 
 		lstEstoque = new ArrayList<Estoque>();
 		StringBuilder str = new StringBuilder();
@@ -71,53 +74,56 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 		}
 		
 
-		lstEstoque = estoqueController.findListByQueryDinamica(str.toString());
-
-		/*
-		 * // Nova lista StringBuilder sql = new StringBuilder(); //lstEstoqueMap =
-		 * estoqueController.
-		 * getSqlListMap("select * from estoque e where idestoque is null");
-		 * sql.append(" select "); if (!campoBusca.equals("")) { sql.
-		 * append(" (select m.nomematerial from material m where m.idmaterial = e.idmaterial and m.nomematerial like '%"
-		 * + campoBusca + "%') as material, "); sql.
-		 * append(" (select f.nomefornecedor  from material m , fornecedor f where m.idmaterial = e.idmaterial and f.idfornecedor = m.idfornecedor and m.nomematerial like '%"
-		 * + campoBusca + "%') as fornecedor, "); sql.
-		 * append(" (select m.nomematerial    from material m where m.idmaterial = e.idmaterial and m.nomematerial like '%"
-		 * + campoBusca + "%') as material, "); sql.
-		 * append(" (select e.valorunitario   from material m where m.idmaterial = e.idmaterial and m.nomematerial like '%"
-		 * + campoBusca + "%') as valor, "); sql.
-		 * append(" (select e.quantidade 	   from material m where m.idmaterial = e.idmaterial and m.nomematerial like '%"
-		 * + campoBusca + "%') as quantidade, "); sql.
-		 * append(" (select e.ativo	       from material m where m.idmaterial = e.idmaterial and m.nomematerial like '%"
-		 * + campoBusca + "%') as status "); } else { sql.
-		 * append(" (select m.nomematerial    from material m where m.idmaterial = e.idmaterial) as material, "
-		 * ); sql.
-		 * append(" (select f.nomefornecedor  from material m , fornecedor f where m.idmaterial  = e.idmaterial and f.idfornecedor = m.idfornecedor) as fornecedor, "
-		 * ); sql.
-		 * append(" (select m.nomematerial    from material m where m.idmaterial = e.idmaterial) as material, "
-		 * ); sql.
-		 * append(" (select e.valorunitario   from material m where m.idmaterial = e.idmaterial) as valor, "
-		 * ); sql.
-		 * append(" (select e.quantidade 	   from material m where m.idmaterial = e.idmaterial) as quantidade, "
-		 * ); sql.
-		 * append(" (select e.ativo	       from material m where m.idmaterial = e.idmaterial) as status "
-		 * ); } sql.append(" from estoque e ");
-		 * 
-		 * lstEstoqueMap = estoqueController.getSqlListMap(sql.toString());
-		 */
+		try {
+			lstEstoque = estoqueController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-	/*
-	 * public void inativar() {
-	 * 
-	 * if (estoqueModel.getAtivo().equals("I")) { estoqueModel.setAtivo("A"); } else
-	 * { estoqueModel.setAtivo("I"); }
-	 * 
-	 * try { estoqueController.saveOrUpdate(estoqueModel); } catch (Exception e) {
-	 * System.out.println("Erro ao ativar/inativar"); e.printStackTrace(); }
-	 * this.estoqueModel = new Estoque(); try { busca(); } catch (Exception e) {
-	 * System.out.println("Erro ao buscar"); e.printStackTrace(); } }
-	 */
+	
+	public void alocarMaterial(){
+		Integer atual = null;
+		Estoque aux = new Estoque();
+		if(alocado > 0) {
+		try {
+			Integer seZero = estoqueModel.getQuantidade() - alocado;
+			if(seZero == 0) {
+				estoqueController.setExecuteParam("DELETE FROM estoque where idestoque =" + estoqueModel.getIdEstoque()); 
+			}else {
+				atual = estoqueModel.getQuantidade() - alocado;
+			}
+	
+			estoqueModel.setQuantidade(atual);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		aux.setMaterial(estoqueModel.getMaterial());
+		aux.setNumPedido(estoqueModel.getNumPedido());
+		aux.setQuantidade(alocado);
+		aux.setStatus("AL");
+		aux.setSetor(estoqueModel.getSetor());
+		aux.setValorUnitario(estoqueModel.getValorUnitario());
+		
+		try {
+			estoqueModel.setSetor(null);
+			estoqueModel.setStatus("A");
+			estoqueController.saveOrUpdate(estoqueModel);
+			estoqueController.saveOrUpdate(aux);
+			sucesso();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		limpar();
+		aux = new Estoque();
+		busca();
+		
+		DialogUtils.closeDialog("alocarMaterial");
+		} else {
+			addMsg("Número negativo é inválido");
+		}
+		
+		
+	}	
 	
 	public void onRowSelect(SelectEvent event) {
 		estoqueModel = (Estoque) event.getObject();
@@ -151,9 +157,15 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 		sucesso();
 	}
 
-	public void solicitacaoPedido() throws Exception {
+	public void solicitacaoPedido()  {
 		System.out.println("Entrou no saveNotReturn()");
-		materialController.merge(materialModel); // salvar material
+
+		try {
+			materialController.merge(materialModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} // salvar material
+		
 		materialModel = new Material();
 		estoqueModel = new Estoque();
 		sucesso();
@@ -291,5 +303,13 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 
 	public void setCampoBuscaAtivo(String campoBuscaAtivo) {
 		this.campoBuscaAtivo = campoBuscaAtivo;
+	}
+
+	public Integer getAlocado() {
+		return alocado;
+	}
+
+	public void setAlocado(Integer alocado) {
+		this.alocado = alocado;
 	}
 }

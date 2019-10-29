@@ -211,7 +211,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
 									
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="CRM* :" />
+										<p:inputText required="true" requiredMessage="Informe um CRM" value="#{medicoBean.medicoModel.numeroCrm}" />
+									</div>
+									
+									<div class="ui-g-12 ui-lg-3">
 										<h:outputLabel value="Grupo Preço" />
 										<div class="ui-inputgroup">
 										<p:autoComplete id="grpPreco"

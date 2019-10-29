@@ -149,6 +149,29 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 		calcularTotalPedido();
 	}
+	
+	public void alteraValorUnitario(Estoque estoqueSelecionado) {
+		try {
+			//Estoque estoqueSelecionado = new Estoque();
+			//DataTable table = (DataTable) event.getSource();
+			//estoqueSelecionado = (Estoque) table.getRowData();
+
+			System.out.println("Valor Editado> " + estoqueSelecionado.getValorUnitario());
+			if (estoqueSelecionado.getValorUnitario() != null ) {
+				estoqueSelecionado.setValorUnitario(estoqueSelecionado.getValorUnitario()); // quem ta nulo é o estoque
+				try {
+					estoqueController.merge(estoqueSelecionado);
+					addMsg("Valor Alterado para :" + estoqueSelecionado.getValorUnitario());
+				} catch (Exception e) {
+
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		calcularTotalPedido();
+	}
 
 	public void aprovarPedido() {
 		try {

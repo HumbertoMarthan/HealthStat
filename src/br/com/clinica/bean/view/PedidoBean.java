@@ -1,6 +1,7 @@
 package br.com.clinica.bean.view;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -141,6 +142,7 @@ public class PedidoBean extends BeanManagedViewAbstract {
 
 			if (salvo == false) {
 				try {
+					carrinho.setDataPedido(new Date());
 					pedidoController.merge(carrinho); // salva pedido
 					salvo = true;
 				} catch (Exception e) {

@@ -121,6 +121,7 @@ body {
             @include overlay-shadow();
             
             &.topbar-menu-visible {
+                width: 220px;
                 display: block;
             }
             
@@ -535,6 +536,7 @@ body {
                             }
                             
                             &:hover + .layout-menu-tooltip {
+                                width: 220px;
                                 display: block;
                             }
                         }

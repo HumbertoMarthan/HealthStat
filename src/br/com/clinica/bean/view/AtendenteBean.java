@@ -144,7 +144,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	@Override
 	public void saveNotReturn() {
 		if (idadeMinimaFuncionario() == true) {
-			if (ValidaCPF.isCPF(atendenteModel.getPessoa().getPessoaCPF())) {
+			if (ValidaCPF.isValid(atendenteModel.getPessoa().getPessoaCPF())) {
 				try {
 					atendenteModel.getPessoa().setTipoPessoa("ATE");
 					atendenteModel = atendenteController.merge(atendenteModel);

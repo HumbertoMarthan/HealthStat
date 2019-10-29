@@ -57,6 +57,16 @@ public class Estoque  implements EntityBase,Serializable {
 	private Double valorUnitario;
 	
 	private Double total;
+	
+	private String setor;
+	
+	public String getSetor() {
+		return setor;
+	}
+
+	public void setSetor(String setor) {
+		this.setor = setor;
+	}
 
 	public Long getIdEstoque() {
 		return idEstoque;

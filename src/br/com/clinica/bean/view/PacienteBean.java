@@ -248,7 +248,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	public void saveNotReturn() {
 		try {
 		//idadeMinimaPaciente();
-		if (ValidaCPF.isCPF(pacienteModel.getPessoa().getPessoaCPF())) {
+		if (ValidaCPF.isValid(pacienteModel.getPessoa().getPessoaCPF())) {
 			System.out.println("CPF Válido");
 			pacienteModel.getPessoa().setTipoPessoa("PAC");
 			pacienteModel = pacienteController.merge(pacienteModel);

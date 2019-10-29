@@ -279,7 +279,7 @@
 										<div class="ui-g-2 ui-lg-6 ui-sm-12">
 											<h:panelGroup id="botoesPedido">
 
-												<div class="ui-g-12 ui-lg-6">
+												<div class="ui-g-12 ui-lg-8">
 													<p:commandButton value="Movimentar o Pedido"
 														style="height:40px; background: greenyellow !important  ;   
 														background-color: greenyellow; 
@@ -289,12 +289,9 @@
 														oncomplete="PF('pedidosDialog').show()" immediate="true"
 														update=":formDialogPedidos"
 														rendered="#{contasPagarBean.pedidoModel.idPedido > 0 and (contasPagarBean.pedidoModel.status eq 'EM')}" />
-													<p:outputLabel value="Nenhum Pedido Pendente Selecionado"
+												
+													<p:outputLabel value="Nenhum Pedido Pendente Selecionado" style="font-size:large; padding: 4%"
 														rendered="#{contasPagarBean.pedidoModel.idPedido == null or (contasPagarBean.pedidoModel.status ne 'EM')}" />
-												</div>
-
-												<div class="ui-g-12 ui-lg-5">
-													<p:outputLabel value="" />
 												</div>
 
 												<div class="ui-g-12 ui-lg-1">
@@ -302,7 +299,6 @@
 														styleClass="btn btn-blue" icon="ui-icon-search"
 														immediate="true" action="#{contasPagarBean.buscaPedido}"
 														update=" inputNome,table,tablePedido" />
-													<p:defaultCommand target="btnBuscatxt" />
 												</div>
 
 											</h:panelGroup>
@@ -314,18 +310,24 @@
 											<p:dataTable value="#{contasPagarBean.lstPedido}" var="d"
 												emptyMessage="Não há dados" rowKey="#{d.idPedido}"
 												selectionMode="single" id="tablePedido" rows="10"
-												paginator="true" paginatorPosition="bottom"
+												paginator="true" 
 												selection="#{contasPagarBean.pedidoModel}">
 
 												<p:ajax event="rowSelect"
 													listener="#{contasPagarBean.onRowSelectPedido}"
 													update="tablePedido, :formDialogPedidos, :formContasPagar:tabs:botoesPedido" />
 
-												<p:column headerText="Nº Pedido" style="text-align: center">
+												<p:column headerText="Nº Pedido" style="text-align: center;font-size:large;">
 													<p:outputLabel value="#{d.numPedido}" />
 												</p:column>
-
-												<p:column headerText="Status" style="text-align:center">
+												
+												<p:column headerText="Data do Pedido" style="text-align: center;font-size:large;">
+													<p:outputLabel value="#{d.dataPedido}" >
+														<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" timeZone="America/Sao_Paulo" />	
+													</p:outputLabel>
+												</p:column>
+												
+												<p:column headerText="Status" style="text-align:center;font-size:large;">
 													<p:outputLabel value="Em Análise"
 														rendered="#{d.status eq 'EM'}" style="color: gray" />
 													<p:outputLabel value="Aprovado"
@@ -344,7 +346,7 @@
 			</div>
 		</h:form>
 
-		<p:dialog widgetVar="pedidosDialog" id="pedidosDialog" modal="true"
+		<p:dialog widgetVar="pedidosDialog" id="pedidosDialog" modal="true" position="top"
 			resizable="false" responsive="true" width="800" header="Pedidos">
 			<h:form id="formDialogPedidos">
 				<div class="ui-fluid">
@@ -371,8 +373,9 @@
 										update="botoesPedidoSelecionado" />
 								</div>
 								<div class="ui-g-12 ui-lg-3">
-									<p:outputLabel value="Valor Total do Pedido : " />
-									<p:outputLabel value="R$ #{contasPagarBean.valorPedido}" />
+									<p:outputLabel value="Valor Total do Pedido : R$ " />
+									<p:inputNumber value="#{contasPagarBean.valorPedido}" disabled="true" >
+									</p:inputNumber>
 								</div>
 							</h:panelGroup>
 						</div>
@@ -381,42 +384,35 @@
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12">
 							<div class="ui-g">
-								<p:dataTable value="#{contasPagarBean.lstEstoque}"
-									editable="true" editMode="cell" var="d"
+								<p:dataTable value="#{contasPagarBean.lstEstoque}" var="d"
 									emptyMessage="Não há dados" id="tablePedidoSelecionado"
-									rows="10" paginator="true" paginatorPosition="bottom	">
+									rows="10" paginator="true" paginatorPosition="bottom">
 
-									<p:ajax event="cellEdit"
-										listener="#{contasPagarBean.onCellEdit}"
+									<p:ajax event="rowSelect"
+										listener="#{contasPagarBean.alteraValorUnitario}"
 										update="tablePedidoSelecionado, :formDialogPedidos:botoesPedidoSelecionado" />
 
-									<p:column headerText="Nº Pedido" style="text-align: center">
+									<p:column headerText="Nº Pedido" style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.numPedido}" />
 									</p:column>
 
-									<p:column headerText="Nome do Material"
-										style="text-align: center">
+									<p:column headerText="Material"
+										style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.material.nomeMaterial}" />
 									</p:column>
 
-									<p:column headerText="Status" style="text-align: center">
+									<p:column headerText="Status" style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.status}" />
 									</p:column>
 
-									<p:column headerText="Quantidade">
-										<p:outputLabel value="#{d.quantidade}" />
+									<p:column headerText="Quantidade" style="text-align: center;font-size: large">
+										<p:outputLabel value="#{d.quantidade}" style="text-align: center;font-size: large" />
 									</p:column>
 
 									<p:column headerText="Valor Unitário">
-										<p:cellEditor>
-											<f:facet name="output">
-												<h:outputText value="#{d.valorUnitario}" />
-											</f:facet>
-											<f:facet name="input">
-												<p:inputText value="#{d.valorUnitario}" style="width:96%"
-													label="Valor Unitário" />
-											</f:facet>
-										</p:cellEditor>
+												<p:inputNumber  value="#{d.valorUnitario}"  emptyValue="0.00" decimalPlaces="2"   >
+													<p:ajax listener="#{contasPagarBean.alteraValorUnitario(d)}" update="tablePedidoSelecionado , formDialogPedidos" />
+												</p:inputNumber>
 									</p:column>
 
 								</p:dataTable>

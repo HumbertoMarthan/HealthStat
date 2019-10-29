@@ -97,11 +97,11 @@
 								<div class="ui-g-12">
 									<h:panelGroup id="botoes">
 										<div class="ui-g-12 ui-lg-2">
-											<p:commandButton id="botaoEditar" value="Redirecionar"
-												style="height:40px; background: lightskyblue !important  ;
-										   background-color: lightskyblue ;
-										   color:white !important;
-										   font-size:large;"
+											<p:commandButton id="botaoRedirecionar" value="Abrir Prontuário"
+													style="height:40px; background: lightskyblue !important  ;
+											    background-color: lightskyblue ;
+											    color:white !important;
+											    font-size:large;"
 												immediate="true" action="#{prontuarioBean.redirecionarGuia}"
 												update="table, @form"
 												rendered="#{prontuarioBean.prontuarioModel.idProntuario > 0 and (prontuarioBean.prontuarioModel.status eq 'P') }">
@@ -141,7 +141,7 @@
 
 									<p:ajax event="rowSelect"
 										listener="#{prontuarioBean.onRowSelect}"
-										update="tablea,form:tabView:botoes " />
+										update="tablea,form:tabView:botoes, @form " />
 
 									<p:column headerText="Data da Agendada" priority="1"
 										style="overflow: hidden;text-align: center; font-size: large; width: 15%">
@@ -190,6 +190,8 @@
 				</p:tabView>
 			</div>
 		</h:form>
+		
+		
 	</ui:define>
 </ui:composition>
 

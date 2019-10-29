@@ -19,6 +19,10 @@ import br.com.clinica.controller.geral.PacienteController;
 import br.com.clinica.controller.geral.ProntuarioController;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.prontuario.Prontuario;
+import br.com.clinica.utils.DialogUtils;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 /**
  * @author Humberto
@@ -34,12 +38,14 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	private Prontuario prontuarioModel = new Prontuario();
 	private List<Prontuario> lstDadosPaciente = new ArrayList<>();
+	private List<Prontuario> lstAtestado = new ArrayList<>();
+	private List<Prontuario> lstEncaminhamento = new ArrayList<>();
 	private List<Prontuario> listaProntuario = new ArrayList<>();
 
 	private String url = "/prontuario/listaProntuario.jsf?faces-redirect=true";
 	private String urlGuia = "/prontuario/prontuarioMedico.jsf?faces-redirect=true";
 	
-	String campoBuscaAtivo = "T";
+	String campoBuscaAtivo = "P";
 	String estado = "C";
 	String campoBusca = "";
 
@@ -69,6 +75,41 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	public void init() {
 		setEstado("C");
 		busca();
+	}
+	
+	public void geraTipoEncaminhamento(){
+		System.out.println("ENCAMINHAMENTOS -----------" );
+		lstEncaminhamento.get(0).setTipoEncaminhamento(prontuarioModel.getTipoEncaminhamento());
+		geraEncaminhamento();
+		DialogUtils.closeDialog("tipoEncaminhamento");
+	}
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstDadosPaciente, "dadosPaciente.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void geraAtestado(){
+		JasperPrint  relatorio =  imprimir(lstAtestado, "atestado.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void geraEncaminhamento(){
+		System.out.println("Gera Encaminhamento");
+		JasperPrint  relatorio =  imprimir(lstEncaminhamento, "encaminhamento.jrxml");
+		try {
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<Paciente> completePaciente(String q)  {
@@ -128,6 +169,12 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao buscar dados do Paciente");
 			e.printStackTrace();
 		}
+		
+		lstAtestado = new ArrayList<>();
+		lstEncaminhamento = new ArrayList<>();
+		
+		lstAtestado.add(lstDadosPaciente.get(0));
+		lstEncaminhamento.add(lstDadosPaciente.get(0));
 	}
 
 	@Override
@@ -149,13 +196,13 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 			System.out.println("Salvar Prontuario --------------------------------");
 			prontuarioModel.setStatus("F");
 			prontuarioModel = prontuarioController.merge(prontuarioModel);
-			sucesso();
 			limpar();
 
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/prontuario/listaProntuario.jsf");
+			sucesso();
 			return;
 		} catch (Exception e) {
-			System.out.println("Erro ao salvar usuário");
+			System.out.println("Erro ao salvar prontuario");
 		}
 	}
 
@@ -294,6 +341,22 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	public void setLstDadosPaciente(List<Prontuario> lstDadosPaciente) {
 		this.lstDadosPaciente = lstDadosPaciente;
+	}
+
+	public List<Prontuario> getLstAtestado() {
+		return lstAtestado;
+	}
+
+	public void setLstAtestado(List<Prontuario> lstAtestado) {
+		this.lstAtestado = lstAtestado;
+	}
+
+	public List<Prontuario> getLstEncaminhamento() {
+		return lstEncaminhamento;
+	}
+
+	public void setLstEncaminhamento(List<Prontuario> lstEncaminhamento) {
+		this.lstEncaminhamento = lstEncaminhamento;
 	}
 
 }
