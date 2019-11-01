@@ -22,6 +22,7 @@ import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
+import br.com.clinica.utils.EmailUtils;
 
 @Controller
 @ViewScoped
@@ -32,6 +33,8 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private ContextoBean contextoBean;
+
+	private Login recuperacao = new Login();
 
 	private Login loginModel = new Login();
 	private Perfil perfilModel;
@@ -45,11 +48,19 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	private String url = "/cadastro/cadUsuario.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findUsuario.jsf?faces-redirect=true";
+	private String urlForget = "/publico/recuperacao.jsf?faces-redirect=true";
 
 	private List<Login> lstLogin = new ArrayList<>();
 
 	private String campoBuscaNome = "";
 	private String campoBuscaLogin = "";
+
+	private String cpf = "";
+	private String login = "";
+
+	private String senhaAtual = "";
+	private String novaSenha = "";
+	private String confirmaSenha = "";
 
 	private String novo = "N";
 
@@ -59,31 +70,102 @@ public class LoginBean extends BeanManagedViewAbstract {
 	@Autowired
 	private PessoaController pessoaController;
 
+	Long id;
+
 	@PostConstruct
-	public void init() {
+	public void init() throws Exception {
 		busca();
+		id = contextoBean.getEntidadeLogada().getIdLogin();
 	}
 
-	public void updateSenha() throws Exception {
-		Login entidadeLogada = contextoBean.getEntidadeLogada();
-		System.out.println("Entidade da Sessão>>>>>><>>>>>>>" + entidadeLogada.getLogin());
-		/*
-		 * if (!loginAtualizaSenha.getSenhaAtual().equals(entidadeLogada.getSenha())) {
-		 * addMsg("A senha atual não é valida."); } if
-		 * (loginAtualizaSenha.getSenhaAtual().equals(loginAtualizaSenha.getNovaSenha())
-		 * ) { addMsg("A senha atual não pode ser igual a nova senha."); } if
-		 * (!loginAtualizaSenha.getNovaSenha().equals(loginAtualizaSenha.
-		 * getConfirmaSenha())) { addMsg("A nova senha e a confirmação não conferem.");
-		 * } else {
-		 */
-		entidadeLogada.setSenha(loginAtualizaSenha.getNovaSenha());
-		loginController.saveOrUpdate(entidadeLogada);
-		entidadeLogada = loginController.findByPorId(Login.class, entidadeLogada.getIdLogin());
-		/*
-		 * if (entidadeLogada.getSenha().equals(loginAtualizaSenha.getNovaSenha())) {
-		 * sucesso(); entidadeLogada = new Login(); } else {
-		 * addMsg("A nova senha não foi atualizada"); error(); } }
-		 */
+	public void updateSenha() throws Exception  {
+		Login usuario = (Login)  loginController.findById(Login.class, id);
+
+		//loginController.setExecuteParam("update Login set login = '"+campo1 + "' where idLogin = "+ usuario.getIdLogin());
+		
+		  if (!senhaAtual.equals(usuario.getSenha())) {
+			  addMsg("A senha atual não é valida."); 
+		  } 
+
+		  if(senhaAtual.equals(novaSenha)) { 
+			  addMsg("A senha atual não pode ser igual a nova senha."); 
+		  }
+		
+		  if(!novaSenha.equals(confirmaSenha)) {
+			  addMsg("A nova senha e a confirmação não conferem.");
+		  } else {
+			
+			  usuario.setSenha(novaSenha);
+		 
+		  try { 
+			  loginController.merge(usuario); sucesso();
+			  usuario = new Login(); 
+		  }
+		  catch (Exception e) { 
+			  error(); 
+			  e.printStackTrace(); }
+		  }
+		 
+	}
+
+	private void limparRecuperacao() {
+		login = "";
+		cpf = "";
+	}
+
+	public void forgetSenha() {
+		List<Login> aux = new ArrayList<>();
+
+		try {
+			aux = loginController.findListByQueryDinamica(
+					"from Login where login = '" + login + "' and pessoa.pessoaCPF = '" + cpf + "'");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (aux.size() > 0) {
+			addMsg("Um email foi enviado para o usuário com a senha de acesso");
+			Login t = aux.get(0);
+			sendEmailSenha(t);
+		} else {
+			addMsg("Usuário não encontrado!");
+		}
+	}
+
+	public void sendEmailSenha(Login t) {
+
+		List<Login> emails = new ArrayList<>();
+
+		try {
+			emails = loginController.findListByQueryDinamica(
+					"from Login where login = '" + login + "' and pessoa.pessoaCPF = '" + cpf + "'");
+			System.out.println("EMAIL ->->" + emails);
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+		}
+
+		String email = "";
+
+		for (Login e : emails) {
+			email = e.getPessoa().getPessoaEmail();
+		}
+
+		String emailTitulo = "";
+		emailTitulo += "Usuário e senha Healtstat : ";
+
+		String emailConteudo = "";
+
+		emailConteudo += "<b>INFORMAÇÕES DO LOGIN</b><br />";
+		emailConteudo += "<b>USUÁRIO:</b> " + t.getLogin() + "<br />";
+		emailConteudo += "<b>SENHA:</b> " + t.getSenha() + "<br /><br /><br />";
+
+		emailConteudo += "<b>EMAIL ENVIADO DE FORMA AUTOMÁTICA POR CLINICA HEALTSTAT, POR FAVOR NÃO RESPONDA O EMAIL</b><br />";
+		// Enviar Email com o dados coletados dentro desse método
+		EmailUtils.enviarEmail(email, emailTitulo, emailConteudo, true);
+
+		t = new Login();
+		limparRecuperacao();
 	}
 
 	public void onRowSelect(SelectEvent event) {
@@ -106,10 +188,14 @@ public class LoginBean extends BeanManagedViewAbstract {
 		return getUrl();
 	}
 
+	public String redirecionarForget() {
+		return getUrlForget();
+	}
+
 	public void busca() {
 		StringBuilder str = new StringBuilder();
 		str.append("from Login a where 1=1");
-		
+
 		if (!campoBuscaLogin.equals("")) {
 			str.append(" and upper(a.login) like upper('%" + campoBuscaLogin + "%')");
 		}
@@ -125,14 +211,18 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 		if (loginModel.getAtivo().equals("I")) {
 			loginModel.setAtivo("A");
+			// pessoaModel.setAtivo("A");
 			loginModel.setInativo(false);
 		} else {
 			loginModel.setAtivo("I");
+			// pessoaModel.setAtivo("I");
 			loginModel.setInativo(true);
 		}
 
 		try {
 			loginController.saveOrUpdate(loginModel);
+			// pessoaController.saveOrUpdate(pessoaModel);
+			addMsg("Ativado/Inativado com sucesso!");
 		} catch (Exception e) {
 			System.out.println("Erro ao ativar/inativar");
 			e.printStackTrace();
@@ -170,66 +260,23 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@Override
 	public void saveNotReturn() {
-		
-		// Seta o Perfil
-		loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
-
-		if (novo.equals("N")) {
-			try {
-				if (!pessoaModel.getTipoPessoa().equals("PAC")) {
-					loginModel.setPessoa(new Pessoa(pessoaAux.getIdPessoa()));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				e.getMessage();
-			}
-
-			try {
-				loginModel = loginController.merge(loginModel);
-				addMsg("Salvou o Login");
-			} catch (Exception e) {
-				error();
-				e.printStackTrace();
-			}
-
-			limpar();
-			pessoaModel = new Pessoa();
-			pessoaAux = new Pessoa();
-
-		} else {
-
-			// Seta TipoPessoa
-			loginModel.setPessoa(new Pessoa(pessoaModel.getTipoPessoa()));
-
-			try {
-				pessoaController.persist(pessoaModel);
-				addMsg("Salvou a Pessoa!");
-			} catch (Exception e) {
-				e.getMessage();
-				error();
-				e.printStackTrace();
-			}
-
-			try {
-				loginController.persist(loginModel);
-				addMsg("Salvou o Login");
-			} catch (Exception e) {
-				e.getMessage();
-				error();
-				e.printStackTrace();
-			}
-
-			limpar();
-			pessoaModel = new Pessoa();
-			pessoaAux = new Pessoa();
-
+		try {
+			loginController.persist(loginModel);
+			addMsg("Salvou o Login");
+		} catch (Exception e) {
+			e.getMessage();
+			error();
+			e.printStackTrace();
 		}
 
+		limpar();
+		pessoaModel = new Pessoa();
+		pessoaAux = new Pessoa();
 	}
 
 	public List<Pessoa> completePessoa(String q) throws Exception {
-		return pessoaController.findListByQueryDinamica(" from Pessoa where pessoaNome like '%" + q.toUpperCase()
-				+ "%' and tipoPessoa = '" + pessoaModel.getTipoPessoa() + "'  order by pessoaNome ASC");
+		return pessoaController.findListByQueryDinamica(
+				" from Pessoa where pessoaNome like '%" + q.toUpperCase() + "%' order by pessoaNome ASC");
 	}
 
 	@Override
@@ -381,5 +428,61 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void setPessoaAux(Pessoa pessoaAux) {
 		this.pessoaAux = pessoaAux;
+	}
+
+	public Login getRecuperacao() {
+		return recuperacao;
+	}
+
+	public void setRecuperacao(Login recuperacao) {
+		this.recuperacao = recuperacao;
+	}
+
+	public String getUrlForget() {
+		return urlForget;
+	}
+
+	public void setUrlForget(String urlForget) {
+		this.urlForget = urlForget;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getSenhaAtual() {
+		return senhaAtual;
+	}
+
+	public void setSenhaAtual(String senhaAtual) {
+		this.senhaAtual = senhaAtual;
+	}
+
+	public String getNovaSenha() {
+		return novaSenha;
+	}
+
+	public void setNovaSenha(String novaSenha) {
+		this.novaSenha = novaSenha;
+	}
+
+	public String getConfirmaSenha() {
+		return confirmaSenha;
+	}
+
+	public void setConfirmaSenha(String confirmaSenha) {
+		this.confirmaSenha = confirmaSenha;
 	}
 }

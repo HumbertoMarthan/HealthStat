@@ -1,0 +1,544 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Dashboard</ui:define>
+
+    <ui:define name="head">
+           <script type="text/javascript">
+               //<![CDATA[
+               function skinBar() {
+                   this.cfg.shadow = false;
+                   this.cfg.title = '';
+                   this.cfg.seriesColors = ['#3984b8','#7e8dcd'];
+                   this.cfg.grid = {
+                       background: '#ffffff',
+                       borderColor: '#ffffff',
+                       gridLineColor: '#dee4e9',
+                       shadow: false
+                   };
+                   this.cfg.axesDefaults = {
+                       borderWidth: 0.1,
+                       borderColor: 'dce2e7',
+                       rendererOptions: {
+                           textColor: '#757575'
+                       }
+                   };
+                   this.cfg.seriesDefaults = {
+                       shadow: false,
+                       lineWidth: 1,
+                       renderer: $.jqplot.BarRenderer,
+                       markerOptions: {
+                           shadow: false,
+                           size: 7,
+                           style: 'circle'
+                       }
+                   }
+               }
+               //]]>  
+           </script>
+           <style type="text/css">
+               .main-content {
+                   padding: 0;
+               }
+           </style>
+       </ui:define>
+
+    <ui:define name="content">
+        <div class="ui-g dashboard">
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-1 no-gutter">
+                    <div class="overview-box-title">Unread Messages</div>
+                    <div class="overview-box-details">
+                        <i class="fa fa-inbox overview-box-details-icon" />
+                        <span class="overview-box-details-count">150</span>
+                    </div>
+                    <div class="overview-box-stats" style="color:#3fb839">+%50</div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-2 no-gutter">
+                    <div class="overview-box-title">Check-Ins</div>
+                    <div class="overview-box-details">
+                        <i class="fa fa-map-pin overview-box-details-icon" />
+                        <span class="overview-box-details-count">532</span>
+                    </div>
+                    <div class="overview-box-stats" style="color:#3fb839">+%75</div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-3 no-gutter">
+                    <div class="overview-box-title">Files Synced</div>
+                    <div class="overview-box-details">
+                        <i class="fa fa-folder overview-box-details-icon" />
+                        <span class="overview-box-details-count">25</span>
+                    </div>
+                    <div class="overview-box-stats" style="color:#3fb839">+%50</div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-4 no-gutter">
+                    <div class="overview-box-title">User Online</div>
+                    <div class="overview-box-details">
+                        <i class="fa fa-user overview-box-details-icon" />
+                        <span class="overview-box-details-count">156</span>
+                    </div>
+                    <div class="overview-box-stats" style="color:#e17576">-%15</div>
+                </div>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-6 global-sales">
+                <p:panel header="GLOBAL SALES">
+                    <div class="globe">
+                        <p:graphicImage name="images/dashboard/globe.png" library="paradise-layout" width="45"/>
+                    </div>
+                    
+                    <span class="sale-interval">20 March - 27 March</span>
+                    <p:commandButton type="button" value="Refresh" icon="fa fa-refresh" styleClass="raised-btn"/>
+                    
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><p:graphicImage name="images/dashboard/flag-brazil.png" library="paradise-layout" width="45"/></td>
+                                <td>BRAZIL</td>
+                                <td>4234</td>
+                                <td>35%</td>
+                                <td><i class="fa fa-arrow-up" /></td>
+                            </tr>
+                            <tr>
+                                <td><p:graphicImage name="images/dashboard/flag-china.png" library="paradise-layout" width="45"/></td>
+                                <td>CHINA</td>
+                                <td>3214</td>
+                                <td>25%</td>
+                                <td><i class="fa fa-arrow-up" /></td>
+                            </tr>
+                            <tr>
+                                <td><p:graphicImage name="images/dashboard/flag-belgium.png" library="paradise-layout" width="45"/></td>
+                                <td>BELGIUM</td>
+                                <td>2842</td>
+                                <td>28%</td>
+                                <td><i class="fa fa-arrow-down" /></td>
+                            </tr>
+                            <tr>
+                                <td><p:graphicImage name="images/dashboard/flag-france.png" library="paradise-layout" width="45"/></td>
+                                <td>FRANCE</td>
+                                <td>1942</td>
+                                <td>15%</td>
+                                <td><i class="fa fa-arrow-up" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p:panel>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-6 stats">
+                <p:panel header="STATISTICS">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-lg-6 knob-container">
+                            <div class="knob">75</div>
+                        </div>
+                        <div class="ui-g-12 ui-lg-6">
+                            <ul>
+                                <li>
+                                    <span class="statsbar-text">IDLE</span>
+                                    <div class="statsbar">
+                                        <div class="statsbar-value" style="width: 25%"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="statsbar-text">READING</span>
+                                    <div class="statsbar">
+                                        <div class="statsbar-value" style="width: 35%"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="statsbar-text">RESPONDING</span>
+                                    <div class="statsbar">
+                                        <div class="statsbar-value" style="width: 50%"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="statsbar-text">WAITING</span>
+                                    <div class="statsbar">
+                                        <div class="statsbar-value" style="width: 72%"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="statsbar-text">COMPLETED</span>
+                                    <div class="statsbar">
+                                        <div class="statsbar-value" style="width: 15%"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+            
+            <div class="ui-g-12 ui-md-6 ui-lg-4 task-list">
+                <p:panel header="TASKS" style="min-height:360px">
+                    <ul>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Sales Reports</span>
+                            <i class="fa fa-briefcase"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Pay Invoices</span>
+                            <i class="fa fa-credit-card"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Dinner with Tony</span>
+                            <i class="fa fa-cutlery"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Client Meeting</span>
+                            <i class="fa fa-user"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">New Theme</span>
+                            <i class="fa fa-paint-brush"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Flight Ticket</span>
+                            <i class="fa fa-fighter-jet"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Generate Charts</span>
+                            <i class="fa fa-area-chart"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Call Client</span>
+                            <i class="fa fa-phone"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Share location</span>
+                            <i class="fa fa-map-marker"></i>
+                        </li>
+                        <li>
+                            <p:selectBooleanCheckbox />
+                            <span class="task-name">Create Feed</span>
+                            <i class="fa fa-rss"></i>
+                        </li>
+                    </ul>
+                </p:panel>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 ui-fluid contact-form">
+                <p:panel header="CONTACT US" style="min-height:360px">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <p:selectOneMenu id="console" value="#{selectOneMenuView.console}" autoWidth="false">
+                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                                <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                                <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:inputText placeholder="Name"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:inputText placeholder="Email"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:inputText placeholder="Age"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:inputText placeholder="Location"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:inputTextarea placeholder="Message" cols="5" autoResize="false"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:commandButton type="button" value="Send" icon="fa fa-paper-plane-o"></p:commandButton>
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+            <div class="ui-g-12 ui-lg-4 contacts">
+                <p:panel header="CONTACTS" style="min-height:360px">
+                    <ul>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar.png" library="paradise-layout" width="45"/>
+                            <div class="contact-info">
+                                <span class="name">Samantha Owens (me)</span>
+                                <span class="location">jane@pf-paradise.com</span>
+                            </div>
+                            <div class="contact-actions">
+                                <span class="connection-status online">online</span>
+                                <i class="fa fa-paper-plane-o"></i>
+                                <i class="fa fa-phone"></i>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar1.png" library="paradise-layout" width="45"/>
+                            <div class="contact-info">
+                                <span class="name">Joshua Williams</span>
+                                <span class="location">joshua@pf-paradise.com</span>
+                            </div>
+                            <div class="contact-actions">
+                                <span class="connection-status online">online</span>
+                                <i class="fa fa-paper-plane-o"></i>
+                                <i class="fa fa-phone"></i>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar2.png" library="paradise-layout" width="45"/>
+                            <div class="contact-info">
+                                <span class="name">Emily Clark</span>
+                                <span class="location">emily@pf-paradise.com</span>
+                            </div>
+                            <div class="contact-actions">
+                                <span class="connection-status offline">offline</span>
+                                <i class="fa fa-paper-plane-o"></i>
+                                <i class="fa fa-phone"></i>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar3.png" library="paradise-layout" width="45"/>
+                            <div class="contact-info">
+                                <span class="name">Tim Johnson</span>
+                                <span class="location">tim@pf-paradise.com</span>
+                            </div>                                
+                            <div class="contact-actions">
+                                <span class="connection-status online">online</span>
+                                <i class="fa fa-paper-plane-o"></i>
+                                <i class="fa fa-phone"></i>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar4.png" library="paradise-layout" width="45"/>
+                            <div class="contact-info">
+                                <span class="name">David Stark</span>
+                                <span class="location">kelly@pf-paradise.com</span>
+                            </div>
+                            <div class="contact-actions">
+                                <span class="connection-status offline">offline</span>
+                                <i class="fa fa-paper-plane-o"></i>
+                                <i class="fa fa-phone"></i>
+                            </div>
+                        </li>
+                    </ul>
+                </p:panel>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-8 chat">
+                <p:panel header="CHAT">
+                    <ul>
+                        <li class="clearfix message-from">
+                            <p:graphicImage name="images/avatar2.png" library="paradise-layout" />
+                            <span>Retro occupy organic, stumptown shabby chic pour-over roof party DIY normcore.</span>
+                        </li>
+                        <li class="clearfix message-own">
+                            <p:graphicImage name="images/avatar.png" library="paradise-layout" />
+                            <span>Actually artisan organic occupy, Wes Anderson ugh whatever pour-over gastropub selvage.</span>
+                        </li>
+                        <li class="clearfix message-from">
+                            <p:graphicImage name="images/avatar2.png" library="paradise-layout" />
+                            <span>Chillwave craft beer tote bag stumptown quinoa hashtag.</span>
+                        </li>
+                        <li class="clearfix message-own">
+                            <p:graphicImage name="images/avatar.png" library="paradise-layout" />
+                            <span>Dreamcatcher locavore iPhone chillwave, occupy trust fund slow-carb distillery art party narwhal.</span>
+                        </li>
+                        <li class="clearfix message-own">
+                            <span>Sed ut perspiciatis unde omnis iste natus.</span>
+                        </li>
+                        <li class="clearfix message-from">
+                            <p:graphicImage name="images/avatar2.png" library="paradise-layout" />
+                            <span>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse.</span>
+                        </li>
+                        <li class="clearfix message-own">
+                            <p:graphicImage name="images/avatar.png" library="paradise-layout" />
+                            <span>At vero eos et accusamus.</span>
+                        </li>
+                    </ul>
+                    <div class="new-message">
+                        <div class="message-attachment">
+                            <i class="fa fa-paperclip" />
+                        </div>
+                        <div class="message-input">
+                            <input type="text" placeholder="Write a message" class="ui-inputfield" />
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+            <div class="ui-g-12 ui-lg-4">
+                <div class="user-card">
+                    <div class="user-card-header">
+                        <p:graphicImage name="images/dashboard/user-card-header.png" library="paradise-layout" />
+                    </div>
+                    <div class="user-card-content">
+                        <p:graphicImage name="images/avatar.png" library="paradise-layout" />
+                        <p:commandButton id="user-button" type="button" icon="ui-icon-plus" styleClass="secondary"/>
+                        
+                        <p:menu overlay="true" trigger="user-button" my="left top" at="left bottom">
+                            <p:menuitem value="Save" icon="fa fa-check" url="#"/>
+                            <p:menuitem value="Update" icon="fa fa-refresh" url="#"/>
+                            <p:menuitem value="Delete" icon="fa fa-trash" url="#"/>
+                        </p:menu>
+                        
+                        <div class="user-card-name">
+                            <span>Emma Davis</span>
+                        </div>
+                        
+                        <div class="user-detail">
+                           <ul>
+                             <li class="clearfix">
+                                 <i class="fa fa-tasks fa-fw"></i>
+                                 <span class="project-title">Tasks</span>
+                                 <span class="project-detail">3 open</span>
+                                 <div class="project-progressbar">
+                                     <div class="project-progressbar-value" style="width: 50%"></div>
+                                 </div>
+                             </li>
+                             <li class="clearfix">
+                                 <i class="fa fa-usd fa-fw"></i>
+                                 <span class="project-title">Revenue</span>
+                                 <span class="project-detail">+20%</span>
+                                 <div class="project-progressbar">
+                                     <div class="project-progressbar-value" style="width: 20%"></div>
+                                 </div>
+                             </li>
+                             <li class="clearfix">
+                                 <i class="fa fa-credit-card fa-fw"></i>
+                                 <span class="project-title">Payments</span>
+                                 <span class="project-detail">24 new</span>
+                                 <div class="project-progressbar">
+                                     <div class="project-progressbar-value" style="width: 65%"></div>
+                                 </div>                                 
+                             </li>
+                             <li class="clearfix">
+                                 <i class="fa fa-users fa-fw"></i>
+                                 <span class="project-title">Clients</span>
+                                 <span class="project-detail">+80%</span>   
+                                 <div class="project-progressbar">
+                                     <div class="project-progressbar-value" style="width: 80%"></div>
+                                 </div>                              
+                             </li>
+                           </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g-12 ui-lg-8">
+                <div class="card">
+                    <h:form>
+                        <p:dataTable var="car" value="#{dtBasicView.cars}" selectionMode="single" rowKey="#{car.id}" reflow="true" style="margin-bottom:20px">
+                            <f:facet name="header">RECENT SALES</f:facet>
+                            <p:column headerText="Id" sortBy="#{car.id}">
+                                <h:outputText value="#{car.id}" />
+                            </p:column>
+
+                            <p:column headerText="Year" sortBy="#{car.year}">
+                                <h:outputText value="#{car.year}" />
+                            </p:column>
+
+                            <p:column headerText="Brand" sortBy="#{car.brand}">
+                                <h:outputText value="#{car.brand}" />
+                            </p:column>
+                            
+                            <p:column headerText="Color" sortBy="#{car.color}">
+                                <h:outputText value="#{car.color}" />
+                            </p:column>
+                        </p:dataTable>   
+                        
+                        <p:panel header="SALES GRAPH" styleClass="chart-panel">
+                            <p:chart type="bar" model="#{chartDemoView.barModel}" responsive="true"/>
+                        </p:panel>
+                    </h:form>
+                </div>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-4">
+                <div class="card timeline ui-fluid">
+                    <div class="ui-g">
+                        <div class="ui-g-3">
+                            <span class="event-time">just now</span>
+                            <i class="fa fa-map-signs" style="color:#3984b8"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner" style="color:#3984b8">Katherine May</span>
+                            <span class="event-text">Lorem ipsun dolor amet</span>
+                            <div class="event-content">
+                                <p:graphicImage name="images/dashboard/bridge.png" library="paradise-layout" width="100"/>
+                            </div>
+                        </div>
+                        
+                        <div class="ui-g-3">
+                            <span class="event-time">12h ago</span>
+                            <i class="fa fa-star" style="color:#f6ac2b"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner" style="color:#f6ac2b">Brandon Santos</span>
+                            <span class="event-text">Ab nobis, magnam sunt eum. Laudantium, repudiandae, similique!.</span>
+                        </div>
+                        
+                        <div class="ui-g-3">
+                            <span class="event-time">15h ago</span>
+                            <i class="fa fa-comment" style="color:#7e8dcd"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner" style="color:#7e8dcd">Stephan Ward</span>
+                            <span class="event-text">Omnis veniam quibusdam ratione est repellat qui nam quisquam ab mollitia dolores ullam voluptates, similique, dignissimos.</span>
+                        </div>
+                        
+                        <div class="ui-g-3">
+                            <span class="event-time">2d ago</span>
+                            <i class="fa fa-map" style="color:#e175a0"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner" style="color:#e175a0">Jason Smith</span>
+                            <span class="event-text">Laudantium, repudiandae, similique!</span>
+                            <div class="event-content">
+                                <p:graphicImage name="images/dashboard/map.png" library="paradise-layout" />
+                            </div>
+                        </div>
+                        
+                        <div class="ui-g-3">
+                            <span class="event-time">1w ago</span>
+                            <i class="fa fa-heart" style="color:#39b8b6"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner">Kevin Cox</span>
+                            <span class="event-text">Quibusdam ratione est repellat qui nam quisquam veniam quibusdam ratione.</span>
+                        </div>
+                        
+                        <div class="ui-g-3">
+                            <span class="event-time">2w ago</span>
+                            <i class="fa fa-history" style="color:#3eb839"></i>
+                        </div>
+                        <div class="ui-g-9">
+                            <span class="event-owner" style="color:#3eb839">Walter White</span>
+                            <span class="event-text">I am the one who knocks!</span>
+                        </div>
+                        
+                        <div class="ui-g-12">
+                            <p:commandButton type="button" value="Refresh" icon="ui-icon-refresh" styleClass="rounded-btn raised-btn"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        
+            <div class="ui-g-12">
+                <p:panel header="CALENDAR" style="height:100%">
+                    <p:schedule value="#{scheduleView.eventModel}" leftHeaderTemplate="prev,next"/>
+                </p:panel>
+            </div>
+            
+        </div>
+    </ui:define>
+
+</ui:composition>

@@ -195,20 +195,7 @@
 								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
 									style="color : red" />
 							</p:column>
-
 							
-
-						<!-- 	<p:column style="width:50px" priority="4">
-								<center>
-									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{loginBean.excluir}" update="table"
-										id="excluir" ajax="true" immediate="true">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-										<f:setPropertyActionListener value="#{d}"
-											target="#{loginBean.loginModel}" />
-									</p:commandLink>
-								</center>
-							</p:column> -->
 						</p:dataTable>
 					</div>
 				</p:panel>

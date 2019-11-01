@@ -192,7 +192,18 @@
 											value="#{estoquistaBean.estoquistaModel.pessoa.pessoaTelefoneSecundario}"
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
-									<div class="ui-g-12 ui-lg-4">
+									
+									<div class="ui-g-12 ui-lg-1">
+										<h:outputLabel value="Criar Login" />
+										<p:selectOneButton rows="1" cols="30" maxlength="315"
+											autoResize="true"
+											value="#{estoquistaBean.estoquistaModel.temLogin}" >
+										<f:selectItem itemLabel="Sim" itemValue="S" />
+										<f:selectItem itemLabel="Nâo" itemValue="N" />
+										</p:selectOneButton>
+									</div>
+									
+									<div class="ui-g-12 ui-lg-3">
 										<h:outputLabel id="labelObservacaoEstoquista" for="obs"
 											value="Observação:" />
 										<p:inputTextarea id="obs" rows="1" cols="30" maxlength="315"
@@ -269,9 +280,50 @@
 			</div>
 
 		</h:form>
+		
+		
+		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário" responsive="true" modal="true">
+			<div class="ui-fluid">
+				<h:form id="formUsuario">
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-2">
+							<h:outputLabel value="Login:*" />
+							<p:inputText required="true"
+								value="#{estoquistaBean.loginModel.login}" autocomplete="true"
+								requiredMessage="Informe o Nome do Usuário">
+								<p:ajax process="@this" />
+							</p:inputText>
+						</div>
 
+						<div class="ui-g-12 ui-lg-2">
+							<h:outputLabel value="Senha:*" />
+							<p:password autocomplete="true" required="true"
+								value="#{estoquistaBean.loginModel.senha}"
+								requiredMessage="Informe o Senha do usuário">
+								<p:ajax process="@this" />
+							</p:password>
+						</div>
 
+						<div class="ui-g-12 ui-lg-2">
+							<p:outputLabel value="Perfis" />
+							<p:autoComplete completeMethod="#{auxController.completePerfil}"
+								forceSelection="true" converter="entityConverter" var="a"
+								itemLabel="#{a.perfilNome}" itemValue="#{a}"
+								value="#{estoquistaBean.perfilModel}" minQueryLength="2"
+								dropdown="true" maxResults="30" required="false"
+								requiredMessage="Informe um Perfil">
+							</p:autoComplete>
+						</div>
+					</div>
 
+					<p:commandButton id="buttonFecharDeSenha" value="Salvar"
+						ajax="true" partialSubmit="true"
+						action="#{estoquistaBean.salvarLogin}" process="@this, @form"
+						immediate="false" update="formUsuario">
+					</p:commandButton>
+				</h:form>
+			</div>
+		</p:dialog>
 	</ui:define>
 
 </ui:composition>

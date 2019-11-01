@@ -44,6 +44,7 @@ public class Atendente  implements EntityBase, Serializable {
 	
 	private String ativo = "A" ;
 	
+	private String temLogin;
 	//GETTERS E SETTERS-------------------------
 	
 	
@@ -72,6 +73,14 @@ public class Atendente  implements EntityBase, Serializable {
 	}
 	
 	// HASH CODE & EQUALS
+
+	public String getTemLogin() {
+		return temLogin;
+	}
+
+	public void setTemLogin(String temLogin) {
+		this.temLogin = temLogin;
+	}
 
 	@Override
 	public int hashCode() {

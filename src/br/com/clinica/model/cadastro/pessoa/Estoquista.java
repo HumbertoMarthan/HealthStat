@@ -39,6 +39,8 @@ public class Estoquista  implements EntityBase,Serializable {
 	
 	private String ativo = "A";
 	
+	private String temLogin;
+	
 	@Override
 	public Long getId() {
 		return idEstoquista;
@@ -68,7 +70,15 @@ public class Estoquista  implements EntityBase,Serializable {
 	public void setAtivo(String ativo) {
 		this.ativo = ativo;
 	}
-	
+
+	public String getTemLogin() {
+		return temLogin;
+	}
+
+	public void setTemLogin(String temLogin) {
+		this.temLogin = temLogin;
+	}
+
 	// HASH CODE & EQUALS
 	@Override
 	public int hashCode() {
@@ -94,11 +104,4 @@ public class Estoquista  implements EntityBase,Serializable {
 			return false;
 		return true;
 	}
-	
-
-	
-	 
-
-	
-	
 }

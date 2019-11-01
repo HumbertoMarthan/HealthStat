@@ -13,10 +13,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -27,10 +25,15 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EspecialidadeController;
+import br.com.clinica.controller.geral.LoginController;
 import br.com.clinica.controller.geral.MedicoController;
+import br.com.clinica.controller.geral.PessoaController;
 import br.com.clinica.model.cadastro.outro.Especialidade;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
+import br.com.clinica.model.cadastro.usuario.Login;
+import br.com.clinica.model.cadastro.usuario.Perfil;
+import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.ValidaCPF;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -43,32 +46,42 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
+	private Login loginModel = new Login();
+	private Perfil perfilModel;
 	private Medico medicoModel = new Medico();
 	private Especialidade espeModel;
 	private List<Medico> lstMedico = new ArrayList<Medico>();
-	
+
 	private String url = "/cadastro/cadMedico.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findMedico.jsf?faces-redirect=true";
 
 	private String campoBuscaAtivo = "T";
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
+	private String criarLogin;
+	private Long idPessoa = 0L;
+
+	@Autowired
+	private LoginController loginController;
+
+	@Autowired
+	private PessoaController pessoaController;
 
 	@Autowired
 	private MedicoController medicoController; // Injetando o Controller do Médico
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
-	
+
 	@PostConstruct
 	public void init() {
 		busca();
 	}
-	
-	public void geraRelatorio(){
-		JasperPrint  relatorio =  imprimir(lstMedico, "medico.jrxml");
+
+	public void geraRelatorio() {
+		JasperPrint relatorio = imprimir(lstMedico, "medico.jrxml");
 		try {
-			//JasperPrintManager.printReport(print, true);
+			// JasperPrintManager.printReport(print, true);
 			JasperPrintManager.printReport(relatorio, true);
 		} catch (JRException e) {
 			e.printStackTrace();
@@ -79,23 +92,24 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		return especialidadeController.findListByQueryDinamica(
 				" from Especialidade where nomeEspecialidade like '%" + q.toUpperCase() + "%'");
 	}
-	
+
 	public void verificaCPFExiste() {
 		List<Medico> lstCPF = new ArrayList<Medico>();
 		try {
-			lstCPF = medicoController.findListByQueryDinamica("from Medico where pessoa.pessoaCPF = '" + medicoModel.getPessoa().getPessoaCPF()+"'");
+			lstCPF = medicoController.findListByQueryDinamica(
+					"from Medico where pessoa.pessoaCPF = '" + medicoModel.getPessoa().getPessoaCPF() + "'");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>CPFCPF " +lstCPF.size());
-		if(!lstCPF.isEmpty()) {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>CPFCPF " + lstCPF.size());
+		if (!lstCPF.isEmpty()) {
 			try {
 				addMsg("O CPF já foi cadastrado");
 				medicoModel.getPessoa().setPessoaCPF("");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
 
 	public void busca() {
@@ -137,25 +151,17 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			System.out.println("Erro ao inativar/ativar");
 		}
-		this.medicoModel = new Medico();
-		try {
-			busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar médico");
-			e.printStackTrace();
-		}
+		limpar();
 
-	}
+		busca();
 
-	private void addMessage(FacesMessage message) {
-		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 
 	public void onRowSelect(SelectEvent event) {
 		medicoModel = (Medico) event.getObject();
 	}
 
-	public void pesquisarCep(AjaxBehaviorEvent event)  {
+	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
 			URL url = new URL("https://viacep.com.br/ws/" + medicoModel.getPessoa().getCep() + "/json/");
 			URLConnection connection = url.openConnection();
@@ -190,7 +196,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String save()  {
+	public String save() {
 		try {
 			medicoModel = medicoController.merge(medicoModel);
 		} catch (Exception e) {
@@ -225,23 +231,38 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveNotReturn(){
+	public void saveNotReturn() {
 		try {
 			if (idadeMinimaFuncionario() == true) {
 				if (ValidaCPF.isValid(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
 					medicoModel.getPessoa().setTipoPessoa("MED");
 					medicoModel = medicoController.merge(medicoModel);
+					idPessoa = medicoModel.getPessoa().getIdPessoa();
+					criarLogin = medicoModel.getTemLogin();
 					limpar();
 					sucesso();
-					// busca();
 					System.out.println("CPF Válido");
 				} else {
-					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
-							"Cpf Inválido: " + medicoModel.getPessoa().getPessoaCPF(), "");
-					addMessage(message);
+					addMsg("Cpf Inválido: " + medicoModel.getPessoa().getPessoaCPF());
 					System.out.println("ERRO CPF INVÁLIDO");
-
 				}
+				
+				if(criarLogin.equals("S")) {
+					
+					List<Login> lst = new ArrayList<Login>();
+					try {
+						lst = (List<Login>) medicoController.getListSQLDinamica("select * from Login where idPessoa ="+ idPessoa);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					if(lst.size() == 0) {
+						DialogUtils.openDialog("dialogUsuario");
+					}else {
+						addMsg("Usuário já tem Login!");
+					}
+				}
+				
 			} else {
 				System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
 			}
@@ -251,9 +272,34 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		}
 		busca();
 	}
+	
+	public void salvarLogin() {
+		if (loginModel.getLogin() != null && loginModel.getSenha() != null && perfilModel != null) { // nome do login vazio
+			Pessoa pessoa = null;
+			try {
+				pessoa = (Pessoa) pessoaController.findById(Pessoa.class, idPessoa);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			try {
+				
+				loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
+				loginModel.setPessoa((pessoa));
+				
+				loginModel = loginController.merge(loginModel);
+				addMsg("Salvou o Login");
+				loginModel = new Login();
+				DialogUtils.closeDialog("dialogUsuario");
+			
+			} catch (Exception e) {
+				error();
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
-	public void saveEdit(){
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
@@ -286,11 +332,10 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String redirecionarFindEntidade()  {
+	public String redirecionarFindEntidade() {
 		limpar();
 		return getUrlFind();
 	}
-
 
 	// Getter e Setters
 	public Medico getmedicoModel() {
@@ -382,4 +427,51 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
 
+	public String getCriarLogin() {
+		return criarLogin;
+	}
+
+	public void setCriarLogin(String criarLogin) {
+		this.criarLogin = criarLogin;
+	}
+
+	public Long getIdPessoa() {
+		return idPessoa;
+	}
+
+	public void setIdPessoa(Long idPessoa) {
+		this.idPessoa = idPessoa;
+	}
+
+	public LoginController getLoginController() {
+		return loginController;
+	}
+
+	public void setLoginController(LoginController loginController) {
+		this.loginController = loginController;
+	}
+
+	public PessoaController getPessoaController() {
+		return pessoaController;
+	}
+
+	public void setPessoaController(PessoaController pessoaController) {
+		this.pessoaController = pessoaController;
+	}
+
+	public Login getLoginModel() {
+		return loginModel;
+	}
+
+	public void setLoginModel(Login loginModel) {
+		this.loginModel = loginModel;
+	}
+
+	public Perfil getPerfilModel() {
+		return perfilModel;
+	}
+
+	public void setPerfilModel(Perfil perfilModel) {
+		this.perfilModel = perfilModel;
+	}
 }

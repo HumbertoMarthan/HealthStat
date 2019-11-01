@@ -25,8 +25,13 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EstoquistaController;
+import br.com.clinica.controller.geral.LoginController;
+import br.com.clinica.controller.geral.PessoaController;
 import br.com.clinica.model.cadastro.pessoa.Estoquista;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
+import br.com.clinica.model.cadastro.usuario.Login;
+import br.com.clinica.model.cadastro.usuario.Perfil;
+import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.ValidaCPF;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -39,6 +44,8 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 
+	private Login loginModel = new Login();
+	private Perfil perfilModel;
 	private Estoquista estoquistaModel = new Estoquista();
 	private List<Estoquista> 	lstEstoquista = new ArrayList<Estoquista>();
 	private String url = "/cadastro/cadEstoquista.jsf?faces-redirect=true";
@@ -46,9 +53,17 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
 	private String campoBuscaAtivo = "T";
+	private String criarLogin ;
+	private Long idPessoa = 0L;
 
 	@Autowired
 	private EstoquistaController estoquistaController;
+	
+	@Autowired
+	private LoginController loginController;
+	
+	@Autowired
+	private PessoaController pessoaController;
 
 	@PostConstruct
 	public void init() {
@@ -199,12 +214,32 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 			if (ValidaCPF.isValid(estoquistaModel.getPessoa().getPessoaCPF())) {
 				estoquistaModel.getPessoa().setTipoPessoa("EST");
 				estoquistaModel = estoquistaController.merge(estoquistaModel);
+				idPessoa = estoquistaModel.getPessoa().getIdPessoa();
+				criarLogin = estoquistaModel.getTemLogin();
 				limpar();
 				sucesso();
 			} else {
 				addMsg("Cpf Inválido: " + estoquistaModel.getPessoa().getPessoaCPF());
 				System.out.println("ERRO CPF INVÁLIDO");
 			}
+			
+			if(criarLogin.equals("S")) {
+				
+				List<Login> lst = new ArrayList<Login>();
+				try {
+					lst = (List<Login>) estoquistaController.getListSQLDinamica("select * from Login where idPessoa ="+ idPessoa);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				if(lst.size() == 0) {
+					DialogUtils.openDialog("dialogUsuario");
+				}else {
+					addMsg("Usuário já tem Login!");
+				}
+			}
+			
+			
 		} else {
 			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
 		}
@@ -214,6 +249,33 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		}
 		busca();
 	}
+	
+	public void salvarLogin() {
+		if (loginModel.getLogin() != null && loginModel.getSenha() != null && perfilModel != null) { // nome do login vazio
+			Pessoa pessoa = null;
+			try {
+				pessoa = (Pessoa) pessoaController.findById(Pessoa.class, idPessoa);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			try {
+				
+				loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
+				loginModel.setPessoa((pessoa));
+				
+				loginModel = loginController.merge(loginModel);
+				addMsg("Salvou o Login");
+				loginModel = new Login();
+				DialogUtils.closeDialog("dialogUsuario");
+			
+			} catch (Exception e) {
+				error();
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 
 	@Override
 	public void saveEdit()  {
@@ -325,4 +387,51 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
 
+	public String getCriarLogin() {
+		return criarLogin;
+	}
+
+	public void setCriarLogin(String criarLogin) {
+		this.criarLogin = criarLogin;
+	}
+
+	public Long getIdPessoa() {
+		return idPessoa;
+	}
+
+	public void setIdPessoa(Long idPessoa) {
+		this.idPessoa = idPessoa;
+	}
+
+	public Login getLoginModel() {
+		return loginModel;
+	}
+
+	public void setLoginModel(Login loginModel) {
+		this.loginModel = loginModel;
+	}
+
+	public Perfil getPerfilModel() {
+		return perfilModel;
+	}
+
+	public void setPerfilModel(Perfil perfilModel) {
+		this.perfilModel = perfilModel;
+	}
+
+	public LoginController getLoginController() {
+		return loginController;
+	}
+
+	public void setLoginController(LoginController loginController) {
+		this.loginController = loginController;
+	}
+
+	public PessoaController getPessoaController() {
+		return pessoaController;
+	}
+
+	public void setPessoaController(PessoaController pessoaController) {
+		this.pessoaController = pessoaController;
+	}
 }

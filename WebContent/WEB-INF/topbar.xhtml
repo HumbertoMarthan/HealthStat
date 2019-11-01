@@ -51,16 +51,14 @@ a:hover {
 				<ul>
 
 					<li role="menuitem"><a
-						href="#{facesContext.externalContext.requestContextPath}/cadastro/alterarSenha.jsf?faces-redirect=true">
-							<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Alterar
-								Senha</span>
+						href="#{facesContext.externalContext.requestContextPath}/publico/alterarSenha.jsf?faces-redirect=true">
+							<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Alterar Senha</span>
 					</a></li>
 
 					<sec:ifAnyGranted roles="ATE,ADMIN">
 						<li role="menuitem"><a
 							href="#{facesContext.externalContext.requestContextPath}/cadastro/findUsuario.jsf?faces-redirect=true">
-								<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Cadastrar
-									Usuário</span>
+								<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Cadastrar Usuário</span>
 						</a></li>
 					</sec:ifAnyGranted>
 
@@ -73,15 +71,15 @@ a:hover {
 					<!--  <span class="topbar-badge animated rubberBand">2</span> -->
 			</a></li>
 
-			<li><a href="#"> <span class="topbar-item-name"
+			<!-- <li><a href="#"> <span class="topbar-item-name"
 					style="font-weight: bold; font-size: 15px; margin-left: auto; margin-right: auto; text-align: center;">Ultimo
 						Acesso do Usuário: <h:outputText
 							value="#{loginBean.loginModel.ultimoAcesso}" id="ultimoAcesso">
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"
 								dateStyle="full" timeStyle="full" timeZone="GMT-03:00" />
 						</h:outputText>
-				</span> <!--     <span class="topbar-badge animated rubberBand">4</span> -->
-			</a></li>
+				</span>     <span class="topbar-badge animated rubberBand">4</span>
+			</a></li> -->
 		</ul>
 
 	</div>

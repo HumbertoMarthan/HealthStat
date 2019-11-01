@@ -76,6 +76,7 @@ public class Medico  implements EntityBase ,Serializable {
 	@JoinColumn(name = "idPrecoConsulta")
 	PrecoConsulta precoConsulta;
 
+	private String temLogin;
 	
 	public Medico(Long idMedico) {
 		this.idMedico = idMedico;
@@ -155,6 +156,14 @@ public class Medico  implements EntityBase ,Serializable {
 		this.precoConsulta = precoConsulta;
 	}
 
+	public String getTemLogin() {
+		return temLogin;
+	}
+
+	public void setTemLogin(String temLogin) {
+		this.temLogin = temLogin;
+	}
+
 	// HASH CODE & EQUALS
 	@Override
 	public int hashCode() {
@@ -180,13 +189,4 @@ public class Medico  implements EntityBase ,Serializable {
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		System.out.println("><><><><><><><><><><><><><><><>< "+especialidades);
-		return  especialidades + ",";
-	}
-	
-
-	
 }

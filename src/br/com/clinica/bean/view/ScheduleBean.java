@@ -667,12 +667,12 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		String email = "";
 
 		for (Evento e : emails) {
-			email = e.getPaciente().getEmail();
+			email = e.getPaciente().getPessoa().getPessoaEmail();
+			//email = e.getPaciente().getEmail();
 		}
 
 		String emailTitulo = "";
-		emailTitulo += "Um Evento foi Agendado/Atualizada para o paciente: '"
-				+ t.getPaciente().getPessoa().getPessoaNome() + "'";
+		emailTitulo += "Um Evento foi Agendado/Atualizada para o paciente: '" + t.getPaciente().getPessoa().getPessoaNome() + "'";
 
 		String emailConteudo = "";
 
