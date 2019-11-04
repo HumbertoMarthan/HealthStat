@@ -15,5 +15,9 @@ public class DialogUtils {
 		RequestContext.getCurrentInstance().execute("PF('" + dialog + "').hide();");
 	}
 	
+	public static void execute(String js){
+		RequestContext.getCurrentInstance().execute(js);
+	}
+	
 
 }

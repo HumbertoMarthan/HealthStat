@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
+import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.EmailUtils;
 
 @Controller
@@ -33,7 +35,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private ContextoBean contextoBean;
-
+	
 	private Login recuperacao = new Login();
 
 	private Login loginModel = new Login();
@@ -74,32 +76,34 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@PostConstruct
 	public void init() throws Exception {
-		busca();
-		id = contextoBean.getEntidadeLogada().getIdLogin();
+		busca(); 
 	}
 
 	public void updateSenha() throws Exception  {
-		Login usuario = (Login)  loginController.findById(Login.class, id);
+		Login usuario = (Login)  contextoBean.retornaUsuario();
 
+//		Login usuario = (Login)  loginController.findById(Login.class, id);
+		System.out.println("Usuario Nome " +usuario.getLogin());
+		System.out.println("Senha Atual "+senhaAtual);
+		System.out.println("Nova Senha "+novaSenha);
+		System.out.println("Confirma Senha" +confirmaSenha);
 		//loginController.setExecuteParam("update Login set login = '"+campo1 + "' where idLogin = "+ usuario.getIdLogin());
 		
 		  if (!senhaAtual.equals(usuario.getSenha())) {
-			  addMsg("A senha atual não é valida."); 
-		  } 
-
-		  if(senhaAtual.equals(novaSenha)) { 
+			  addMsg("Senha nâo confere com a do banco"); 
+		  } else if(senhaAtual.equals(novaSenha)) { 
 			  addMsg("A senha atual não pode ser igual a nova senha."); 
-		  }
-		
-		  if(!novaSenha.equals(confirmaSenha)) {
+		  } else if(!novaSenha.equals(confirmaSenha)) {
 			  addMsg("A nova senha e a confirmação não conferem.");
 		  } else {
-			
 			  usuario.setSenha(novaSenha);
-		 
-		  try { 
-			  loginController.merge(usuario); sucesso();
-			  usuario = new Login(); 
+
+			  try { 
+			  loginController.merge(usuario); 
+			  sucesso();
+			  usuario = new Login();
+			  Thread.sleep(2500);
+			  DialogUtils.execute("logout('"+ FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath()+"')");
 		  }
 		  catch (Exception e) { 
 			  error(); 
@@ -286,6 +290,15 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	// GETTERS E SETTERS
 
+	public String getNomePerfil() {
+		try {
+			return contextoBean.getEntidadeLogada().getPerfil().getPerfilNome();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	public String getUsuarioLogadoSecurity() {
 		return contextoBean.getAuthentication().getName();
 	}

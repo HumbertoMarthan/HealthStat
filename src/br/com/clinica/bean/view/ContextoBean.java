@@ -59,6 +59,11 @@ public class ContextoBean implements Serializable {
 		}
 		return login;
 	}
+	
+	public Login retornaUsuario() {
+		Login login = (Login) getExternalContext().getSessionMap().get(USER_LOGADO_SESSAO);
+	return login;
+	}
 
 	private Object getUserPrincipal() {
 

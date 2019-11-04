@@ -777,8 +777,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 			try { // deleta os lancamentos do pagamento especial
 				if (contasReceberModel.getStatus().equals("L")) {
-					pagamentoEspecialController.setExecuteParam("delete from pagamentoespecial where idcontasreceber = "
-							+ idContaReceber + " and situacao = 'P' ");
+					pagamentoEspecialController.setExecuteParam("delete from pagamentoespecial where idcontasreceber = " + idContaReceber + " and situacao = 'P' ");
 				}
 			} catch (Exception e) {
 				System.out.println("Erro ao Deletar Pagamento Especial");
@@ -869,6 +868,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 			try {
 				fazerPagamentoDuasFormas();
+				sucesso();
 				busca();
 			} catch (Exception e) {
 				System.out.println("Erro ao fazer Pagamento Duas Formas");

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -85,15 +86,16 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	@Autowired
 	private EstoqueController estoqueController;
 
-	public ContasPagarBean() {
+	@PostConstruct
+	public void init() {
 		try {
-			busca();
+		busca();
 		} catch (Exception e) {
 			System.out.println("Erro ao buscar contas a pagar");
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void abrirPedido() {
 		try {
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
@@ -124,32 +126,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void onCellEdit(CellEditEvent event) {
-		try {
-			Object oldValue = event.getOldValue();
-			Object newValue = event.getNewValue();
-			Estoque estoqueSelecionado = new Estoque();
-			DataTable table = (DataTable) event.getSource();
-			estoqueSelecionado = (Estoque) table.getRowData();
-
-			System.out.println("Valor Antigo> " + oldValue);
-			System.out.println("Valor Editado> " + newValue);
-			if (newValue != null && !newValue.equals(oldValue)) {
-				estoqueSelecionado.setValorUnitario((Double) newValue); // quem ta nulo é o estoque
-				try {
-					estoqueController.merge(estoqueSelecionado);
-					addMsg("Valor Alterado para :" + newValue);
-				} catch (Exception e) {
-
-					e.printStackTrace();
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		calcularTotalPedido();
-	}
-	
 	public void alteraValorUnitario(Estoque estoqueSelecionado) {
 		try {
 			//Estoque estoqueSelecionado = new Estoque();
@@ -265,8 +241,10 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			contasPagarModel.setStatus("L");
 			contasPagarModel.setDataLancamento(new Date());
 			contasPagarController.merge(contasPagarModel);
-			busca();
+
 			addMsg("Operação Realizada Com Sucesso!");
+			DialogUtils.closeDialog("contaFixa");
+			busca();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -318,14 +296,16 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void pagarConta() {
 		try {
-			System.out.println("Conta atual sem pesquisa " + contasPagarModel.getIdContasPagar());
+			
 			contasPagarModel.setStatus("PA");
 			contasPagarModel.setDataPagamento(new Date());
-			contasPagarController.merge(contasPagarModel);
+			contasPagarModel = contasPagarController.merge(contasPagarModel);
 
-			ContasPagar contaAtual = contasPagarController.findByPorId(ContasPagar.class,
-					contasPagarModel.getIdContasPagar());
+			ContasPagar contaAtual = contasPagarController.findByPorId(ContasPagar.class, contasPagarModel.getIdContasPagar());
+			System.out.println("Conta Atual Valor >>"+ contaAtual.getValorConta());
+			
 			System.out.println("Conta atual com pesquisa " + contaAtual.getIdContasPagar());
+			
 			if(contaAtual.getFornecedor() == null ) {
 				caixaModel.setFornecedor(contaAtual.getMaterial().getFornecedor());	
 			}else {
@@ -333,7 +313,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			}
 			caixaModel.setDataLancamento(new Date());
 			caixaModel.setContasPagar(new ContasPagar(contaAtual.getIdContasPagar()));
-			caixaModel.setValorRetirado(contaAtual.getValorConta());
+			caixaModel.setValorRetirado(contaAtual.getValorTotalConta());
 			caixaModel.setTipo("CP");
 			
 			limpar();
@@ -355,6 +335,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao buscar no caixa (metodo pagar)");
 			e.printStackTrace();
 		}
+		contasPagarModel = new ContasPagar();
 	}
 
 	@Override
@@ -643,3 +624,21 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		this.temParcela = temParcela;
 	}
 }
+
+
+/*
+ * public void onCellEdit(CellEditEvent event) { try { Object oldValue =
+ * event.getOldValue(); Object newValue = event.getNewValue(); Estoque
+ * estoqueSelecionado = new Estoque(); DataTable table = (DataTable)
+ * event.getSource(); estoqueSelecionado = (Estoque) table.getRowData();
+ * 
+ * System.out.println("Valor Antigo> " + oldValue);
+ * System.out.println("Valor Editado> " + newValue); if (newValue != null &&
+ * !newValue.equals(oldValue)) { estoqueSelecionado.setValorUnitario((Double)
+ * newValue); // quem ta nulo é o estoque try {
+ * estoqueController.merge(estoqueSelecionado); addMsg("Valor Alterado para :" +
+ * newValue); } catch (Exception e) {
+ * 
+ * e.printStackTrace(); } } } catch (Exception ex) { ex.printStackTrace(); }
+ * calcularTotalPedido(); }
+ */

@@ -7,10 +7,28 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	xmlns:p="http://primefaces.org/ui">
 <body>
+		<div class="ui-fluid">
+			 <p:outputPanel>
+				<div align="center">
+					<p:panel>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-lg-12">
+								<div align="center">
+									<p:outputLabel value="Receber Consultas" styleClass="titulo" />
+								</div>
+							</div>
+						</div>
+				</p:panel>
+				</div>
+			</p:outputPanel>
+			</div>
+			<br/>
+			<br/>
+			
 	<p:panel rendered="#{contasReceberBean.estado eq 'P'}">
 		<div class="content">
 			<div class="ui-fluid">
-				<p:panel header="Pesquisa de Pacientes" style="text-align:center">
+				<p:panel header="Consultas" style="text-align:center">
 					<div class="ui-g">
 						<h:panelGroup id="botoes">
 							<!-- Botão Pagamento -->
@@ -30,10 +48,10 @@
 							<p:commandButton
 								style="height:40px;width:170px; 
 								background-color: blue; background: blue; color:white !important"
-								value="Editar Pagamento" update=":relancarForm"
+								value="Editar Pagamento" update=":relancarFormEditar"
 								rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and
-											(contasReceberBean.contasReceberModel.idContasReceber > 0)}"
-								onclick="PF('relancarPagamento').show()">
+											(contasReceberBean.contasReceberModel.idContasReceber > 0) and (contasReceberBean.parcelaPagarModel.situacao eq 'P')}"
+								onclick="PF('relancarPagamentoEditar').show()">
 							</p:commandButton>
 						</h:panelGroup>
 						<div class="ui-g-12 ui-lg-3">
@@ -73,8 +91,7 @@
 								listener="#{contasReceberBean.onRowSelect}"
 								update="table, formPai:botoes" />
 
-							<p:column headerText="Status" priority="1"
-								style="overflow: hidden;text-align: center; font-size: medium;width: 8%">
+							<p:column headerText="Status" priority="1" style="overflow: hidden;text-align: center; font-size: large;width: 8%">
 								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
 									style="color : red" />
 								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
@@ -82,7 +99,6 @@
 								<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
 									style="color : green" />
 							</p:column>
-
 
 							<p:column headerText="Usuário"
 								style="overflow: hidden;text-align: center; font-size: large;"
@@ -122,7 +138,7 @@
 								<p:outputLabel style="color: red" value="R$ #{d.valorConsulta}" />
 							</p:column>
 
-							<p:column headerText="Ações" width="10%">
+							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta ne 'PA'}">
 								<p:commandButton
 									rendered="#{d.tipoPagamento eq 'PAR' or (d.tipoPagamento eq 'ESP')}"
 									action="#{contasReceberBean.selecionarBusca(contasReceberBean.contasReceberModel)}"

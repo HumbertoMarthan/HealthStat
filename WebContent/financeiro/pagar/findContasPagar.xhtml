@@ -108,27 +108,55 @@
 	border-color: var(- -input-hover-border-color, #ccc);
 }
 
-.painelFornecedor{
+.painelFornecedor {
 	background-color: #5c9ccc;
-	width: 100%; 
+	width: 100%;
 	padding: 2%;
 	padding-left: 8%;
 }
 
-
 .ui-dialog .ui-dialog-content {
-    position: relative;
-    border: 0;
-    padding: 0 !important;
-    background: none;
-    overflow: auto;
-    zoom: 1;
+	position: relative;
+	border: 0;
+	padding: 0 !important;
+	background: none;
+	overflow: auto;
+	zoom: 1;
+}
+.titulo{
+	font-size: large !important;
+    color: #2e6e9e;
+    font-weight: bold;
+
+}
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled,
+	.ui-widget-header .ui-state-disabled {
+	/* opacity: .35;*/
+	background-image: none;
 }
 </style>
 	</ui:define>
 	<ui:define name="content">
 		<h:form id="formContasPagar">
 			<div class="ui-fluid">
+			 <p:outputPanel>
+				<div align="center">
+					<p:panel>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-lg-12">
+								<div align="center">
+									<p:outputLabel value="Pagamento de Contas" styleClass="titulo" />
+								</div>
+							</div>
+						</div>
+				</p:panel>
+				</div>
+			</p:outputPanel>
+			
+			<br/>
+			<br/>
+			
 				<p:panel>
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12 ui-sm-12">
@@ -154,7 +182,8 @@
 														   background-color: lightskyblue ;
 														   color:white !important;
 														   font-size:large;"
-														immediate="true" update="table, formDialogContasPagar"
+														immediate="true"
+														update="table, :formDialogHeaderContasPagar :formDialogContasPagar"
 														oncomplete="PF('editarContaPagar').show()"
 														rendered="#{contasPagarBean.contasPagarModel.status eq 'L' 
 															  or (contasPagarBean.contasPagarModel.status eq 'P') 
@@ -163,6 +192,7 @@
 													</p:commandButton>
 
 												</div>
+
 												<div class="ui-g-12 ui-lg-1">
 													<p:commandButton id="botaoPagar" value="Pagar"
 														style="height:40px; background: green !important  ;
@@ -172,8 +202,10 @@
 														immediate="true" action="#{contasPagarBean.pagarConta}"
 														update="table"
 														rendered="#{contasPagarBean.contasPagarModel.status eq 'L' }">
+
 													</p:commandButton>
 												</div>
+
 												<div class="ui-g-12 ui-lg-3">
 													<p:selectOneRadio
 														value="#{contasPagarBean.campoBuscaStatus}">
@@ -267,8 +299,9 @@
 
 												</p:column>
 												<p:column headerText="Valor Total" priority="1" width="10%"
-													style="overflow: hidden;text-align: right; font-size: large">
-													<p:outputLabel value="R$ #{d.valorTotalConta}" />
+													style="overflow: hidden;text-align: center; font-size: large">
+													<p:outputLabel value="R$ " />
+													<p:outputLabel value="#{d.valorTotalConta}"> <f:convertNumber maxFractionDigits="3" minFractionDigits="2" /> </p:outputLabel>
 												</p:column>
 											</p:dataTable>
 										</div>
@@ -289,8 +322,9 @@
 														oncomplete="PF('pedidosDialog').show()" immediate="true"
 														update=":formDialogPedidos"
 														rendered="#{contasPagarBean.pedidoModel.idPedido > 0 and (contasPagarBean.pedidoModel.status eq 'EM')}" />
-												
-													<p:outputLabel value="Nenhum Pedido Pendente Selecionado" style="font-size:large; padding: 4%"
+
+													<p:outputLabel value="Nenhum Pedido Pendente Selecionado"
+														style="font-size:large; padding: 4%"
 														rendered="#{contasPagarBean.pedidoModel.idPedido == null or (contasPagarBean.pedidoModel.status ne 'EM')}" />
 												</div>
 
@@ -310,24 +344,27 @@
 											<p:dataTable value="#{contasPagarBean.lstPedido}" var="d"
 												emptyMessage="Não há dados" rowKey="#{d.idPedido}"
 												selectionMode="single" id="tablePedido" rows="10"
-												paginator="true" 
-												selection="#{contasPagarBean.pedidoModel}">
+												paginator="true" selection="#{contasPagarBean.pedidoModel}">
 
 												<p:ajax event="rowSelect"
 													listener="#{contasPagarBean.onRowSelectPedido}"
 													update="tablePedido, :formDialogPedidos, :formContasPagar:tabs:botoesPedido" />
 
-												<p:column headerText="Nº Pedido" style="text-align: center;font-size:large;">
+												<p:column headerText="Nº Pedido"
+													style="text-align: center;font-size:large;">
 													<p:outputLabel value="#{d.numPedido}" />
 												</p:column>
-												
-												<p:column headerText="Data do Pedido" style="text-align: center;font-size:large;">
-													<p:outputLabel value="#{d.dataPedido}" >
-														<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" timeZone="America/Sao_Paulo" />	
+
+												<p:column headerText="Data do Pedido"
+													style="text-align: center;font-size:large;">
+													<p:outputLabel value="#{d.dataPedido}">
+														<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+															timeZone="America/Sao_Paulo" />
 													</p:outputLabel>
 												</p:column>
-												
-												<p:column headerText="Status" style="text-align:center;font-size:large;">
+
+												<p:column headerText="Status"
+													style="text-align:center;font-size:large;">
 													<p:outputLabel value="Em Análise"
 														rendered="#{d.status eq 'EM'}" style="color: gray" />
 													<p:outputLabel value="Aprovado"
@@ -346,8 +383,9 @@
 			</div>
 		</h:form>
 
-		<p:dialog widgetVar="pedidosDialog" id="pedidosDialog" modal="true" position="top"
-			resizable="false" responsive="true" width="800" header="Pedidos">
+		<p:dialog widgetVar="pedidosDialog" id="pedidosDialog" modal="true"
+			position="top" resizable="false" responsive="true" width="800"
+			header="Pedidos">
 			<h:form id="formDialogPedidos">
 				<div class="ui-fluid">
 					<div class="ui-g">
@@ -374,7 +412,8 @@
 								</div>
 								<div class="ui-g-12 ui-lg-3">
 									<p:outputLabel value="Valor Total do Pedido : R$ " />
-									<p:inputNumber value="#{contasPagarBean.valorPedido}" disabled="true" >
+									<p:inputNumber value="#{contasPagarBean.valorPedido}"
+										disabled="true">
 									</p:inputNumber>
 								</div>
 							</h:panelGroup>
@@ -392,7 +431,8 @@
 										listener="#{contasPagarBean.alteraValorUnitario}"
 										update="tablePedidoSelecionado, :formDialogPedidos:botoesPedidoSelecionado" />
 
-									<p:column headerText="Nº Pedido" style="text-align: center;font-size: large">
+									<p:column headerText="Nº Pedido"
+										style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.numPedido}" />
 									</p:column>
 
@@ -401,18 +441,23 @@
 										<p:outputLabel value="#{d.material.nomeMaterial}" />
 									</p:column>
 
-									<p:column headerText="Status" style="text-align: center;font-size: large">
+									<p:column headerText="Status"
+										style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.status}" />
 									</p:column>
 
-									<p:column headerText="Quantidade" style="text-align: center;font-size: large">
-										<p:outputLabel value="#{d.quantidade}" style="text-align: center;font-size: large" />
+									<p:column headerText="Quantidade"
+										style="text-align: center;font-size: large">
+										<p:outputLabel value="#{d.quantidade}"
+											style="text-align: center;font-size: large" />
 									</p:column>
 
 									<p:column headerText="Valor Unitário">
-												<p:inputNumber  value="#{d.valorUnitario}"  emptyValue="0.00" decimalPlaces="2"   >
-													<p:ajax listener="#{contasPagarBean.alteraValorUnitario(d)}" update="tablePedidoSelecionado , formDialogPedidos" />
-												</p:inputNumber>
+										<p:inputNumber value="#{d.valorUnitario}" emptyValue="0.00"
+											decimalPlaces="2">
+											<p:ajax listener="#{contasPagarBean.alteraValorUnitario(d)}"
+												update="tablePedidoSelecionado , formDialogPedidos" />
+										</p:inputNumber>
 									</p:column>
 
 								</p:dataTable>
@@ -425,7 +470,7 @@
 		</p:dialog>
 
 		<p:dialog widgetVar="contaFixa" id="contaFixa" modal="true"
-			resizable="false" responsive="true" width="550" header="Fixa">
+			resizable="false" responsive="true" width="550" header="Conta Fixa">
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">
@@ -457,7 +502,7 @@
 											requiredMessage="Informe uma uma forma de pagamento">
 										</p:autoComplete>
 									</div>
-									
+
 									<div class="ui-g-12 ui-lg-6 ui-sm-12 ">
 										<h:outputLabel value="Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
@@ -470,14 +515,14 @@
 									</div>
 								</div>
 								<div class="ui-g">
-										<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
-											<h:outputLabel value="Parcelas" />
-											<p:inputNumber decimalPlaces="2" 
-												symbolPosition="p" required="true"
-												value="#{contasPagarBean.contasPagarModel.parcelas}">
-											</p:inputNumber>
-										</div>
-									
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
+										<h:outputLabel value="Parcelas" />
+										<p:inputNumber decimalPlaces="0" symbolPosition="p"
+											required="true"
+											value="#{contasPagarBean.contasPagarModel.parcelas}">
+										</p:inputNumber>
+									</div>
+
 									<div class="ui-g-12 ui-lg-4 ui-sm-12 ">
 										<h:outputLabel value="Valor Total" />
 										<p:inputNumber decimalPlaces="2" symbol="R$"
@@ -505,23 +550,34 @@
 
 		<p:dialog widgetVar="editarContaPagar" id="editarContaPagar"
 			modal="true" resizable="false" responsive="true" width="800"
-			header="Fixa">
+			header="Editar Lançamento">
 			<div class="ui-fluid">
-				<div class="ui-g">
-					<p:outputPanel styleClass="painelFornecedor" >
-						<div class="ui-g">
-							<div class="ui-g-12 ui-lg-6">
-								<h:outputLabel value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor.toUpperCase()}" style="font-size: large;color:white" />
-							</div>
+				<h:form id="formDialogHeaderContasPagar">
+					<div class="ui-g">
+						<p:outputPanel styleClass="painelFornecedor">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-6">
+									<h:outputLabel
+										value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor.toUpperCase()}"
+										style="font-size: large;color:white" />
+								</div>
 
-							<div class="ui-g-12 ui-lg-3">
-								<h:outputLabel value="Valor Total: R$ #{contasPagarBean.contasPagarModel.valorTotalConta}" style="font-size: large;color:white"  />
-							</div>
+								<div class="ui-g-12 ui-lg-2">
+									<h:outputLabel value="Valor Total"
+										style="font-size: large;color:white" />
+								</div>
 
-						</div>
-					</p:outputPanel>
-				</div>
-			
+								<div class="ui-g-12 ui-lg-3">
+									<p:inputNumber
+										value="#{contasPagarBean.contasPagarModel.valorTotalConta}"
+										disabled="true" style="font-size: large;color:white" />
+								</div>
+
+							</div>
+						</p:outputPanel>
+					</div>
+				</h:form>
+
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<div class="ui-g-12 ui-lg-12">
@@ -534,8 +590,8 @@
 											value="#{contasPagarBean.contasPagarModel.valorTotalConta}">
 										</p:inputNumber>
 									</div>
-								
-										<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
+
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
 										<h:outputLabel value="Data de Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
 											popupIconOnly="true" required="true"
@@ -545,7 +601,7 @@
 											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
 										</p:calendar>
 									</div>
-								
+
 									<div class="ui-g-12 ui-lg-6 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
@@ -569,7 +625,8 @@
 								<div class="ui-g" align="center">
 									<div class="ui-g-12 ui-lg-12">
 										<p:commandButton value="Lançar"
-											actionListener="#{contasPagarBean.editarPagamento}" oncomplete="PF(editarContaPagar).hide()"
+											actionListener="#{contasPagarBean.editarPagamento}"
+											oncomplete="PF(editarContaPagar).hide()"
 											style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important" />
 									</div>
 								</div>
@@ -578,7 +635,7 @@
 						</div>
 					</div>
 				</div>
-				</div>
+			</div>
 		</p:dialog>
 
 

@@ -68,7 +68,7 @@
 									 -->
 									<sec:ifAnyGranted roles="ATE, ADMIN">
 										<p:menuitem id="item_menu_especialidade" value="Especialidade"  style="font-size:14px"
-											icon="fa fa-glass"
+											icon="fa fa-stethoscope"
 											action="#{especialidadeBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
@@ -80,13 +80,13 @@
 
 									<sec:ifAnyGranted roles="EST, ADMIN">
 										<p:menuitem id="item_menu_material" value="Material"  style="font-size:14px"
-											icon="fa fa-glass"
+											icon="fa fa-cube"
 											action="#{materialBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 									
 									<sec:ifAnyGranted roles="ATE, ADMIN">
 										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"  style="font-size:14px"
-											icon="fa fa-glass"
+											icon="pi pi-th-large"
 											action="#{precoConsultaBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 								</p:submenu>
@@ -94,7 +94,7 @@
 
 							<sec:ifAnyGranted roles="EST, ADMIN">
 								<p:submenu id="pm_hierarchy_movimentação" label="Estoque"  style="font-size:14px"
-									icon="fa fa-refresh">
+									icon="fa fa-cubes">
 									<p:menuitem id="submenu_estoque" value="Estoque/Pedidos" style="font-size:14px"
 										action="#{estoqueBean.redirecionarFindEntidade}" 
 										icon="fa fa-archive"/>
@@ -103,7 +103,7 @@
 
 							<sec:ifAnyGranted roles="MED, ADMIN">
 								<p:submenu id="pm_hierarchy_medico" label="Prontuário"  style="font-size:14px"
-									icon="fa fa-medkit"> 
+									icon="fa fa-hospital-o"> 
 									<p:menuitem id="item_menu_prontuario" value="Prontuário"  style="font-size:14px"
 										action="#{prontuarioBean.redirecionarFindEntidade}"
 										icon="fa fa-heartbeat" />
@@ -114,19 +114,19 @@
 								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"  style="font-size:14px"
 									icon="fa fa-money">
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
-											<p:menuitem id="item_menu_financeiro_caixa" value="Caixa"  style="font-size:14px"
+											<p:menuitem id="item_menu_financeiro_caixa" value="Movimentos"  style="font-size:14px"
 												action="#{caixaBean.redirecionarFindEntidade}"
-												icon="fa fa-glass" />
+												icon="fa fa-balance-scale" />
 										</sec:ifAnyGranted>
 
 										<sec:ifAnyGranted roles="ATE ,ADMIN">
 											<p:menuitem id="item_menu_financeiro" value="Pagamento"  style="font-size:14px"
 												action="#{contasPagarBean.redirecionarFindEntidade}"
-												icon="fa fa-glass" />
+												icon="fa fa-credit-card" />
 										</sec:ifAnyGranted>
 										<p:menuitem id="item_menu_receber_consultas"  style="font-size:14px"
 											action="#{contasReceberBean.redirecionarFindEntidade}" 
-											value="Receber" icon="fa fa-glass" />
+											value="Receber" icon="fa fa-share" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 

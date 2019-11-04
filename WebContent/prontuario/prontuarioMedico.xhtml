@@ -86,8 +86,6 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	</ui:define>
 	<ui:define name="content">
 		<h:form>
-
-
 			<p:outputPanel>
 				<div align="center">
 					<p:panel>
@@ -98,39 +96,6 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								</div>
 							</div>
 						</div>
-
-						<!-- Botão Guia de Consulta -->
-						<p:commandButton value="Guia Consulta"
-							rendered="#{prontuarioBean.estado ne 'C'}"
-							style="height:40px;width:170px; background-color: darkcyan; background: darkcyan; color:white !important"
-							ajax="true" immediate="true" id="buttonGuiaConsulta"
-							icon="fa fa-info-circle" iconPos="right"
-							action="#{prontuarioBean.mudaEstadoGuiaConsulta}" update="@form">
-
-							<p:confirm
-								message="Deseja ir para a Guia de Consulta? A tela atual será perdida, senão salva!"
-								icon="ui-icon-mail-closed" />
-						</p:commandButton>
-						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-							<div align="center">
-								<p:commandButton value="Sim" type="button"
-									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-
-								<p:commandButton value="Não" type="button"
-									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
-							</div>
-						</p:confirmDialog>
-
-						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-							<div align="center">
-								<p:commandButton value="Sim" type="button"
-									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-
-								<p:commandButton value="Não" type="button"
-									styleClass="ui-confirmdialog-no" icon=" ui-icon-close" />
-							</div>
-						</p:confirmDialog>
-
 				</p:panel>
 				</div>
 			</p:outputPanel>

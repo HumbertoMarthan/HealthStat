@@ -32,9 +32,9 @@ a:hover {
 		<a href="#" id="menu-button"> <i class="fa fa-bars"></i>
 		</a> <a href="#" id="user-display"> <span class="username"
 			style="text-decoration: none;"> <p:outputLabel
-					style="font-weight:bold;">Usuário: #{loginBean.usuarioLogadoSecurity}
+					style="font-weight:bold;">	#{loginBean.usuarioLogadoSecurity.toUpperCase()}
 		</p:outputLabel>
-		</span> <p:graphicImage name="images/avatar.png" library="paradise-layout"
+		</span> <p:graphicImage name="images/user.png" library="paradise-layout"
 				style="border: 0px;" /> <i class="fa fa-angle-down"></i>
 		</a> <label for="topbar-search"> <!-- <i
 			class="fa fa-search topbar-search-icon"></i> -->
@@ -43,13 +43,17 @@ a:hover {
 			placeholder="" id="topbar-search" />
  -->
 		<ul id="topbar-menu" class="fadeInDown animated">
-
-
+			
+			<li><a href="#"> <i class="topbar-icon fa fa-fw fa-user"></i>
+					<span class="topbar-item-name" style="font-size: 15px;">Perfil - #{loginBean.nomePerfil}</span>
+			</a></li>
+			
 			<li><a href="#"> <i class="topbar-icon fa fa-fw fa-user"></i>
 					<span class="topbar-item-name" style="font-size: 15px;">Ajustes</span>
 			</a>
+			
 				<ul>
-
+				
 					<li role="menuitem"><a
 						href="#{facesContext.externalContext.requestContextPath}/publico/alterarSenha.jsf?faces-redirect=true">
 							<i class="fa fa-fw fa-user"></i> <span style="font-size: 15px;">Alterar Senha</span>
@@ -70,7 +74,6 @@ a:hover {
 					style="font-size: 15px; font-weight: bold; font-size: 15px;">Logout</span>
 					<!--  <span class="topbar-badge animated rubberBand">2</span> -->
 			</a></li>
-
 			<!-- <li><a href="#"> <span class="topbar-item-name"
 					style="font-weight: bold; font-size: 15px; margin-left: auto; margin-right: auto; text-align: center;">Ultimo
 						Acesso do Usuário: <h:outputText

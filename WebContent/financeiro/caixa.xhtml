@@ -104,15 +104,13 @@
 								<hr />
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-1">
 										<p:outputLabel value="Data Inicial" />
-										<p:calendar value="#{caixaBean.campoDataInicio}"
-											navigator="true" />
+										<p:calendar value="#{caixaBean.campoDataInicio}" navigator="true" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-1">
 										<p:outputLabel value="Data Fim" />
-										<p:calendar id="dtFim" value="#{caixaBean.campoDataFim}"
-											navigator="true" />
+										<p:calendar id="dtFim" value="#{caixaBean.campoDataFim}" navigator="true" />
 									</div>
 									<div class="ui-g-12 ui-lg-2">
 										<p:outputLabel value="Nome do Fornecedor" />
@@ -120,14 +118,10 @@
 									</div>
 									<div class="ui-g-12 ui-lg-2">
 										<p:outputLabel value="Nome do Paciente" />
-										<p:inputText value="#{caixaBean.campoBuscaPaciente}" />
-									</div>
-									<div class="ui-g-12 ui-lg-1">
-										<p:outputLabel value=" " />
-										<br />
-										<p:commandButton styleClass="btn btn-blue"
-											icon="ui-icon-search" actionListener="#{caixaBean.busca}"
-											update="@form" />
+										<div class="ui-inputgroup">
+											<p:inputText value="#{caixaBean.campoBuscaPaciente}" />
+											<p:commandButton styleClass="btn btn-blue" icon="ui-icon-search" actionListener="#{caixaBean.busca}" update="@form" />
+										</div>
 									</div>
 								</div>
 								<div class="ui-g">
@@ -142,7 +136,7 @@
 												update="tableReceber , @form" />
 
 											<p:column headerText="Lançamento" priority="2"
-												style="width:20%; text-align:center; font-size: small ">
+												style="width:20%; text-align:center; font-size: large ">
 												<p:outputLabel value="#{d.dataLancamento}">
 													<f:convertDateTime timeZone="America/Sao_Paulo"
 														pattern="dd/MM/yyyy" />
@@ -150,7 +144,7 @@
 											</p:column>
 
 											<p:column headerText="Paciente/Fornecedor" priority="1"
-												style="width:60%; text-align:left; font-size: small ">
+												style="width:60%; text-align:left; font-size: large ">
 												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}"
 													style="color: blue;" />
 												<p:outputLabel value="#{d.fornecedor.nomeFornecedor}"
@@ -158,14 +152,14 @@
 											</p:column>
 
 											<p:column headerText="Valor" priority="1"
-												style="width:20%; text-align:right; font-size: small ">
+												style="width:20%; text-align:right; font-size: large ">
 												<p:outputLabel value="R$ " />
-												<p:outputLabel value="#{d.valorRetirado}" />
-												<p:outputLabel value="#{d.valorInserido}" />
+												<p:outputLabel value="#{d.valorRetirado}" > <f:convertNumber maxFractionDigits="2" /></p:outputLabel>
+												<p:outputLabel value="#{d.valorInserido}" > <f:convertNumber maxFractionDigits="2" /></p:outputLabel>
 											</p:column>
 
 											<p:column headerText="Tipo" priority="1"
-												style="width:20%; text-align:right; font-size: small ">
+												style="width:20%; text-align:right; font-size: large ">
 												<p:outputLabel value="Recebimento"
 													rendered="#{d.tipo eq 'CR'}" style="color: blue;" />
 												<p:outputLabel value="Pagamento"
@@ -175,7 +169,7 @@
 										</p:dataTable>
 									</div>
 								</div>
-
+								
 								<p:accordionPanel multiple="true">
 									<p:tab title="Receita">
 										<div class="ui-g">
@@ -187,7 +181,7 @@
 														<p:outputLabel value="R$ #{lst.janeiror}"
 															rendered="#{lst.janeiror != null}" />
 														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.janeiror} == null}" />
+															rendered="#{lst.janeiror} == 0}" />
 													</p:column>
 
 													<p:column headerText="Fevereiro" priority="2"

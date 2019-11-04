@@ -10,6 +10,41 @@
 	<ui:define name="head">
 
 		<style type="text/css">
+		
+		.ui-panel .ui-panel-title {
+    margin: 0.1em 16px 0.2em 0;
+    font-size: large;
+}
+		
+.dashboard .overview-box .overview-box-title {
+    font-size: large;
+    width: 100%;
+    text-align: center;
+    background: lightblue;
+    padding: 10px;
+    color: black !important;
+    font-weight: bold;
+}		
+
+.dashboard .overview-box .overview-box-details {
+    width: 100%;
+    padding: 8px 0;
+    padding-left: 15px;
+}
+
+.card {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background: #ffffff;
+    padding: 16px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+}
+		
 .ui-g label {
 	font-size: medium;
 	color: black;
@@ -54,14 +89,13 @@
 	color: black;
 }
 
-
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
-    width: 100%;
-    height: 40px;
-    /* font-size: 20px !important; */
-    font-size: large;
-    text-align: center;
-    color: black;
+	width: 100%;
+	height: 40px;
+	/* font-size: 20px !important; */
+	font-size: large;
+	text-align: center;
+	color: black;
 }
 
 .ui-selectonemenu label.ui-selectonemenu-label {
@@ -142,193 +176,307 @@
 
 	<ui:define name="content">
 		<h:form id="formAgendamento">
-			<p:tabView id="tabView">
-				<p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}"
-					update="@form" />
-				<p:tab id="tabAgenda" title="Agendamento">
-					<div align="center">
-						<div align="center" style="width: 1200px">
-							<p:panel header="Agendamento de Consultas"
-								rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
-								<p:schedule value="#{scheduleBean.model}" showWeekends="false"
-									initialDate="#{scheduleBean.dataAtualSchedule}"
-									widgetVar="scheduleAgendamento" id="scheduleAgendamento"
-									allDaySlot="false" centerHeaderTemplate="true" timeZone="GMT-3"
-									locale="pt_BR" scrollTime="18:00" tooltip="true"
-									timeFormat="HH:mm" axisFormat="HH:mm" view="agendaWeek"
-									minTime="8:00" maxTime="20:00" aspectRatio="2.0">
+			<p:tabView id="tabView"
+				rendered="#{contextoBean.possuiAcesso('ADMIN') or (contextoBean.possuiAcesso('ATE'))}">
+				<!-- <p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}" update="@form" /> -->
+				<p:tab id="tabAgenda" title="Dashboard Agendamento">
+					<div class="ui-g dashboard">
+						<div class="ui-g-12 ui-lg-9 ui-sm-12 ui-md-12">
+							<div class="ui-g dashboard">
+								<p:panel id="dash" header="Agendamento de Consultas"
+									rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
+									<p:schedule value="#{scheduleBean.model}" showWeekends="false" 
+										initialDate="#{scheduleBean.dataAtualSchedule}" 
+										widgetVar="scheduleAgendamento" id="scheduleAgendamento"
+										allDaySlot="false" centerHeaderTemplate="true" 
+										timeZone="GMT-3" locale="pt_BR" scrollTime="18:00"
+										tooltip="true" timeFormat="HH:mm" axisFormat="HH:mm"
+										view="agendaWeek" minTime="8:00" maxTime="20:00"
+										aspectRatio="2.0">
 
-									<!-- DATA SELECIONADA -->
-									<p:ajax event="dateSelect"
-										listener="#{scheduleBean.onDateSelect}"
-										update="#{p:component('formScheduleDialog')}"
-										oncomplete="PF('eventDialog').show();" />
+										<!-- DATA SELECIONADA -->
+										<p:ajax event="dateSelect"
+											listener="#{scheduleBean.onDateSelect}"
+											update="#{p:component('formScheduleDialog')}"
+											oncomplete="PF('eventDialog').show();" />
 
-									<!-- EVENTO SELECIONADO DO AGENDAMENTO -->
-									<p:ajax event="eventSelect"
-										listener="#{scheduleBean.onEventSelect}"
-										update="#{p:component('formScheduleDialog')}"
-										oncomplete="PF('eventDialog').show();" />
-								</p:schedule>
-							</p:panel>
+										<!-- EVENTO SELECIONADO DO AGENDAMENTO -->
+										<p:ajax event="eventSelect"
+											listener="#{scheduleBean.onEventSelect}"
+											update="#{p:component('formScheduleDialog')}"
+											oncomplete="PF('eventDialog').show();" />
+									</p:schedule>
+								</p:panel>
+							</div>
 						</div>
+						<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
+							<div class="ui-g dashboard">
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<div class="ui-g card overview-box overview-box-2 no-gutter">
+										<div class="overview-box-title">Consultas</div>
+										<div class="overview-box-details">
+											<i class="fa fa-id-card  overview-box-details-icon" /> <span
+												class="overview-box-details-count">#{scheduleBean.resConsulta}</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<div class="ui-g card overview-box overview-box-2 no-gutter">
+										<div class="overview-box-title">Retorno</div>
+										<div class="overview-box-details">
+											<i class="fa fa-undo overview-box-details-icon" /> <span
+												class="overview-box-details-count">#{scheduleBean.resRetorno}</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<div class="ui-g card overview-box overview-box-2 no-gutter">
+										<div class="overview-box-title">Confirmadas</div>
+										<div class="overview-box-details">
+											<i class="fa fa-check overview-box-details-icon" /> <span
+												class="overview-box-details-count">#{scheduleBean.resConfirmacao}</span>
+										</div>
+									</div>
+								</div>
+
+
+
+
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<p:button value="Consulta"
+										style="color: white; background: red; font-weight: bold; width : 100% !important; text-align:center;" />
+								</div>
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<p:button value="Retorno"
+										style="color: white; background: green; font-weight: bold; width : 100% !important; text-align:center; " />
+								</div>
+								<div class="ui-g-12 ui-md-6 ui-lg-4">
+									<p:button value="Confirmação"
+										style="color: white; background: blue; font-weight: bold; width : 100% !important; text-align:center;" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</p:tab>
+				<p:tab title="Lista de Agendamentos">
+					<div class="ui-fluid">
+						<p:panel header="Pesquisa de Agendamentos"
+							style="text-align:center">
+							<div class="ui-g">
+								<div class="ui-g-12">
+									<h:panelGroup id="botao">
+										<div class="ui-g-12 ui-lg-4">
+											<p:selectOneRadio
+												value="#{scheduleBean.campoBuscaTipoAgendamento}"
+												style="padding-left: 10% !important">
+												<f:selectItem itemLabel="Agendada" itemValue="CA" />
+												<f:selectItem itemLabel="Confirmada" itemValue="CC" />
+												<f:selectItem itemLabel="Retorno" itemValue="RE" />
+												<p:ajax event="change"
+													listener="#{scheduleBean.buscaEvento}" update="table" />
+											</p:selectOneRadio>
+										</div>
+									</h:panelGroup>
+
+									<div class="ui-g-12 ui-lg-1">
+										<p:calendar id="inicio" pattern="dd/MM/yyyy"
+											value="#{scheduleBean.campoDataInicio}" navigator="true" placeholder="Data Inicio" />
+									</div>
+
+									<div class="ui-g-12 ui-lg-1">
+										<p:calendar id="fim" pattern="dd/MM/yyyy" navigator="true"
+											value="#{scheduleBean.campoDataFim}" placeholder="Data Fim" />
+									</div>
+
+									<div class="ui-g-12 ui-lg-2">
+										<p:inputText value="#{scheduleBean.campoBuscaPaciente}"
+											placeholder="Buscar pelo Paciente" id="inputNome"
+											style="height:40px; ">
+
+										</p:inputText>
+									</div>
+
+									<div class="ui-g-12 ui-lg-2 ">
+										<div class="ui-inputgroup">
+											<p:inputText value="#{scheduleBean.campoBuscaMedico}"
+												placeholder="Buscar pelo Médico" id="inputCPF"
+												style="height:40px; " />
+											<p:commandButton style="height:40px;" icon="ui-icon-search"
+												actionListener="#{scheduleBean.buscaEvento}" update="table" />
+										</div>
+									</div>
+
+									<div class="ui-g-12 ui-lg-1">
+										<p:commandLink rendered="#{scheduleBean.lstEvento.size() > 0}"
+											actionListener="#{scheduleBean.geraRelatorio}">
+											<h:graphicImage library="img" name="pdf-icon.png" height="40"
+												width="40" />
+										</p:commandLink>
+									</div>
+
+								</div>
+							</div>
+						</p:panel>
+
+						<p:panel>
+							<div class="ui-g">
+								<p:dataTable value="#{scheduleBean.lstEvento}" var="d"
+									emptyMessage="Não Há Registros Lançados" rowKey="#{d.id}"
+									selectionMode="single" id="table" rows="10" paginator="true"
+									selection="#{scheduleBean.evento}">
+
+									<p:ajax event="rowSelect"
+										listener="#{scheduleBean.onRowSelect}" update="table" />
+
+									<p:column headerText="Paciente" priority="1"
+										style="overflow: hidden;text-align: left; font-size: large">
+										<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
+									</p:column>
+
+									<p:column headerText="Data Inicio" priority="1"
+										style="overflow: hidden;text-align: left; font-size: large">
+										<p:outputLabel value="#{d.dataInicio}">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Data Inicio" priority="1"
+										style="overflow: hidden;text-align: left; font-size: large">
+										<p:outputLabel value="#{d.dataFim}">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Médico" priority="1"
+										style="overflow: hidden;text-align: left; font-size: large">
+										<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
+									</p:column>
+
+								</p:dataTable>
+							</div>
+						</p:panel>
+
 					</div>
 				</p:tab>
 				<p:tab title="Tabela de Preços">
 					<div class="ui-fluid">
 						<p:panel header="Tabela de Preços" style="text-align:center">
-					<div class="ui-g">
-						<div class="ui-g-12">
-							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-3">
-									<p:selectOneRadio value="#{scheduleBean.campoBuscaAtivo}"
-										style="padding-left: 10% !important">
-										<f:selectItem itemLabel="Todos" itemValue="T" />
-										<f:selectItem itemLabel="Ativo" itemValue="A" />
-										<f:selectItem itemLabel="Inativo" itemValue="I" />
-										<p:ajax event="change" listener="#{scheduleBean.buscaPreco}" update="carousel" />
-									</p:selectOneRadio>
-								</div>
-							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-2">
-								<div class="ui-inputgroup">
-									<p:inputText value="#{scheduleBean.campoBuscaNome}"
-									placeholder="Buscar pelo Nome" id="inputMedico"
-									style="height:40px; "/>
-									<p:commandButton style="height:40px;" icon="ui-icon-search"
-										id="btnBuscatxt" actionListener="#{scheduleBean.buscaPreco}"
-										update=" inputMedico,carousel" />
-								</div>
-							</div>
+							<div class="ui-g">
+								<div class="ui-g-12">
+									<h:panelGroup id="botoes">
+										<div class="ui-g-12 ui-lg-3">
+											<p:selectOneRadio value="#{scheduleBean.campoBuscaAtivo}"
+												style="padding-left: 10% !important">
+												<f:selectItem itemLabel="Todos" itemValue="T" />
+												<f:selectItem itemLabel="Ativo" itemValue="A" />
+												<f:selectItem itemLabel="Inativo" itemValue="I" />
+												<p:ajax event="change" listener="#{scheduleBean.buscaPreco}"
+													update="panelRep" />
+											</p:selectOneRadio>
+										</div>
+									</h:panelGroup>
+									<div class="ui-g-12 ui-lg-2">
+										<div class="ui-inputgroup">
+											<p:inputText value="#{scheduleBean.campoBuscaNome}"
+												placeholder="Buscar pelo Nome" id="inputMedico"
+												style="height:40px; " />
+											<p:commandButton style="height:40px;" icon="ui-icon-search"
+												id="btnBuscatxt" actionListener="#{scheduleBean.buscaPreco}"
+												update=" inputMedico panelRep" />
+										</div>
+									</div>
 
-						</div>
-					</div>
-				</p:panel>
-						<p:panel >
-						<div class="ui-g">
-							<div class="ui-g-12 ui-md-12 ui-lg-12 ui-sm-12">
-								<p:carousel id="carousel" value="#{scheduleBean.lstPrecos}" var="d" footerText="Total de Médicos #{scheduleBean.lstPrecos.size()}"
-								circular="true"  
-									responsive="true">
-									<p:outputPanel styleClass="tituloCard">
-										<p:outputLabel value="#{d.pessoa.pessoaNome.toUpperCase()}"
-											style="font-size: large; font-weight:bold;color :white" />
-									</p:outputPanel>
-									<p:outputPanel styleClass="subEspecialidade">
-										<p:outputLabel value="Especialidades: " style="font-size: large; font-weight:bold"  />
-										<p:outputLabel value="#{d.especialidades}"
-											style="font-size: large; font-weight:bold" />
-									</p:outputPanel>
-									<p:outputPanel styleClass="valorConsulta">
-										<p:outputLabel value="VALOR DA CONSULTA R$ #{d.precoConsulta.valor}"
-											style="font-size: large; font-weight:bold;color:white  " />
-									</p:outputPanel>
-								</p:carousel>
+								</div>
 							</div>
-						</div>
+						</p:panel>
+						<p:panel id="panelRep">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+									<div class="ui-g dashboard">
+										<p:repeat id="rep"  var="d" value="#{scheduleBean.lstPrecos}">
+											<div class="ui-g-12 ui-md-6 ui-lg-3">
+												<div class="ui-g card overview-box overview-box-3 no-gutter">
+												 <div class="overview-box-title"><p:outputLabel value="#{d.pessoa.pessoaNome}" style="font-size: x-large;" /> </div> 
+													<div class="overview-box-details">
+														<i class="fa fa-stethoscope  overview-box-details-icon" /> 
+														<span class="overview-box-details-count">#{d.especialidades}</span><br/>
+														<i class="fa fa-money  overview-box-details-icon" /> 
+														<span class="overview-box-details-count">R$ #{d.precoConsulta.valor}</span>
+													</div>
+												</div>
+											</div>
+										</p:repeat>
+									</div>
+								</div>
+							</div>
 						</p:panel>
 					</div>
 				</p:tab>
-				<p:tab title="Lista">
-			<div class="ui-fluid">
-				<p:panel header="Pesquisa de Agendamentos" style="text-align:center">
-					<div class="ui-g">
-						<div class="ui-g-12">
-							<h:panelGroup id="botao">
-							
-							<div class="ui-g-12 ui-lg-4">
-								<p:selectOneRadio value="#{scheduleBean.campoBuscaTipoAgendamento}"
-									style="padding-left: 10% !important">
-									<f:selectItem itemLabel="Agendada" itemValue="CA" />
-									<f:selectItem itemLabel="Confirmada" itemValue="CC" />
-									<f:selectItem itemLabel="Retorno" itemValue="RE" />
-									<p:ajax event="change" listener="#{scheduleBean.buscaEvento}"
-										update="table" />
-								</p:selectOneRadio>
-							</div>
-							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-2">
-								<p:calendar id="inicio"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataInicio}"
-									placeholder="Data Inicio" />
-							</div>
-							
-							<div class="ui-g-12 ui-lg-2">
-								<p:calendar id="fim"  pattern="dd/MM/yyyy" value="#{scheduleBean.campoDataFim}"
-									placeholder="Data Fim" />
-							</div>		
-	
-
-							<div class="ui-g-12 ui-lg-2">
-								<p:inputText value="#{scheduleBean.campoBuscaPaciente}"
-									placeholder="Buscar pelo Paciente" id="inputNome"
-									style="height:40px; ">
-
-								</p:inputText>
-							</div>
-
-							<div class="ui-g-12 ui-lg-2 ">
-								<div class="ui-inputgroup">
-									<p:inputText value="#{scheduleBean.campoBuscaMedico}"
-										placeholder="Buscar pelo Médico" id="inputCPF"
-										style="height:40px; " />
-									<p:commandButton style="height:40px;" icon="ui-icon-search"
-										 actionListener="#{scheduleBean.buscaEvento}"
-										update="table" />
-								</div>
-							</div>
-							<div class="ui-g-12 ui-lg-1">
-									<p:commandLink	rendered="#{scheduleBean.lstEvento.size() > 0}"
-										actionListener="#{scheduleBean.geraRelatorio}">
-										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
-									</p:commandLink>
+			</p:tabView>
+			<p:outputPanel rendered="#{contextoBean.possuiAcesso('EST')}">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-2 no-gutter">
+							<div class="overview-box-title">Pedidos Aprovados</div>
+							<div class="overview-box-details">
+								<i class="fa fa-check overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estAprovado}</span>
 							</div>
 						</div>
 					</div>
-				</p:panel>
-				<p:panel>
-					<div class="ui-g">
-						<br />
-						<p:dataTable value="#{scheduleBean.lstEvento}" var="d"
-							emptyMessage="Não Há Registros Lançados"
-							 rowKey="#{d.id}"
-							selectionMode="single" id="table" rows="10" paginator="true" 
-							selection="#{scheduleBean.evento}">
-
-							<p:ajax event="rowSelect" listener="#{scheduleBean.onRowSelect}"
-								update="table" />
-
-							<p:column headerText="Paciente" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel
-									value="#{d.paciente.pessoa.pessoaNome}"/>
-							</p:column>
-							
-							<p:column headerText="Data Inicio" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel
-									value="#{d.dataInicio}">
-										<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-									</p:outputLabel>
-							</p:column>
-
-							<p:column headerText="Data Inicio" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.dataFim}">
-									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-								</p:outputLabel>
-							</p:column>
-
-							<p:column headerText="Médico" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
-							</p:column>
-
-						</p:dataTable>
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-3 no-gutter">
+							<div class="overview-box-title">Pedidos Reprovados</div>
+							<div class="overview-box-details">
+								<i class="fa fa-folder overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estReprovado}</span>
+							</div>
+						</div>
 					</div>
-				</p:panel>
-			</div>
-				</p:tab>
-			</p:tabView>
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-4 no-gutter">
+							<div class="overview-box-title">Pedidos Em análise</div>
+							<div class="overview-box-details">
+								<i class="fa fa-user overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estEmAnalise}</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-4 no-gutter">
+							<div class="overview-box-title">Alocados(Médico)</div>
+							<div class="overview-box-details">
+								<i class="fa fa-user-md overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estAlocaMedico}</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-4 no-gutter">
+							<div class="overview-box-title">Alocados(Estoque)</div>
+							<div class="overview-box-details">
+								<i class="fa fa-cubes overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estAlocaEstoque}</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="ui-g-12 ui-md-6 ui-lg-2">
+						<div class="ui-g card overview-box overview-box-4 no-gutter">
+							<div class="overview-box-title">Alocados(Recepção)</div>
+							<div class="overview-box-details">
+								<i class="fa fa-user overview-box-details-icon" /> <span
+									class="overview-box-details-count">#{scheduleBean.estAlocaRecepcao}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</p:outputPanel>
 
 		</h:form>
 
@@ -448,17 +596,6 @@
 								</div>
 							</div>
 							<div class="ui-g">
-								<p:commandButton value="Salvar"
-									style="height:40px;  margin: 0 auto; 
-									width:130px; 
-									background-color: green; 
-									background: green; 
-									color:white !important;
-									font-size:large;"
-									update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf"
-									oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
-									actionListener="#{scheduleBean.salvar()}">
-								</p:commandButton>
 
 								<p:commandButton value="Fechar"
 									style="height:40px;  margin: 0 auto; 
@@ -468,6 +605,7 @@
 									color:white !important;
 									font-size:large;"
 									onclick="PF('eventDialog').hide(); return false;" />
+
 
 								<p:commandButton value="Remover"
 									action="#{scheduleBean.remover}"
@@ -482,6 +620,18 @@
 									<p:confirm
 										message="Confirmar Remoção do Agendamento Selecionado?"
 										icon="ui-icon-mail-closed" />
+								</p:commandButton>
+
+								<p:commandButton value="Salvar"
+									style="height:40px;  margin: 0 auto; 
+									width:130px; 
+									background-color: green; 
+									background: green; 
+									color:white !important;
+									font-size:large;"
+									update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf :formAgendamento:tabView"
+									oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
+									actionListener="#{scheduleBean.salvar()}">
 								</p:commandButton>
 
 								<p:confirmDialog global="true" showEffect="fade"
