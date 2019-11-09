@@ -11,7 +11,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold
 }
@@ -22,7 +22,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -84,7 +84,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
 </style>
 	</ui:define>
@@ -138,7 +138,7 @@
 									<f:selectItem itemLabel="Todos" itemValue="T" />
 									<f:selectItem itemLabel="Ativo" itemValue="A" />
 									<f:selectItem itemLabel="Inativo" itemValue="I" />
-									<p:ajax event="change" update="table"
+									<p:ajax event="change" update="table @form"
 										listener="#{pacienteBean.busca}" />
 								</p:selectOneRadio>
 							</div>
@@ -152,13 +152,13 @@
 
 							<div class="ui-g-12 ui-lg-2">
 							<div class="ui-inputgroup">
-								<p:inputText value="#{pacienteBean.campoBuscaCPF}"
+								<p:inputText value="#{pacienteBean.campoBuscaCPF}"   type="number"
 									placeholder="Buscar pelo CPF" id="inputCPF"
 									style="height:40px; "/>
 								<p:commandButton style="height:40px;" 
 									icon="ui-icon-search" id="btnBuscatxt"
 									actionListener="#{pacienteBean.busca}"
-									update=" inputNome,impressao,inputCPF, table" />
+									update=" inputNome impressao inputCPF table @form" />
 									</div>
 							</div>
 							<div class="ui-g-12 ui-lg-1">

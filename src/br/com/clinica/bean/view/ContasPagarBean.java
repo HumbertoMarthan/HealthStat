@@ -9,8 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,11 +18,13 @@ import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.ContasPagarController;
 import br.com.clinica.controller.geral.EstoqueController;
 import br.com.clinica.controller.geral.FornecedorController;
+import br.com.clinica.controller.geral.ItemPedidoController;
 import br.com.clinica.controller.geral.MaterialController;
 import br.com.clinica.controller.geral.ParcelaContasPagarController;
 import br.com.clinica.controller.geral.PedidoController;
 import br.com.clinica.model.cadastro.estoque.Estoque;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
+import br.com.clinica.model.cadastro.estoque.ItemPedido;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
 import br.com.clinica.model.financeiro.Caixa;
@@ -53,6 +53,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private List<ParcelaContasPagar> lstParcelaPagarPendentes;
 	private List<Pedido> lstPedido;
 	private List<Estoque> lstEstoque = new ArrayList<Estoque>();
+	private List<ItemPedido> lstItemPedido = new ArrayList<ItemPedido>();
 	private List<Map<Object, Object>> lstTotalPedido;
 	
 	private String campoBuscaFornecedor = "";
@@ -86,6 +87,9 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	@Autowired
 	private EstoqueController estoqueController;
 
+	@Autowired
+	private ItemPedidoController itemPedidoController;
+	
 	@PostConstruct
 	public void init() {
 		try {
@@ -98,20 +102,21 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	
 	public void abrirPedido() {
 		try {
+			
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
-			lstEstoque = estoqueController
-					.findListByQueryDinamica("from Estoque where numPedido = " + pedidoModel.getNumPedido());
+			lstItemPedido = itemPedidoController.findListByQueryDinamica("from ItemPedido where numPedido = " + pedidoModel.getNumPedido());
+			calcularTotalPedido();
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
 		}
-		// calcularTotalPedido();
+		 calcularTotalPedido();
 	}
 
 	public void calcularTotalPedido() {
 		try {
 			StringBuilder str = new StringBuilder();
-			str.append("select sum(c.valorUnitario * quantidade) as total from Estoque c where numpedido = "
+			str.append("select sum(c.valorUnitario * quantidade) as total from itempedido c where numpedido = "
 					+ pedidoModel.getNumPedido());
 			try {
 				lstTotalPedido = contasPagarController.getSqlListMap(str.toString());
@@ -126,18 +131,14 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void alteraValorUnitario(Estoque estoqueSelecionado) {
+	public void alteraValorUnitario(ItemPedido itemSelecionado) {
 		try {
-			//Estoque estoqueSelecionado = new Estoque();
-			//DataTable table = (DataTable) event.getSource();
-			//estoqueSelecionado = (Estoque) table.getRowData();
-
-			System.out.println("Valor Editado> " + estoqueSelecionado.getValorUnitario());
-			if (estoqueSelecionado.getValorUnitario() != null ) {
-				estoqueSelecionado.setValorUnitario(estoqueSelecionado.getValorUnitario()); // quem ta nulo é o estoque
+			System.out.println("Valor Editado> " + itemSelecionado.getValorUnitario());
+			if (itemSelecionado.getValorUnitario() != null ) {
+				itemSelecionado.setValorUnitario(itemSelecionado.getValorUnitario()); // quem ta nulo é o estoque
 				try {
-					estoqueController.merge(estoqueSelecionado);
-					addMsg("Valor Alterado para :" + estoqueSelecionado.getValorUnitario());
+					itemPedidoController.merge(itemSelecionado);
+					addMsg("Valor Alterado para :" + itemSelecionado.getValorUnitario());
 				} catch (Exception e) {
 
 					e.printStackTrace();
@@ -152,14 +153,22 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	public void aprovarPedido() {
 		try {
 			List<Estoque> lstEstoque = new ArrayList<>();
-			lstEstoque = estoqueController
-					.findListByQueryDinamica("from Estoque where numPedido =" + pedidoModel.getNumPedido());
-			System.out.println("Tamanho da Lista Estoque :> " + lstEstoque.size());
+			Estoque e = new Estoque();
+			
+			lstItemPedido = itemPedidoController.findListByQueryDinamica("from ItemPedido where numPedido = " + pedidoModel.getNumPedido());
+			
+			
+			for (ItemPedido itemPedido : lstItemPedido) {
+				e.setMaterial(itemPedido.getMaterial());
+				e.setQuantidade(itemPedido.getQuantidade());
+				lstEstoque.add(e);
+			}
+			
 			for (Estoque estoque : lstEstoque) {
 				estoque.setStatus("A");
 				estoqueController.merge(estoque);
 			}
-
+			
 			pedidoModel.setTotal(valorPedido); // pegar valor total do sum
 			pedidoModel.setStatus("A"); // aprova o pedido
 
@@ -168,12 +177,11 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			contasPagarModel.setStatus("P");
 			contasPagarModel.setValorTotalConta(valorPedido);
 			contasPagarModel.setMaterial(pedidoModel.getMaterial());
-			contasPagarModel.setFornecedor(pedidoModel.getMaterial().getFornecedor());
+			contasPagarModel.setFornecedor(lstItemPedido.get(0).getMaterial().getFornecedor());
 
 			pedidoController.merge(pedidoModel);
 			contasPagarController.merge(contasPagarModel);
 			addMsg("Operação realizada com sucesso");
-			buscaPedido();
 		} catch (Exception e) {
 			try {
 				addMsg("Ocorreu um erro ao aprovar");
@@ -183,6 +191,8 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			e.getMessage();
 			e.printStackTrace();
 		}
+		buscaPedido();
+		busca();
 		DialogUtils.closeDialog("pedidosDialog");
 	}
 
@@ -192,7 +202,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		try {
 			pedidoController.merge(pedidoModel);
 			addMsg("Operação realizada com sucesso");
-			buscaPedido();
 		} catch (Exception e) {
 			try {
 				addMsg("Ocorreu um erro ao aprovar");
@@ -201,6 +210,8 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			}
 			e.printStackTrace();
 		}
+		buscaPedido();
+		busca();
 		DialogUtils.closeDialog("pedidosDialog");
 	}
 
@@ -223,12 +234,16 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 	}
 
-	public void buscaPedido() throws Exception {
+	public void buscaPedido()  {
 		lstPedido = new ArrayList<Pedido>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Pedido a where 1=1");
 
-		lstPedido = pedidoController.findListByQueryDinamica(str.toString());
+		try {
+			lstPedido = pedidoController.findListByQueryDinamica(str.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void selecionaFornecedor(Long cod) {
@@ -622,6 +637,22 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void setTemParcela(String temParcela) {
 		this.temParcela = temParcela;
+	}
+
+	public ItemPedidoController getItemPedidoController() {
+		return itemPedidoController;
+	}
+
+	public void setItemPedidoController(ItemPedidoController itemPedidoController) {
+		this.itemPedidoController = itemPedidoController;
+	}
+
+	public List<ItemPedido> getLstItemPedido() {
+		return lstItemPedido;
+	}
+
+	public void setLstItemPedido(List<ItemPedido> lstItemPedido) {
+		this.lstItemPedido = lstItemPedido;
 	}
 }
 

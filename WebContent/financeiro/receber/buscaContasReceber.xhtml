@@ -124,21 +124,26 @@
 							</p:column>
 							
 							<p:column headerText="Entrada"
-								style="text-align: right; font-size: large" width="8%">
-								<p:outputLabel style="color: red" value="R$ #{d.valorEntrada}" />
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorEntrada == null}"/>
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorEntrada != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorEntrada}" />
 							</p:column>
 							
 							<p:column headerText="Desconto"
-								style="text-align: right; font-size: large" width="8%">
-								<p:outputLabel style="color: red" value="R$ #{d.valorDesconto}" />
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorDesconto == null}"/>
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorDesconto != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorDesconto}" />
 							</p:column>
 							
 							<p:column headerText="Valor"
-								style="text-align: right; font-size: large" width="8%">
-								<p:outputLabel style="color: red" value="R$ #{d.valorConsulta}" />
+								style="text-align: center	; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorConsulta != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorConsulta}" />
 							</p:column>
 
-							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta ne 'PA'}">
+							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta eq 'L'}">
 								<p:commandButton
 									rendered="#{d.tipoPagamento eq 'PAR' or (d.tipoPagamento eq 'ESP')}"
 									action="#{contasReceberBean.selecionarBusca(contasReceberBean.contasReceberModel)}"

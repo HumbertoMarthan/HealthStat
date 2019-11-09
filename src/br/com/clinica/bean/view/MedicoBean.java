@@ -131,12 +131,17 @@ public class MedicoBean extends BeanManagedViewAbstract {
 				System.out.println("Entro no T");
 				str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 			}
+			
+			str.append(" and pessoa.tipoPessoa = 'MED' " );
 
 			lstMedico = medicoController.findListByQueryDinamica(str.toString());
 		} catch (Exception e) {
 			System.out.println("Erro ao buscar Médico");
 			e.printStackTrace();
 		}
+		
+		campoBuscaCPF = "";
+		campoBuscaNome = "";
 	}
 
 	public void inativar() {

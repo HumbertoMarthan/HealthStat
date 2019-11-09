@@ -42,6 +42,9 @@ public class Convenio implements  EntityBase,Serializable {
 	private String logradouro;
 	
 	@Column
+	private String localidade;
+	
+	@Column
 	private String bairro;
 	
 	@Column
@@ -75,9 +78,12 @@ public class Convenio implements  EntityBase,Serializable {
 		this.nomeConvenio = nomeConvenio;
 	}
 	
-	//EQUALS E HASCODE ----------------------------------------
-	
-	
+	public String getLocalidade() {
+		return localidade;
+	}
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
+	}
 	public String getLogradouro() {
 		return logradouro;
 	}

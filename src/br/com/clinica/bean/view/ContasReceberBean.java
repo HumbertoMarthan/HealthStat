@@ -1,8 +1,11 @@
 package br.com.clinica.bean.view;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -311,7 +314,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 			// salva
 			parcelaPagarController.merge(parcelaPagarModel);
-
+			addMsg("Parcela Paga com sucesso!");
 			verificaParcelasPendentes();
 			busca();
 		} catch (Exception e) {
@@ -346,16 +349,26 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 	 */
 	public void fazerDesconto() {
 		try {
+			
+			InputStream input = new FileInputStream("C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\src\\ini.properties");
+			Properties prop = new Properties();
+	        prop.load(input);
+	        Double desconto = Double.parseDouble(String.valueOf(prop.get("desconto")));
+			
 			System.out.println(" O Valor da Consulta " + contasReceberModel.getValorConsulta());
 			contasReceberModel.setValorComDesconto(contasReceberModel.getValorConsulta());
+			
+			Double maximoDesconto =  contasReceberModel.getValorConsulta() * (desconto / 100) ;
+			
 			System.out.println(" O Valor do Desconto" + contasReceberModel.getValorDesconto());
-			Double total = contasReceberModel.getValorConsulta()
-					- (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
-
-			if (total < 0 || total > contasReceberModel.getValorComDesconto()) {
-				addMsg("Impossível atribuir um Desconto mair que o total da consulta");
-			} else {
-				System.out.println("TOTAL " + total);
+			Double total = contasReceberModel.getValorConsulta() - (contasReceberModel.getValorDesconto() + contasReceberModel.getValorEntrada());
+			
+			System.out.println(desconto);
+			System.out.println(maximoDesconto);
+			if(contasReceberModel.getValorDesconto() > maximoDesconto ) {
+				addMsg("Impossivel atribuir desconto maior que R$"+ maximoDesconto);
+				contasReceberModel.setValorDesconto(null);
+			}else {
 				contasReceberModel.setValorComDesconto(total);
 			}
 		} catch (Exception e) {
@@ -477,7 +490,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 		try {
-			addMsg("Operação Realizada com sucesso");
+			addMsg("Parcela Estornada com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -517,7 +530,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 		try {
-			addMsg("Operação Realizada com Sucesso!");
+			addMsg("Parcela estornada com sucesso!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -875,6 +888,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 				e.printStackTrace();
 			}
 		}
+		
+		DialogUtils.closeDialog("relancarPagamento");
 
 	}
 

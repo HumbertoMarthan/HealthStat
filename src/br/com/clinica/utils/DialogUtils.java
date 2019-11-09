@@ -1,5 +1,8 @@
 package br.com.clinica.utils;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.primefaces.context.RequestContext;
 
 public class DialogUtils {
@@ -19,5 +22,4 @@ public class DialogUtils {
 		RequestContext.getCurrentInstance().execute(js);
 	}
 	
-
 }

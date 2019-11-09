@@ -52,7 +52,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	
 	private String campoBuscaNome = "";
 	private String campoBuscaAtivo = "T";
-	private String campoBuscaCPF;
+	private String campoBuscaCPF = "";
 	private int idade = 20;
 
 	@Autowired
@@ -78,32 +78,34 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	
 
 	public void busca() {
-		// lstAcompanhante = acompanhanteController.findListByQueryDinamica(" from
-		// Acompanhante");
 		try {
-		StringBuilder str = new StringBuilder();
-		str.append("from Paciente a where 1=1");
-
-		if (!campoBuscaNome.equals("")) {
-			str.append(" and (upper(a.pessoa.pessoaNome) like upper('%" + campoBuscaNome + "%'))");
-		}
-		if (!campoBuscaCPF.equals("")) {
-			str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
-		}
-		if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
-			System.out.println("Entrou no A or I");
-			str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
-		}
-		if (campoBuscaAtivo.equals("T")) {
-			System.out.println("Entro no T");
-			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
-		}
+			StringBuilder str = new StringBuilder();
+			str.append("from Paciente a where 1=1");
+	
+			if (!campoBuscaNome.equals("")) {
+				str.append(" and upper(a.pessoa.pessoaNome) like '%" + campoBuscaNome.toUpperCase() + "%'");
+			}
+			if (!campoBuscaCPF.equals("")) {
+				str.append(" and a.pessoa.pessoaCPF like'%" + campoBuscaCPF + "%'");
+			}
+			if (campoBuscaAtivo.equals("A") || campoBuscaAtivo.equals("I")) {
+				System.out.println("Entrou no A or I");
+				str.append(" and a.ativo = '" + campoBuscaAtivo.toUpperCase() + "'");
+			}
+			if (campoBuscaAtivo.equals("T")) {
+				System.out.println("Entro no T");
+				str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
+			}
+			
+		str.append(" and pessoa.tipoPessoa = 'PAC' " );
 		
 		lstPaciente = pacienteController.findListByQueryDinamica(str.toString());
 		}catch (Exception e) {
 			System.out.println("Erro ao buscar Paciente");
 			e.printStackTrace();
 		}
+		campoBuscaCPF = "";
+		campoBuscaNome = "";
 	}
 	
 	public void inativar() {
@@ -232,6 +234,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	public String save() {
 
 		try {
+			pacienteModel.getPessoa().setTipoPessoa("PAC");
 			pacienteModel = pacienteController.merge(pacienteModel);
 		} catch (Exception e) {
 			e.printStackTrace();

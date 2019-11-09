@@ -67,6 +67,12 @@
 	color: black;
 }
 
+.ui-fluid .ui-spinner .ui-spinner-input {
+    padding-right: 36px;
+    width: 100%;
+    height: 35px;
+}
+
 .ui-selectonemenu label.ui-selectonemenu-label {
 	cursor: pointer;
 	height: 33px;
@@ -106,9 +112,7 @@
 										background-color: darkblue; 
 										color:white !important;
 										font-size:large; "
-										actionListener="#{pedidoBean.limparPedido}"
-										action="#{pedidoBean.geraPedido}" update=":forma"
-										onclick="PF('fazerPedido').show()" immediate="true"
+										action="#{pedidoBean.geraPedido}" update=":forma:tableCarrinho" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 
@@ -133,10 +137,8 @@
 									style="padding-left: 10% !important">
 									<f:selectItem itemLabel="Alocados" itemValue="AL" />
 									<f:selectItem itemLabel="Aprovado" itemValue="A" />
-									<f:selectItem itemLabel="Em Análise" itemValue="EM" />
 									<f:selectItem itemLabel="Reprovado" itemValue="R" />
-									<p:ajax event="change" listener="#{estoqueBean.busca}"
-										update="table" />
+									<p:ajax event="change" listener="#{estoqueBean.busca}" update="table" />
 								</p:selectOneRadio>
 							</div>
 
@@ -146,7 +148,7 @@
 										placeholder="Buscar Material" style="height:40px; ">
 									</p:inputText>
 									<p:commandButton icon="ui-icon-search" id="btnBuscatxt"
-										update="table,impressao, tablePedido"
+										update="table impressao tablePedido @form"
 										actionListener="#{estoqueBean.busca}"
 										action="#{pedidoBean.busca}" />
 								</div>
@@ -207,7 +209,7 @@
 									style="overflow: hidden;text-align: center; font-size: large;">
 									<p:outputLabel value="Reprovado" rendered="#{d.status eq 'R'}"
 										style="color : red" />
-									<p:outputLabel value="Em analise"
+									<p:outputLabel value="Em análise"
 										rendered="#{d.status eq 'EM'}" style="color : blue" />
 									<p:outputLabel value="Aprovado" rendered="#{d.status eq 'A'}"
 										style="color : green" />
@@ -287,7 +289,7 @@
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-8">
 							<h:outputLabel value="Setor*:" />
-							<p:selectOneMenu value="#{estoqueBean.estoqueModel.setor}"  >
+							<p:selectOneMenu value="#{estoqueBean.setor}"  >
 								<f:selectItem itemLabel="Médico" itemValue="ME" />
 								<f:selectItem itemLabel="Estoque" itemValue="ES" />
 								<f:selectItem itemLabel="Recepção" itemValue="RC" />
@@ -355,7 +357,7 @@
 											icon="fa fa-floppy-o fa" iconPos="rigth" />
 
 										<p:commandButton value="Limpar Pedido" immediate="true"
-											actionListener="#{pedidoBean.limparLista}" update="@form"
+											actionListener="#{pedidoBean.limparLista}" update="tableCarrinho"
 											style="height:40px;
 													width: 200px !important;
 													background-color: red; 
@@ -399,19 +401,11 @@
 
 									</div>
 
-
+									<br/>
 									<div class="ui-g">
-										<p:dataTable value="#{pedidoBean.lstPedidoCarrinho}" var="d"
+										<p:dataTable value="#{pedidoBean.lstItemPedidoCarrinho}" id="tableCarrinho" var="d"
 											emptyMessage="Não há dados">
 
-											<f:facet name="header">
-       								 Status do(s) Pedido(s)
- 							   </f:facet>
-
-											<p:column headerText="Nº Pedido"
-												style="text-align:center; font-size: large" width="20%">
-												<p:outputLabel value="#{d.numPedido}" />
-											</p:column>
 											<p:column headerText="Material"
 												style="text-align:left; font-size: large">
 												<p:outputLabel value="#{d.material.nomeMaterial}" />

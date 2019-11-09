@@ -10,41 +10,40 @@
 	<ui:define name="head">
 
 		<style type="text/css">
-		
-		.ui-panel .ui-panel-title {
-    margin: 0.1em 16px 0.2em 0;
-    font-size: large;
+.ui-panel .ui-panel-title {
+	margin: 0.1em 16px 0.2em 0;
+	font-size: large;
 }
-		
+
 .dashboard .overview-box .overview-box-title {
-    font-size: large;
-    width: 100%;
-    text-align: center;
-    background: lightblue;
-    padding: 10px;
-    color: black !important;
-    font-weight: bold;
-}		
+	font-size: large;
+	width: 100%;
+	text-align: center;
+	background: lightblue;
+	padding: 10px;
+	color: black !important;
+	font-weight: bold;
+}
 
 .dashboard .overview-box .overview-box-details {
-    width: 100%;
-    padding: 8px 0;
-    padding-left: 15px;
+	width: 100%;
+	padding: 8px 0;
+	padding-left: 15px;
 }
 
 .card {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    background: #ffffff;
-    padding: 16px;
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
-    box-sizing: border-box;
-    margin-bottom: 16px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	background: #ffffff;
+	padding: 16px;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	box-sizing: border-box;
+	margin-bottom: 16px;
 }
-		
+
 .ui-g label {
 	font-size: medium;
 	color: black;
@@ -185,10 +184,10 @@
 							<div class="ui-g dashboard">
 								<p:panel id="dash" header="Agendamento de Consultas"
 									rendered="#{contextoBean.possuiAcesso('ATE', 'ADMIN')}">
-									<p:schedule value="#{scheduleBean.model}" showWeekends="false" 
-										initialDate="#{scheduleBean.dataAtualSchedule}" 
+									<p:schedule value="#{scheduleBean.model}" showWeekends="false"
+										initialDate="#{scheduleBean.dataAtualSchedule}"
 										widgetVar="scheduleAgendamento" id="scheduleAgendamento"
-										allDaySlot="false" centerHeaderTemplate="true" 
+										allDaySlot="false" centerHeaderTemplate="true"
 										timeZone="GMT-3" locale="pt_BR" scrollTime="18:00"
 										tooltip="true" timeFormat="HH:mm" axisFormat="HH:mm"
 										view="agendaWeek" minTime="8:00" maxTime="20:00"
@@ -245,16 +244,16 @@
 
 
 								<div class="ui-g-12 ui-md-6 ui-lg-4">
-									<p:button value="Consulta"
-										style="color: white; background: red; font-weight: bold; width : 100% !important; text-align:center;" />
+									<p:button value="Consulta" disabled="true"
+										style="color: white; background: red; font-weight: bold; width : 100% !important; text-align:center;    opacity: 100" />
 								</div>
 								<div class="ui-g-12 ui-md-6 ui-lg-4">
-									<p:button value="Retorno"
-										style="color: white; background: green; font-weight: bold; width : 100% !important; text-align:center; " />
+									<p:button value="Retorno" disabled="true"
+										style="color: white; background: green; font-weight: bold; width : 100% !important; text-align:center; opacity: 100" />
 								</div>
 								<div class="ui-g-12 ui-md-6 ui-lg-4">
-									<p:button value="Confirmação"
-										style="color: white; background: blue; font-weight: bold; width : 100% !important; text-align:center;" />
+									<p:button value="Confirmação" disabled="true"
+										style="color: white; background: blue; font-weight: bold; width : 100% !important; text-align:center; opacity: 100" />
 								</div>
 							</div>
 						</div>
@@ -262,7 +261,7 @@
 				</p:tab>
 				<p:tab title="Lista de Agendamentos">
 					<div class="ui-fluid">
-						<p:panel header="Pesquisa de Agendamentos"
+						<p:panel id="panel" header="Pesquisa de Agendamentos"
 							style="text-align:center">
 							<div class="ui-g">
 								<div class="ui-g-12">
@@ -275,14 +274,15 @@
 												<f:selectItem itemLabel="Confirmada" itemValue="CC" />
 												<f:selectItem itemLabel="Retorno" itemValue="RE" />
 												<p:ajax event="change"
-													listener="#{scheduleBean.buscaEvento}" update="table" />
+													listener="#{scheduleBean.buscaEvento}" update="table panel" />
 											</p:selectOneRadio>
 										</div>
 									</h:panelGroup>
 
 									<div class="ui-g-12 ui-lg-1">
 										<p:calendar id="inicio" pattern="dd/MM/yyyy"
-											value="#{scheduleBean.campoDataInicio}" navigator="true" placeholder="Data Inicio" />
+											value="#{scheduleBean.campoDataInicio}" navigator="true"
+											placeholder="Data Inicio" />
 									</div>
 
 									<div class="ui-g-12 ui-lg-1">
@@ -304,7 +304,7 @@
 												placeholder="Buscar pelo Médico" id="inputCPF"
 												style="height:40px; " />
 											<p:commandButton style="height:40px;" icon="ui-icon-search"
-												actionListener="#{scheduleBean.buscaEvento}" update="table" />
+												actionListener="#{scheduleBean.buscaEvento}" update="table panel" />
 										</div>
 									</div>
 
@@ -395,15 +395,19 @@
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 									<div class="ui-g dashboard">
-										<p:repeat id="rep"  var="d" value="#{scheduleBean.lstPrecos}">
+										<p:repeat id="rep" var="d" value="#{scheduleBean.lstPrecos}">
 											<div class="ui-g-12 ui-md-6 ui-lg-3">
 												<div class="ui-g card overview-box overview-box-3 no-gutter">
-												 <div class="overview-box-title"><p:outputLabel value="#{d.pessoa.pessoaNome}" style="font-size: x-large;" /> </div> 
+													<div class="overview-box-title">
+														<p:outputLabel value="#{d.pessoa.pessoaNome}"
+															style="font-size: x-large;" />
+													</div>
 													<div class="overview-box-details">
-														<i class="fa fa-stethoscope  overview-box-details-icon" /> 
-														<span class="overview-box-details-count">#{d.especialidades}</span><br/>
-														<i class="fa fa-money  overview-box-details-icon" /> 
-														<span class="overview-box-details-count">R$ #{d.precoConsulta.valor}</span>
+														<i class="fa fa-stethoscope  overview-box-details-icon" />
+														<span class="overview-box-details-count">#{d.especialidades}</span><br />
+														<i class="fa fa-money  overview-box-details-icon" /> <span
+															class="overview-box-details-count">R$
+															#{d.precoConsulta.valor}</span>
 													</div>
 												</div>
 											</div>
@@ -609,7 +613,7 @@
 
 								<p:commandButton value="Remover"
 									action="#{scheduleBean.remover}"
-									rendered="#{scheduleBean.evento.id != null}"
+									rendered="#{scheduleBean.evento.id != null and (scheduleBean.evento.tipoEvento.descricao ne 'Confirmar' )}"
 									style="height:40px;  margin: 0 auto; 
 									width:130px; 
 									background-color: red; 
@@ -629,6 +633,7 @@
 									background: green; 
 									color:white !important;
 									font-size:large;"
+									rendered="#{scheduleBean.evento.tipoEvento.descricao ne 'Confirmar'}"
 									update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf :formAgendamento:tabView"
 									oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
 									actionListener="#{scheduleBean.salvar()}">

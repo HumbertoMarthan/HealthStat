@@ -1,9 +1,12 @@
 package br.com.clinica.bean.view;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,25 +14,21 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.ConvenioController;
 import br.com.clinica.model.cadastro.outro.Convenio;
+import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRPdfExporter;
 
 @Controller
 @ViewScoped
@@ -80,11 +79,49 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao buscar Convenio");
 			e.printStackTrace();
 		}
+		campoBuscaNome ="";
 	}
 
 	public void onRowSelect(SelectEvent event) {
 		convenioModel = (Convenio) event.getObject();
 	}
+	
+	// PESQUISA CEP
+		public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
+			try {
+				URL url = new URL("https://viacep.com.br/ws/" + convenioModel.getCep() + "/json/");
+				URLConnection connection = url.openConnection();
+				InputStream inputStream = connection.getInputStream(); // is
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br
+
+				String cep = "";
+				StringBuilder jsonCEP = new StringBuilder();
+
+				while ((cep = bufferedReader.readLine()) != null) {
+					jsonCEP.append(cep);
+
+				}
+
+				Convenio gson = new Gson().fromJson(jsonCEP.toString(), Convenio.class);
+
+				convenioModel.setCep(gson.getCep());
+				convenioModel.setLogradouro(gson.getLogradouro());
+				convenioModel.setBairro(gson.getBairro());
+				convenioModel.setLocalidade(gson.getLocalidade());
+
+				System.out.println("CEP Saindo " + jsonCEP);
+
+			} catch (MalformedURLException ex) {
+				ex.printStackTrace();
+				addMsg("Cep Inválido (Erro ao Buscar|Sem internet");
+				error();
+				System.out.println("Erro ao buscar cep 'Internet' ");
+			} catch (IOException e) {
+				// CAI AQUI SE DIGITAR MAIS NUMEROS DO QUE TEM UM CEP
+				// COLOQUEI UM LIMITADOR NO CAMPO DE DIGITOS
+				addMsg("Cep Inválido");
+			}
+		}
 
 	@Override
 	public String save(){

@@ -99,6 +99,8 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 			System.out.println("Entro no T");
 			str.append(" and (a.ativo = 'A' or a.ativo = 'I') ");
 		}
+		
+		str.append(" and pessoa.tipoPessoa = 'EST' " );
 
 		lstEstoquista = estoquistaController.findListByQueryDinamica(str.toString());
 		
@@ -106,6 +108,9 @@ public class EstoquistaBean extends BeanManagedViewAbstract {
 			System.out.println("Erro ao buscar o Estoquista");
 			e.printStackTrace();
 		}
+		
+		campoBuscaCPF = "";
+		campoBuscaNome = "";
 	}
 
 	public void inativar() {

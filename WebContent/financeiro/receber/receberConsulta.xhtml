@@ -149,7 +149,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 		<!-- DIALOG -->
 		<p:dialog widgetVar="mostraParcelas" id="mostraParcelas" modal="true"
-			resizable="false" height="200" width="800" dynamic="true"
+			resizable="false"  width="800" dynamic="true"
 			responsive="true" onHide="atualizarAoSair()" appendToBody="@body"
 			header="Parcelas">
 			<h:form id="formulario">
@@ -224,8 +224,10 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 						<p:column headerText="Valor" priority="1"
 							style="text-align:right; width: 15%; font-size: large">
-							<p:outputLabel value="R$" />
-							<p:outputLabel value="#{d.valorBruto}" />
+							<p:outputLabel value="R$ " />
+							<p:outputLabel value="#{d.valorBruto}" >
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
+							</p:outputLabel>
 						</p:column>
 					</p:dataTable>
 				</div>
@@ -301,7 +303,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 			</div>
 		</p:dialog>
 
-		<p:dialog widgetVar="relancarPagamento" id="relancarPagamento"
+		<p:dialog widgetVar="relancarPagamento" id="relancarPagamento" closable="false"
 			modal="true" resizable="false" height="400" width="900"
 			responsive="true" dynamic="true" appendToBody="@body"
 			header="Lançamento de Pagamento">
@@ -344,21 +346,23 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								<div class="ui-g-12 ui-lg-12">
 									<div class="ui-g">
 										<div class="ui-g-12 ui-lg-2">
+											<p:outputPanel id="descontos">
 											<h:outputLabel value="Desconto" />
 											<br />
 											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: medium"
+												symbolPosition="p" emptyValue="0.00" style="font-size: medium"
 												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
-												<p:ajax event="change" update="valorComDesconto,par"
+												<p:ajax event="change" update="valorComDesconto par descontos"
 													listener="#{contasReceberBean.fazerDesconto}" />
 											</p:inputNumber>
+											</p:outputPanel>
 										</div>
 
 										<div class="ui-g-12 ui-lg-2">
 											<h:outputLabel value="Entrada" />
 											<br />
-											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: medium"
+											<p:inputNumber decimalPlaces="2" symbol="R$" 
+												symbolPosition="p" emptyValue="0.00" style="font-size: medium"
 												value="#{contasReceberBean.contasReceberModel.valorEntrada}">
 												<p:ajax event="change" update="valorComDesconto,par"
 													listener="#{contasReceberBean.fazerDesconto}" />
@@ -495,11 +499,16 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 										</ui:fragment>
 									</div>
 									<div class="ui-g" align="center">
-										<div class="ui-g-12 ui-lg-12">
+										<div class="ui-g-12 ui-lg-6">
 											<p:commandButton value="Lançar"
 												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
-												oncomplete="PF('relancarPagamento').hide()"
 												actionListener="#{contasReceberBean.editarPagamento}" />
+										</div>
+										<div class="ui-g-12 ui-lg-6">
+											<p:commandButton value="Fechar"
+												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+												oncomplete="PF('relancarPagamento').hide()"
+												actionListener="#{contasReceberBean.busca}" />
 										</div>
 									</div>
 								</div>

@@ -137,7 +137,7 @@
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
 										<f:selectItem itemLabel="Inativo" itemValue="I" />
 										<p:ajax event="change" listener="#{medicoBean.busca}"
-											update="table" />
+											update="table @form" />
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
@@ -151,7 +151,7 @@
 
 							<div class="ui-g-12 ui-lg-2">
 								<div class="ui-inputgroup">
-									<p:inputText value="#{medicoBean.campoBuscaCPF}"
+									<p:inputText value="#{medicoBean.campoBuscaCPF}"  type="number"
 										placeholder="Buscar pelo CPF" id="inputCPF"
 										style="height:40px; " />
 									<p:commandButton style="height:40px;" icon="ui-icon-search"

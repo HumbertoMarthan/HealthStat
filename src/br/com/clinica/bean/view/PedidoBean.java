@@ -15,12 +15,13 @@ import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EstoqueController;
+import br.com.clinica.controller.geral.ItemPedidoController;
 import br.com.clinica.controller.geral.PedidoController;
-import br.com.clinica.controller.geral.PedidoMaterialController;
 import br.com.clinica.model.cadastro.estoque.Estoque;
+import br.com.clinica.model.cadastro.estoque.ItemPedido;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
-import br.com.clinica.model.cadastro.estoque.PedidoMaterial;
+import br.com.clinica.utils.DialogUtils;
 
 @Controller
 @ViewScoped
@@ -29,11 +30,12 @@ public class PedidoBean extends BeanManagedViewAbstract {
 
 	private static final long serialVersionUID = 1L;
 	private Pedido pedidoModel = new Pedido();
-	private PedidoMaterial pedidoMaterialModel = new PedidoMaterial();;
-	private Estoque estoqueModel = new Estoque();;
+	private ItemPedido itemPedidoModel = new ItemPedido();
+	private Estoque estoqueModel = new Estoque();
 	private Material materialModel; // materialModel = new Material();
 	private List<Pedido> lstPedido = new ArrayList<Pedido>();
 	private List<Pedido> lstPedidoCarrinho = new ArrayList<>();
+	private List<ItemPedido> lstItemPedidoCarrinho = new ArrayList<>();
 	private String url = "/estoque/gereciadorPedido.jsf?faces-redirect=true";
 	private String urlFind = "/estoque/findPedido.jsf?faces-redirect=true";
 	private String campoBuscaAtivo = "T";
@@ -45,7 +47,7 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	private EstoqueController estoqueController;
 
 	@Autowired
-	private PedidoMaterialController pedidoMaterialController;
+	private ItemPedidoController itemPedidoController;
 
 
 	@PostConstruct
@@ -54,6 +56,8 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	public void geraPedido() {
+		DialogUtils.openDialog("fazerPedido");
+		
 		String sql = "select MAX(numPedido)+1 as num FROM Pedido";
 		List<Map<Object, Object>> lst = pedidoController.getSqlListMap(sql);
 		lst.get(0).get("num");
@@ -106,103 +110,69 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} // salvar estoque
-		pedidoModel = new Pedido();
 		sucesso();
+		pedidoModel = new Pedido();
 	}
 
 	public void addLista() {
-		//pedidoModel.setMaterial(new Material(materialModel.getIdMaterial()));
 		pedidoModel.setMaterial(materialModel);
-		System.out.println("Pedido :>" + pedidoModel.getMaterial().getIdMaterial());
-		lstPedidoCarrinho.add(pedidoModel);
+		itemPedidoModel.setMaterial(materialModel);
+		itemPedidoModel.setQuantidade(pedidoModel.getQuantidade());
+		lstItemPedidoCarrinho.add(itemPedidoModel);
+		itemPedidoModel = new ItemPedido();
 		pedidoModel = new Pedido();
 	}
 
-	public void removerLista(Pedido pedido) {
-		lstPedidoCarrinho.remove(pedido);
+	public void removerLista(ItemPedido itempedido) {
+		lstItemPedidoCarrinho.remove(itempedido);
 	}
 
 	public void salvarLista() {
-		int num = lstPedidoCarrinho.get(0).getNumPedido();
-		boolean salvo = false;
-		for (Pedido carrinho : lstPedidoCarrinho) {
-
-			StringBuilder sql = new StringBuilder();
-			sql.append("from Estoque where idMaterial = " + carrinho.getMaterial().getIdMaterial());
-			List<Estoque> armazenado = new ArrayList<Estoque>();
-
+		//--------------------SALVAR PEDIDO-----------------
+		try {
+			pedidoModel.setDataPedido(new Date());
+			pedidoModel = pedidoController.merge(pedidoModel);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		//----------------------------------------------------
+		for (ItemPedido carrinho : lstItemPedidoCarrinho) {
+			
 			try {
-				armazenado = estoqueController.findListByQueryDinamica(sql.toString());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-
-			Long idMaterial = carrinho.getMaterial().getIdMaterial();
-			Integer qtd = carrinho.getQuantidade();
-
-			if (salvo == false) {
-				try {
-					carrinho.setDataPedido(new Date());
-					pedidoController.merge(carrinho); // salva pedido
-					salvo = true;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (!armazenado.isEmpty()) { // Se o material ja tiver no estoque entra nesta condição
-
-				if (armazenado.get(0).getMaterial().getIdMaterial() == idMaterial) {
-					Estoque estoque = armazenado.get(0);
-					Integer soma = qtd + armazenado.get(0).getQuantidade();
-
-					estoque.setNumPedido(num);
-					estoque.setMaterial(new Material(idMaterial));
-					estoque.setQuantidade(soma);
-					
-					try {
-						estoqueController.merge(estoque);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			} else { // se o item for novo
-
-				estoqueModel.setNumPedido(num);
-				estoqueModel.setMaterial(new Material(idMaterial));
-				estoqueModel.setQuantidade(qtd);
-
-				try {
-					estoqueController.merge(estoqueModel);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				
+				carrinho.setNumPedido(pedidoModel.getNumPedido());
+				carrinho.setDataPedido(pedidoModel.getDataPedido());
+				itemPedidoController.merge(carrinho);
+			} catch (Exception e) {
+				error();
+				e.printStackTrace();
 			}
 		}
-		try {
-			addMsg("Pedido Realizado com sucesso!");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		limparCarrinho();
-		try {
-			busca();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		addMsg("Pedido Realizado com sucesso!");
+		limparListaItem();
+		busca();
 	}
 
 	public void limparCarrinho() {
-		// pedidoModel = new Pedido();
-		lstPedidoCarrinho = new ArrayList<Pedido>();
+		lstItemPedidoCarrinho = new ArrayList<ItemPedido>();
 	}
 
 	public void limparLista() {
 		lstPedido = new ArrayList<>();
 		pedidoModel = new Pedido();
+		materialModel = null;
+
+	}
+	
+	public void limparListaItem() {
+		lstItemPedidoCarrinho = new ArrayList<>();
+		pedidoModel = new Pedido();
+		//materialModel = null;
 
 	}
 
+	
 	public void limparPedido() {
 		pedidoModel = new Pedido();
 	}
@@ -290,12 +260,20 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		this.campoBuscaAtivo = campoBuscaAtivo;
 	}
 
-	public PedidoMaterialController getPedidoMaterialController() {
-		return pedidoMaterialController;
+	public EstoqueController getEstoqueController() {
+		return estoqueController;
 	}
 
-	public void setPedidoMaterialController(PedidoMaterialController pedidoMaterialController) {
-		this.pedidoMaterialController = pedidoMaterialController;
+	public void setEstoqueController(EstoqueController estoqueController) {
+		this.estoqueController = estoqueController;
+	}
+
+	public ItemPedidoController getItemPedidoController() {
+		return itemPedidoController;
+	}
+
+	public void setItemPedidoController(ItemPedidoController itemPedidoController) {
+		this.itemPedidoController = itemPedidoController;
 	}
 
 	public Material getMaterialModel() {
@@ -314,10 +292,6 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		this.pedidoController = pedidoController;
 	}
 
-	public PedidoMaterial getPedidoMaterialModel() {
-		return pedidoMaterialModel;
-	}
-
 	public List<Pedido> getLstPedidoCarrinho() {
 		return lstPedidoCarrinho;
 	}
@@ -334,8 +308,19 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		this.estoqueModel = estoqueModel;
 	}
 
-	public void setPedidoMaterialModel(PedidoMaterial pedidoMaterialModel) {
-		this.pedidoMaterialModel = pedidoMaterialModel;
+	public ItemPedido getItemPedidoModel() {
+		return itemPedidoModel;
 	}
 
+	public void setItemPedidoModel(ItemPedido itemPedidoModel) {
+		this.itemPedidoModel = itemPedidoModel;
+	}
+
+	public List<ItemPedido> getLstItemPedidoCarrinho() {
+		return lstItemPedidoCarrinho;
+	}
+
+	public void setLstItemPedidoCarrinho(List<ItemPedido> lstItemPedidoCarrinho) {
+		this.lstItemPedidoCarrinho = lstItemPedidoCarrinho;
+	}
 }

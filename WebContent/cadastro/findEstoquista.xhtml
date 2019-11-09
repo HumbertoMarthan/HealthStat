@@ -11,7 +11,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold
 }
@@ -22,7 +22,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -84,7 +84,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
 </style>
 	</ui:define>
@@ -138,7 +138,7 @@
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
 										<f:selectItem itemLabel="Inativo" itemValue="I" />
 										<p:ajax event="change" listener="#{estoquistaBean.busca}"
-											update="table" />
+											update="table @form" />
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
@@ -152,7 +152,7 @@
 
 							<div class="ui-g-12 ui-lg-2">
 								<div class="ui-inputgroup">
-									<p:inputText value="#{estoquistaBean.campoBuscaCPF}"
+									<p:inputText value="#{estoquistaBean.campoBuscaCPF}"  type="number"
 										placeholder="Buscar pelo CPF" id="inputCPF"
 										style="height:40px; " />
 									<p:commandButton style="height:40px; "
@@ -164,7 +164,7 @@
 							
 								<div class="ui-g-12 ui-lg-1">
 									<p:commandLink rendered="#{estoquistaBean.lstEstoquista.size() > 0}"	
-										actionListener="#{estoquistaBean.geraRelatorio}">
+										actionListener="#{estoquistaBean.geraRelatorio}"> 
 										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40"  />
 									</p:commandLink>
 							</div>

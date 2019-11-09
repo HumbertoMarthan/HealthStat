@@ -372,6 +372,11 @@
 													<p:outputLabel value="Reprovado"
 														rendered="#{d.status eq 'R'}" style="color: red" />
 												</p:column>
+												<p:column headerText="Total" style="text-align:center;font-size:large;">
+													<p:outputLabel value="R$" />
+													<p:outputLabel value="#{d.total}"
+														rendered="#{d.total != null}" style="color: green" />
+												</p:column>
 											</p:dataTable>
 										</div>
 									</div>
@@ -398,7 +403,7 @@
 											color:white !important;
 											font-size:large; "
 										action="#{contasPagarBean.aprovarPedido}" immediate="true"
-										update="botoesPedidoSelecionado" />
+										update="botoesPedidoSelecionado tablePedidoSelecionado" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-2">
@@ -408,7 +413,7 @@
 												color:white !important;
 												font-size:large; "
 										action="#{contasPagarBean.reprovarPedido}" immediate="true"
-										update="botoesPedidoSelecionado" />
+										update="botoesPedidoSelecionado tablePedidoSelecionado" />
 								</div>
 								<div class="ui-g-12 ui-lg-3">
 									<p:outputLabel value="Valor Total do Pedido : R$ " />
@@ -423,7 +428,7 @@
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12">
 							<div class="ui-g">
-								<p:dataTable value="#{contasPagarBean.lstEstoque}" var="d"
+								<p:dataTable value="#{contasPagarBean.lstItemPedido}" var="d"
 									emptyMessage="Não há dados" id="tablePedidoSelecionado"
 									rows="10" paginator="true" paginatorPosition="bottom">
 
@@ -439,11 +444,6 @@
 									<p:column headerText="Material"
 										style="text-align: center;font-size: large">
 										<p:outputLabel value="#{d.material.nomeMaterial}" />
-									</p:column>
-
-									<p:column headerText="Status"
-										style="text-align: center;font-size: large">
-										<p:outputLabel value="#{d.status}" />
 									</p:column>
 
 									<p:column headerText="Quantidade"

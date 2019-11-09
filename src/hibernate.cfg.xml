@@ -52,7 +52,7 @@
 		<mapping class="br.com.clinica.model.cadastro.estoque.Fornecedor" />
 		<mapping class="br.com.clinica.model.cadastro.estoque.Estoque" />
 		<mapping class="br.com.clinica.model.cadastro.estoque.Pedido" />
-		<mapping class="br.com.clinica.model.cadastro.estoque.PedidoMaterial" />
+		<mapping class="br.com.clinica.model.cadastro.estoque.ItemPedido" />
 		
 		<!-- Financeiro  -->
 		<mapping class="br.com.clinica.model.financeiro.ContasReceber" />

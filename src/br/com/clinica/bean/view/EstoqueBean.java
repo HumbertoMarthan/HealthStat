@@ -40,7 +40,9 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	private String urlFind = "/estoque/findEstoque.jsf?faces-redirect=true";
 	
 	private String campoBusca = "";
-	private String campoBuscaAtivo = "EM";
+	private String campoBuscaAtivo = "A";
+	
+	private String setor;
 	
 	Integer alocado;
 
@@ -84,43 +86,90 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	public void alocarMaterial(){
 		Integer atual = null;
 		Estoque aux = new Estoque();
+		
 		if(alocado > 0) {
 		try {
 			Integer seZero = estoqueModel.getQuantidade() - alocado;
 			if(seZero == 0) {
-				estoqueController.setExecuteParam("DELETE FROM estoque where idestoque =" + estoqueModel.getIdEstoque()); 
+				Integer soma = 0;
+				
+				aux.setMaterial(estoqueModel.getMaterial());
+				aux.setNumPedido(estoqueModel.getNumPedido());
+				
+				List<Estoque> lstAux = new ArrayList<>();
+				lstAux = estoqueController.findListByQueryDinamica("from Estoque where setor = '" +setor+"' and material.idMaterial =" +estoqueModel.getMaterial().getIdMaterial());
+				
+				if(!lstAux.isEmpty()) {
+					soma = 	lstAux.get(0).getQuantidade() + alocado; 
+					aux.setIdEstoque(lstAux.get(0).getIdEstoque());
+					aux.setQuantidade(soma);
+				}else {
+					aux.setQuantidade(alocado);
+				}
+				aux.setStatus("AL");
+				aux.setSetor(setor);
+				aux.setValorUnitario(estoqueModel.getValorUnitario());
+				estoqueController.merge(aux);
+
+				aux = new Estoque();
+				
+				estoqueController.setExecuteParam("delete from estoque where idestoque = " + estoqueModel.getIdEstoque()); 
+				
+				
+				sucesso();
+				busca();
+				limpar();
+				setor = "";
+				alocado = null;
+				
+				DialogUtils.closeDialog("alocarMaterial");
+				
 			}else {
+			
+				Integer soma = 0;
+				
 				atual = estoqueModel.getQuantidade() - alocado;
+				estoqueModel.setQuantidade(atual);
+				estoqueModel.setSetor(null);
+				estoqueModel.setStatus("A");
+				estoqueModel = estoqueController.merge(estoqueModel);
+				
+				aux.setMaterial(estoqueModel.getMaterial());
+				aux.setNumPedido(estoqueModel.getNumPedido());
+				List<Estoque> lstAux = new ArrayList<>();
+				lstAux = estoqueController.findListByQueryDinamica("from Estoque where setor = '" +setor+"' and material.idMaterial =" +estoqueModel.getMaterial().getIdMaterial());
+				
+				if(!lstAux.isEmpty()) {
+					soma = 	lstAux.get(0).getQuantidade() + alocado;
+					aux.setIdEstoque(lstAux.get(0).getIdEstoque());
+					aux.setQuantidade(soma);
+				}else {
+					aux.setQuantidade(alocado);
+				}
+				
+				aux.setStatus("AL");
+				aux.setSetor(setor);
+				aux.setValorUnitario(estoqueModel.getValorUnitario());
+				estoqueController.merge(aux);
+
+				aux = new Estoque();
+
+				sucesso();
+				limpar();
+				setor = "";
+				alocado = null;
+				busca();
+				
+				DialogUtils.closeDialog("alocarMaterial");
 			}
-	
-			estoqueModel.setQuantidade(atual);
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		aux.setMaterial(estoqueModel.getMaterial());
-		aux.setNumPedido(estoqueModel.getNumPedido());
-		aux.setQuantidade(alocado);
-		aux.setStatus("AL");
-		aux.setSetor(estoqueModel.getSetor());
-		aux.setValorUnitario(estoqueModel.getValorUnitario());
 		
-		try {
-			estoqueModel.setSetor(null);
-			estoqueModel.setStatus("A");
-			estoqueController.saveOrUpdate(estoqueModel);
-			estoqueController.saveOrUpdate(aux);
-			sucesso();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		limpar();
-		aux = new Estoque();
-		busca();
-		
-		DialogUtils.closeDialog("alocarMaterial");
-		} else {
-			addMsg("Número negativo é inválido");
-		}
+			} else {
+				addMsg("Número negativo é inválido");
+			}
 		
 		
 	}	
@@ -312,4 +361,14 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	public void setAlocado(Integer alocado) {
 		this.alocado = alocado;
 	}
+
+	public String getSetor() {
+		return setor;
+	}
+
+	public void setSetor(String setor) {
+		this.setor = setor;
+	}
+	
+	
 }
