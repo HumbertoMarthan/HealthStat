@@ -27,10 +27,14 @@ import br.com.clinica.model.cadastro.estoque.Fornecedor;
 import br.com.clinica.model.cadastro.estoque.ItemPedido;
 import br.com.clinica.model.cadastro.estoque.Material;
 import br.com.clinica.model.cadastro.estoque.Pedido;
+import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasPagar;
 import br.com.clinica.model.financeiro.ParcelaContasPagar;
 import br.com.clinica.utils.DialogUtils;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -77,6 +81,9 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private FornecedorController fornecedorController;
+	
+	@Autowired
+	private ContextoBean contextoBean;
 
 	@Autowired
 	private ParcelaContasPagarController parcelaContasPagarController;
@@ -99,6 +106,17 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstContasPagar, "pagamento.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	public void abrirPedido() {
 		try {
@@ -152,6 +170,17 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void aprovarPedido() {
 		try {
+			
+			Long usuarioSessaoId = 0L;
+
+			try {
+				usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+			} catch (Exception e) {
+				System.out.println("Erro ao recuperar da sessao");
+				e.printStackTrace();
+				e.getMessage();
+			}
+			
 			List<Estoque> lstEstoque = new ArrayList<>();
 			Estoque e = new Estoque();
 			
@@ -178,6 +207,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 			contasPagarModel.setValorTotalConta(valorPedido);
 			contasPagarModel.setMaterial(pedidoModel.getMaterial());
 			contasPagarModel.setFornecedor(lstItemPedido.get(0).getMaterial().getFornecedor());
+			contasPagarModel.setLogin(new Login(usuarioSessaoId)); //SETEI O LOGIN ---------------------
 
 			pedidoController.merge(pedidoModel);
 			contasPagarController.merge(contasPagarModel);
@@ -253,8 +283,21 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void editarPagamento() {
 		try {
+			
+			Long usuarioSessaoId = 0L;
+
+			try {
+				usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+			} catch (Exception e) {
+				System.out.println("Erro ao recuperar da sessao");
+				e.printStackTrace();
+				e.getMessage();
+			}
+
+			
 			contasPagarModel.setStatus("L");
 			contasPagarModel.setDataLancamento(new Date());
+			contasPagarModel.setLogin(new Login(usuarioSessaoId));
 			contasPagarController.merge(contasPagarModel);
 
 			addMsg("Operação Realizada Com Sucesso!");
@@ -653,6 +696,14 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void setLstItemPedido(List<ItemPedido> lstItemPedido) {
 		this.lstItemPedido = lstItemPedido;
+	}
+
+	public ContextoBean getContextoBean() {
+		return contextoBean;
+	}
+
+	public void setContextoBean(ContextoBean contextoBean) {
+		this.contextoBean = contextoBean;
 	}
 }
 

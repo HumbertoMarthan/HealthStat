@@ -76,6 +76,12 @@
 									update=" inputNome,table,formPai:botoes" />
 							</div>
 						</div>
+						<div class="ui-g-12 ui-lg-1">
+							<p:commandLink id="impressao"	rendered="#{contasReceberBean.lstContasReceber.size() > 0}"
+								actionListener="#{contasReceberBean.geraRelatorio}">
+								<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+							</p:commandLink>
+						</div>
 
 					</div>
 				</p:panel>

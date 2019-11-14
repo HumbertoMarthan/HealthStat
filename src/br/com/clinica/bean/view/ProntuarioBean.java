@@ -54,6 +54,7 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private PacienteController pacienteController;
+	
 
 	public void mudaEstadoHistorico() {
 		setEstado("H");
@@ -358,5 +359,4 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	public void setLstEncaminhamento(List<Prontuario> lstEncaminhamento) {
 		this.lstEncaminhamento = lstEncaminhamento;
 	}
-
 }

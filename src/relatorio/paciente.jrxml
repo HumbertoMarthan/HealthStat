@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2019-10-23T22:47:42 -->
+<!-- 2019-11-14T00:54:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="convenio" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="790fbb8d-402c-47ed-86c8-b5fcb0080ffd">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="clinica"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -33,10 +33,6 @@
 					</textElement>
 					<text><![CDATA[Pacientes]]></text>
 				</staticText>
-				<image>
-					<reportElement x="390" y="20" width="185" height="50" uuid="05b19224-98a5-4a7b-899d-9079457bfbff"/>
-					<imageExpression><![CDATA["C:/Users/Humberto/Documents/workspace-spring-clinica/clinica/WebContent/resources/paradise-layout/images/loginHealthStat.png"]]></imageExpression>
-				</image>
 			</frame>
 		</band>
 	</title>

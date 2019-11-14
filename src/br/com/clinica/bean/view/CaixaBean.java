@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.poi.hssf.record.RecalcIdRecord;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 
 	private String url = "/cadastro/cadCaixa.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/caixa.jsf?faces-redirect=true";
-	
+
 	private List<Caixa> lstContasReceber = new ArrayList<Caixa>();
 	private List<Caixa> lstContasPagar = new ArrayList<Caixa>();
 	private List<Caixa> lstCaixa = new ArrayList<>();
@@ -40,13 +41,15 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	private List<Map<Object, Object>> lstDespesaMap;
 	private List<Map<Object, Object>> lstTotalReceber;
 	private List<Map<Object, Object>> lstTotalPagar;
-	
+
 	private Double total = 0.0;
 	private Date campoDataInicio;
 	private Date campoDataFim;
 	private int valorStatus;
-	private String campoBuscaFornecedor ="";
-	private String campoBuscaPaciente="";
+	private String campoBuscaFornecedor = "";
+	private String campoBuscaPaciente = "";
+
+	// ------
 
 	@Autowired
 	private CaixaController caixaController;
@@ -54,11 +57,11 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	@Autowired
 	private CaixaMensalController caixaMensalController;
 
-
 	@PostConstruct
 	public void init() {
 		buscaTotalMensal();
 		resultadoAnual();
+		busca();
 
 	}
 
@@ -70,9 +73,9 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//------------------------------------------------------------------------------------
-		
+
+		// ------------------------------------------------------------------------------------
+
 		StringBuilder strr = new StringBuilder();
 		strr.append("select sum(c.valorInserido) as totalReceber from Caixa c where c.tipo = 'CR'");
 		try {
@@ -83,87 +86,139 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	public void resultadoAnual() {
-		//Despesas
-		StringBuilder str = new StringBuilder();
-		str.append("select ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') as fevereiroP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') as marcoP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') as abrilP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') as maioP, "); 
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') as junhoP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') as julhoP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') as agostoP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') as setembroP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') as outubroP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') as novembroP, ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') as dezembroP, ");
-	
-		//Receita
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') as fevereiroR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') as marcoR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') as abrilR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') as maioR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') as junhoR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') as julhoR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') as agostoR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') as setembroR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') as outubroR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') as novembroR, ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') as dezembroR, ");
-		//Total
-		
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-01-01'	and '2019-01-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31')) *(-1) as saldoJaneiro, ");
-		
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28')) *(-1)  as saldoFevereiro, ");
-		
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31')) *(-1) as saldoMarco, ");	
+		// Despesas
+		 StringBuilder str = new StringBuilder();
+			str.append("select ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') as fevereiroP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') as marcoP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') as abrilP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') as maioP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') as junhoP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') as julhoP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') as agostoP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') as setembroP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') as outubroP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') as novembroP, ");
+			str.append(
+					"(select COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') as dezembroP, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30')) *(-1) as saldoAbril, ");
+			// Receita
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31') as janeiroR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') as fevereiroR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') as marcoR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') as abrilR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') as maioR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') as junhoR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') as julhoR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') as agostoR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') as setembroR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') as outubroR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') as novembroR, ");
+			str.append(
+					"(select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') as dezembroR, ");
+			// Total
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31')) *(-1) as saldoMaio, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-01-01'	and '2019-01-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-01-01' and '2019-01-31')) as saldoJaneiro, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') - ");
-		str.append("(select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30')) *(-1) as saldoJunho, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-02-01' and '2019-02-28'))  as saldoFevereiro, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31')) *(-1) as saldoJulho, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-03-01' and '2019-03-31')) as saldoMarco, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') -  ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31')) *(-1) as saldoAgosto, ");
-				
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30')) *(-1) as saldoSetembro, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-04-01' and '2019-04-30')) as saldoAbril, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31')) *(-1) as saldoOutubro, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-05-01' and '2019-05-31')) as saldoMaio, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30')) *(-1) as saldoNovembro, ");
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-06-01' and '2019-06-30')) as saldoJunho, ");
 
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31')) *(-1) as saldoDezembro, ");
-				
-		str.append("((select sum(c.valorInserido) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2020-01-01'	and '2020-01-31') - ");
-		str.append("(select sum(c.valorRetirado) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2020-01-01' and '2020-01-31')) *(-1) as saldoJaneiro2019 ");		
-		
-		lstFinanceiroMap = caixaController.getSqlListMap(str.toString());
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-07-01' and '2019-07-31')) as saldoJulho, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31') -  ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-08-01' and '2019-08-31')) as saldoAgosto, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-09-01' and '2019-09-30')) as saldoSetembro, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-10-01' and '2019-10-31')) as saldoOutubro, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30')) * (-1) as saldoNovembro, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31')) as saldoDezembro, ");
+
+			str.append(
+					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2020-01-01'	and '2020-01-31') - ");
+			str.append(
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2020-01-01' and '2020-01-31')) as saldoJaneiro2019 ");
+
+			
+			lstFinanceiroMap = caixaController.getSqlListMap(str.toString());
+
+			System.out.println("SQL >> "+str.toString());
+
 	}
-	
+
 	public void busca() {
-		System.out.println("Campo Inicio" + campoDataInicio);
-		System.out.println("Campo Fim" + campoDataFim);
-		lstCaixa = new ArrayList<Caixa>();
+		
 		StringBuilder str = new StringBuilder();
 		str.append("from Caixa a where 1=1");
 		str.append(" and (tipo = 'CR' or tipo = 'CP')");
-		
+
 		if (campoDataInicio != null || campoDataFim != null) {
 			if (campoDataFim.before(campoDataInicio) == false) {
 				str.append(" and a.dataLancamento BETWEEN  '" + campoDataInicio + "' AND '" + campoDataFim + "'");
@@ -194,22 +249,22 @@ public class CaixaBean extends BeanManagedViewAbstract {
 			}
 
 		}
-		if(!campoBuscaFornecedor.equals("")) {
-		  str.append(" and upper(a.fornecedor.nomeFornecedor) LIKE '%"+ campoBuscaFornecedor.toUpperCase() +"%'");	
-		}
-		
-		if(!campoBuscaPaciente.equals("")) {
-			  str.append(" and upper(a.paciente.pessoa.pessoaNome) LIKE '%" + campoBuscaPaciente.toUpperCase() +"%'");	
+		if (!campoBuscaFornecedor.equals("")) {
+			str.append(" and upper(a.fornecedor.nomeFornecedor) LIKE '%" + campoBuscaFornecedor.toUpperCase() + "%'");
 		}
 
+		if (!campoBuscaPaciente.equals("")) {
+			str.append(" and upper(a.paciente.pessoa.pessoaNome) LIKE '%" + campoBuscaPaciente.toUpperCase() + "%'");
+		}
 
 		System.out.println(" SQL IMPRIMIDO " + str.toString());
 		try {
 			lstCaixa = caixaController.findListByQueryDinamica(str.toString());
+			System.out.println("<><><<><><><><<"+ lstCaixa.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//chama a lista de balanço 
+		
 		resultadoAnual();
 	}
 
@@ -241,7 +296,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void saveEdit(){
+	public void saveEdit() {
 		saveNotReturn();
 	}
 
@@ -261,7 +316,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public void excluir()  {
+	public void excluir() {
 		try {
 			caixaModel = (Caixa) caixaController.getSession().get(Caixa.class, caixaModel.getIdCaixa());
 		} catch (Exception e) {
@@ -277,15 +332,13 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	}
 
 	@Override
-	public String redirecionarFindEntidade(){
+	public String redirecionarFindEntidade() {
 		limpar();
-			return getUrlFind();
+		return getUrlFind();
 	}
 
 	// GETTERS E SETTERS
-	
-	
-	
+
 	public String getUrl() {
 		return url;
 	}
@@ -349,7 +402,6 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	public void setLstTotalPagar(List<Map<Object, Object>> lstTotalPagar) {
 		this.lstTotalPagar = lstTotalPagar;
 	}
-
 
 	public List<Map<Object, Object>> getLstTotalReceber() {
 		return lstTotalReceber;
@@ -450,5 +502,4 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) {
 		caixaModel = (Caixa) event.getObject();
 	}
-
 }

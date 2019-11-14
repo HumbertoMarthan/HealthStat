@@ -103,9 +103,9 @@
 			<div class="ui-fluid">
 				<p:panel header="Pesquisa de Atendentes" style="text-align:center">
 					<div class="ui-g">
-						<div class="ui-g-12">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
@@ -114,7 +114,7 @@
 										action="#{atendenteBean.novo}" rendered="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -129,7 +129,7 @@
 											target="#{atendenteBean.atendenteModel}" />
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
@@ -139,10 +139,9 @@
 										update="table, @form"
 										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }"
 										icon="fa fa-check" iconPos="right">
-
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-3">
+								<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 									<p:selectOneRadio value="#{atendenteBean.campoBuscaAtivo}"
 										style="padding-left: 10% !important">
 										<f:selectItem itemLabel="Todos" itemValue="T" />
@@ -152,7 +151,7 @@
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 								<p:inputText value="#{atendenteBean.campoBuscaNome}"
 									placeholder="Buscar pelo Nome" id="inputNome"
 									style="height:40px; ">
@@ -160,7 +159,7 @@
 								</p:inputText>
 							</div>
 
-							<div class="ui-g-12 ui-lg-2 ">
+							<div class="ui-g-12 ui-lg-2 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{atendenteBean.campoBuscaCPF}"  type="number"
 										placeholder="Buscar pelo CPF" id="inputCPF"
@@ -170,7 +169,7 @@
 										update=" inputNome inputCPF table @form" />
 								</div>
 							</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 									<p:commandLink id="impressao"	rendered="#{atendenteBean.lstAtendente.size() > 0}"
 										actionListener="#{atendenteBean.geraRelatorio}">
 										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
@@ -181,57 +180,46 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
-						<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
-							emptyMessage="Não Há Registros Lançados"
-							 rowKey="#{d.idAtendente}"
-							selectionMode="single" id="table" rows="10" paginator="true" 
-							selection="#{atendenteBean.atendenteModel}">
-
-							<p:ajax event="rowSelect" listener="#{atendenteBean.onRowSelect}"
-								update="table,:form:botoes" />
-
-							<p:column headerText="Atendente" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
-								<br />
-								<p:outputLabel
-									value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
-							</p:column>
-
-							<p:column headerText="Mais Informações" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.pessoa.pessoaEmail}" />
-								<br />
-								<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
-							</p:column>
-							<p:column headerText="Endereço" priority="5"
-								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="#{d.pessoa.logradouro} - " />
-								<p:outputLabel value="#{d.pessoa.cep}" />
-								<br />
-								<p:outputLabel value="#{d.pessoa.bairro}" />
-							</p:column>
-							<p:column headerText="Status" priority="5"
-								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
-								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
-									style="color : green" />
-								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
-									style="color : red" />
-							</p:column>
-
-							<!-- <p:column style="width:10%" priority="4">
-								<center>
-									<f:facet name="header">Excluir</f:facet>
-									<p:commandLink action="#{atendenteBean.excluir}" update="table"
-										id="excluir" ajax="true" immediate="true">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-										<f:setPropertyActionListener value="#{d}"
-											target="#{atendenteBean.atendenteModel}" />
-									</p:commandLink>
-								</center>
-							</p:column> -->
-						</p:dataTable>
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+							<p:dataTable value="#{atendenteBean.lstAtendente}" var="d"
+								emptyMessage="Não Há Registros Lançados" reflow="true"
+								 rowKey="#{d.idAtendente}"
+								selectionMode="single" id="table" rows="10" paginator="true" 
+								selection="#{atendenteBean.atendenteModel}">
+	
+								<p:ajax event="rowSelect" listener="#{atendenteBean.onRowSelect}"
+									update="table,:form:botoes" />
+	
+								<p:column headerText="Atendente" priority="1"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.pessoa.pessoaNome}" />
+									<br />
+									<p:outputLabel
+										value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
+								</p:column>
+	
+								<p:column headerText="Mais Informações" priority="1"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.pessoa.pessoaEmail}" />
+									<br />
+									<p:outputLabel value="#{d.pessoa.pessoaTelefonePrimario}" />
+								</p:column>
+								<p:column headerText="Endereço" priority="5"
+									style="overflow: hidden;text-align: left; font-size: large">
+									<p:outputLabel value="#{d.pessoa.logradouro} - " />
+									<p:outputLabel value="#{d.pessoa.cep}" />
+									<br />
+									<p:outputLabel value="#{d.pessoa.bairro}" />
+								</p:column>
+								<p:column headerText="Status" priority="5"
+									style="overflow: hidden;text-align: center; font-size: large; width: 90px">
+									<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
+										style="color : green" />
+									<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
+										style="color : red" />
+								</p:column>
+							</p:dataTable>
+						</div>			
 					</div>
 				</p:panel>
 			</div>

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 
 import br.com.clinica.converters.EntityBase;
+import br.com.clinica.model.cadastro.usuario.Login;
 
 @Entity
 @Audited
@@ -49,6 +50,10 @@ public class ParcelaPagar implements EntityBase, Serializable {
 	private Double valorBruto;
 
 	private Double valorDesconto;
+	
+	@ManyToOne
+	@JoinColumn(name = "idLogin")
+	Login Login;
 
 	// PENDENTE (P), PAGA(PA)
 	private String situacao = "P";
@@ -129,6 +134,14 @@ public class ParcelaPagar implements EntityBase, Serializable {
 
 	public void setPagamentoEspecial(Double pagamentoEspecial) {
 		this.pagamentoEspecial = pagamentoEspecial;
+	}
+	
+	public Login getLogin() {
+		return Login;
+	}
+
+	public void setLogin(Login login) {
+		Login = login;
 	}
 
 	@Override

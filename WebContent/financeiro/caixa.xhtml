@@ -13,8 +13,27 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large !important;
 	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.dashboard .overview-box .overview-box-title {
+	font-size: large !important;
+	width: 100%;
+	text-align: center;
+	background: lightblue;
+	padding: 10px;
+	color: black !important;
+	font-weight: bold;
+
+}
+
+.dashboard .overview-box .overview-box-details {
+	width: 100%;
+	padding: 15px 0;
+	padding-left: 15px;
+	background: azure;
 	font-weight: bold;
 }
 
@@ -22,21 +41,21 @@
 	font-size: 20px;
 	width: 100%;
 	text-align: center;
-	height: 35px;
+	height: 40px;
 	color: black;
 }
 
 .ui-fluid .ui-inputtext {
 	width: 100%;
-	height: 35px;
-	font-size: medium;
+	height: 40px;
+	font-size: large !important;
 	text-align: center;
 	color: black;
 }
 
 .ui-fluid .ui-inputtextarea {
 	width: 100%;
-	height: 35px !important;
+	height: 40px !important;
 	color: black;
 	text-align: center;
 }
@@ -44,14 +63,14 @@
 .ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	width: 100%;
 	text-align: center;
-	height: 35px;
+	height: 40px;
 	font-size: 20px !important;
 	color: black;
 }
 
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
 	width: 100%;
-	height: 35px;
+	height: 40px;
 	font-size: 20px !important;
 	text-align: center;
 	color: black;
@@ -95,22 +114,20 @@
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">
-						<p:panel>
 							<div class="card card-w-title">
-								<br />
-								<div align="center">
-									<p:outputLabel value="Revisão(Caixa)" styleClass="titulo" />
-								</div>
-								<hr />
-								<br />
-								<div class="ui-g">
+								<p:tabView>
+									<p:tab title="Busca">
+										
+										<div class="ui-g">
 									<div class="ui-g-12 ui-lg-1">
 										<p:outputLabel value="Data Inicial" />
-										<p:calendar value="#{caixaBean.campoDataInicio}" navigator="true" />
+										<p:calendar value="#{caixaBean.campoDataInicio}"
+											navigator="true" />
 									</div>
 									<div class="ui-g-12 ui-lg-1">
 										<p:outputLabel value="Data Fim" />
-										<p:calendar id="dtFim" value="#{caixaBean.campoDataFim}" navigator="true" />
+										<p:calendar id="dtFim" value="#{caixaBean.campoDataFim}"
+											navigator="true" />
 									</div>
 									<div class="ui-g-12 ui-lg-2">
 										<p:outputLabel value="Nome do Fornecedor" />
@@ -120,23 +137,26 @@
 										<p:outputLabel value="Nome do Paciente" />
 										<div class="ui-inputgroup">
 											<p:inputText value="#{caixaBean.campoBuscaPaciente}" />
-											<p:commandButton styleClass="btn btn-blue" icon="ui-icon-search" actionListener="#{caixaBean.busca}" update="@form" />
+											<p:commandButton styleClass="btn btn-blue"
+												icon="ui-icon-search" actionListener="#{caixaBean.busca}"
+												update="@all" />
 										</div>
 									</div>
 								</div>
 								<div class="ui-g">
+									
 									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
-										<p:dataTable value="#{caixaBean.lstCaixa}" var="d"
-											emptyMessage="Não há Pendências" styleClass="table.gridtable"
-											rowKey="#{d.idCaixa}" selectionMode="single"
-											id="tableReceber" paginator="true" rows="8"
-											selection="#{caixaBean.caixaModel}">
-
+									<p:dataTable value="#{caixaBean.lstCaixa}" var="d"
+							emptyMessage="Não Há Registros Lançados"
+							 rowKey="#{d.idCaixa}"
+							selectionMode="single" id="table" rows="10" paginator="true" 
+							selection="#{caixaBean.caixaModel}">
+								
 											<p:ajax event="rowSelect" listener="#{caixaBean.onRowSelect}"
-												update="tableReceber , @form" />
+												update="table  @form" />
 
 											<p:column headerText="Lançamento" priority="2"
-												style="width:20%; text-align:center; font-size: large ">
+												style="width:20%; text-align:center; font-size: large !important ">
 												<p:outputLabel value="#{d.dataLancamento}">
 													<f:convertDateTime timeZone="America/Sao_Paulo"
 														pattern="dd/MM/yyyy" />
@@ -144,7 +164,7 @@
 											</p:column>
 
 											<p:column headerText="Paciente/Fornecedor" priority="1"
-												style="width:60%; text-align:left; font-size: large ">
+												style="width:60%; text-align:left; font-size: large !important ">
 												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}"
 													style="color: blue;" />
 												<p:outputLabel value="#{d.fornecedor.nomeFornecedor}"
@@ -152,14 +172,18 @@
 											</p:column>
 
 											<p:column headerText="Valor" priority="1"
-												style="width:20%; text-align:right; font-size: large ">
+												style="width:20%; text-align:right; font-size: large !important ">
 												<p:outputLabel value="R$ " />
-												<p:outputLabel value="#{d.valorRetirado}" > <f:convertNumber maxFractionDigits="2" /></p:outputLabel>
-												<p:outputLabel value="#{d.valorInserido}" > <f:convertNumber maxFractionDigits="2" /></p:outputLabel>
+												<p:outputLabel value="#{d.valorRetirado}">
+													<f:convertNumber maxFractionDigits="2" />
+												</p:outputLabel>
+												<p:outputLabel value="#{d.valorInserido}">
+													<f:convertNumber maxFractionDigits="2" />
+												</p:outputLabel>
 											</p:column>
 
 											<p:column headerText="Tipo" priority="1"
-												style="width:20%; text-align:right; font-size: large ">
+												style="width:20%; text-align:right; font-size: large !important ">
 												<p:outputLabel value="Recebimento"
 													rendered="#{d.tipo eq 'CR'}" style="color: blue;" />
 												<p:outputLabel value="Pagamento"
@@ -169,358 +193,401 @@
 										</p:dataTable>
 									</div>
 								</div>
+										
+											
+									</p:tab>
+									
+									<p:tab title="Resumo">
+									
+										<div class="ui-g dashboard">
+									
+									<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Despesas</h2></div>
+									<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
 								
-								<p:accordionPanel multiple="true">
-									<p:tab title="Receita">
-										<div class="ui-g">
-											<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
-												<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
-													reflow="true">
-													<p:column headerText="Janeiro"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.janeiror}"
-															rendered="#{lst.janeiror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.janeiror} == 0}" />
-													</p:column>
-
-													<p:column headerText="Fevereiro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.fevereiror}"
-															rendered="#{lst.fevereiror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.fevereiror == null}" />
-													</p:column>
-
-													<p:column headerText="Março" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.marcor}"
-															rendered="#{lst.marcor != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.marcor == null}" />
-													</p:column>
-
-													<p:column headerText="Abril" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.abrilr}"
-															rendered="#{lst.abrilr != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.abrilr == null}" />
-													</p:column>
-
-													<p:column headerText="Maio" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.maior}"
-															rendered="#{lst.maior != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.maior == null}" />
-													</p:column>
-													<p:column headerText="Junho" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.junhor}"
-															rendered="#{lst.junhor != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.junhor == null}" />
-													</p:column>
-													<p:column headerText="Julho" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.julhor}"
-															rendered="#{lst.julhor != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.julhor == null}" />
-													</p:column>
-													<p:column headerText="Agosto" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.agostor}"
-															rendered="#{lst.agostor != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.agostor == null}" />
-													</p:column>
-													<p:column headerText="Setembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.setembror}"
-															rendered="#{lst.setembror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.setembror == null}" />
-													</p:column>
-													<p:column headerText="Outubro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.outubror}"
-															rendered="#{lst.outubror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.outubror == null}" />
-													</p:column>
-													<p:column headerText="Novembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.novembror}"
-															rendered="#{lst.novembror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.novembror == null}" />
-													</p:column>
-													<p:column headerText="Dezembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.dezembror}"
-															rendered="#{lst.dezembror != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.dezembror == null}" />
-													</p:column>
-												</p:dataTable>
+									<p:repeat var="d" value="#{caixaBean.lstFinanceiroMap}">
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Janeiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.janeiror} </span>
+												</div>
 											</div>
 										</div>
-									</p:tab>
-									<p:tab title="Despesas">
-										<div class="ui-g">
-											<div class="ui-g-12 ui-lg-12 ui-sm-12">
-												<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
-													reflow="true">
-													<p:column headerText="Janeiro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.janeirop}"
-															rendered="#{lst.janeirop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.janeirop == null}" />
-													</p:column>
-
-													<p:column headerText="Fevereiro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.fevereirop}"
-															rendered="#{lst.fevereirop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.fevereirop == null}" />
-													</p:column>
-
-													<p:column headerText="Março" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.marcop}"
-															rendered="#{lst.marcop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.marcop == null}" />
-													</p:column>
-
-													<p:column headerText="Abril" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.abrilp}"
-															rendered="#{lst.abrilp != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.abrilp == null}" />
-													</p:column>
-
-													<p:column headerText="Maio" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.maiop}"
-															rendered="#{lst.maiop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.maiop == null}" />
-													</p:column>
-													<p:column headerText="Junho" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.junhop}"
-															rendered="#{lst.junhop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.junhop == null}" />
-													</p:column>
-													<p:column headerText="Julho" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.julhop}"
-															rendered="#{lst.julhop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.julhop == null}" />
-													</p:column>
-													<p:column headerText="Agosto" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.agostop}"
-															rendered="#{lst.agostop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.agostop == null}" />
-													</p:column>
-													<p:column headerText="Setembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.setembrop}"
-															rendered="#{lst.setembrop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.setembrop == null}" />
-													</p:column>
-													<p:column headerText="Outubro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.outubrop}"
-															rendered="#{lst.outubrop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.outubrop == null}" />
-													</p:column>
-													<p:column headerText="Novembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.novembrop}"
-															rendered="#{lst.novembrop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.novembrop == null}" />
-													</p:column>
-													<p:column headerText="Dezembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.dezembrop}"
-															rendered="#{lst.dezembrop != null}" />
-														<p:outputLabel value="Não Lançado" style="color: red"
-															rendered="#{lst.mediumP == null}" />
-													</p:column>
-												</p:dataTable>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Fevereiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.fevereiror} </span>
+												</div>
 											</div>
 										</div>
-									</p:tab>
-									<p:tab title="Balanço">
-										<div class="ui-g">
-											<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
-												<p:dataTable value="#{caixaBean.lstFinanceiroMap}" var="lst"
-													reflow="true">
-													<p:column headerText="Janeiro"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldojaneiro}"
-															rendered="#{lst.saldojaneiro != null}" />
-														<p:outputLabel value="R$ #{lst.janeiror}"
-															style="color: blue"
-															rendered="#{lst.saldojaneiro == null and (lst.janeiror != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldojaneiro == null and (lst.janeiror == null )}" />
-													</p:column>
-
-													<p:column headerText="Fevereiro" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldofevereiro}"
-															rendered="#{lst.saldofeveireiro != null}" />
-														<p:outputLabel value="R$ #{lst.fevereiror}"
-															style="color: blue"
-															rendered="#{lst.saldofevereiro == null and (lst.fevereiror != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldofevereiro == null and (lst.fevereiror == null )}" />
-
-
-													</p:column>
-
-													<p:column headerText="Março" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldomarco}"
-															rendered="#{lst.saldomarco != null}" />
-														<p:outputLabel value="R$ #{lst.marcor}"
-															style="color: blue"
-															rendered="#{lst.saldomarco == null and (lst.marcor != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldomarco == null and (lst.marcor == null )}" />
-													</p:column>
-
-													<p:column headerText="Abril" priority="2"
-														style=" text-align:center; font-size: small ">
-														
-														<p:outputLabel value="R$ #{lst.saldoabril}"
-															rendered="#{lst.saldoabril != null}" />
-														<p:outputLabel value="R$ #{lst.abrilr}"
-															style="color: blue"
-															rendered="#{lst.saldoabril == null and (lst.abrilr != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldoabril == null and (lst.abrilr == null )}" />
-
-													</p:column>
-
-													<p:column headerText="Maio" priority="2"
-														style=" text-align:center; font-size: small ">
-														
-														<p:outputLabel value="R$ #{lst.saldomaio}"
-															rendered="#{lst.saldomaio != null}" />
-														<p:outputLabel value="R$ #{lst.maior}" style="color: blue"
-															rendered="#{lst.saldomaio == null and (lst.maior != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldomaio == null and (lst.maior == null )}" />
-
-
-													</p:column>
-													<p:column headerText="Junho" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldojunho}"
-															rendered="#{lst.saldojunho != null}" />
-														<p:outputLabel value="R$ #{lst.julhor}"
-															style="color: blue"
-															rendered="#{lst.saldojunho == null and (lst.junhor != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldojunho == null and (lst.junhor == null )}" />
-
-													</p:column>
-													<p:column headerText="Julho" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldojulho}"
-															rendered="#{lst.saldojulho != null}" />
-														<p:outputLabel value="R$ #{lst.julhor}"
-															style="color: blue"
-															rendered="#{lst.saldojulho == null and (lst.julhor != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldojulho == null and (lst.julhor  == null )}" />
-
-
-													</p:column>
-													<p:column headerText="Agosto" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldoagosto}"
-															rendered="#{lst.saldoagosto != null}" />
-														<p:outputLabel value="R$ #{lst.agostor}"
-															style="color: blue"
-															rendered="#{lst.saldoagosto == null and (lst.agostor != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldoagosto == null and (lst.agostor  == null )}" />
-
-
-													</p:column>
-													<p:column headerText="Setembro" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldosetembro}"
-															rendered="#{lst.saldosetembro  != null}" />
-														<p:outputLabel value="R$ #{lst.setembror}"
-															style="color: green"
-															rendered="#{lst.saldosetembro == null and (lst.setembror != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldosetembro == null and (lst.setembror == null )}" />
-													</p:column>
-													<p:column headerText="Outubro" priority="2"
-														style=" text-align:center; font-size: small ">
-
-														<p:outputLabel value="R$ #{lst.saldooutubro}"
-															rendered="#{lst.saldooutubro != null }" />
-														<p:outputLabel value="R$ #{lst.outubror}"
-															style="color: blue"
-															rendered="#{lst.saldooutubro == null and (lst.outubror != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldooutubro == null and (lst.outubror == null )}" />
-													
-													</p:column>
-													<p:column headerText="Novembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.saldonovembro}"
-															rendered="#{lst.saldonovembro != null}" />
-														<p:outputLabel value="R$ #{lst.novembror}"
-															style="color: blue"
-															rendered="#{lst.saldonovembro == null and (lst.novembro != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldonovembro == null and (lst.novembro == null )}" />
-													</p:column>
-													<p:column headerText="Dezembro" priority="2"
-														style=" text-align:center; font-size: small ">
-														<p:outputLabel value="R$ #{lst.saldodezembro}"
-															rendered="#{lst.saldodezembro != null}" />
-														<p:outputLabel value="R$ #{lst.dezembror}"
-															style="color: blue"
-															rendered="#{lst.saldodezembro == null and (lst.dezembro != null )}" />
-														<p:outputLabel value="Não Lançado" style="color: blue"
-															rendered="#{lst.saldodezembro == null and (lst.dezembro == null )}" />
-													</p:column>
-												</p:dataTable>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Março</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.marcor} </span>
+												</div>
 											</div>
 										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Abril</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.abrilr} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Maio</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.maior} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Junho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.junhor} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Julho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.julhor} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Agosto</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.agostor} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Setembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.setembror} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Outubro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.outubror} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Novembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.novembror} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Dezembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.dezembror} </span>
+												</div>
+											</div>
+										</div>
+										
+										<div class="ui-g">
+										<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Receita</h2></div>
+										<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
+										
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Janeiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.janeirop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Fevereiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.fevereirop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Março</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.marcop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Abril</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.abrilp} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Maio</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.maiop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Junho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.junhop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Julho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.julhop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Agosto</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.agostop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Setembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.setembrop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Outubro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.outubrop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Novembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.novembrop} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Dezembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.dezembrop} </span>
+												</div>
+											</div>
+										</div>
+
+										</div>
+										<div class="ui-g">
+										
+										<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px">Saldo</h2></div>
+										<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
+										
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Janeiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldojaneiro} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Fevereiro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldofevereiro} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Março</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldomarco} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Abril</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldoabril} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Maio</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldomaio} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Junho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldojunho} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Julho</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldojulho} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Agosto</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldoagosto} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Setembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldosetembro} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Outubro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldooutubro} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Novembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldonovembro} </span>
+												</div>
+											</div>
+										</div>
+										<div class="ui-g-12 ui-md-6 ui-lg-3">
+											<div class="ui-g card overview-box overview-box-3 no-gutter">
+												<div class="overview-box-title">Saldo Dezembro</div>
+												<div class="overview-box-details">
+													<span class="overview-box-details-count"></span><br />
+													<i class="fa fa-money  overview-box-details-icon" /> <span
+														class="overview-box-details-count">R$ #{d.saldodezembro} </span>
+												</div>
+											</div>
+										</div>
+										</div>
+									</p:repeat>
+																	
+								</div>
+										
+									
 									</p:tab>
-								</p:accordionPanel>
-							</div>
-						</p:panel>
+									
+								</p:tabView>
+																
+								</div>										
 					</div>
 				</div>
 			</div>

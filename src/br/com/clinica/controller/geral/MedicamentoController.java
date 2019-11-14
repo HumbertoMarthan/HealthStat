@@ -20,6 +20,6 @@ public class MedicamentoController extends ImplementacaoCrud<Medicamento> implem
 	private SrvMedicamento srvMedicamento;
 	
 	@Resource
-	private RepositoryMedicamento repositoryMedicamentoa;
+	private RepositoryMedicamento repositoryMedicamento;
 	
 }

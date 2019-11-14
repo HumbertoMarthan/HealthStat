@@ -12,6 +12,15 @@
 
 	<ui:define name="head">
 		<style>
+		
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightsteelblue;
+    font-weight: bold;
+    color: #e17009;
+}
+		
 .ui-g label {
 	font-size: medium;
 	color: #2e6e9e;
@@ -100,7 +109,7 @@
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -132,7 +141,7 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelNomeEstoquista" for="nome"
 											value="Atendente:*" />
@@ -142,7 +151,7 @@
 											value="#{atendenteBean.atendenteModel.pessoa.pessoaNome}"
 											requiredMessage="Informe o Nome do Estoquista" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelDataNascimentoEstoquista"
 											for="nascimento" value="Nascimento:*" />
 
@@ -152,7 +161,7 @@
 											value="#{atendenteBean.atendenteModel.pessoa.pessoaDataNascimento}"
 											requiredMessage="Informe o Data de Nascimento" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelSexoEstoquista" for="sexo"
 											value="Sexo: *" />
 
@@ -164,7 +173,7 @@
 											<f:selectItem itemLabel=" Feminino" itemValue="F" />
 										</p:selectOneMenu>
 									</div>
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelEmailEstoquista" for="email"
 											value="Email: *" />
 
@@ -172,14 +181,14 @@
 											value="#{atendenteBean.atendenteModel.pessoa.pessoaEmail}"
 											requiredMessage="Informe o Email" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelRgEstoquista" for="rg" value="RG: *" />
 										<p:inputMask id="rg"
 											value="#{atendenteBean.atendenteModel.pessoa.pessoaRG}"
 											mask="99.999.999-9" required="true"
 											requiredMessage="Informe o RG" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCPFEstoquista" for="cpf"
 											value="CPF: *" />
 										<p:inputMask id="cpf"
@@ -187,7 +196,7 @@
 											mask="999.999.999-99" required="true"
 											requiredMessage="Informe o Cpf" />
 									</div>
-									<div class="ui-g-12 ui-lg-2 ">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelTelefonePrimarioEstoquista"
 											for="telefonePrimario" value="Celular:*" />
 										<p:inputMask id="telefonePrimario"
@@ -196,7 +205,7 @@
 											requiredMessage="Informe o Telefone de Contato" />
 
 									</div>
-									<div class="ui-g-12  ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="telefoneSecundarioLabel"
 											for="telefoneSecundario" value="Fixo:" />
 										<p:inputMask id="telefoneSecundario"
@@ -204,7 +213,7 @@
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Criar Login" />
 										<p:selectOneButton rows="1" cols="30" maxlength="315" required="true"
 											autoResize="true"
@@ -214,7 +223,7 @@
 										</p:selectOneButton>
 									</div>
 
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelObservacaoEstoquista" for="obs"
 											value="Observação:" />
 										<p:inputTextarea id="obs" rows="1" cols="30" maxlength="315"
@@ -226,7 +235,7 @@
 								<p:separator />
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
 										<p:inputText id="campoCep" autocomplete="true"
@@ -242,7 +251,7 @@
 												hideEvent="blur" />
 										</p:inputText>
 									</div>
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"
 											value="Cidade: *" />
 										<p:inputText id="localidade"
@@ -251,14 +260,14 @@
 											required="true" requiredMessage="Informe a Cidade">
 										</p:inputText>
 									</div>
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelUf" value="UF:*" />
 										<p:inputText id="uf" ondblclick="javascript:this.value=''"
 											value="#{atendenteBean.atendenteModel.pessoa.uf}">
 										</p:inputText>
 									</div>
 
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelComplemento" value="Detalhes:" />
 										<p:inputText id="complemento"
 											ondblclick="javascript:this.value=''"
@@ -266,14 +275,14 @@
 									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelLogradouro" value="Endereço:*" />
 										<p:inputText id="logradouro"
 											value="#{atendenteBean.atendenteModel.pessoa.logradouro}"
 											ondblclick="javascript:this.value=''" required="true"
 											requiredMessage="Informe o Endereço" />
 									</div>
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelBairro" value="Bairro:*" />
 										<p:inputText ondblclick="javascript:this.value=''"
 											value="#{atendenteBean.atendenteModel.pessoa.bairro}"

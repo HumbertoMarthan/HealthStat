@@ -22,6 +22,7 @@ import org.hibernate.envers.Audited;
 import br.com.clinica.converters.EntityBase;
 import br.com.clinica.model.cadastro.estoque.Fornecedor;
 import br.com.clinica.model.cadastro.estoque.Material;
+import br.com.clinica.model.cadastro.usuario.Login;
 
 /**
  * @author Humberto
@@ -79,6 +80,18 @@ public class ContasPagar implements EntityBase, Serializable {
 	
 	private Integer parcelas;
 	
+	@ManyToOne
+	@JoinColumn(name = "idLogin")
+	Login Login;
+	
+	public Login getLogin() {
+		return Login;
+	}
+
+	public void setLogin(Login login) {
+		Login = login;
+	}
+
 	public ContasPagar(Long cod) {
 		this.idContasPagar = cod;
 	}

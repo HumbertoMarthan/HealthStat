@@ -21,6 +21,7 @@ import br.com.clinica.controller.geral.ContasReceberController;
 import br.com.clinica.controller.geral.PagamentoEspecialController;
 import br.com.clinica.controller.geral.ParcelaPagarController;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
+import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.ContasReceber;
 import br.com.clinica.model.financeiro.FormaPagamento;
@@ -28,6 +29,9 @@ import br.com.clinica.model.financeiro.PagamentoEspecial;
 import br.com.clinica.model.financeiro.ParcelaPagar;
 import br.com.clinica.utils.DatasUtils;
 import br.com.clinica.utils.DialogUtils;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -82,6 +86,10 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private CaixaController caixaController;
+	
+	@Autowired
+	private ContextoBean contextoBean;
+
 
 	@PostConstruct
 	public void init() {
@@ -95,7 +103,17 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		}
 	}
 
+	public void geraRelatorio(){
+		try {
+			JasperPrint  relatorio =  imprimir(lstContasReceber, "receberconsulta.jrxml");
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
 
+	
 	public void mudaEstadoPendencia() {
 		setEstado("P");
 	}
@@ -169,11 +187,9 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		try {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
-			str.append(
-					"	select idparcela, situacao, valorbruto, numeroparcela, valordesconto, pagamentoEspecial, datapagamento, datavencimento,"
-							+ " idcontasreceber from parcelapagar   where 1=1 and idcontasreceber = "
-							+ contas.getIdContasReceber());
-			lstParcelaPagarPendentes = (List<ParcelaPagar>) parcelaPagarController.getSQLListParam(str.toString(),ParcelaPagar.class);
+			str.append(" from ParcelaPagar where contasReceber.idContasReceber = " + contas.getIdContasReceber());
+			str.append(" order by idParcela ");
+			lstParcelaPagarPendentes =  parcelaPagarController.findListByQueryDinamica(str.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -185,8 +201,7 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			StringBuilder str = new StringBuilder();
 			System.out.println("ID CONTAS A RECEBER PARA A PARCELA " + contasReceberModel.getIdContasReceber());
 			str.append(" from PagamentoEspecial where contasReceber.idContasReceber = " + contas.getIdContasReceber());
-			lstEspecialPagarPendentes = (List<PagamentoEspecial>) pagamentoEspecialController
-					.findListByQueryDinamica(str.toString());
+			lstEspecialPagarPendentes = (List<PagamentoEspecial>) pagamentoEspecialController.findListByQueryDinamica(str.toString());
 			System.out.println("LISTA PAGAMENTO ESPECIAL > " + lstEspecialPagarPendentes.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -294,12 +309,24 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 
 	public void pagarParcela() {
 		try {
+			Long usuarioSessaoId = 0L;
+
+			try {
+				usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
+			} catch (Exception e) {
+				System.out.println("Erro ao recuperar da sessao");
+				e.printStackTrace();
+				e.getMessage();
+			}
+			
+			
 			ContasReceber conta = (ContasReceber) contasReceberController.findById(ContasReceber.class, parcelaPagarModel.getContasReceber().getIdContasReceber());
 			// Muda a situação da parcela para paga
 			parcelaPagarModel.setSituacao("PA");
 			// Muda da
 			parcelaPagarModel.setDataPagamento(new Date());
-
+			parcelaPagarModel.setLogin(new Login(usuarioSessaoId));
+			
 			// adiciona valor da parcela ao CAIXA DA EMPRESA
 			// ----------------------------------------------------------
 			caixaModel.setPaciente(new Paciente(conta.getPaciente().getIdPaciente()));
@@ -321,6 +348,8 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 			System.out.println("Problema ao pagar parcela");
 		}
+		
+		
 	}
 
 	public void recalcularDuasFormas() {
@@ -1256,4 +1285,16 @@ public class ContasReceberBean extends BeanManagedViewAbstract {
 		this.lstEspecialPagarPendentes = lstEspecialPagarPendentes;
 	}
 
+
+	public ContextoBean getContextoBean() {
+		return contextoBean;
+	}
+
+
+	public void setContextoBean(ContextoBean contextoBean) {
+		this.contextoBean = contextoBean;
+	}
+
+	
+	
 }

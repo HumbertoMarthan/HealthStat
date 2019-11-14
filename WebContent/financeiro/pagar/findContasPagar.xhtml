@@ -165,8 +165,8 @@
 									<div class="ui-g">
 										<div class="ui-g-12">
 											<h:panelGroup id="botoes">
-												<div class="ui-g-12 ui-lg-1">
-													<p:commandButton value="Fixa"
+												<div class="ui-g-12 ui-lg-2">
+													<p:commandButton value="Lançamento"
 														style="height:40px; background: greenyellow !important  ;   
 														background-color: greenyellow; 
 														color:white !important;
@@ -231,14 +231,20 @@
 														update=" inputNome,table" />
 												</div>
 											</div>
+											
+											<div class="ui-g-12 ui-lg-1">
+												<p:commandLink id="impressao"	rendered="#{contasPagarBean.lstContasPagar.size() > 0}"
+													actionListener="#{contasPagarBean.geraRelatorio}">
+													<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+												</p:commandLink>
+											</div>
 										</div>
 									</div>
 									<div class="ui-g">
 										<div class="ui-g-12 ui-lg-12 ui-sm-12">
 											<p:dataTable value="#{contasPagarBean.lstContasPagar}"
 												var="d" emptyMessage="Não Há Registros Lançados" rows="10"
-												paginator="true" styleClass="table.gridtable" reflow="true"
-												rowKey="#{d.idContasPagar}" selectionMode="single"
+												paginator="true" reflow="true" rowKey="#{d.idContasPagar}" selectionMode="single"
 												id="table" selection="#{contasPagarBean.contasPagarModel}">
 
 												<p:ajax event="rowSelect"
@@ -246,7 +252,7 @@
 													update="table, :formContasPagar:tabs:botoes" />
 
 												<p:column headerText="Status" priority="5" width="8%"
-													style="overflow: hidden;text-align: center; font-size: large">
+													style="text-align: center; font-size: large">
 													<p:outputLabel value="Lançado"
 														rendered="#{d.status eq 'L'}" style="color: blue" />
 													<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
@@ -254,21 +260,26 @@
 													<p:outputLabel value="Pendente"
 														rendered="#{d.status eq 'P'}" style="color: red" />
 												</p:column>
+												
+												<p:column headerText="Usuário" priority="5" width="8%" style="text-align: center; font-size: large" >
+													#{d.login.login.toUpperCase()}
+												</p:column>
 
 												<p:column headerText="Fornecedor" priority="5"
-													style="overflow: hidden;text-align: left; font-size: large">
+													style="text-align: left; font-size: large">
 													<p:outputLabel value="#{d.fornecedor.nomeFornecedor}" />
 
 												</p:column>
 
 												<p:column headerText="Forma" priority="5" width="20%"
-													style="overflow: hidden;text-align: left; font-size: large">
-													<p:outputLabel value="#{d.formaPagamento.nomePagamento}" />
+													style="text-align: left; font-size: large">
+													<p:outputLabel value="#{d.formaPagamento.nomePagamento}" rendered="#{d.formaPagamento.nomePagamento != null}" />
+													<p:outputLabel value="Não Lançado" rendered="#{d.formaPagamento.nomePagamento == null}" />
 
 												</p:column>
 
 												<p:column headerText="Lançamento" priority="1" width="10%"
-													style="overflow: hidden;text-align: center; font-size: large">
+													style="text-align: center; font-size: large">
 													<p:outputLabel value="#{d.dataLancamento}"
 														style="color : blue">
 														<f:convertDateTime timeZone="America/Sao_Paulo"
@@ -277,7 +288,7 @@
 												</p:column>
 
 												<p:column headerText="Pagamento" priority="1" width="10%"
-													style="overflow: hidden;text-align: center; font-size: large">
+													style="text-align: center; font-size: large">
 													<p:outputLabel rendered="#{d.status eq 'PA'}"
 														value="#{d.dataPagamento}">
 														<f:convertDateTime timeZone="America/Sao_Paulo"
@@ -291,7 +302,7 @@
 
 												<p:column headerText="Vencimento" priority="1" width="10%"
 													rendered="#{contasPagarBean.campoBuscaStatus ne 'P'}"
-													style="overflow: hidden;text-align: center; font-size: large">
+													style="text-align: center; font-size: large">
 													<p:outputLabel value="#{d.dataVencimento}">
 														<f:convertDateTime timeZone="America/Sao_Paulo"
 															pattern="dd/MM/yyyy" />
@@ -299,7 +310,7 @@
 
 												</p:column>
 												<p:column headerText="Valor Total" priority="1" width="10%"
-													style="overflow: hidden;text-align: center; font-size: large">
+													style="text-align: center; font-size: large">
 													<p:outputLabel value="R$ " />
 													<p:outputLabel value="#{d.valorTotalConta}"> <f:convertNumber maxFractionDigits="3" minFractionDigits="2" /> </p:outputLabel>
 												</p:column>
@@ -470,7 +481,7 @@
 		</p:dialog>
 
 		<p:dialog widgetVar="contaFixa" id="contaFixa" modal="true"
-			resizable="false" responsive="true" width="550" header="Conta Fixa">
+			resizable="false" responsive="true" width="550" header="Lançamento de Conta a Pagar">
 			<div class="ui-fluid">
 				<div class="ui-g">
 					<div class="ui-g-12">

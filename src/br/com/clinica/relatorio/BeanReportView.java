@@ -42,7 +42,8 @@ public abstract class BeanReportView extends BeanViewAbstract {
 	
 	public JasperPrint imprimir(List<?> lista, String relatorioSemCompila)
 	{
-		String caminho = "C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\src\\relatorio\\";
+		String caminho = "C:\\Users\\Humberto\\Documents\\clinicaH\\clinica\\clinica\\src\\relatorio\\";
+		//String caminho = "C:\\Users\\Humberto\\Documents\\workspace-spring-clinica\\clinica\\src\\relatorio\\";
 		
 		JasperReport report;
 		JasperPrint print = null;

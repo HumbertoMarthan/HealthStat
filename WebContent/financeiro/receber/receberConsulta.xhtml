@@ -13,7 +13,7 @@
 		<style type="text/css">
 .ui-datatable thead th, .ui-datatable tfoot td {
 	text-align: center;
-	font-size: large;
+	font-size: large !important;
 }
 
 .ui-lg-12.centralizar {
@@ -31,13 +31,13 @@
 .ui-fluid .ui-inputtext {
 	width: 100%;
 	height: 35px;
-	font-size: large;
+	font-size: large !important;
 	text-align: center;
 	color: black;
 }
 
 .ui-g label {
-	font-size: medium;
+	font-size: large !important;
 	color: black;
 	font-weight: bold
 }
@@ -52,7 +52,7 @@
 ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	width: 100%;
 	height: 35px;
-	font-size: large;
+	font-size: large !important;
 	text-align: center;
 	color: black;
 }
@@ -64,15 +64,15 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 .ui-inputfield {
 	margin: 0;
-	outline: medium none;
+	outline: large !important none;
 	padding: 4px;
 	font-weight: bold;
 	height: 35px;
-	font-size: medium !important;
+	font-size: large !important !important;
 }
 
 .ui-g label {
-	font-size: medium;
+	font-size: large !important;
 	color: black;
 	font-weight: bold
 }
@@ -83,7 +83,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large !important;
 }
 
 .ui-autocomplete-input.ui-autocomplete-dd-input {
@@ -119,17 +119,17 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 .ui-confirm-dialog-message {
 	display: inline-block;
 	margin-top: 1px;
-	font-size: large;
+	font-size: large !important;
 	font-weight: bold;
 }
 
 .ui-button-text-icon-left .ui-button-text {
 	padding: .3em 1em .3em 2.1em;
-	font-size: large;
+	font-size: large !important;
 }
 
 .titulo{
-	font-size: large !important;
+	font-size: large !important !important;
     color: #2e6e9e;
     font-weight: bold;
 
@@ -151,7 +151,8 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 		<p:dialog widgetVar="mostraParcelas" id="mostraParcelas" modal="true"
 			resizable="false"  width="800" dynamic="true"
 			responsive="true" onHide="atualizarAoSair()" appendToBody="@body"
-			header="Parcelas">
+			header="Parcelas" style="font-size: large;	" 
+ >
 			<h:form id="formulario">
 				<p:remoteCommand name="atualizarAoSair" update="@form"
 					actionListener="#{contasReceberBean.busca}" />
@@ -167,7 +168,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						actionListener="#{contasReceberBean.pagarParcela}" />
 
 					<p:commandButton
-						style="height:40px;width:200px; background-color: red;  margin: 0 auto;font-size: large; 
+						style="height:40px;width:200px; background-color: red;  margin: 0 auto;font-size: large !important; 
 							background: red; color:white !important"
 						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
 								(contasReceberBean.parcelaPagarModel.idParcela > 0) and (contextoBean.possuiAcesso('ADMIN'))}" 
@@ -199,23 +200,26 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							update="tableParcelas :formulario" />
 
 						<p:column headerText="Nº Parcela" priority="1"
-							style="width:10%; text-align:center;font-size: large; ">
+							style="width:10%; text-align:center;font-size: large !important; ">
 							<p:outputLabel value="#{d.numeroParcela}" />
 						</p:column>
-						<p:column headerText="Vencimento" priority="1"
-							style="text-align:center; width: 20% ; font-size: large">
+						<p:column headerText="Usuário" priority="1" style="width:10%; text-align:center;font-size: large !important; ">
+							<p:outputLabel value="#{d.login.login}" rendered="#{d.login.login != null}" />
+							<p:outputLabel value=" - " rendered="#{d.login.login == null}" />
+						</p:column>	
+						<p:column headerText="Vencimento" priority="1" style="text-align:center; width: 20% ; font-size: large !important">
 							<p:outputLabel value="#{d.dataVencimento}">
 								<f:convertDateTime timeZone="America/Sao_Paulo" />
 							</p:outputLabel>
 						</p:column>
-						<p:column headerText="Pagamento" priority="1"
-							style="text-align:center; width: 20% ; font-size: large">
-							<p:outputLabel value="#{d.dataPagamento}">
+						<p:column headerText="Pagamento" priority="1" style="text-align:center; width: 20% ; font-size: large !important">
+							<p:outputLabel value=" - " rendered="#{d.dataPagamento == null}"  />
+							<p:outputLabel value="#{d.dataPagamento}" rendered="#{d.dataPagamento != null}"  >
 								<f:convertDateTime timeZone="America/Sao_Paulo" />
 							</p:outputLabel>
 						</p:column>
 						<p:column headerText="Situação" priority="1"
-							style="width: 20%; text-align:center; font-size: large">
+							style="width: 20%; text-align:center; font-size: large !important">
 							<p:outputLabel value="Pendente" rendered="#{d.situacao eq 'P'}"
 								style="color : green" />
 							<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
@@ -223,7 +227,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						</p:column>
 
 						<p:column headerText="Valor" priority="1"
-							style="text-align:right; width: 15%; font-size: large">
+							style="text-align:right; width: 15%; font-size: large !important">
 							<p:outputLabel value="R$ " />
 							<p:outputLabel value="#{d.valorBruto}" >
 								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
@@ -267,32 +271,32 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								update="pagamentoEspecial" />
 
 							<p:column headerText="Lancamento"
-								style="text-align:center;font-size: large">
+								style="text-align:center;font-size: large !important">
 								<p:outputLabel value="#{d.dataLancamento}">
 									<f:convertDateTime pattern="dd/MM/yyyy"
 										timeZone="America/Sao_Paulo" locale="pt_BR" />
 								</p:outputLabel>
 							</p:column>
 							<p:column headerText="Vencimento"
-								style="text-align:center;font-size: large">
+								style="text-align:center;font-size: large !important">
 								<p:outputLabel value="#{d.dataVencimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy"
 										timeZone="America/Sao_Paulo" locale="pt_BR" />
 								</p:outputLabel>
 							</p:column>
 							<p:column headerText="Forma"
-								style="text-align:center;font-size:large">
+								style="text-align:center;font-size:large !important">
 								<p:outputLabel value="#{d.formaPagamento.nomePagamento}" />
 							</p:column>
 							<p:column headerText="Situacao"
-								style="text-align:center;font-size: large">
+								style="text-align:center;font-size: large !important">
 								<p:outputLabel value="Pendente" rendered="#{d.situacao eq 'P'}"
 									style="color : green" />
 								<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
 									style="color : red" />
 							</p:column>
 							<p:column headerText="Valor"
-								style="text-align:right; font-size: large">
+								style="text-align:right; font-size: large !important">
 								<p:outputLabel value="R$ " />
 								<p:outputLabel value="#{d.valorBruto}" />
 							</p:column>
@@ -314,27 +318,27 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-5">
 									<h:outputLabel value="Paciente"
-										style="font-size: large;color:white" />
+										style="font-size: large !important;color:white" />
 									<br />
-									<h:outputLabel style="font-size: large; color:white;"
+									<h:outputLabel style="font-size: large !important; color:white;"
 										value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-3">
 									<h:outputLabel value="Consulta"
-										style="font-size: large;color:white" />
+										style="font-size: large !important;color:white" />
 									<br />
 									<p:outputLabel required="true"
-										style="font-size: large; color:white"
+										style="font-size: large !important; color:white"
 										value="R$ #{contasReceberBean.contasReceberModel.valorConsulta}" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-4">
 									<h:outputLabel value="Total Desconto/Entrada"
-										style="font-size: large; color:white" />
+										style="font-size: large !important; color:white" />
 									<br />
 									<p:outputLabel id="valorComDesconto"
-										style="font-size: large; color:white"
+										style="font-size: large !important; color:white"
 										value="R$ #{contasReceberBean.contasReceberModel.valorComDesconto}">
 
 									</p:outputLabel>
@@ -350,7 +354,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<h:outputLabel value="Desconto" />
 											<br />
 											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0.00" style="font-size: medium"
+												symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
 												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
 												<p:ajax event="change" update="valorComDesconto par descontos"
 													listener="#{contasReceberBean.fazerDesconto}" />
@@ -362,7 +366,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<h:outputLabel value="Entrada" />
 											<br />
 											<p:inputNumber decimalPlaces="2" symbol="R$" 
-												symbolPosition="p" emptyValue="0.00" style="font-size: medium"
+												symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
 												value="#{contasReceberBean.contasReceberModel.valorEntrada}">
 												<p:ajax event="change" update="valorComDesconto,par"
 													listener="#{contasReceberBean.fazerDesconto}" />
@@ -430,7 +434,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
 														symbol="R$" symbolPosition="p"
 														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
-														style="font-size: medium;" />
+														style="font-size: large !important;" />
 												</div>
 											</div>
 										</ui:fragment>
@@ -501,12 +505,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									<div class="ui-g" align="center">
 										<div class="ui-g-12 ui-lg-6">
 											<p:commandButton value="Lançar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
 												actionListener="#{contasReceberBean.editarPagamento}" />
 										</div>
 										<div class="ui-g-12 ui-lg-6">
 											<p:commandButton value="Fechar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
 												oncomplete="PF('relancarPagamento').hide()"
 												actionListener="#{contasReceberBean.busca}" />
 										</div>
@@ -530,27 +534,27 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-5">
 									<h:outputLabel value="Paciente"
-										style="font-size: large;color:white" />
+										style="font-size: large !important;color:white" />
 									<br />
-									<h:outputLabel style="font-size: large; color:white;"
+									<h:outputLabel style="font-size: large !important; color:white;"
 										value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-3">
 									<h:outputLabel value="Consulta"
-										style="font-size: large;color:white" />
+										style="font-size: large !important;color:white" />
 									<br />
 									<p:outputLabel required="true"
-										style="font-size: large; color:white"
+										style="font-size: large !important; color:white"
 										value="R$ #{contasReceberBean.contasReceberModel.valorConsulta}" />
 								</div>
 
 								<div class="ui-g-12 ui-lg-4">
 									<h:outputLabel value="Total Desconto/Entrada"
-										style="font-size: large; color:white" />
+										style="font-size: large !important; color:white" />
 									<br />
 									<p:outputLabel id="valorComDesconto"
-										style="font-size: large; color:white"
+										style="font-size: large !important; color:white"
 										value="R$ #{contasReceberBean.contasReceberModel.valorComDesconto}">
 
 									</p:outputLabel>
@@ -565,7 +569,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<h:outputLabel value="Desconto" />
 											<br />
 											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: medium"
+												symbolPosition="p" emptyValue="0" style="font-size: large !important"
 												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
 												<p:ajax event="change" update="valorComDesconto,par"
 													listener="#{contasReceberBean.fazerDesconto}" />
@@ -576,7 +580,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<h:outputLabel value="Entrada" />
 											<br />
 											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: medium"
+												symbolPosition="p" emptyValue="0" style="font-size: large !important"
 												value="#{contasReceberBean.contasReceberModel.valorEntrada}">
 												<p:ajax event="change" update="valorComDesconto,par"
 													listener="#{contasReceberBean.fazerDesconto}" />
@@ -644,7 +648,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
 														symbol="R$" symbolPosition="p"
 														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
-														style="font-size: medium;" />
+														style="font-size: large !important;" />
 												</div>
 											</div>
 										</ui:fragment>
@@ -715,7 +719,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									<div class="ui-g" align="center">
 										<div class="ui-g-12 ui-lg-12">
 											<p:commandButton value="Lançar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
 												oncomplete="PF('relancarPagamento').hide()"
 												actionListener="#{contasReceberBean.editarPagamento}" />
 										</div>
