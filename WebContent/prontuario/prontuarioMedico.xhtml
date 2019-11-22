@@ -6,7 +6,7 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	template="/WEB-INF/template.xhtml">
 
-	<ui:define name="title">Prontuário Médico</ui:define>
+	<ui:define name="title">Ficha de Consulta Médica</ui:define>
 
 	<ui:define name="head">
 
@@ -15,6 +15,13 @@
 	text-align: center;
 	font-size: large;
 }
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
 
 .ui-lg-12.centralizar {
 	margin: 0 auto !important;
@@ -53,6 +60,11 @@
 	font-size: 20px !important;
 	color: black !important;
 }
+
+.ui-panel .ui-panel-title {
+	font-size: large;
+}
+
 
 .
 ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
@@ -104,8 +116,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 			<br />
 
 			<!-- GUIA DE CONSULTA -->
-			<h:form
-				rendered="#{prontuarioBean.estado eq 'C' and (prontuarioBean.prontuarioModel.paciente != null)}">
+			<h:form	>
 				<ui:include src="/prontuario/guiaConsulta.xhtml" />
 			</h:form>
 
@@ -145,7 +156,6 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						<div class="ui-g-12 ui-lg-12">
 							<p:commandButton value="Adicionar"
 								style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
-								oncomplete="PF('tipoEncaminhamento').hide()"
 								actionListener="#{prontuarioBean.geraTipoEncaminhamento}" />
 						</div>
 					</div>

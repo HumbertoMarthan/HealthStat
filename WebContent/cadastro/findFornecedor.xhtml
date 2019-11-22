@@ -11,7 +11,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold
 }
@@ -22,7 +22,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -75,7 +75,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -99,7 +99,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
 </style>
 	</ui:define>
@@ -110,16 +110,16 @@
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{fornecedorBean.novo}" rendered="true"
+										action="#{fornecedorBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')}"
 										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -127,7 +127,7 @@
 										   font-size:large;"
 										immediate="true" action="#{fornecedorBean.editar}"
 										update="table, @form"
-										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 }"
+										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 and contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
@@ -135,7 +135,7 @@
 									</p:commandButton>
 								</div>
 
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
@@ -143,12 +143,12 @@
 										   font-size:large;"
 										immediate="true" action="#{fornecedorBean.inativar}"
 										update="table, @form"
-										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 }"
+										rendered="#{fornecedorBean.fornecedorModel.idFornecedor > 0 and contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-3">
+							<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 								<p:selectOneRadio value="#{fornecedorBean.campoBuscaAtivo}"
 									>
 									<f:selectItem itemLabel="Todos" itemValue="T" />
@@ -157,7 +157,7 @@
 									<p:ajax event="change" listener="#{fornecedorBean.busca}" update="table" />
 								</p:selectOneRadio>
 							</div>
-							<div class="ui-g-12 ui-lg-4">
+							<div class="ui-g-12 ui-lg-4 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{fornecedorBean.campoBuscaFornecedor}"
 										placeholder="Buscar pelo Nome" id="inputNome"
@@ -168,7 +168,7 @@
 										update=" inputNome,table" />
 								</div>
 							</div>
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 									<p:commandLink	rendered="#{fornecedorBean.lstFornecedor.size() > 0}"
 									actionListener="#{fornecedorBean.geraRelatorio}">
 									<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
@@ -179,15 +179,17 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12" >
 						<p:dataTable value="#{fornecedorBean.lstFornecedor}" var="d"
-							paginator="true" rows="8"
+							paginator="true" rows="8" reflow="true"
 							rowKey="#{d.idFornecedor}" selectionMode="single" id="table"
 							selection="#{fornecedorBean.fornecedorModel}">
 
 							<p:ajax event="rowSelect"
 								listener="#{fornecedorBean.onRowSelect}"
 								update="table,:form:botoes" />
+								
+							<p:ajax event="rowDblselect" listener="#{fornecedorBean.onRowSelectDouble}" />	
 
 							<p:column headerText="Atendente" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
@@ -218,7 +220,7 @@
 								<p:outputLabel value="#{d.bairro}" />
 							</p:column>
 							<p:column headerText="Status" priority="5"
-								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
+								style="overflow: hidden;text-align: center; font-size: large; width: 90px">
 								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
 									style="color : green" />
 								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
@@ -237,6 +239,7 @@
 								</center>
 							</p:column> -->
 						</p:dataTable>
+						</div>
 					</div>
 				</p:panel>
 			</div>

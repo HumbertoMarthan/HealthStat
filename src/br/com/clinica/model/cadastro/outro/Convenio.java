@@ -39,6 +39,9 @@ public class Convenio implements  EntityBase,Serializable {
 	private String nomeConvenio;
 	
 	@Column
+	private String sigla;
+	
+	@Column
 	private String logradouro;
 	
 	@Column
@@ -96,6 +99,15 @@ public class Convenio implements  EntityBase,Serializable {
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
+	
+	public String getSigla() {
+		return sigla;
+	}
+	
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -103,6 +115,7 @@ public class Convenio implements  EntityBase,Serializable {
 		result = prime * result + ((idConvenio == null) ? 0 : idConvenio.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

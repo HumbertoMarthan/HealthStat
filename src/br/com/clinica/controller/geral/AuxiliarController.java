@@ -125,7 +125,7 @@ public class AuxiliarController implements Serializable{
 	}
 	
 	public List<PrecoConsulta> completePrecoConsulta(String q) throws Exception {
-		return precoConsultaController.findListByQueryDinamica(" from PrecoConsulta where ativo='A' and categoria like '%" + q.toUpperCase()+ "%' order by categoria ASC");
+		return precoConsultaController.findListByQueryDinamica(" from PrecoConsulta where ativo='A' and categoria like '%" + q.toUpperCase()+ "%' and ativo='A' order by categoria ASC");
 	}
 	
 	public EstoquistaController getEstoquistaController() {

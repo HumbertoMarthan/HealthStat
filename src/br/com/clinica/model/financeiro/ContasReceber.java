@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,12 +52,16 @@ public class ContasReceber implements EntityBase, Serializable {
 
 	private Date dataPagamento;
 
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorConsulta;
 
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorComDesconto;
-
+	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorDesconto;
 	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorEntrada;
 	
 	private String maisForma = "N";
@@ -67,6 +72,7 @@ public class ContasReceber implements EntityBase, Serializable {
 	@JoinColumn(name = "idFormaPagamento")
 	private FormaPagamento formaPagamento;
 
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorParcelado;
 
 	private int quantidadeParcelas = 0;

@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -80,7 +80,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	
+	font-size: large;
 }
 </style>
 }
@@ -91,7 +91,7 @@
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -105,12 +105,12 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{fornecedorBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
+										botaoNovo="#{contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')
 												 and fornecedorBean.fornecedorModel.idFornecedor == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')
 												 and fornecedorBean.fornecedorModel.idFornecedor != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_FOR', 'ATE', 'ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 								</div>
@@ -122,38 +122,38 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Fornecedor:*" />
 										<p:inputText required="true" autocomplete="true"
 											value="#{fornecedorBean.fornecedorModel.nomeFornecedor}"
 											requiredMessage="Informe o Nome do Convenio" />
 									</div>
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Razão Social:*" />
 										<p:inputText required="true"
 											value="#{fornecedorBean.fornecedorModel.razaoSocial}" />
 									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Nome Fantasia:*" />
 										<p:inputText required="true"
 											value="#{fornecedorBean.fornecedorModel.nomeFantasia}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="CPNJ:*" />
 										<p:inputMask mask="99.999.999/9999-99" required="true"
 											maxlength="150"
 											value="#{fornecedorBean.fornecedorModel.cnpj}" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Inscrição Estadual:*" />
 										<p:inputText required="true"
 											value="#{fornecedorBean.fornecedorModel.inscricaoEstadual}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Telefone:*" />
 										<p:inputMask required="true" mask="(999) 9 99999999"
 											value="#{fornecedorBean.fornecedorModel.telefone}" />
@@ -161,7 +161,7 @@
 								</div>
 								
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Cep:*" />
 										<p:inputText required="true"
 											value="#{fornecedorBean.fornecedorModel.cep}" >
@@ -173,37 +173,36 @@
 										</p:inputText>
 									</div>
 
-									<div class="ui-g-12 ui-lg-5">
+									<div class="ui-g-12 ui-lg-5 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Logradouro:*" />
 										<p:inputText id="logradouro" required="true"
 											value="#{fornecedorBean.fornecedorModel.logradouro}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-5">
+									<div class="ui-g-12 ui-lg-5 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Bairro:*" />
 										<p:inputText id="bairro" required="true"
 											value="#{fornecedorBean.fornecedorModel.bairro}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Localidade:*" />
 										<p:inputText id="localidade" required="true"
 											value="#{fornecedorBean.fornecedorModel.localidade}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel value="UF:*" />
 										<p:inputText id="uf" required="true"
 											value="#{fornecedorBean.fornecedorModel.uf}" />
 									</div>
 									
-									<div class="ui-g-12 ui-lg-7">
+									<div class="ui-g-12 ui-lg-8 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Complemento:" />
 										<p:inputText  id="complemento" required="false"
 											value="#{fornecedorBean.fornecedorModel.complemento}" />
 									</div>
 								</div>
-								<div class="ui-g"></div>
 							</p:panel>
 						</div>
 					</div>

@@ -63,7 +63,7 @@ public class Caixa implements EntityBase, Serializable {
 	@ManyToOne
 	@JoinColumn(name = "idPagamentoEspecial")
 	private PagamentoEspecial pagamentoEspecial;
-
+	
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 

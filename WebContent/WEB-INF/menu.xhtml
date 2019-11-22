@@ -20,79 +20,75 @@
 						</div>
 
 						<pv:menu>
-							<p:menuitem id="pm_dashboard" value="Pagina Inicial"
-								icon="fa fa-home" outcome="/restrito/dashboard" />
+							<p:menuitem id="pm_dashboard" value="Pagina Inicial" icon="fa fa-home" outcome="/restrito/dashboard" />
 
-							<sec:ifAnyGranted roles="ATE,ADMIN">
+							<sec:ifAnyGranted roles="ACE_MED, ACE_EST, ACE_ATE, ACE_MED, ACE_PAC, ACE_MAT,ACE_ESP , ACE_CON, ACE_ESTPE, ACE_GRPP, ADMIN, ATE">
 								<p:submenu id="pm_hierarchy_cadastros" label="Cadastros"
 									icon="fa fa-plus-circle">
+								
+								<sec:ifAnyGranted roles="ACE_MED, ACE_ATE, ACE_MED, ADMIN, ATE">
 									<p:submenu id="submenu_colaboradores" label="Colaboradores"  style="font-size:14px"
 										icon="fa fa-group">
 
-										<sec:ifAnyGranted roles="ATE, ADMIN">
+										<sec:ifAnyGranted roles="ACE_ATE, ADMIN, ATE">
 											<p:menuitem value="Atendente" style="font-size:14px"
 												action="#{atendenteBean.redirecionarFindEntidade}"
 												icon="fa fa-user-o" immediate="true" ajax="false" />
 										</sec:ifAnyGranted>
 
-										<sec:ifAnyGranted roles="ATE, ADMIN">
+										<sec:ifAnyGranted roles="ACE_EST, ADMIN,ATE">
 											<p:menuitem id="item_menu_estoquista" value="Estoquista"  style="font-size:14px" 
 												icon="fa fa-cubes"
 												action="#{estoquistaBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 
-										<sec:ifAnyGranted roles="ATE, ADMIN">
+										<sec:ifAnyGranted roles="ACE_MED, ADMIN,ATE">
 											<p:menuitem id="item_menu_medico" value="Médico"  style="font-size:14px"
 												icon="fa fa-user-md"
 												action="#{medicoBean.redirecionarFindEntidade}" />
 										</sec:ifAnyGranted>
 									</p:submenu>
-
-									<sec:ifAnyGranted roles="ATE, ADMIN">
+								</sec:ifAnyGranted>
+								
+									<sec:ifAnyGranted roles="ACE_PAC, ADMIN, ATE">
 										<p:menuitem id="item_menu_paciente" value="Paciente"  style="font-size:14px"
 											icon="fa fa-user-o" 
 											action="#{pacienteBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
-									<sec:ifAnyGranted roles="ATE, ADMIN">
+									<sec:ifAnyGranted roles="ACE_CON, ADMIN, ATE">
 										<p:menuitem id="item_menu_convenio" value="Convênio"  style="font-size:14px"
 											icon="fa fa-medkit"
 											action="#{convenioBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
-									<!-- <sec:ifAnyGranted roles="MED, ADMIN">
-										<p:menuitem id="item_menu_doencas" value="Doença"
-											icon="fa fa-stethoscope"
-											action="#{doencaBeanView.redirecionarFindEntidade}" />
-									</sec:ifAnyGranted>
-									 -->
-									<sec:ifAnyGranted roles="ATE, ADMIN">
+									<sec:ifAnyGranted roles="ACE_ESP, ADMIN, ATE">
 										<p:menuitem id="item_menu_especialidade" value="Especialidade"  style="font-size:14px"
 											icon="fa fa-stethoscope"
 											action="#{especialidadeBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
-									<sec:ifAnyGranted roles="EST, ATE, ADMIN">
+									<sec:ifAnyGranted roles="ACE_ESTPE, ACE_ATE, ADMIN, ATE, EST">
 										<p:menuitem id="item_menu_fornecedor" value="Fornecedor"  style="font-size:14px"
 											icon="fa fa-building"
 											action="#{fornecedorBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 
-									<sec:ifAnyGranted roles="EST, ADMIN">
+									<sec:ifAnyGranted roles="ACE_ESTPE, ACE_MAT, ADMIN, EST">
 										<p:menuitem id="item_menu_material" value="Material"  style="font-size:14px"
 											icon="fa fa-cube"
 											action="#{materialBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 									
-									<sec:ifAnyGranted roles="ATE, ADMIN">
+									<sec:ifAnyGranted roles="ACE_GRPP, ADMIN, ATE">
 										<p:menuitem id="item_menu_preco_consulta" value="Grupo de Preços"  style="font-size:14px"
-											icon="pi pi-th-large"
+											icon="fa fa-usd"
 											action="#{precoConsultaBean.redirecionarFindEntidade}" />
 									</sec:ifAnyGranted>
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<sec:ifAnyGranted roles="EST, ADMIN">
+							<sec:ifAnyGranted roles="ACE_ESTPE, ADMIN">
 								<p:submenu id="pm_hierarchy_movimentação" label="Estoque"  style="font-size:14px"
 									icon="fa fa-cubes">
 									<p:menuitem id="submenu_estoque" value="Estoque/Pedidos" style="font-size:14px"
@@ -101,32 +97,34 @@
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<sec:ifAnyGranted roles="MED, ADMIN">
-								<p:submenu id="pm_hierarchy_medico" label="Prontuário"  style="font-size:14px"
+							<sec:ifAnyGranted roles="ACE_FICHA, ADMIN, MED">
+								<p:submenu id="pm_hierarchy_medico" label="Ficha de Consulta"  style="font-size:14px"
 									icon="fa fa-hospital-o"> 
-									<p:menuitem id="item_menu_prontuario" value="Prontuário"  style="font-size:14px"
+									<p:menuitem id="item_menu_prontuario" value="Ficha de Consulta"  style="font-size:14px"
 										action="#{prontuarioBean.redirecionarFindEntidade}"
 										icon="fa fa-heartbeat" />
 								</p:submenu>
 							</sec:ifAnyGranted>
 
-							<sec:ifAnyGranted roles="ATE ,ADMIN">
+							<sec:ifAnyGranted roles="ACE_MOV, ACE_PAG, ACE_REC, ADMIN, ATE">
 								<p:submenu id="pm_hierarchy_financeiro" label="Financeiro"  style="font-size:14px"
 									icon="fa fa-money">
-										<sec:ifAnyGranted roles="ATE ,ADMIN">
+										<sec:ifAnyGranted roles="ACE_MOV, ADMIN, ATE">
 											<p:menuitem id="item_menu_financeiro_caixa" value="Movimentos"  style="font-size:14px"
 												action="#{caixaBean.redirecionarFindEntidade}"
 												icon="fa fa-balance-scale" />
 										</sec:ifAnyGranted>
 
-										<sec:ifAnyGranted roles="ATE ,ADMIN">
+										<sec:ifAnyGranted roles="ACE_PAG, ADMIN, ATE">
 											<p:menuitem id="item_menu_financeiro" value="Pagamento"  style="font-size:14px"
 												action="#{contasPagarBean.redirecionarFindEntidade}"
 												icon="fa fa-credit-card" />
 										</sec:ifAnyGranted>
-										<p:menuitem id="item_menu_receber_consultas"  style="font-size:14px"
-											action="#{contasReceberBean.redirecionarFindEntidade}" 
-											value="Receber" icon="fa fa-share" />
+										<sec:ifAnyGranted roles="ACE_REC, ADMIN,ATE">
+											<p:menuitem id="item_menu_receber_consultas"  style="font-size:14px"
+												action="#{contasReceberBean.redirecionarFindEntidade}" 
+												value="Receber" icon="fa fa-share" />
+										</sec:ifAnyGranted>
 								</p:submenu>
 							</sec:ifAnyGranted>
 

@@ -7,11 +7,24 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
-	<ui:define name="title">Prontuário</ui:define>
+	<ui:define name="title">Ficha de Consulta Médica</ui:define>
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large !important;
+	color: black;
+	font-weight: bold
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
+
+.ui-g .ui-fluid label {
+	font-size: large !important;
 	color: black;
 	font-weight: bold
 }
@@ -22,7 +35,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -75,7 +88,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -85,32 +98,84 @@
 	color: black;
 }
 
+.titulo {
+	font-size: large !important;
+	color: #2e6e9e;
+	font-weight: bold;
+}
+
+.ui-dialog .ui-dialog-title {
+	float: left;
+	margin: .3em 16px .1em 0;
+	font-size: large;
+}
+
+.ui-panel .ui-panel-title {
+    margin: 0.1em 16px 0.2em 0;
+    font-size: large;
+}
+
+.labelmaior{
+	font-size: 20px !important;
+}
 </style>
 	</ui:define>
 	<ui:define name="content">
 		<h:form id="form">
+
 			<div class="ui-fluid">
-				<p:tabView id="tabView">
-					<p:tab title="Lista de Prontuário">
-						<p:panel header="Prontuários" style="text-align:center">
+				<p:outputPanel>
+					<div align="center">
+						<p:panel>
 							<div class="ui-g">
-								<div class="ui-g-12">
+								<div class="ui-g-12 ui-sm-12 ui-lg-12 ui-md-12">
+									<div align="center">
+										<p:outputLabel value="Ficha de Consulta Médica"
+											styleClass="titulo" />
+									</div>
+								</div>
+							</div>
+						</p:panel>
+					</div>
+				</p:outputPanel>
+				<br /> <br />
+				<p:tabView id="tabView">
+					<p:tab title="Lista de Ficha Médica">
+						<p:panel header="Fichas Médicas" style="text-align:center">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-sm-12 ui-lg-12 ui-md-12">
 									<h:panelGroup id="botoes">
-										<div class="ui-g-12 ui-lg-2">
-											<p:commandButton id="botaoRedirecionar" value="Abrir Prontuário"
-													style="height:40px; background: lightskyblue !important  ;
+										<div class="ui-g-12 ui-sm-12 ui-lg-2 ui-md-12">
+											<p:commandButton id="botaoAbrirProntuario"
+												value="Ficha de Consulta"
+												style="height:40px; background: lightskyblue !important  ;
 											    background-color: lightskyblue ;
 											    color:white !important;
 											    font-size:large;"
 												immediate="true" action="#{prontuarioBean.redirecionarGuia}"
 												update="table, @form"
-												rendered="#{prontuarioBean.prontuarioModel.idProntuario > 0 and (prontuarioBean.prontuarioModel.status eq 'P') }">
+												rendered="#{prontuarioBean.prontuarioModel.idProntuario > 0 and prontuarioBean.prontuarioModel.status eq 'P' and contextoBean.possuiAcesso('ADMIN','MOV_PRONT')}">
 
 												<f:setPropertyActionListener value="#{d}"
 													target="#{prontuarioBean.prontuarioModel}" />
 											</p:commandButton>
 										</div>
-										<div class="ui-g-12 ui-lg-3">
+										<div class="ui-g-12 ui-sm-12 ui-lg-1 ui-md-12">
+											<p:commandButton id="botaoResumo" value="Resumo"
+												style="height:40px; background: yellow !important  ;
+											    background-color: yellow ;
+											    color:white !important;
+											    font-size:large;"
+												oncomplete="PF('resumoPaciente').show();" immediate="true"
+												action="#{prontuarioBean.resumoPaciente}"
+												update=":formResumoPaciente"
+												rendered="#{prontuarioBean.prontuarioModel.idProntuario > 0 and (prontuarioBean.prontuarioModel.status eq 'F') }">
+
+												<f:setPropertyActionListener value="#{d}"
+													target="#{prontuarioBean.prontuarioModel}" />
+											</p:commandButton>
+										</div>
+										<div class="ui-g-12 ui-sm-12 ui-lg-3 ui-md-12">
 											<p:selectOneRadio value="#{prontuarioBean.campoBuscaAtivo}">
 												<f:selectItem itemLabel="Todos" itemValue="T" />
 												<f:selectItem itemLabel="Pendente" itemValue="P" />
@@ -120,31 +185,33 @@
 											</p:selectOneRadio>
 										</div>
 									</h:panelGroup>
-									<div class="ui-g-12 ui-lg-3">
-									 <div class="ui-inputgroup">
-										<p:inputText value="#{prontuarioBean.campoBusca}"
-											placeholder="Buscar pelo Nome" id="inputNome"/>
-										<p:commandButton
-											styleClass="btn btn-blue" icon="ui-icon-search"
-											actionListener="#{prontuarioBean.busca}"
-											update=" inputNome, tablea" />
-									</div></div></div>
+									<div class="ui-g-12 ui-sm-12 ui-lg-3 ui-md-12">
+										<div class="ui-inputgroup">
+											<p:inputText value="#{prontuarioBean.campoBusca}"
+												placeholder="Buscar pelo Nome" id="inputNome" />
+											<p:commandButton styleClass="btn btn-blue"
+												icon="ui-icon-search"
+												actionListener="#{prontuarioBean.busca}"
+												update=" inputNome, tablea" />
+										</div>
+									</div>
+								</div>
 							</div>
 						</p:panel>
 						<p:panel>
 							<div class="ui-g">
-								<br />
+							<div class="ui-g-12 ui-sm-12 ui-lg-12 ui-md-12">
 								<p:dataTable value="#{prontuarioBean.listaProntuario}" var="d"
-									emptyMessage="Não há registros" rows="10" paginator="true" 
-									rowKey="#{d.idProntuario}" selectionMode="single" id="tablea"
-									selection="#{prontuarioBean.prontuarioModel}">
+									emptyMessage="Não há registros" rows="10" paginator="true"
+									reflow="true" rowKey="#{d.idProntuario}" selectionMode="single"
+									id="tablea" selection="#{prontuarioBean.prontuarioModel}">
 
 									<p:ajax event="rowSelect"
 										listener="#{prontuarioBean.onRowSelect}"
 										update="tablea,form:tabView:botoes, @form " />
 
 									<p:column headerText="Data da Agendada" priority="1"
-										style="overflow: hidden;text-align: center; font-size: large; width: 15%">
+										style="text-align: center; font-size: large; width: 15%">
 										<p:outputLabel value="#{d.dataConsulta}" style="color:green">
 											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
 												timeZone="America/Sao_Paulo" />
@@ -152,21 +219,14 @@
 									</p:column>
 
 									<p:column headerText="Paciente" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="text-align: left; font-size: large">
 										<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
 										<br />
 										<p:outputLabel value="CPF - #{d.paciente.pessoa.pessoaCPF}" />
 									</p:column>
 
-									<p:column headerText="Médico" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
-										<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
-										<br />
-										<p:outputLabel value="#{d.medico.especialidades}" />
-									</p:column>
-
 									<p:column headerText="Endereço" priority="5"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="text-align: left; font-size: large">
 										<p:outputLabel value="#{d.paciente.pessoa.logradouro}" />
 										<br />
 										<p:outputLabel value="#{d.paciente.pessoa.bairro}" />
@@ -175,12 +235,27 @@
 										<p:outputLabel value="#{d.paciente.pessoa.cep}" />
 										<br />
 									</p:column>
+									<p:column headerText="Médico" priority="1"
+										style="text-align: left; font-size: large">
+										<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
+										<br />
+										<p:outputLabel value="#{d.medico.especialidades}" />
+									</p:column>
+
+									<p:column headerText="Status" priority="5"
+										style="text-align: center; font-size: large; width: 90px">
+										<p:outputLabel value="Finalizado"
+											rendered="#{d.status eq 'F'}" style="color : green" />
+										<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+											style="color : red" />
+									</p:column>
 								</p:dataTable>
+								</div>
 							</div>
 						</p:panel>
 
 					</p:tab>
-					<p:tab title="Histórico">
+					<p:tab title="Histórico" rendered="false">
 						<div class="ui-g">
 							<div class="ui-g-12 ui-lg-12">
 								<ui:include src="/prontuario/historico.xhtml" />
@@ -190,8 +265,128 @@
 				</p:tabView>
 			</div>
 		</h:form>
-		
-		
+
+		<p:dialog widgetVar="resumoPaciente" id="resumoPaciente" modal="true"
+			position="top" resizable="false" height="850" width="750"
+			responsive="true" dynamic="true" appendToBody="@body"
+			header="Resumo da Ficha de Consulta">
+			<div class="ui-fluid">
+				<h:form id="formResumoPaciente">
+					<div class="ui-g dashboard">
+						<div class="ui-g-12 ui-md-12 ui-lg-12 ui-sm-12">
+							<div class="ui-g card overview-box overview-box-2 no-gutter">
+								<div class="overview-box-title">
+									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+										<p:outputLabel
+											value="Paciente:
+										#{prontuarioBean.prontuarioModel.paciente.pessoa.pessoaNome}"
+											style="font-size: 20px !important; text-align: center; color: #2e6e9e" />
+									</div>
+									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12"> 	
+										<p:outputLabel
+											value="Médico: #{prontuarioBean.prontuarioModel.medico.pessoa.pessoaNome}"
+											style="font-size: 20px !important; text-align: center; color: #2e6e9e" />
+									</div>
+								</div>
+								<div class="overview-box-details">
+									<span class="overview-box-details-count">
+											<br />
+											<p:outputLabel value="Relato do paciente:"
+												style="font-size:18px ; text-align:center; color: black" />
+											<p:panel>
+												<p:outputLabel
+													value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
+													style="font-size:16px ; text-align:center; color: black" />
+											</p:panel>
+											<br />
+											<p:outputLabel value="Diagnótisco:"
+												style="font-size:18px ; text-align:center; color: black" />
+											<p:panel>
+												<p:outputLabel
+													value="#{prontuarioBean.prontuarioModel.diagnostico}"
+													style="font-size:16px ; text-align:center; color: black" />
+											</p:panel>
+											<br />
+											<p:outputLabel value="Receita Médica:"
+												style="font-size:18px ; text-align:center; color: black" />
+											<p:panel>
+												<p:editor disabled="true" styleClass="labelmaior"
+													value="#{prontuarioBean.prontuarioModel.receituario}"
+													style="font-size:20px !important ; text-align:center; color: black" />
+											</p:panel>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
+							<p:commandButton value="Atestado"
+								style="height:40px; margin: 0 auto;font-size:large; background-color: green; background: green; color:white !important"
+								actionListener="#{prontuarioBean.geraAtestado}" immediate="true"
+								iconPos="rigth">
+							</p:commandButton>
+						</div>
+						<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
+							<p:commandButton value="Receita" rendered="true"
+								style="height:40px; background-color: green; font-size:large;background: green; color:white !important"
+								actionListener="#{prontuarioBean.geraReceita}" immediate="true"
+								iconPos="rigth">
+							</p:commandButton>
+						</div>
+						<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
+							<p:commandButton value="Encaminhamento"
+								style=" height:40px;margin: 0 auto;background-color: blue;font-size:large; background: blue; color:white !important"
+								oncomplete="PF('tipoEncaminhamento').show()"
+								update=":formTipoEncaminhamento" immediate="false"
+								iconPos="rigth">
+							</p:commandButton>
+						</div>
+						<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
+							<p:commandButton value="Fechar"
+								style="height:40px;  margin: 0 auto; 
+						background-color: gray; 
+						background: gray; 
+						color:white !important;
+						font-size:large;"
+								onclick="PF('resumoPaciente').hide();" />
+						</div>
+					</div>
+				</h:form>
+			</div>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="tipoEncaminhamento" id="tipoEncaminhamento"
+			modal="true" resizable="false" height="200" width="400"
+			responsive="true" dynamic="true" appendToBody="@body"
+			header="Motivo do Encaminhamento?">
+			<div class="ui-fluid">
+				<h:form id="formTipoEncaminhamento">
+					<div class="ui-g">
+						<p:outputLabel />
+						<p:selectOneMenu
+							value="#{prontuarioBean.prontuarioModel.tipoEncaminhamento}">
+							<f:selectItem
+								itemLabel="Necessita de especialidade médica específica"
+								itemValue="Necessita de especialidade médica específica" />
+							<f:selectItem itemLabel="A pedido do paciente"
+								itemValue="A pedido do paciente" />
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g" align="center">
+						<div class="ui-g-12 ui-lg-12">
+							<p:commandButton value="Adicionar"
+								style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large"
+								oncomplete="PF('tipoEncaminhamento').hide()"
+								actionListener="#{prontuarioBean.geraTipoEncaminhamento}" />
+						</div>
+					</div>
+				</h:form>
+			</div>
+		</p:dialog>
 	</ui:define>
 </ui:composition>
 

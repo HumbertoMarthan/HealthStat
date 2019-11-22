@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -90,7 +90,7 @@
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -103,12 +103,12 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{materialBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="false"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
+										botaoNovo="#{contextoBean.possuiAcesso('MOV_MAT', 'ATE', 'ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('MOV_MAT', 'ATE', 'ADMIN')
 												 and materialBean.materialModel.idMaterial == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('MOV_MAT', 'ATE', 'ADMIN') 
 												 and materialBean.materialModel.idMaterial != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_MAT', 'ATE', 'ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 								</div>
@@ -120,7 +120,7 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 									<h:outputLabel value="Fornecedor" />
 										<p:autoComplete id="fornecedor"
 											completeMethod="#{auxController.completeFornecedor}"
@@ -136,7 +136,7 @@
 										</p:autoComplete>
 
 									</div>
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 
 										<h:outputLabel value="Material:*" />
 

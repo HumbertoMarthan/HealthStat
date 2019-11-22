@@ -1,11 +1,13 @@
 package br.com.clinica.bean.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.hibernate.HibernateException;
 import org.primefaces.event.SelectEvent;
@@ -84,6 +86,17 @@ public class EspecialidadeBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) {
 		especialidadeModel = (Especialidade) event.getObject();
 	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		especialidadeModel = (Especialidade) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadEspecialidade.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	@Override
 	public String save()  {

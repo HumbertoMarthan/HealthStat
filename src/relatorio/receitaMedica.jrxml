@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2019-11-14T00:51:07 -->
+<!-- 2019-11-18T23:15:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="convenio" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="790fbb8d-402c-47ed-86c8-b5fcb0080ffd">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="clinica"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -40,11 +40,9 @@ FROM public.convenio]]>
 		<![CDATA[]]>
 	</queryString>
 	<field name="paciente.pessoa.pessoaNome" class="java.lang.String"/>
-	<field name="paciente.pessoa.pessoaCPF" class="java.lang.String"/>
-	<field name="paciente.pessoa.localidade" class="java.lang.String"/>
 	<field name="medico.pessoa.pessoaNome" class="java.lang.String"/>
 	<field name="medico.numeroCrm" class="java.lang.String"/>
-	<field name="tipoEncaminhamento" class="java.lang.String"/>
+	<field name="receituario" class="java.lang.String"/>
 	<group name="Group1"/>
 	<group name="Group2"/>
 	<group name="Group3"/>
@@ -61,7 +59,7 @@ FROM public.convenio]]>
 					<textElement>
 						<font size="34" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Encaminhamento]]></text>
+					<text><![CDATA[Receita Médica]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -89,7 +87,7 @@ FROM public.convenio]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Guia de Encaminhamento Médico]]></text>
+				<text><![CDATA[Receita médica]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -117,7 +115,7 @@ FROM public.convenio]]>
 				<textFieldExpression><![CDATA[" CRM : "+$F{medico.numeroCrm}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="554" height="240" forecolor="#FFFFFF" uuid="8723bb7c-a68f-4a17-842a-e63e31ceca44"/>
+				<reportElement x="0" y="0" width="554" height="40" forecolor="#FFFFFF" uuid="8723bb7c-a68f-4a17-842a-e63e31ceca44"/>
 				<box padding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -128,12 +126,14 @@ FROM public.convenio]]>
 					<font size="14" isBold="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Prezado(a) Dr.(a):  " +
-
-"Encaminho o(a) paciente "+ $F{paciente.pessoa.pessoaNome} + " que informa/apresenta os seguintes dados subjetivos e objetivos mais relevantes para justificar o encaminhamento:"
+				<textFieldExpression><![CDATA["Para o paciente: "+ $F{paciente.pessoa.pessoaNome} 
 
 
-+ $F{tipoEncaminhamento}]]></textFieldExpression>
+
+
+
+
+]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="280" width="244" height="26" forecolor="#FFFFFF" uuid="a39f9083-9d29-4e45-8f42-f3500c33eae2"/>
@@ -179,6 +179,14 @@ FROM public.convenio]]>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["À disposição para quaisquer esclarecimentos"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="555" height="200" forecolor="#FFFFFF" uuid="8f3a835f-366b-40f9-b195-2db1ecd4ef37"/>
+				<box padding="6"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{receituario}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

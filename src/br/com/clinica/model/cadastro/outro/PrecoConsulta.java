@@ -2,6 +2,7 @@ package br.com.clinica.model.cadastro.outro;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +39,7 @@ public class PrecoConsulta implements  EntityBase,Serializable {
 	
 	private String observacao;
 	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valor;
 	
 	private String ativo = "A";

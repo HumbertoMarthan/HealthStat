@@ -18,6 +18,13 @@
 	font-weight: bold;
 }
 
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
+
 .dashboard .overview-box .overview-box-title {
 	font-size: large !important;
 	width: 100%;
@@ -102,7 +109,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	
+	font-size: large;
 }
 </style>
 }
@@ -112,13 +119,26 @@
 	<ui:define name="content">
 		<h:form id="form">
 			<div class="ui-fluid">
+			 <p:outputPanel>
+				<div align="center">
+					<p:panel>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-sm-12 ui-lg-12 ui-md-12">
+								<div align="center">
+									<p:outputLabel value="Movimentações" styleClass="titulo" />
+								</div>
+							</div>
+						</div>
+				</p:panel>
+				</div>
+			</p:outputPanel>
 				<div class="ui-g">
 					<div class="ui-g-12">
 							<div class="card card-w-title">
 								<p:tabView>
 									<p:tab title="Busca">
 										
-										<div class="ui-g">
+								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-1">
 										<p:outputLabel value="Data Inicial" />
 										<p:calendar value="#{caixaBean.campoDataInicio}"
@@ -139,19 +159,24 @@
 											<p:inputText value="#{caixaBean.campoBuscaPaciente}" />
 											<p:commandButton styleClass="btn btn-blue"
 												icon="ui-icon-search" actionListener="#{caixaBean.busca}"
-												update="@all" />
+												update="@form" />
 										</div>
+									</div>
+									<div class="ui-g-12 ui-lg-1">
+										<p:commandLink id="impressao"	rendered="#{caixaBean.lstCaixa.size() > 0}"
+											actionListener="#{caixaBean.geraRelatorio}">
+											<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+										</p:commandLink>
 									</div>
 								</div>
 								<div class="ui-g">
 									
 									<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
-									<p:dataTable value="#{caixaBean.lstCaixa}" var="d"
-							emptyMessage="Não Há Registros Lançados"
-							 rowKey="#{d.idCaixa}"
-							selectionMode="single" id="table" rows="10" paginator="true" 
-							selection="#{caixaBean.caixaModel}">
-								
+									<p:dataTable value="#{caixaBean.lstCaixa}" var="d" reflow="true"
+										emptyMessage="Não Há Registros Lançados"  rowKey="#{d.idCaixa}"
+										selectionMode="single" id="table" rows="10" paginator="true" 
+										selection="#{caixaBean.caixaModel}">
+											
 											<p:ajax event="rowSelect" listener="#{caixaBean.onRowSelect}"
 												update="table  @form" />
 
@@ -165,9 +190,8 @@
 
 											<p:column headerText="Paciente/Fornecedor" priority="1"
 												style="width:60%; text-align:left; font-size: large !important ">
-												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}"
-													style="color: blue;" />
-												<p:outputLabel value="#{d.fornecedor.nomeFornecedor}"
+												<p:outputLabel value="#{d.paciente.pessoa.pessoaNome.toUpperCase()}" style="color: blue;" />
+												<p:outputLabel value="#{d.fornecedor.nomeFornecedor.toUpperCase()}"
 													style="color: red;" />
 											</p:column>
 
@@ -175,19 +199,17 @@
 												style="width:20%; text-align:right; font-size: large !important ">
 												<p:outputLabel value="R$ " />
 												<p:outputLabel value="#{d.valorRetirado}">
-													<f:convertNumber maxFractionDigits="2" />
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 												</p:outputLabel>
 												<p:outputLabel value="#{d.valorInserido}">
-													<f:convertNumber maxFractionDigits="2" />
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 												</p:outputLabel>
 											</p:column>
 
 											<p:column headerText="Tipo" priority="1"
 												style="width:20%; text-align:right; font-size: large !important ">
-												<p:outputLabel value="Recebimento"
-													rendered="#{d.tipo eq 'CR'}" style="color: blue;" />
-												<p:outputLabel value="Pagamento"
-													rendered="#{d.tipo eq 'CP'}" style="color: red;" />
+												<p:outputLabel value="Recebimento" rendered="#{d.tipo eq 'CR'}" style="color: blue;" />
+												<p:outputLabel value="Pagamento"   rendered="#{d.tipo eq 'CP'}" style="color: red;" />
 											</p:column>
 
 										</p:dataTable>
@@ -197,9 +219,9 @@
 											
 									</p:tab>
 									
-									<p:tab title="Resumo">
+									<p:tab title="Resumo(2019)">
 									
-										<div class="ui-g dashboard">
+									<div class="ui-g dashboard">
 									
 									<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Despesas</h2></div>
 									<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
@@ -210,8 +232,13 @@
 												<div class="overview-box-title">Janeiro</div>
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
-													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.janeiror} </span>
+													<i class="fa fa-money  overview-box-details-icon" /> 
+													<span class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.janeiror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel>
+													</span>
 												</div>
 											</div>
 										</div>
@@ -220,8 +247,13 @@
 												<div class="overview-box-title">Fevereiro</div>
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
-													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.fevereiror} </span>
+													<i class="fa fa-money  overview-box-details-icon" /> 
+													<span class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.fevereiror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel>
+													</span>
 												</div>
 											</div>
 										</div>
@@ -230,8 +262,13 @@
 												<div class="overview-box-title">Março</div>
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
-													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.marcor} </span>
+													<i class="fa fa-money  overview-box-details-icon" /> 
+													<span class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.marcor}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel>
+													</span>
 												</div>
 											</div>
 										</div>
@@ -241,7 +278,12 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.abrilr} </span>
+														class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.abrilr}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+													</p:outputLabel>
+													</span>		
 												</div>
 											</div>
 										</div>
@@ -250,8 +292,13 @@
 												<div class="overview-box-title">Maio</div>
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
-													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.maior} </span>
+													<i class="fa fa-money  overview-box-details-icon" /> 
+													<span class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.maior}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel>
+													</span>
 												</div>
 											</div>
 										</div>
@@ -261,7 +308,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.junhor} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.junhor}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -271,7 +321,11 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.julhor} </span>
+														class="overview-box-details-count"> 
+														R$ 
+														<p:outputLabel value="#{d.julhor}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -281,7 +335,11 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.agostor} </span>
+														class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.agostor}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -291,7 +349,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.setembror} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.setembror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -301,7 +362,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.outubror} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.outubror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -311,7 +375,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.novembror} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.novembror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -321,7 +388,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.dezembror} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.dezembror}" style="color: red; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -336,7 +406,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.janeirop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.janeirop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -346,7 +419,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.fevereirop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.fevereirop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -356,7 +432,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.marcop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.marcop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -366,7 +445,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.abrilp} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.abrilp}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -376,7 +458,11 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.maiop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.maiop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel>
+														</span>
 												</div>
 											</div>
 										</div>
@@ -386,7 +472,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.junhop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.junhop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -396,7 +485,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.julhop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.julhop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -406,7 +498,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.agostop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.agostop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -416,7 +511,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.setembrop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.setembrop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -426,7 +524,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.outubrop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.outubrop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -436,7 +537,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.novembrop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.novembrop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -446,7 +550,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.dezembrop} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.dezembrop}" style="color: green; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -463,7 +570,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldojaneiro} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldojaneiro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -473,7 +583,11 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldofevereiro} </span>
+														class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.saldofevereiro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel> </span>
 												</div>
 											</div>
 										</div>
@@ -483,7 +597,11 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldomarco} </span>
+														class="overview-box-details-count">
+														R$ 
+														<p:outputLabel value="#{d.saldomarco}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel> </span>
 												</div>
 											</div>
 										</div>
@@ -493,7 +611,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldoabril} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldomarco}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -503,7 +624,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldomaio} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldomaio}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -513,7 +637,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldojunho} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldojunho}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -523,7 +650,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldojulho} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldojunho}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel> </span>
 												</div>
 											</div>
 										</div>
@@ -533,7 +663,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldoagosto} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldoagosto}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel> </span>
 												</div>
 											</div>
 										</div>
@@ -543,7 +676,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldosetembro} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldosetembro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -553,7 +689,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldooutubro} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldooutubro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>
@@ -563,7 +702,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldonovembro} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldonovembro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel> </span>
 												</div>
 											</div>
 										</div>
@@ -573,7 +715,10 @@
 												<div class="overview-box-details">
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
-														class="overview-box-details-count">R$ #{d.saldodezembro} </span>
+														class="overview-box-details-count">R$ 
+														<p:outputLabel value="#{d.saldodezembro}" style="color: blue; font-size: 24px !important;" >
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+														</p:outputLabel></span>
 												</div>
 											</div>
 										</div>

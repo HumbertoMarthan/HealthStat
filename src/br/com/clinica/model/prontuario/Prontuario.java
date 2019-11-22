@@ -69,6 +69,9 @@ public class Prontuario implements EntityBase, Serializable {
 	/* Exame fisico */ //
 	private String exameFisico;
 	
+	@Column(length=4000)
+	private String receituario;
+	
 	@Column(length=2000)
 	private String posologia;
 	
@@ -226,5 +229,13 @@ public class Prontuario implements EntityBase, Serializable {
 
 	public void setTipoEncaminhamento(String tipoEncaminhamento) {
 		this.tipoEncaminhamento = tipoEncaminhamento;
+	}
+
+	public String getReceituario() {
+		return receituario;
+	}
+
+	public void setReceituario(String receituario) {
+		this.receituario = receituario;
 	}
 }

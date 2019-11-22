@@ -94,8 +94,6 @@
 .ui-panel .ui-panel-title {
 	font-size: large;
 }
-
-
 </style>
 	</ui:define>
 	<ui:define name="content">
@@ -111,7 +109,7 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{atendenteBean.novo}" rendered="true"
+										action="#{atendenteBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')}"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
@@ -122,7 +120,7 @@
 										   font-size:large;"
 										immediate="true" action="#{atendenteBean.editar}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0}"
+										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 and contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
@@ -137,7 +135,7 @@
 										   font-size:large;"
 										immediate="true" action="#{atendenteBean.inativar}"
 										update="table, @form"
-										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 }"
+										rendered="#{atendenteBean.atendenteModel.idAtendente > 0 and contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
@@ -189,6 +187,8 @@
 	
 								<p:ajax event="rowSelect" listener="#{atendenteBean.onRowSelect}"
 									update="table,:form:botoes" />
+									
+								<p:ajax event="rowDblselect" listener="#{atendenteBean.onRowSelectDouble}" />
 	
 								<p:column headerText="Atendente" priority="1"
 									style="overflow: hidden;text-align: left; font-size: large">

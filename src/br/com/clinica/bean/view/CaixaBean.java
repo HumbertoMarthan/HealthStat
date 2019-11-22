@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.poi.hssf.record.RecalcIdRecord;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,9 @@ import br.com.clinica.controller.geral.CaixaController;
 import br.com.clinica.controller.geral.CaixaMensalController;
 import br.com.clinica.model.financeiro.Caixa;
 import br.com.clinica.model.financeiro.CaixaMensal;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
 @Controller
 @ViewScoped
@@ -33,12 +35,9 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	private String url = "/cadastro/cadCaixa.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/caixa.jsf?faces-redirect=true";
 
-	private List<Caixa> lstContasReceber = new ArrayList<Caixa>();
-	private List<Caixa> lstContasPagar = new ArrayList<Caixa>();
 	private List<Caixa> lstCaixa = new ArrayList<>();
 	private List<CaixaMensal> lstCaixaMensal = new ArrayList<>();
 	private List<Map<Object, Object>> lstFinanceiroMap;
-	private List<Map<Object, Object>> lstDespesaMap;
 	private List<Map<Object, Object>> lstTotalReceber;
 	private List<Map<Object, Object>> lstTotalPagar;
 
@@ -48,8 +47,6 @@ public class CaixaBean extends BeanManagedViewAbstract {
 	private int valorStatus;
 	private String campoBuscaFornecedor = "";
 	private String campoBuscaPaciente = "";
-
-	// ------
 
 	@Autowired
 	private CaixaController caixaController;
@@ -62,8 +59,18 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		buscaTotalMensal();
 		resultadoAnual();
 		busca();
-
 	}
+	
+	public void geraRelatorio(){
+		JasperPrint  relatorio =  imprimir(lstCaixa, "movimentos.jrxml");
+		try {
+			//JasperPrintManager.printReport(print, true);
+			JasperPrintManager.printReport(relatorio, true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public void buscaTotalMensal() {
 		StringBuilder str = new StringBuilder();
@@ -218,7 +225,9 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		StringBuilder str = new StringBuilder();
 		str.append("from Caixa a where 1=1");
 		str.append(" and (tipo = 'CR' or tipo = 'CP')");
-
+		
+		try {
+		
 		if (campoDataInicio != null || campoDataFim != null) {
 			if (campoDataFim.before(campoDataInicio) == false) {
 				str.append(" and a.dataLancamento BETWEEN  '" + campoDataInicio + "' AND '" + campoDataFim + "'");
@@ -260,8 +269,10 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		System.out.println(" SQL IMPRIMIDO " + str.toString());
 		try {
 			lstCaixa = caixaController.findListByQueryDinamica(str.toString());
-			System.out.println("<><><<><><><><<"+ lstCaixa.size());
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -367,22 +378,6 @@ public class CaixaBean extends BeanManagedViewAbstract {
 		this.caixaModel = caixaModel;
 	}
 
-	public List<Caixa> getLstContasReceber() {
-		return lstContasReceber;
-	}
-
-	public void setLstContasReceber(List<Caixa> lstContasReceber) {
-		this.lstContasReceber = lstContasReceber;
-	}
-
-	public List<Caixa> getLstContasPagar() {
-		return lstContasPagar;
-	}
-
-	public void setLstContasPagar(List<Caixa> lstContasPagar) {
-		this.lstContasPagar = lstContasPagar;
-	}
-
 	public CaixaController getCaixaController() {
 		return caixaController;
 	}
@@ -465,14 +460,6 @@ public class CaixaBean extends BeanManagedViewAbstract {
 
 	public void setLstCaixa(List<Caixa> lstCaixa) {
 		this.lstCaixa = lstCaixa;
-	}
-
-	public List<Map<Object, Object>> getLstDespesaMap() {
-		return lstDespesaMap;
-	}
-
-	public void setLstDespesaMap(List<Map<Object, Object>> lstDespesaMap) {
-		this.lstDespesaMap = lstDespesaMap;
 	}
 
 	public List<Map<Object, Object>> getLstFinanceiroMap() {

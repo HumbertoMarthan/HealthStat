@@ -11,7 +11,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold
 }
@@ -27,7 +27,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -95,13 +95,35 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
+
+.titulo{
+	font-size: large !important;
+    color: #2e6e9e;
+    font-weight: bold;
+}
+
 </style>
 	</ui:define>
 	<ui:define name="content">
 		<h:form id="form">
 			<div class="ui-fluid">
+			 <p:outputPanel>
+				<div align="center">
+					<p:panel>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-lg-12">
+								<div align="center">
+									<p:outputLabel value="Estoque" styleClass="titulo" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+				</div>
+			</p:outputPanel>
+			<br/>
+			<br/>				
 				<p:panel header="Pesquisa de Estoque" style="text-align:center">
 					<div class="ui-g">
 						<div class="ui-g-12">
@@ -113,6 +135,7 @@
 										color:white !important;
 										font-size:large; "
 										action="#{pedidoBean.geraPedido}" update=":forma:tableCarrinho" immediate="true"
+										rendered="#{contextoBean.possuiAcesso('ADMIN','MOV_ESTPE')}"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 
@@ -125,8 +148,7 @@
 										font-size:large;"
 										immediate="true"
 										update=":formAlocacao"
-										oncomplete="PF('alocarMaterial').show()"
-										rendered="#{estoqueBean.estoqueModel.idEstoque > 0 and (estoqueBean.estoqueModel.status eq 'A') }">
+										oncomplete="PF('alocarMaterial').show()">
 
 									</p:commandButton>
 								</div>
@@ -197,13 +219,13 @@
 									<p:outputLabel value="#{d.quantidade}" />
 								</p:column>
 
-								<p:column headerText="Valor" priority="1" width="15%"
+								<!-- <p:column headerText="Valor" priority="1" width="15%"
 									style="overflow: hidden;text-align: center; font-size: large">
 									<p:outputLabel value="R$ #{d.valorUnitario}"
 										rendered="#{d.valorUnitario != null}" />
 									<p:outputLabel value="Aguardando Financeiro" 
 										rendered="#{d.valorUnitario == null}" style="color : blue" />
-								</p:column>
+								</p:column> -->
 
 								<p:column headerText="Status" priority="5" width="10%"
 									style="overflow: hidden;text-align: center; font-size: large;">
@@ -332,7 +354,6 @@
 										</util:botoesCrud>
 
 										<p:commandButton value="Adicionar ao Pedido"
-											rendered="#{pedidoBean.pedidoModel.idPedido == null}"
 											actionListener="#{pedidoBean.addLista}" update="@form"
 											style="height:40px;
 													width: 240px;
@@ -345,7 +366,6 @@
 										</p:commandButton>
 
 										<p:commandButton value="Finalizar Pedido" immediate="true"
-											rendered="#{pedidoBean.pedidoModel.idPedido == null}"
 											actionListener="#{pedidoBean.salvarLista}" update="@form"
 											oncomplete="PF('fazerPedido').hide()"
 											style="height:40px;
@@ -375,7 +395,7 @@
 									<br />
 									<div class="ui-g">
 										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Num Pedido:" />
+											<h:outputLabel value="Pedido:" />
 											<p:inputText value="#{pedidoBean.pedidoModel.numPedido}"
 												disabled="true" />
 										</div>

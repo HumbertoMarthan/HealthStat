@@ -81,6 +81,7 @@ public class ContextoBean implements Serializable {
 		for (String acesso : acessos) {
 			for (GrantedAuthority authority : getAuthentication().getAuthorities()) {
 				if (authority.getAuthority().trim().equals(acesso.trim())) {
+					//System.out.println(acesso.trim());
 					return true;
 				}
 			}

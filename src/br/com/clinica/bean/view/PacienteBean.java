@@ -15,6 +15,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -146,16 +147,23 @@ public class PacienteBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event){
 		try {
-		pacienteModel = (Paciente) event.getObject();
-		buscaAcompanhante();
-		/*
-		 * FacesContext.getCurrentInstance().getExternalContext()
-		 * .redirect("cadastro/e/" + pacienteModel.getIdPaciente());
-		 */
+			pacienteModel = (Paciente) event.getObject();
+			//buscaAcompanhante();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		pacienteModel = (Paciente) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadPaciente.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public void removerAcompanhante() {
 		for (Acompanhante item : lstAcompanhante) {
@@ -250,21 +258,23 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	@Override
 	public void saveNotReturn() {
 		try {
-		//idadeMinimaPaciente();
-		if (ValidaCPF.isValid(pacienteModel.getPessoa().getPessoaCPF())) {
-			System.out.println("CPF Válido");
-			pacienteModel.getPessoa().setTipoPessoa("PAC");
-			pacienteModel = pacienteController.merge(pacienteModel);
-			limpar();
-			sucesso();
-		} else {
-			addMsg("Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF());
-			System.out.println("ERRO CPF INVÁLIDO");
-		}
+			//idadeMinimaPaciente();
+			if (ValidaCPF.isValid(pacienteModel.getPessoa().getPessoaCPF())) {
+				System.out.println("CPF Válido");
+				pacienteModel.getPessoa().setTipoPessoa("PAC");
+				pacienteModel = pacienteController.merge(pacienteModel);
+				limpar();
+				sucesso();
+			} else {
+				addMsg("Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF());
+				System.out.println("ERRO CPF INVÁLIDO");
+			}
 		}catch (Exception e) {
 			System.out.println("Erro ao salvar Paciente");
 			e.printStackTrace();
 		}
+		busca();
+		
 	}
 
 	public void salvarAcompanhante() {

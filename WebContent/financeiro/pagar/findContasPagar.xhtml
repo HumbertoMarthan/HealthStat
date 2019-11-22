@@ -11,10 +11,17 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold;
 }
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
 
 .ui-widget-header .ui-inputfield, .ui-widget-content .ui-inputfield {
 	font-weight: normal;
@@ -262,7 +269,8 @@
 												</p:column>
 												
 												<p:column headerText="Usuário" priority="5" width="8%" style="text-align: center; font-size: large" >
-													#{d.login.login.toUpperCase()}
+														<p:outputLabel value="#{d.login.login.toUpperCase()}" rendered="#{d.login.login != null}" />
+														<p:outputLabel value=" - " rendered="#{d.login.login == null}" />
 												</p:column>
 
 												<p:column headerText="Fornecedor" priority="5"
@@ -312,7 +320,9 @@
 												<p:column headerText="Valor Total" priority="1" width="10%"
 													style="text-align: center; font-size: large">
 													<p:outputLabel value="R$ " />
-													<p:outputLabel value="#{d.valorTotalConta}"> <f:convertNumber maxFractionDigits="3" minFractionDigits="2" /> </p:outputLabel>
+													<p:outputLabel value="#{d.valorTotalConta}"> 
+														<f:convertNumber maxFractionDigits="2" minFractionDigits="2" /> 
+													</p:outputLabel>
 												</p:column>
 											</p:dataTable>
 										</div>
@@ -385,9 +395,11 @@
 												</p:column>
 												<p:column headerText="Total" style="text-align:center;font-size:large;">
 													<p:outputLabel value="R$" />
-													<p:outputLabel value="#{d.total}"
-														rendered="#{d.total != null}" style="color: green" />
+													<p:outputLabel value="#{d.total}" rendered="#{d.total != null}" style="color: green" >
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+													</p:outputLabel>
 												</p:column>
+												
 											</p:dataTable>
 										</div>
 									</div>
@@ -568,8 +580,7 @@
 						<p:outputPanel styleClass="painelFornecedor">
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-6">
-									<h:outputLabel
-										value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor.toUpperCase()}"
+									<h:outputLabel value="#{contasPagarBean.contasPagarModel.fornecedor.nomeFornecedor.toUpperCase()}"
 										style="font-size: large;color:white" />
 								</div>
 
@@ -616,7 +627,7 @@
 									<div class="ui-g-12 ui-lg-6 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
-											completeMethod="#{auxController.completeFormaPagamento}"
+											completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomePagamento}" itemValue="#{a}"
 											value="#{contasPagarBean.contasPagarModel.formaPagamento}"

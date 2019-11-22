@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -88,12 +88,7 @@
 </style>
 }
 	</ui:define>
-
-
 	<ui:define name="content">
-
-
-
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
@@ -116,6 +111,7 @@
 										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
+									
 									<p:commandButton value="Salvar"
 										style="height:40px;     width: 140px;background: green !important  ;   
 										background-color: green; 
@@ -124,6 +120,7 @@
 										action="#{contasPagarBean.adicionarContasPagar}"
 										rendered="#{contasPagarBean.contasPagarModel.idContasPagar == null}"
 										immediate="true" icon="fa fa-plus" iconPos="right" />
+									
 									<p:commandButton value="Atualizar"
 										style="height:40px;    width: 140px;; background: greenyellow !important  ;   
 										background-color: greenyellow; 
@@ -155,7 +152,6 @@
 											</p:column>
 											<p:ajax event="change" listener="#{contasPagarBean.selecionaFornecedor(a.idFornecedor)}" />
 										</p:autoComplete>
-
 									</div>
 
 									<div class="ui-g-12 ui-lg-2">
@@ -166,43 +162,20 @@
 											<f:selectItem itemLabel="Luz" itemValue="L" />
 											<f:selectItem itemLabel="Internet" itemValue="I" />
 											<f:selectItem itemLabel="Telefone" itemValue="T" />
-
 										</p:selectOneMenu>
 									</div>
 
-									<!-- <div class="ui-g-12 ui-lg-2">
-										<h:outputLabel value="Data de Lançamento" />
-										<p:calendar locale="pt_BR" autocomplete="true"
-											popupIconOnly="true" required="true"
-											requiredMessage="Informe uma data " showButtonPanel="true"
-											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
-											mindate="today" style="font-size: medium"
-											value="#{contasPagarBean.contasPagarModel.dataLancamento}">
-										</p:calendar>
-									</div>-->
-									
 									<div class="ui-g-12 ui-lg-2">
 										<h:outputLabel value="Data de Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
 											popupIconOnly="true" required="true"
 											requiredMessage="Informe uma data " showButtonPanel="true"
 											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
-											mindate="today" style="font-size: medium"
+											mindate="today" style="font-size: large"
 											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
 										</p:calendar>
 									</div>
 
-									<!-- <div class="ui-g-12 ui-lg-2">
-										<h:outputLabel value="Data de Pagamento" />
-										<p:calendar locale="pt_BR" autocomplete="true"
-											popupIconOnly="true" required="true"
-											requiredMessage="Informe uma data " showButtonPanel="true"
-											showTodayButton="false" timeZone="GMT-3" pattern="dd/MM/yyyy"
-											mindate="today" style="font-size: medium"
-											value="#{contasPagarBean.contasPagarModel.dataPagamento}">
-										</p:calendar>
-									</div>-->
-									
 									<div class="ui-g-12 ui-lg-1">
 										<h:outputLabel value="Valor" />
 										<p:inputNumber decimalPlaces="2" symbol="R$"

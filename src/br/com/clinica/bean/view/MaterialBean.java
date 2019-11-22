@@ -1,11 +1,13 @@
 package br.com.clinica.bean.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,17 @@ public class MaterialBean extends BeanManagedViewAbstract {
 		materialModel = (Material) event.getObject();
 	}
 
+
+	public void onRowSelectDouble(SelectEvent event) {
+		materialModel = (Material) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadMaterial.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
 	public void busca() {
 		try {
 			StringBuilder str = new StringBuilder();

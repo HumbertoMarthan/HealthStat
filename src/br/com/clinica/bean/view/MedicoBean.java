@@ -15,6 +15,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -25,12 +26,14 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.EspecialidadeController;
+import br.com.clinica.controller.geral.LiberacaoController;
 import br.com.clinica.controller.geral.LoginController;
 import br.com.clinica.controller.geral.MedicoController;
 import br.com.clinica.controller.geral.PessoaController;
 import br.com.clinica.model.cadastro.outro.Especialidade;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
+import br.com.clinica.model.cadastro.usuario.Liberacao;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.utils.DialogUtils;
@@ -50,14 +53,17 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	private Perfil perfilModel;
 	private Medico medicoModel = new Medico();
 	private Especialidade espeModel;
-	private List<Medico> lstMedico = new ArrayList<Medico>();
 
+	private List<Medico> lstMedico = new ArrayList<Medico>();
+	private List<Perfil> lstSelecionada = new ArrayList<>();
+	
 	private String url = "/cadastro/cadMedico.jsf?faces-redirect=true";
 	private String urlFind = "/cadastro/findMedico.jsf?faces-redirect=true";
 
 	private String campoBuscaAtivo = "T";
 	private String campoBuscaNome = "";
 	private String campoBuscaCPF = "";
+
 	private String criarLogin;
 	private Long idPessoa = 0L;
 
@@ -72,6 +78,9 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private EspecialidadeController especialidadeController;
+	
+	@Autowired
+	private LiberacaoController liberacaoController;
 
 	@PostConstruct
 	public void init() {
@@ -165,6 +174,17 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) {
 		medicoModel = (Medico) event.getObject();
 	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		medicoModel = (Medico) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadMedico.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
@@ -243,29 +263,21 @@ public class MedicoBean extends BeanManagedViewAbstract {
 					medicoModel.getPessoa().setTipoPessoa("MED");
 					medicoModel = medicoController.merge(medicoModel);
 					idPessoa = medicoModel.getPessoa().getIdPessoa();
-					criarLogin = medicoModel.getTemLogin();
+					
+					List<Login> lst = new ArrayList<>();
+					lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + idPessoa);
+					
+					if(lst.isEmpty()) {
+						DialogUtils.openDialog("dialogUsuario");
+					}
+					
 					limpar();
 					sucesso();
-					System.out.println("CPF Válido");
+					
+					DialogUtils.openDialog("dialogUsuario");
 				} else {
 					addMsg("Cpf Inválido: " + medicoModel.getPessoa().getPessoaCPF());
 					System.out.println("ERRO CPF INVÁLIDO");
-				}
-				
-				if(criarLogin.equals("S")) {
-					
-					List<Login> lst = new ArrayList<Login>();
-					try {
-						lst = (List<Login>) medicoController.getListSQLDinamica("select * from Login where idPessoa ="+ idPessoa);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					if(lst.size() == 0) {
-						DialogUtils.openDialog("dialogUsuario");
-					}else {
-						addMsg("Usuário já tem Login!");
-					}
 				}
 				
 			} else {
@@ -278,31 +290,49 @@ public class MedicoBean extends BeanManagedViewAbstract {
 		busca();
 	}
 	
-	public void salvarLogin() {
-		if (loginModel.getLogin() != null && loginModel.getSenha() != null && perfilModel != null) { // nome do login vazio
-			Pessoa pessoa = null;
-			try {
-				pessoa = (Pessoa) pessoaController.findById(Pessoa.class, idPessoa);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			try {
-				
-				loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
-				loginModel.setPessoa((pessoa));
-				
-				loginModel = loginController.merge(loginModel);
-				addMsg("Salvou o Login");
-				loginModel = new Login();
-				DialogUtils.closeDialog("dialogUsuario");
+	public void verificaLogin() {
+		List<Login> lst = new ArrayList<>();
+		try {
+			lst = loginController.findListByQueryDinamica("from Login where login = '" +loginModel.getLogin()+"'");
 			
-			} catch (Exception e) {
-				error();
-				e.printStackTrace();
+			if(!lst.isEmpty()) {
+				addMsg("Este usuário já existe!");
+				loginModel.setLogin("");
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-
+	
+	public void salvarLogin() {
+		Pessoa pessoa = null;
+		try {
+			pessoa = (Pessoa) pessoaController.findById(Pessoa.class, idPessoa);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			loginModel.setPessoa((pessoa));
+			loginModel = loginController.merge(loginModel);
+			Liberacao liberacaoModel = new Liberacao();
+			
+			for(Perfil p :lstSelecionada){
+				liberacaoModel.setPerfil(new Perfil(p.getIdPerfil()));
+				liberacaoModel.setLogin(new Login(loginModel.getIdLogin()));
+				liberacaoController.merge(liberacaoModel);
+			}
+			addMsg("Usuário salvo com sucesso!!");
+			
+			DialogUtils.closeDialog("dialogUsuario");
+			loginModel = new Login();
+			lstSelecionada = new ArrayList<>();
+		} catch (Exception e) {
+			error();
+			e.printStackTrace();
+		}
+}
+	
 	@Override
 	public void saveEdit() {
 		saveNotReturn();
@@ -478,5 +508,21 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	public void setPerfilModel(Perfil perfilModel) {
 		this.perfilModel = perfilModel;
+	}
+
+	public LiberacaoController getLiberacaoController() {
+		return liberacaoController;
+	}
+
+	public void setLiberacaoController(LiberacaoController liberacaoController) {
+		this.liberacaoController = liberacaoController;
+	}
+
+	public List<Perfil> getLstSelecionada() {
+		return lstSelecionada;
+	}
+
+	public void setLstSelecionada(List<Perfil> lstSelecionada) {
+		this.lstSelecionada = lstSelecionada;
 	}
 }

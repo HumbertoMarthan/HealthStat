@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,8 +50,10 @@ public class ContasPagar implements EntityBase, Serializable {
 	
 	private String tipoConta;
 	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorConta;
 	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorTotalConta;
 	
 	private int quantidadeParcelas;

@@ -69,14 +69,14 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large !important;
 }
 </style>
 	</ui:define>
 	<ui:define name="content">
 		<h:form id="form">
 			<div class="ui-fluid">
-				<p:panel header="Pesquisa de Preço por Consulta" style="text-align:center">
+				<p:panel header="Pesquisa por Grupo de Preço" style="text-align:center">
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
@@ -86,7 +86,7 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{precoConsultaBean.novo}" rendered="true" immediate="true"
+										action="#{precoConsultaBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_GRPP', 'ATE', 'ADMIN')}" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
@@ -97,18 +97,30 @@
 										   font-size:large;"
 										immediate="true" action="#{precoConsultaBean.edita}"
 										update="table, @form"
-										rendered="#{precoConsultaBean.precoConsultaModel.idPrecoConsulta > 0 }"
+										rendered="#{precoConsultaBean.precoConsultaModel.idPrecoConsulta > 0 and contextoBean.possuiAcesso('MOV_GRPP', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{precoConsultaBean.precoConsultaModel}" />
 									</p:commandButton>
 								</div>
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
+									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
+										style="height:40px;background: tomato !important  ;
+										   background-color: tomato ;
+										   color:white !important;
+										   font-size:large;"
+										immediate="true" action="#{precoConsultaBean.inativar}"
+										update="table, @form"
+										rendered="#{precoConsultaBean.precoConsultaModel.idPrecoConsulta > 0 and contextoBean.possuiAcesso('MOV_GRPP', 'ATE', 'ADMIN')}"
+										icon="fa fa-check" iconPos="right">
+									</p:commandButton>
+								</div>
 							</h:panelGroup>
 							<div class="ui-g-12 ui-lg-3">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{precoConsultaBean.campoCategoria}"
-										placeholder="Buscar pelo Nome" id="inputNome"
+										placeholder="Buscar pela Categoria" id="inputNome"
 										style="height:40px; " />
 									<p:commandButton 
 										icon="ui-icon-search" id="btnBuscatxt"
@@ -130,6 +142,8 @@
 
 							<p:ajax event="rowSelect" listener="#{precoConsultaBean.onRowSelect}"
 								update="table,:form:botoes" />
+								
+							<p:ajax event="rowDblselect" listener="#{precoConsultaBean.onRowSelectDouble}" />	
 
 							<p:column headerText="Categoria" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
@@ -138,8 +152,18 @@
 
 							<p:column headerText="Valor" priority="5"
 								style="overflow: hidden;text-align: left; font-size: large">
-								<p:outputLabel value="R$ #{d.valor}" />
+								<p:outputLabel value="R$ " />
+								<p:outputLabel value="#{d.valor}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
 							</p:column>
+							<p:column headerText="Status" priority="5"
+									style="overflow: hidden;text-align: center; font-size: large; width: 90px">
+									<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
+										style="color : green" />
+									<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
+										style="color : red" />
+								</p:column>
 						</p:dataTable>
 					</div>
 				</p:panel>

@@ -28,6 +28,8 @@ public class Perfil implements Serializable, EntityBase {
 	private String perfilNome;
 	
 	private String perfilSigla;
+
+	private String categoria;
 	
 	public Perfil() {}
 	
@@ -60,11 +62,17 @@ public class Perfil implements Serializable, EntityBase {
 		this.perfilSigla = perfilSigla;
 	}
 
-
 	@Override
 	public Long getId() {
 		return idPerfil;
 	}
-	
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
 	
 }

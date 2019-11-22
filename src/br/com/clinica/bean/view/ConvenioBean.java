@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -25,7 +26,6 @@ import com.google.gson.Gson;
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.ConvenioController;
 import br.com.clinica.model.cadastro.outro.Convenio;
-import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
@@ -85,6 +85,17 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) {
 		convenioModel = (Convenio) event.getObject();
 	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		convenioModel = (Convenio) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadConvenio.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	// PESQUISA CEP
 		public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {

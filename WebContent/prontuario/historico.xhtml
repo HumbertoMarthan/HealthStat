@@ -6,39 +6,34 @@
 	xmlns:util="http://java.sun.com/jsf/composite/componentes">
 <body>
 	<div class="content">
-		<p:panel>
-			<!-- <div align="center">
-				<p:outputLabel value="Histórico de Paciente" styleClass="titulo" />
-			</div>
-			<br />
-			<br /> -->
+		<p:panel header="Histórico" style="text-align:center">
 			<div class="ui-g">
-				<div class="ui-g-12" style="text-align: center;">
+				<div class="ui-g-12 ui-sm-12 ui-lg-2 ui-md-12">
+						<p:inputText value="#{prontuarioBean.campoBusca}"
+						placeholder="Buscar por data" />
+				</div>
+				
+				<div class="ui-g-12 ui-sm-12 ui-lg-4 ui-md-12">
 					 <div class="ui-inputgroup">
-					<p:inputText value="#{prontuarioBean.campoBusca}"
-						style="margin: 0;
-								outline: medium none;
-								padding: 4px;
-								font-weight: bold;
-								height: 35px !important;
-								font-size: medium !important;
-								text-align: center;"
+						<p:inputText value="#{prontuarioBean.campoBusca}"
 						placeholder="Buscar pelo Nome" id="inputCampo" />
-					 <p:commandButton icon="ui-icon-search"
-							style="height:45px; width: 50px;" id="btnBuscatxt"
+						 <p:commandButton icon="ui-icon-search"
+							id="btnBuscatxt"
 							action="#{prontuarioBean.busca}" update="table, inputCampo" />
 						</div>
 				</div>
 			</div>
 			<div class="ui-g">
-				<p:dataTable id="table" var="a" widgetVar="table"
-					emptyMessage="Não há Agendamentos" rowKey="#{a.idProntuario}"
-					value="#{prontuarioBean.listaProntuario}" rows="10"
+			<div class="ui-g-12 ui-sm-12 ui-lg-12 ui-md-12">
+				<p:dataTable id="table" var="d" widgetVar="table"
+					emptyMessage="Não há Agendamentos" rowKey="#{d.idProntuario}"
+					selectionMode="single" selection="#{prontuarioBean.prontuarioModel}"
+					value="#{prontuarioBean.lstHistorico}" rows="10" reflow="true"
 					paginator="true">
 
 					<p:column headerText="Data da Agendada" priority="1"
-						style="overflow: hidden;text-align: center; font-size: large; width: 15%">
-						<p:outputLabel value="#{a.dataConsulta}" style="color:green">
+						style="text-align: center; font-size: large; width: 15%">
+						<p:outputLabel value="#{d.dataConsulta}" style="color:green">
 							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
 								timeZone="America/Sao_Paulo" />
 						</p:outputLabel>
@@ -48,23 +43,39 @@
 					<p:column headerText="Paciente"
 						style="text-align:left;font-size:large" priority="1">
 						<p:outputLabel
-							value="#{a.paciente.pessoa.pessoaNome.toUpperCase()}" />
+							value="#{d.paciente.pessoa.pessoaNome.toUpperCase()}" />
 						<br />
-						<p:outputLabel value="CPF - #{a.paciente.pessoa.pessoaCPF}" />
+						<p:outputLabel value="CPF - #{d.paciente.pessoa.pessoaCPF}" />
+					</p:column>
+					
+					<p:column headerText="Endereço" priority="5"
+						style="text-align: left; font-size: large">
+						<p:outputLabel value="#{d.paciente.pessoa.logradouro}" />
+						<br />
+						<p:outputLabel value="#{d.paciente.pessoa.bairro}" />
+						<br />
+						<p:outputLabel value="#{d.paciente.pessoa.localidade} - " />
+						<p:outputLabel value="#{d.paciente.pessoa.cep}" />
+						<br />
 					</p:column>
 
-					<p:column headerText="Relato do Paciente"
-						style="text-align:left;font-size:large" priority="1">
-						<p:outputLabel value="#{a.problemaPaciente.toUpperCase()}" />
+					<p:column headerText="Médico" priority="1"
+						style="text-align: left; font-size: large">
+						<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
+						<br />
+						<p:outputLabel value="#{d.medico.especialidades}" />
 					</p:column>
 
-					<p:column headerText="Diagnóstico"
-						style="text-align:left;font-size:large" priority="3">
-						<p:outputLabel value="#{a.diagnostico.toUpperCase()}" />
-						<!-- <p:outputLabel value="#{a.prescricao}" /> -->
+					<p:column headerText="Status" priority="5"
+						style="text-align: center; font-size: large; width: 90px">
+						<p:outputLabel value="Finalizado"
+							rendered="#{d.status eq 'F'}" style="color : green" />
+						<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+							style="color : red" />
 					</p:column>
 				</p:dataTable>
-			</div>
+		</div>			
+		</div>
 		</p:panel>
 	</div>
 </body>

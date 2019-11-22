@@ -15,12 +15,15 @@ import org.springframework.stereotype.Controller;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.bean.geral.LoginAtualizaSenha;
+import br.com.clinica.controller.geral.LiberacaoController;
 import br.com.clinica.controller.geral.LoginController;
+import br.com.clinica.controller.geral.PerfilController;
 import br.com.clinica.controller.geral.PessoaController;
 import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Estoquista;
 import br.com.clinica.model.cadastro.pessoa.Medico;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
+import br.com.clinica.model.cadastro.usuario.Liberacao;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.utils.DialogUtils;
@@ -53,7 +56,10 @@ public class LoginBean extends BeanManagedViewAbstract {
 	private String urlForget = "/publico/recuperacao.jsf?faces-redirect=true";
 
 	private List<Login> lstLogin = new ArrayList<>();
-
+	private List<Perfil> lstSelecionada = new ArrayList<>();
+	private List<Perfil> lstPerfis = new ArrayList<>();
+	private List<Perfil> lstSelecao = new ArrayList<>();
+	
 	private String campoBuscaNome = "";
 	private String campoBuscaLogin = "";
 
@@ -68,17 +74,100 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private LoginController loginController;
+	
+	@Autowired
+	private PerfilController perfilController;
 
 	@Autowired
 	private PessoaController pessoaController;
+	
+	@Autowired
+	private LiberacaoController liberacaoController;
 
 	Long id;
 
 	@PostConstruct
 	public void init() throws Exception {
 		busca(); 
+		listaPerfis();
 	}
-
+	
+	public void verificaLogin() {
+		List<Login> lst = new ArrayList<>();
+		try {
+			lst = loginController.findListByQueryDinamica("from Login where login = '" +loginModel.getLogin()+"'");
+			
+			if(!lst.isEmpty()) {
+				addMsg("Este usuário já existe!");
+				loginModel.setLogin("");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void listaPerfis() {
+		try {
+			lstPerfis = perfilController.findListByQueryDinamica("from Perfil");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void populaPerfis() {
+		
+		try {
+			lstPerfis = perfilController.findListByQueryDinamica(" from Perfil ");
+		
+			lstSelecionada =  perfilController.findListByQueryDinamica(" from Perfil e where exists (select 1 from Liberacao ue where ue.perfil.idPerfil = e.idPerfil and ue.login.idLogin = "  +loginModel.getIdLogin() + ")");
+															 	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void saveNotReturn() {
+		//SOLUCA --> COLOCAR ELSE PARA EXECUTAR
+		System.out.println("Entrou no saveNotReturn");
+			List<Login> lst = new ArrayList<>();
+			try {
+				lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + loginModel.getPessoa().getIdPessoa());
+			}catch (Exception e) {
+				error();
+				e.printStackTrace();
+			}
+			
+			if(lst.isEmpty() || loginModel.getIdLogin() != null) {
+				try {
+					Liberacao liberacaoModel = new Liberacao();
+					loginModel = loginController.merge(loginModel);
+					
+					List<Liberacao> lib = new ArrayList<>();
+					lib = liberacaoController.findListByQueryDinamica("from Liberacao where login.idLogin = " + loginModel.getIdLogin());
+					
+					if(!lib.isEmpty()) {
+						for (Liberacao l : lib) {
+							liberacaoController.delete(l);
+						}
+					}
+					
+					for(Perfil p :lstSelecionada){
+						liberacaoModel.setPerfil(new Perfil(p.getIdPerfil()));
+						liberacaoModel.setLogin(new Login(loginModel.getIdLogin()));
+						liberacaoController.merge(liberacaoModel);
+					}
+					
+					addMsg("Usuário salvo com sucesso!!");
+				}catch (Exception e) {
+					error();
+					e.printStackTrace();
+				}
+			}
+			limpar();
+	}
+	
 	public void updateSenha() throws Exception  {
 		Login usuario = (Login)  contextoBean.retornaUsuario();
 
@@ -174,6 +263,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event) {
 		loginModel = (Login) event.getObject();
+		populaPerfis();
 	}
 
 	@Override
@@ -182,8 +272,9 @@ public class LoginBean extends BeanManagedViewAbstract {
 		return getUrlFind();
 	}
 
-	private void limpar() {
+	public void limpar() {
 		loginModel = new Login();
+		lstSelecionada = new ArrayList<Perfil>();
 	}
 
 	@Override
@@ -201,7 +292,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 		str.append("from Login a where 1=1");
 
 		if (!campoBuscaLogin.equals("")) {
-			str.append(" and upper(a.login) like upper('%" + campoBuscaLogin + "%')");
+			str.append(" and upper(a.pessoa.pessoaNome) like '%" + campoBuscaLogin.toUpperCase() + "%'");
 		}
 
 		try {
@@ -213,31 +304,21 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void inativar() {
 
-		if (loginModel.getAtivo().equals("I")) {
-			loginModel.setAtivo("A");
-			// pessoaModel.setAtivo("A");
-			loginModel.setInativo(false);
-		} else {
-			loginModel.setAtivo("I");
-			// pessoaModel.setAtivo("I");
+		if (loginModel.getInativo() == false) {
 			loginModel.setInativo(true);
+		} else {
+			loginModel.setInativo(false);
 		}
 
 		try {
-			loginController.saveOrUpdate(loginModel);
-			// pessoaController.saveOrUpdate(pessoaModel);
+			loginController.merge(loginModel);
 			addMsg("Ativado/Inativado com sucesso!");
 		} catch (Exception e) {
 			System.out.println("Erro ao ativar/inativar");
 			e.printStackTrace();
 		}
 		limpar();
-		try {
-			busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar S");
-			e.printStackTrace();
-		}
+		busca();
 	}
 
 	@Override
@@ -262,29 +343,14 @@ public class LoginBean extends BeanManagedViewAbstract {
 		busca();
 	}
 
-	@Override
-	public void saveNotReturn() {
-		try {
-			loginController.persist(loginModel);
-			addMsg("Salvou o Login");
-		} catch (Exception e) {
-			e.getMessage();
-			error();
-			e.printStackTrace();
-		}
-
-		limpar();
-		pessoaModel = new Pessoa();
-		pessoaAux = new Pessoa();
-	}
-
 	public List<Pessoa> completePessoa(String q) throws Exception {
-		return pessoaController.findListByQueryDinamica(
-				" from Pessoa where pessoaNome like '%" + q.toUpperCase() + "%' order by pessoaNome ASC");
+		//select * from Pessoa p where exists(select 1 from Login where p.idPessoa = login.idPessoa)
+		return pessoaController.findListByQueryDinamica(" from Pessoa p where pessoaNome like '%" + q.toUpperCase() + "%' and  not exists (select 1  from Login l where p.idPessoa = l.pessoa.idPessoa ) order by p.pessoaNome ASC");
 	}
 
 	@Override
 	public void saveEdit() {
+		System.out.println("Entrou no Save Edit");
 		saveNotReturn();
 	}
 
@@ -296,7 +362,7 @@ public class LoginBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "";
+		return "N";
 	}
 	
 	public String getUsuarioLogadoSecurity() {
@@ -497,5 +563,53 @@ public class LoginBean extends BeanManagedViewAbstract {
 
 	public void setConfirmaSenha(String confirmaSenha) {
 		this.confirmaSenha = confirmaSenha;
+	}
+	
+	public List<Perfil> getLstSelecionada() {
+		return lstSelecionada;
+	}
+
+	public void setLstSelecionada(List<Perfil> lstSelecionada) {
+		this.lstSelecionada = lstSelecionada;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public PerfilController getPerfilController() {
+		return perfilController;
+	}
+
+	public void setPerfilController(PerfilController perfilController) {
+		this.perfilController = perfilController;
+	}
+
+	public LiberacaoController getLiberacaoController() {
+		return liberacaoController;
+	}
+
+	public void setLiberacaoController(LiberacaoController liberacaoController) {
+		this.liberacaoController = liberacaoController;
+	}
+
+	public List<Perfil> getLstPerfis() {
+		return lstPerfis;
+	}
+
+	public void setLstPerfis(List<Perfil> lstPerfis) {
+		this.lstPerfis = lstPerfis;
+	}
+
+	public List<Perfil> getLstSelecao() {
+		return lstSelecao;
+	}
+
+	public void setLstSelecao(List<Perfil> lstSelecao) {
+		this.lstSelecao = lstSelecao;
 	}
 }

@@ -95,16 +95,16 @@
 					<div class="ui-g">
 						<div class="ui-g-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{estoquistaBean.novo}" rendered="true"
+										action="#{estoquistaBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_EST', 'ATE', 'ADMIN')}"
 										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -112,14 +112,14 @@
 										   font-size:large;"
 										immediate="true" action="#{estoquistaBean.editar}"
 										update="table, @form"
-										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }"
+										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 and contextoBean.possuiAcesso('MOV_EST', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{estoquistaBean.estoquistaModel}" />
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
@@ -127,11 +127,11 @@
 										   font-size:large;"
 										immediate="true" action="#{estoquistaBean.inativar}"
 										update="table, @form"
-										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 }"
+										rendered="#{estoquistaBean.estoquistaModel.idEstoquista > 0 and contextoBean.possuiAcesso('MOV_EST', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-3">
+								<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 									<p:selectOneRadio value="#{estoquistaBean.campoBuscaAtivo}"
 										style="    padding-left: 10% !important;">
 										<f:selectItem itemLabel="Todos" itemValue="T" />
@@ -142,7 +142,7 @@
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 								<p:inputText value="#{estoquistaBean.campoBuscaNome}"
 									placeholder="Buscar pelo Nome" id="inputNome"
 									style="height:40px; ">
@@ -150,7 +150,7 @@
 								</p:inputText>
 							</div>
 
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{estoquistaBean.campoBuscaCPF}"  type="number"
 										placeholder="Buscar pelo CPF" id="inputCPF"
@@ -162,7 +162,7 @@
 								</div>
 							</div>
 							
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 									<p:commandLink rendered="#{estoquistaBean.lstEstoquista.size() > 0}"	
 										actionListener="#{estoquistaBean.geraRelatorio}"> 
 										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40"  />
@@ -173,9 +173,9 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
+			<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<p:dataTable value="#{estoquistaBean.lstEstoquista}" var="d"
-							emptyMessage="Não há dados" styleClass="table.gridtable"
+							emptyMessage="Não há dados" reflow="true"
 							rowKey="#{d.idEstoquista}" selectionMode="single" id="table"
 							rows="10" paginator="true"
 							selection="#{estoquistaBean.estoquistaModel}">
@@ -183,12 +183,14 @@
 							<p:ajax event="rowSelect"
 								listener="#{estoquistaBean.onRowSelect}"
 								update="table,:form:botoes" />
+								
+							<p:ajax event="rowDblselect" listener="#{estoquistaBean.onRowSelectDouble}" />	
+							
 							<p:column headerText="Estoquista" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
 								<br />
-								<p:outputLabel
-									value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
+								<p:outputLabel value=" CPF - #{d.pessoa.pessoaCPF} | RG - #{d.pessoa.pessoaRG}" />
 							</p:column>
 
 							<p:column headerText="Mais Informações" priority="1"
@@ -205,7 +207,7 @@
 								<p:outputLabel value="#{d.pessoa.localidade}  - #{d.pessoa.uf}" />
 							</p:column>
 							<p:column headerText="Status" priority="5"
-								style="overflow: hidden;text-align: center; font-size: large; width: 8%">
+								style="overflow: hidden;text-align: center; font-size: large; width: 90px">
 								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
 									style="color : green" />
 								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
@@ -224,6 +226,7 @@
 								</center>
 							</p:column> -->
 						</p:dataTable>
+					</div>
 					</div>
 				</p:panel>
 			</div>

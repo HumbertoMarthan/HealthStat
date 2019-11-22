@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -108,8 +108,8 @@
 									<util:botoesCrud managedBeanView="#{pacienteBean}"
 										camposReload=":formTemplate:msg, form" botaoNovo="true"
 										botaoSalvar="false"
-										botaoAtualizar="#{pacienteBean.pacienteModel.idPaciente != null}"
-										botaoRedirecionar="true" botaoExcluir="false">
+										botaoAtualizar="#{pacienteBean.pacienteModel.idPaciente != null and contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN')}" botaoExcluir="false">
 									</util:botoesCrud>
 
 									<!-- Botão Salvar -->
@@ -120,7 +120,7 @@
 										background: green; 
 										color:white !important;
 										font-size:large;"
-										rendered="#{pacienteBean.pacienteModel.idPaciente == null}"
+										rendered="#{pacienteBean.pacienteModel.idPaciente == null and contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN')}"
 										actionListener="#{pacienteBean.saveNotReturn}" ajax="true"
 										partialSubmit="true" process="@this, @form" id="buttonSalvar"
 										immediate="false" update="@form" icon="fa fa-floppy-o fa"

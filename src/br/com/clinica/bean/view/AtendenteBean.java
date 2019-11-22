@@ -15,6 +15,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -25,10 +26,12 @@ import com.google.gson.Gson;
 
 import br.com.clinica.bean.geral.BeanManagedViewAbstract;
 import br.com.clinica.controller.geral.AtendenteController;
+import br.com.clinica.controller.geral.LiberacaoController;
 import br.com.clinica.controller.geral.LoginController;
 import br.com.clinica.controller.geral.PessoaController;
 import br.com.clinica.model.cadastro.pessoa.Atendente;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
+import br.com.clinica.model.cadastro.usuario.Liberacao;
 import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.utils.DialogUtils;
@@ -86,6 +89,15 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event) {
 		atendenteModel = (Atendente) event.getObject();
+	}
+	
+	public void onRowSelectDouble(SelectEvent event) {
+		atendenteModel = (Atendente) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadAtendente.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void inativar() {
@@ -162,10 +174,17 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 					atendenteModel.getPessoa().setTipoPessoa("ATE");
 					atendenteModel = atendenteController.merge(atendenteModel);
 					idPessoa = atendenteModel.getPessoa().getIdPessoa();
-					criarLogin = atendenteModel.getTemLogin();
+					
+					List<Login> lst = new ArrayList<>();
+					lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + atendenteModel.getPessoa().getIdPessoa());
+					
+					if(lst.isEmpty()) {
+						DialogUtils.openDialog("dialogUsuario");
+					}
+					
 					limpar();
 					sucesso();
-					System.out.println("ID Atendente >>"+atendenteModel.getPessoa().getIdPessoa());
+					
 				} catch (Exception e) {
 					System.out.println("Erro ao salvar Atendente");
 					e.printStackTrace();
@@ -175,56 +194,56 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 				System.out.println("ERRO CPF INVÁLIDO");
 			}
 			
-			if(criarLogin.equals("S")) {
-				
-				List<Login> lst = new ArrayList<Login>();
-				try {
-					lst = (List<Login>) atendenteController.getListSQLDinamica("select * from Login where idPessoa ="+ idPessoa);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				if(lst.size() == 0) {
-					DialogUtils.openDialog("dialogUsuario");
-				}else {
-					addMsg("Usuário já tem Login!");
-				}
-			}
-		} else {
-			System.out.println("ERRO IDADE MINIMA INVALIDA>>>");
-		}
-		try {
 			busca();
+
+		}
+	}
+	private List<Perfil> lstSelecionada = new ArrayList<>();
+	
+	@Autowired
+	private LiberacaoController liberacaoController;
+	
+	public void verificaLogin() {
+		List<Login> lst = new ArrayList<>();
+		try {
+			lst = loginController.findListByQueryDinamica("from Login where login = '" +loginModel.getLogin()+"'");
+			
+			if(!lst.isEmpty()) {
+				addMsg("Este usuário já existe!");
+				loginModel.setLogin("");
+			}
 		} catch (Exception e) {
-			System.out.println("Erro ao Buscar Atendente");
 			e.printStackTrace();
 		}
-
 	}
 	
 	public void salvarLogin() {
-		if (loginModel.getLogin() != null && loginModel.getSenha() != null && perfilModel != null) { // nome do login vazio
 			Pessoa pessoa = null;
 			try {
 				pessoa = (Pessoa) pessoaController.findById(Pessoa.class, idPessoa);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-			try {
-				
-				loginModel.setPerfil(new Perfil(perfilModel.getIdPerfil()));
-				loginModel.setPessoa((pessoa));
-				
-				loginModel = loginController.merge(loginModel);
-				addMsg("Salvou o Login");
-				loginModel = new Login();
-				DialogUtils.closeDialog("dialogUsuario");
 			
+			try {
+				loginModel.setPessoa((pessoa));
+				loginModel = loginController.merge(loginModel);
+				Liberacao liberacaoModel = new Liberacao();
+				
+				for(Perfil p :lstSelecionada){
+					liberacaoModel.setPerfil(new Perfil(p.getIdPerfil()));
+					liberacaoModel.setLogin(new Login(loginModel.getIdLogin()));
+					liberacaoController.merge(liberacaoModel);
+				}
+				addMsg("Usuário salvo com sucesso!!");
+				
+				DialogUtils.closeDialog("dialogUsuario");
+				loginModel = new Login();
+				lstSelecionada = new ArrayList<>();
 			} catch (Exception e) {
 				error();
 				e.printStackTrace();
 			}
-		}
 	}
 	
 	@Override
@@ -451,5 +470,21 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 
 	public void setPessoaController(PessoaController pessoaController) {
 		this.pessoaController = pessoaController;
+	}
+
+	public List<Perfil> getLstSelecionada() {
+		return lstSelecionada;
+	}
+
+	public void setLstSelecionada(List<Perfil> lstSelecionada) {
+		this.lstSelecionada = lstSelecionada;
+	}
+
+	public LiberacaoController getLiberacaoController() {
+		return liberacaoController;
+	}
+
+	public void setLiberacaoController(LiberacaoController liberacaoController) {
+		this.liberacaoController = liberacaoController;
 	}
 }

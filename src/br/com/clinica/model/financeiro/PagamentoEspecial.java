@@ -3,6 +3,7 @@ package br.com.clinica.model.financeiro;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,6 +50,7 @@ public class PagamentoEspecial implements EntityBase, Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataVencimento;
 	
+	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorBruto;
 
 	private String situacao ="P";

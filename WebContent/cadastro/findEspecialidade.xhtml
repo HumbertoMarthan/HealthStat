@@ -80,18 +80,18 @@
 				<p:panel header="Pesquisa de Especialidades"
 					style="text-align:center">
 					<div class="ui-g">
-						<div class="ui-g-12">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{especialidadeBean.novo}" rendered="true"
+										action="#{especialidadeBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN')}"
 										immediate="true" icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -99,14 +99,14 @@
 										   font-size:large;"
 										immediate="true" action="#{especialidadeBean.editar}"
 										update="table, @form"
-										rendered="#{especialidadeBean.especialidadeModel.idEspecialidade> 0 }"
+										rendered="#{especialidadeBean.especialidadeModel.idEspecialidade > 0 and contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN') }"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
 											target="#{especialidadeBean.especialidadeModel}" />
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
@@ -114,13 +114,12 @@
 										   font-size:large;"
 										immediate="true" action="#{pacienteBean.inativar}"
 										update="table, @form"
-										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }"
+										rendered="#{especialidadeBean.especialidadeModel.idEspecialidade > 0 and contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
-									<!-- TROCAR BUSCA  -->
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-3">
+							<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 								<p:selectOneRadio value="#{especialidadeBean.campoBuscaAtivo}" 
 									style="padding-left: 10% !important">
 									<f:selectItem itemLabel="Todos" itemValue="T" />
@@ -130,7 +129,7 @@
 										update="table" />
 								</p:selectOneRadio>
 							</div>
-							<div class="ui-g-12 ui-lg-4">
+							<div class="ui-g-12 ui-lg-4 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText
 										value="#{especialidadeBean.campoBuscaEspecialidade}"
@@ -142,7 +141,7 @@
 										update=" inputNome,table" />
 								</div>
 							</div>
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 									<p:commandLink rendered="#{especialidadeBean.lstEspecialidade.size() > 0}"	
 									actionListener="#{especialidadeBean.geraRelatorio}">
 									<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40"  />
@@ -153,7 +152,7 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<p:dataTable value="#{especialidadeBean.lstEspecialidade}" var="d"
 							styleClass="table.gridtable" rowKey="#{d.idEspecialidade}"
 							selectionMode="single" id="table" rows="10" paginator="true"
@@ -162,14 +161,16 @@
 							<p:ajax event="rowSelect"
 								listener="#{especialidadeBean.onRowSelect}"
 								update="table,:form:botoes" />
+							
+							<p:ajax event="rowDblselect" listener="#{especialidadeBean.onRowSelectDouble}" />	
 
 							<p:column headerText="Especialidade" priority="5" width="30%"
-								style="overflow: hidden;text-align: left; font-size: large">
+								style="text-align: left; font-size: large">
 								<p:outputLabel value="#{d.nomeEspecialidade}" />
 							</p:column>
 
 							<p:column headerText="Status" priority="5"
-								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
+								style="text-align: center; font-size: large; width: 90px">
 								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
 									style="color : green" />
 								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
@@ -177,7 +178,7 @@
 							</p:column>
 
 							<p:column headerText="Observação" priority="1"
-								style="overflow: hidden;text-align: left; font-size: large">
+								style="text-align: left; font-size: large">
 								<p:outputLabel value="#{d.observacao}" />
 							</p:column>
 
@@ -195,6 +196,7 @@
 							</p:column> -->
 						</p:dataTable>
 					</div>
+						</div>
 				</p:panel>
 			</div>
 		</h:form>

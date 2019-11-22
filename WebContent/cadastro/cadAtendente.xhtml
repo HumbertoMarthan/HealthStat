@@ -12,7 +12,7 @@
 
 	<ui:define name="head">
 		<style>
-		
+
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
     border: 1px solid #79b7e7;
@@ -22,7 +22,7 @@
 }
 		
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -97,15 +97,19 @@
     display: inline-block;
     padding: 5px;
 }
+
+.ui-dialog-titlebar {
+    padding: .4em .4em .4em 1em;
+    position: relative;
+    border: 0px;
+    font-size: large;
+}
 </style>
 }
 	</ui:define>
 
 
 	<ui:define name="content">
-
-
-
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
@@ -123,12 +127,12 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{atendenteBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ATE','ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ATE','ADMIN')
+										botaoNovo="#{contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')
 												 and atendenteBean.atendenteModel.idAtendente == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ATE','ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN') 
 												 and atendenteBean.atendenteModel.idAtendente != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ATE','ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_ATE', 'ATE', 'ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 
@@ -213,17 +217,8 @@
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
-										<h:outputLabel value="Criar Login" />
-										<p:selectOneButton rows="1" cols="30" maxlength="315" required="true"
-											autoResize="true"
-											value="#{atendenteBean.atendenteModel.temLogin}" >
-										<f:selectItem itemLabel="Sim" itemValue="S" />
-										<f:selectItem itemLabel="Nâo" itemValue="N" />
-										</p:selectOneButton>
-									</div>
 
-									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelObservacaoEstoquista" for="obs"
 											value="Observação:" />
 										<p:inputTextarea id="obs" rows="1" cols="30" maxlength="315"
@@ -301,45 +296,50 @@
 
 		</h:form>
 
-		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário" responsive="true" modal="true" closable="false">
+		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário"  responsive="true" modal="true" closable="false"  width="400"  >
 			<div class="ui-fluid">
 				<h:form id="formUsuario">
 					<div class="ui-g">
-						<div class="ui-g-12 ui-lg-3">
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 							<h:outputLabel value="Login:*" />
-							<p:inputText required="true"
-								value="#{atendenteBean.loginModel.login}" autocomplete="true"
-								 requiredMessage="Informe o Nome do Usuário">
-								<p:ajax process="@this" />
+							<p:inputText required="true" value="#{atendenteBean.loginModel.login}" autocomplete="true" requiredMessage="Informe o Nome do Usuário">
+								<p:ajax process="@this" listener="#{atendenteBean.verificaLogin}" update="@this" />
 							</p:inputText>
 						</div>
 
-						<div class="ui-g-12 ui-lg-3">
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 							<h:outputLabel value="Senha:*" />
-							<p:password autocomplete="true" required="true" 
-								value="#{atendenteBean.loginModel.senha}"
-								requiredMessage="Informe o Senha do usuário">
+							<p:password autocomplete="true" required="true" value="#{atendenteBean.loginModel.senha}"	requiredMessage="Informe o Senha do usuário">
 								<p:ajax process="@this" />
 							</p:password>
 						</div>
 
-						<div class="ui-g-12 ui-lg-6">
-							<p:outputLabel value="Perfis" />
-							<p:autoComplete completeMethod="#{auxController.completePerfil}"
-								forceSelection="true" converter="entityConverter" var="a"
-								itemLabel="#{a.perfilNome}" itemValue="#{a}"
-								value="#{atendenteBean.perfilModel}" minQueryLength="2"
-								dropdown="true" maxResults="30" required="true"
+					
+					</div>
+					<div class="ui-g">
+							<h:outputLabel value="Perfis" />
+							<p:autoComplete  emptyMessage="Não há perfis"
+								completeMethod="#{auxController.completePerfil}" at="left top" my="left center" itemtipAtPosition="left center" itemtipMyPosition="left center"
+								
+								forceSelection="true" multiple="true"  converter="entityConverter" var="a"
+								itemLabel="#{a.perfilNome}" itemValue="#{a}" unique="true" 
+								value="#{atendenteBean.lstSelecionada}" minQueryLength="2"
+								dropdown="true" maxResults="50" required="true"
 								requiredMessage="Informe um Perfil">
 							</p:autoComplete>
-						</div>
 					</div>
-
+					<br/>
+					<div class="ui-g">
 					<p:commandButton id="buttonFecharDeSenha" value="Salvar"
+						style="height:40px; width: 140px; margin : 0 auto;background: green !important  ;
+										   background-color: green ;
+										   color:white !important;
+										   font-size:large;"
 						ajax="true" partialSubmit="true"
 						action="#{atendenteBean.salvarLogin}" process="@this, @form"
 						immediate="false" update="formUsuario">
 					</p:commandButton>
+					</div>
 				</h:form>
 			</div>
 		</p:dialog>

@@ -101,7 +101,7 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{pacienteBean.novo}" rendered="true" immediate="true"
+										action="#{pacienteBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN')}" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
@@ -112,7 +112,7 @@
 										   font-size:large;"
 										immediate="true" action="#{pacienteBean.editar}"
 										update="table, @form"
-										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }"
+										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 and contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN') }"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
@@ -127,7 +127,7 @@
 										   font-size:large;"
 										immediate="true" action="#{pacienteBean.inativar}"
 										update="table, @form"
-										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 }"
+										rendered="#{pacienteBean.pacienteModel.idPaciente > 0 and contextoBean.possuiAcesso('MOV_PAC', 'ATE', 'ADMIN')}"
 											icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
@@ -181,8 +181,10 @@
 
 							<p:ajax event="rowSelect" listener="#{pacienteBean.onRowSelect}"
 								update="table,:form:botoes" />
-
-						<p:column headerText="Paciente" priority="1"
+								
+							<p:ajax event="rowDblselect" listener="#{pacienteBean.onRowSelectDouble}" />
+							
+							<p:column headerText="Paciente" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
 								<p:outputLabel value="#{d.pessoa.pessoaNome}" />
 								<br />

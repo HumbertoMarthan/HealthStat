@@ -14,7 +14,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -82,7 +82,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	
+	font-size: large;
 }
 </style>
 }
@@ -94,7 +94,7 @@
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -107,12 +107,12 @@
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{especialidadeBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoNovo="#{contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN') 
 												 and especialidadeBean.especialidadeModel.idEspecialidade == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN') 
 												 and especialidadeBean.especialidadeModel.idEspecialidade != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_ESP', 'ATE', 'ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 								</div>
@@ -122,14 +122,14 @@
 								<p:separator />
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Especialidade:*" />
 										<p:inputText id="especialidadeNome" required="true"
 											value="#{especialidadeBean.especialidadeModel.nomeEspecialidade}"
 											requiredMessage="Informe a Especialidade">
 										</p:inputText>
 									</div>
-									<div class="ui-g-12 ui-lg-8">
+									<div class="ui-g-12 ui-lg-8 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Observação:" />
 										<p:inputText
 											value="#{especialidadeBean.especialidadeModel.observacao}" />

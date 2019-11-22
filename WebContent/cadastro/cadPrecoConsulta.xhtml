@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: mefium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -75,7 +75,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	
+	font-size:large;
 }
 </style>
 }
@@ -84,7 +84,7 @@
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -114,19 +114,19 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Categoria:*" />
 										<p:inputText required="true" maxlength="150"
 											value="#{precoConsultaBean.precoConsultaModel.categoria}"
 											requiredMessage="Informe o Nome do Convenio" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Valor:*" />
-										<p:inputText required="true" maxlength="150"
+										<p:inputNumber decimalPlaces="2"  required="true" maxlength="150" 
 											value="#{precoConsultaBean.precoConsultaModel.valor}" />
 									</div>
 
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Observação:*" />
 										<p:inputTextarea required="true" maxlength="150"
 											value="#{precoConsultaBean.precoConsultaModel.observacao}" />

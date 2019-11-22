@@ -69,7 +69,7 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
 }
 </style>
 	</ui:define>
@@ -78,18 +78,18 @@
 			<div class="ui-fluid">
 				<p:panel header="Pesquisa de Convênio" style="text-align:center">
 					<div class="ui-g">
-						<div class="ui-g-12">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{convenioBean.novo}" rendered="true" immediate="true"
+										action="#{convenioBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_CON', 'ATE', 'ADMIN')}" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -97,26 +97,24 @@
 										   font-size:large;"
 										immediate="true" action="#{convenioBean.editar}"
 										update="table, @form"
-										rendered="#{convenioBean.convenioModel.idConvenio > 0 }"
+										rendered="#{convenioBean.convenioModel.idConvenio > 0  and  contextoBean.possuiAcesso('MOV_CON', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
-										<f:setPropertyActionListener value="#{d}"
-											target="#{convenioBean.convenioModel}" />
+										<f:setPropertyActionListener value="#{d}" target="#{convenioBean.convenioModel}" />
 									</p:commandButton>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-3">
+							<div class="ui-g-12 ui-lg-3 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{convenioBean.campoBuscaNome}"
-										placeholder="Buscar pelo Nome" id="inputNome"
-										style="height:40px; " />
+										placeholder="Buscar pelo Nome" id="inputNome" style="height:40px;" />
 									<p:commandButton 
 										icon="ui-icon-search" id="btnBuscatxt"
 										actionListener="#{convenioBean.busca}"
 										update=" inputNome,table" />
 								</div>
 							</div>
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 								<p:commandLink rendered="#{convenioBean.lstConvenio.size() > 0}" actionListener="#{convenioBean.geraRelatorio}">
 									<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
 								</p:commandLink>
@@ -126,15 +124,17 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<p:dataTable value="#{convenioBean.lstConvenio}" var="d"
-							emptyMessage="Não há dados" 
+							emptyMessage="Não há dados" reflow="true"
 							rowKey="#{d.idConvenio}" selectionMode="single" id="table"
 							rows="10" paginator="true"
 							selection="#{convenioBean.convenioModel}">
 
 							<p:ajax event="rowSelect" listener="#{convenioBean.onRowSelect}"
 								update="table,:form:botoes" />
+								
+							<p:ajax event="rowDblselect" listener="#{convenioBean.onRowSelectDouble}" />	
 
 							<p:column headerText="Convênio" priority="1"
 								style="overflow: hidden;text-align: left; font-size: large">
@@ -151,6 +151,7 @@
 								<p:outputLabel value="#{d.bairro}" />
 							</p:column>
 						</p:dataTable>
+						</div>
 					</div>
 				</p:panel>
 			</div>

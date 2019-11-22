@@ -12,15 +12,36 @@
 		<style type="text/css">
 .ui-panel .ui-panel-title {
 	margin: 0.1em 16px 0.2em 0;
-	font-size: large;
+	font-size: large !important;
 }
 
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
+
+.fc-toolbar button {
+    position: relative !important;
+    font-size: large !important;
+}
+
+
+.ui-autocomplete-panel .ui-autocomplete-table th, .ui-autocomplete-panel .ui-autocomplete-table td {
+    font-size: large;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    padding: 4px 10px 4px 10px;
+}
+
+/*.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
     border: 1px solid #79b7e7;
     background: lightsteelblue;
     font-weight: bold;
     color: #2e6e9e !important;
-}
+}*/
 
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
@@ -28,7 +49,7 @@
     text-decoration: none;
 }
 .dashboard .overview-box .overview-box-title {
-	font-size: large;
+	font-size: large !important;
 	width: 100%;
 	text-align: center;
 	background: lightblue;
@@ -57,7 +78,7 @@
 }
 
 .ui-g label {
-	font-size: medium;
+	font-size: large !important;
 	color: black;
 	font-weight: bold
 }
@@ -68,7 +89,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large !important;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -89,7 +110,7 @@
 .ui-fluid .ui-inputtext {
 	width: 100%;
 	height: 35px;
-	font-size: large;
+	font-size: large !important;
 	text-align: center;
 	color: black;
 }
@@ -104,7 +125,7 @@
 	width: 100%;
 	height: 40px;
 	/* font-size: 20px !important; */
-	font-size: large;
+	font-size: large !important;
 	text-align: center;
 	color: black;
 }
@@ -122,13 +143,14 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large !important;
 }
 
 .ui-autocomplete-input.ui-autocomplete-dd-input {
-	padding-right: 2.4em;
-	height: 35px;
-	text-align: center;
+    padding-right: 2.4em;
+    height: 35px;
+    text-align: center;
+    font-size:large;
 }
 
 .consulta {
@@ -173,24 +195,18 @@
 	color: white;
 	text-align: center;
 }
+
+buttonset {
+    width: 100%;
+    font-size: large;
+}
 </style>
-		<script type="text/javascript">
-			function handleLoginRequest(xhr, status, args) {
-				if (args.validationFailed || !args.loggedIn) {
-				} else {
-					PF('eventDialog').hide();
-					$('#loginLink').fadeOut();
-				}
-			}
-		</script>
 	</ui:define>
 
 	<ui:define name="content">
 		<h:form id="formAgendamento">
-			<p:tabView id="tabView"
-				rendered="#{contextoBean.possuiAcesso('ADMIN') or (contextoBean.possuiAcesso('ATE'))}">
-				<!-- <p:ajax event="tabChange" listener="#{scheduleBean.buscaPreco}" update="@form" /> -->
-				<p:tab id="tabAgenda" title="Dashboard Agendamento">
+			<p:tabView id="tabView" rendered="#{contextoBean.possuiAcesso('ADMIN','ATE','EST')}">
+				<p:tab id="tabAgenda" title="Dashboard Agendamento" rendered="#{contextoBean.possuiAcesso('ADMIN','ATE')}">
 					<div class="ui-g dashboard">
 						<div class="ui-g-12 ui-lg-9 ui-sm-12 ui-md-12">
 							<div class="ui-g dashboard">
@@ -271,10 +287,9 @@
 						</div>
 					</div>
 				</p:tab>
-				<p:tab title="Lista de Agendamentos">
+				<p:tab title="Lista de Agendamentos" rendered="#{contextoBean.possuiAcesso('ADMIN','ATE')}">
 					<div class="ui-fluid">
-						<p:panel id="panel" header="Pesquisa de Agendamentos"
-							style="text-align:center">
+						<p:panel id="panel" header="Pesquisa de Agendamentos" style="text-align:center" rendered="#{contextoBean.possuiAcesso('ADMIN','ATE')}">
 							<div class="ui-g">
 								<div class="ui-g-12">
 									<h:panelGroup id="botao">
@@ -343,26 +358,26 @@
 										listener="#{scheduleBean.onRowSelect}" update="table" />
 
 									<p:column headerText="Paciente" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
 									</p:column>
 
 									<p:column headerText="Data Inicio" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.dataInicio}">
 											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 										</p:outputLabel>
 									</p:column>
 
 									<p:column headerText="Data Inicio" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.dataFim}">
 											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 										</p:outputLabel>
 									</p:column>
 
 									<p:column headerText="Médico" priority="1"
-										style="overflow: hidden;text-align: left; font-size: large">
+										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.medico.pessoa.pessoaNome}" />
 									</p:column>
 
@@ -372,7 +387,7 @@
 
 					</div>
 				</p:tab>
-				<p:tab title="Tabela de Preços">
+				<p:tab title="Tabela de Preços" rendered="#{contextoBean.possuiAcesso('ADMIN') or (contextoBean.possuiAcesso('ATE'))}">
 					<div class="ui-fluid">
 						<p:panel header="Tabela de Preços" style="text-align:center">
 							<div class="ui-g">
@@ -412,7 +427,7 @@
 												<div class="ui-g card overview-box overview-box-3 no-gutter">
 													<div class="overview-box-title">
 														<p:outputLabel value="#{d.pessoa.pessoaNome}"
-															style="font-size: x-large;" />
+															style="font-size: x-large !important;" />
 													</div>
 													<div class="overview-box-details">
 														<i class="fa fa-stethoscope  overview-box-details-icon" />
@@ -430,8 +445,8 @@
 						</p:panel>
 					</div>
 				</p:tab>
-			</p:tabView>
-			<p:outputPanel rendered="#{contextoBean.possuiAcesso('EST')}">
+				<p:tab title="Estoque" rendered="#{contextoBean.possuiAcesso('EST')}">
+			<p:outputPanel >
 				<div class="ui-g dashboard">
 					<div class="ui-g-12 ui-md-6 ui-lg-2">
 						<div class="ui-g card overview-box overview-box-2 no-gutter">
@@ -493,13 +508,16 @@
 					</div>
 				</div>
 			</p:outputPanel>
-
+			</p:tab>
+				
+			</p:tabView>
+			
 		</h:form>
 
 		<p:growl id="avisosGrowl" />
-		<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true"
+		<p:dialog widgetVar="eventDialog" id="eventDialog" responsive="true" position="top"
 			dynamic="true" resizable="false" closable="true" showEffect="true"
-			modal="true" width="580" header="Agendamento">
+			modal="true" width="700" header="Agendamento">
 			<h:form id="formScheduleDialog">
 				<div class="ui-fluid">
 					<p:hotkey bind="esc" handler="PF('eventDialog').hide();" />
@@ -583,25 +601,23 @@
 							</div>
 
 							<div class="ui-g">
-
 								<div class="ui-g-12 ui-lg-6">
-									<p:outputLabel value="Inicio" />
+									<p:outputLabel value="Inicio do Agendamento" />
 									<p:calendar id="dti" pattern="dd/MM/yyyy HH:mm"
 										popupIconOnly="true" alt="Agendamento Inicio"
-										mindate="#{scheduleBean.dataAtual}" locale="pt_BR"
+										locale="pt_BR"
 										required="true" disabledWeekends="true"
 										requiredMessage="Informe uma data Inicio para o Agendamento"
-										autocomplete="true" showButtonPanel="true" maxHour="17"
-										timeZone="GMT-3" minHour="8" showTodayButton="false"
+										autocomplete="true" showButtonPanel="false" maxHour="17"
+										timeZone="GMT-3" minHour="8" showTodayButton="false"  mode="popup"
 										value="#{scheduleBean.evento.dataInicio}">
-										<p:ajax event="blur"
-											listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-										<p:ajax event="change"
-											listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+										
+										<p:ajax event="blur" listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
+										<!--  <p:ajax event="change"	listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />--> 
 									</p:calendar>
 								</div>
 								<div class="ui-g-12 ui-lg-6">
-									<p:outputLabel value="Fim" />
+									<p:outputLabel value="Fim do Agendamento" />
 									<p:calendar id="dtf" value="#{scheduleBean.evento.dataFim}"
 										locale="pt_BR" autocomplete="true" popupIconOnly="true"
 										required="true" disabledWeekends="true"
@@ -619,9 +635,10 @@
 									background-color: gray; 
 									background: gray; 
 									color:white !important;
-									font-size:large;"
+									font-size:large !important;"
 									onclick="PF('eventDialog').hide(); return false;" />
-
+								
+								<br/>
 
 								<p:commandButton value="Remover"
 									action="#{scheduleBean.remover}"
@@ -631,7 +648,7 @@
 									background-color: red; 
 									background: red; 
 									color:white !important;
-									font-size:large;"
+									font-size:large !important;"
 									update="avisosGrowl,@form,:formAgendamento:tabView:scheduleAgendamento">
 									<p:confirm
 										message="Confirmar Remoção do Agendamento Selecionado?"
@@ -644,10 +661,9 @@
 									background-color: green; 
 									background: green; 
 									color:white !important;
-									font-size:large;"
+									font-size:large !important;"
 									rendered="#{scheduleBean.evento.tipoEvento.descricao ne 'Confirmar'}"
 									update="avisosGrowl,:formAgendamento:tabView:scheduleAgendamento,paciente, medico,dti, dtf :formAgendamento:tabView"
-									oncomplete="if (!args.validationFailed) PF('eventDialog').hide()"
 									actionListener="#{scheduleBean.salvar()}">
 								</p:commandButton>
 

@@ -45,7 +45,8 @@ public class Login implements Serializable {
 	@JoinColumn(name ="idPerfil")
 	Perfil perfil;
 
-	private String ativo = "A";
+	//private String ativo = "A";
+	
 	
 	//GETTERS E SETTERS -----------------------------------------
 	
@@ -56,14 +57,6 @@ public class Login implements Serializable {
 		this.perfil = perfil;
 	}
 
-	public String getAtivo() {
-		return ativo;
-	}
-	
-	public void setAtivo(String ativo) {
-		this.ativo = ativo;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,7 +118,7 @@ public class Login implements Serializable {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	public boolean isInativo() {
+	public boolean getInativo() {
 		return inativo;
 	}
 	public void setInativo(boolean inativo) {

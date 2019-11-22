@@ -25,6 +25,7 @@
 		<!-- Usuário  -->
 		<mapping class="br.com.clinica.model.cadastro.usuario.Login" />
 		<mapping class="br.com.clinica.model.cadastro.usuario.Perfil" />
+		<mapping class="br.com.clinica.model.cadastro.usuario.Liberacao" />
 		
 		<!-- Pessoas  -->
 		<mapping class="br.com.clinica.model.cadastro.pessoa.Paciente" />
@@ -43,7 +44,7 @@
 		<!-- Prontuário Médico  -->
 		<mapping class="br.com.clinica.model.prontuario.Prontuario" />
 		<mapping class="br.com.clinica.model.prontuario.Medicamento" />
-			<mapping class="br.com.clinica.model.prontuario.MedicamentoProntuario" />
+		<mapping class="br.com.clinica.model.prontuario.MedicamentoProntuario" />
 		
 		<!-- Agendamento  -->
 		<mapping class="br.com.clinica.model.cadastro.agendamento.Evento" />

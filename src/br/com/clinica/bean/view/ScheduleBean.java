@@ -12,7 +12,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
@@ -37,6 +36,7 @@ import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.financeiro.ContasReceber;
 import br.com.clinica.model.prontuario.Prontuario;
 import br.com.clinica.utils.DatasUtils;
+import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.EmailUtils;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -141,17 +141,6 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		}
 		return listaEvento;
 	}
-
-	/*
-	 * @Override public StreamedContent getArquivoReport() throws Exception {
-	 * super.setNomeRelatorioJasper("report_calendario");
-	 * super.setNomeRelatorioSaida("report_calendario");
-	 * super.setListDataBeanCollectionReport(eventoController.findList(getClassImp()
-	 * )); return super.getArquivoReport(); }
-	 */
-	/**
-	 * Report com periodo de agendamentos
-	 */
 
 	@PostConstruct
 	public void init() {
@@ -496,15 +485,16 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void adicionarContasReceber() {
 		if (evento.getTipoEvento().getDescricao() == "Confirmar") {
+			
 			try {
 				lstContas = contasReceberController.findListByQueryDinamica("from ContasReceber");
 			} catch (Exception e) {
 				e.getMessage();
 				e.printStackTrace();
 			}
+			
 			for (ContasReceber contas : lstContas) {
-				if (contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente()
-						&& evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0) {
+				if (contas.getPaciente().getIdPaciente() == evento.getPaciente().getIdPaciente() && evento.getDataInicio().compareTo(contas.getDataInicioAgendamento()) == 0) {
 					try {
 						contasReceberController.delete(contas);
 					} catch (Exception e) {
@@ -515,89 +505,98 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			}
 
 			// Verifica se o Convênio é UNIMED
-			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Unimed")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("UNIMED")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("unimed")) {
+			if (evento.getPaciente().getConvenio().getSigla().equals("UNI")) {
 
 				convenioUnimed();
 			}
 			// Verifica se o Convênio é PREVER
-			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Prever")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("PREVER")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("prever")) {
+			if (evento.getPaciente().getConvenio().getSigla().equals("PREVER")) {
 
 				convenioPrever();
 			}
 			// Verifica se o Convênio é SAS
-			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Sas")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("SAS")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("sas")) {
+			if (evento.getPaciente().getConvenio().getSigla().equals("SAS")) {
 
 				convenioSas();
 			}
 			// Verifica se o Convênio é PARTICULAR
-			if (evento.getPaciente().getConvenio().getNomeConvenio().equals("Particular")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("PARTICULAR")
-					|| evento.getPaciente().getConvenio().getNomeConvenio().equals("particular")) {
-
+			if (evento.getPaciente().getConvenio().getSigla().equals("PAR")){
 				convenioParticular();
 			}
 		}
 	}
 
-	/* Salva */
 	public void salvar() {
 		try {
-			// Salva o construtor que implementa a interface (Custom) do Schedule com os
-			// atributos.
-			ScheduleEvent newEvent = new CustomScheduleEvent(this.evento.getTitulo(), this.evento.getDataInicio(),
-					this.evento.getDataFim(), this.evento.getTipoEvento().getCss(), this.evento.isDiaInteiro(),
-					this.evento.getDescricao(), this.evento.getMedico(), this.evento.getPaciente(),
-					this.evento.getConfirmaConsulta(), this.evento);
+			ScheduleEvent newEvent = new CustomScheduleEvent(this.evento.getTitulo(), 
+															 this.evento.getDataInicio(),
+  															 this.evento.getDataFim(), 
+  															 this.evento.getTipoEvento().getCss(), 
+  															 this.evento.isDiaInteiro(),
+													    	 this.evento.getDescricao(),
+													    	 this.evento.getMedico(), 
+													    	 this.evento.getPaciente(),
+															 this.evento.getConfirmaConsulta(), 
+															 this.evento);
+			
 			Date dataHoje = new Date();
+			
 			System.out.println("DATA><HOJE " + dataHoje);
+			
 			if (evento.getDataInicio().before(dataHoje) || evento.getDataFim().before(dataHoje)) {
+			
 				addMsg("O Agendamento tem que ser feito com data/hora superior a de hoje ");
-			} else if (evento.getDataFim()
-					.before(evento.getDataInicio())) {/* Verifica se a Datafim está vindo antes da DataInicio */
+			
+			} else if (evento.getDataFim().before(evento.getDataInicio())) {				/* Verifica se a Datafim está vindo antes da DataInicio */
+
 				addMsg("Data Final do agendamento  não pode ser maior que a Data Inicial do mesmo");
 
 			} else if (validarMedico() && validarPaciente()) { /* Se o Evento for novo */
 				if (evento.getId() == null) {
+					
 					model.addEvent(newEvent);
-					// persistirEventoPaciente();
+
 					eventoController.persist(evento);
 
-					// Envio de Email para o paciente
+					// Email Paciente
 					eventoController.findById(Evento.class, evento.getId());
+					
 					try {
+					
 						sendEmailAgendamento(evento);
+					
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
 				} else { /* Se o Evento já existir */
+					
 					newEvent.setId(event.getId());
 					model.updateEvent(newEvent);
-					// atualizarEventoPaciente();
+
 					eventoController.merge(evento);
 
-					// Envio de Email para o paciente
+					// Email Paciente
 					evento = (Evento) eventoController.findById(Evento.class, evento.getId());
 					try {
+					
 						sendEmailAgendamento(evento);
+					
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				
 					// Busca o Evento para comparação no Contas a receber
-					Long id = this.evento.getId();
-					evento = eventoController.findByPorId(Evento.class, id);
+					evento = eventoController.findByPorId(Evento.class, this.evento.getId());
 
 					adicionarContasReceber();
 
 				}
 
-				addMsg(" Agendamento Salvo para: " + evento.getPaciente().getPessoa().getPessoaNome());
+				addMsg(" Agendamento Salvo : " + evento.getPaciente().getPessoa().getPessoaNome());
 				contar();
+				DialogUtils.closeDialog("eventDialog");
+			
 			} else {
 				addMsg("Já existe um agendamento cadastrado neste horário para este paciente ou médico, Revise o calendário!");
 			}
@@ -609,7 +608,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	public void remover() {
 		try {
-			/* Deleta evento do agendamento do banco de dados */
+		
 			evento = (Evento) eventoController.getSession().get(Evento.class, evento.getId());
 			eventoController.delete(evento);
 
@@ -617,6 +616,7 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 			addMsg("Agendamento Removido: " + evento.getPaciente().getPessoa().getPessoaNome());
 			contar();
+		
 		} catch (Exception e) {
 			addMsg("Impossivel remover" + "Há dependencias:" + evento.getTitulo());
 			e.printStackTrace();
@@ -626,11 +626,10 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	// AO SALVAR SELEÇÃO DE UMA AGENDAMENTO
 	public void onDateSelect(SelectEvent selectEvent) {
+		//Date date = (Date) selectEvent.getObject();
+		//this.evento.setDataInicio(date);
 		this.evento = new Evento();
-		Date dataSelecionada = (Date) selectEvent.getObject();
-		@SuppressWarnings("unused")
-		DateTime dataSelecionadaJoda = new DateTime(dataSelecionada.getTime());
-		this.evento.setDataInicio(dataSelecionada);
+		System.out.println("onDateSelect()");
 	}
 
 	// EVENTO DE SELEÇÃO DOS HORARIOS AGENDADOS
@@ -1073,15 +1072,19 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 		return dataAtual;
 	}
 
-	public void setDataAtual(Date dataAtual) {
-		LocalDate localDate = new LocalDate();
-		dataAtual = localDate.toDate();
-
-		this.dataAtual = dataAtual;
-	}
-
+	/*
+	 * public void setDataAtual(Date dataAtual) { LocalDate localDate = new
+	 * LocalDate(); dataAtual = localDate.toDate();
+	 * 
+	 * this.dataAtual = dataAtual; }
+	 */
+	
 	public ContasReceberController getContasReceberController() {
 		return contasReceberController;
+	}
+
+	public void setDataAtual(Date dataAtual) {
+		this.dataAtual = dataAtual;
 	}
 
 	public void setContasReceberController(ContasReceberController contasReceberController) {

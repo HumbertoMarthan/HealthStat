@@ -1,6 +1,7 @@
 package br.com.clinica.bean.view;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.event.SelectEvent;
@@ -208,6 +210,17 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	public void onRowSelect(SelectEvent event) {
 		fornecedorModel = (Fornecedor) event.getObject();
 	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		fornecedorModel = (Fornecedor) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadFornecedor.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	
 	

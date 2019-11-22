@@ -34,8 +34,7 @@
 							<!-- Botão Pagamento -->
 							<p:commandButton value="Pagamento"
 								actionListener="#{contasReceberBean.setarVariaveisNulas}"
-								rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and (
-										contasReceberBean.contasReceberModel.idContasReceber > 0)}"
+								rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and 	contasReceberBean.contasReceberModel.idContasReceber > 0 and contextoBean.possuiAcesso('ADMIN','MOV_REC')}"
 								style="height:40px;width:170px; 
 								background-color: darkcyan; background: darkcyan; color:white !important"
 								ajax="true" immediate="true" id="buttonPagamento"
@@ -49,9 +48,8 @@
 								style="height:40px;width:170px; 
 								background-color: blue; background: blue; color:white !important"
 								value="Editar Pagamento" update=":relancarFormEditar"
-								rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and
-											(contasReceberBean.contasReceberModel.idContasReceber > 0) and (contasReceberBean.parcelaPagarModel.situacao eq 'P')}"
-								onclick="PF('relancarPagamentoEditar').show()">
+								rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and contasReceberBean.contasReceberModel.idContasReceber > 0 and contextoBean.possuiAcesso('ADMIN','MOV_REC')}"	
+											onclick="PF('relancarPagamentoEditar').show()">
 							</p:commandButton>
 						</h:panelGroup>
 						<div class="ui-g-12 ui-lg-3">
@@ -133,20 +131,26 @@
 								style="text-align: center; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorEntrada == null}"/>
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorEntrada != null}"/>
-								<p:outputLabel style="color: red" value="#{d.valorEntrada}" />
+								<p:outputLabel style="color: red" value="#{d.valorEntrada}" rendered="#{d.valorEntrada != null}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
 							</p:column>
 							
 							<p:column headerText="Desconto"
 								style="text-align: center; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorDesconto == null}"/>
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorDesconto != null}"/>
-								<p:outputLabel style="color: red" value="#{d.valorDesconto}" />
+								<p:outputLabel style="color: red" value="#{d.valorDesconto}" >
+								<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
 							</p:column>
 							
 							<p:column headerText="Valor"
 								style="text-align: center	; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorConsulta != null}"/>
-								<p:outputLabel style="color: red" value="#{d.valorConsulta}" />
+								<p:outputLabel style="color: red" value="#{d.valorConsulta}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
 							</p:column>
 
 							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta eq 'L'}">

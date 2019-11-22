@@ -11,6 +11,10 @@
 	<ui:define name="head">
 
 		<style type="text/css">
+.ui-panel .ui-panel-title {
+	font-size: large;
+}		
+		
 .ui-datatable thead th, .ui-datatable tfoot td {
 	text-align: center;
 	font-size: large !important;
@@ -171,11 +175,11 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						style="height:40px;width:200px; background-color: red;  margin: 0 auto;font-size: large !important; 
 							background: red; color:white !important"
 						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
-								(contasReceberBean.parcelaPagarModel.idParcela > 0) and (contextoBean.possuiAcesso('ADMIN'))}" 
+								(contasReceberBean.parcelaPagarModel.idParcela > 0) and contextoBean.possuiAcesso('ADMIN','ATE','MOV_REC')}" 
 						value="Estornar Parcela (ATE)" update="tableParcelas"
 						actionListener="#{contasReceberBean.estornarParcelas}" />
 
-					<p:commandButton
+				<!-- 	<p:commandButton
 						style="height:40px;width:200px; background-color: red;  margin: 0 auto;
 							background: red; color:white !important"
 						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
@@ -184,7 +188,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								contasReceberBean.parcelaPagarModel.idParcela > 0 }"
 						value="Estornar Parcela (ADM)" update="tableParcelas"
 						actionListener="#{contasReceberBean.estornarParcelasPagas}" />
-
+ -->
 					<p:commandButton value="Fechar" onclick="PF(mostraParcelas).hide()"
 						style="height:40px;  margin: 0 auto; width:130px; " />
 				</div>
@@ -230,7 +234,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							style="text-align:right; width: 15%; font-size: large !important">
 							<p:outputLabel value="R$ " />
 							<p:outputLabel value="#{d.valorBruto}" >
-								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
+								<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 							</p:outputLabel>
 						</p:column>
 					</p:dataTable>
@@ -248,15 +252,18 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 				<h:form id="pagamentoEspecial">
 					<br />
 					<div class="ui-g">
-						<p:commandButton
-							style="height:40px;width:200px; background-color: green; 
-											background: green; color:white !important"
-							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'P' and
-											contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
+						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: green; background: green; color:white !important"
+							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'P' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
 							value="Pagar Parcela" update="tableEspecial"
 							actionListener="#{contasReceberBean.pagarEspecial}" />
+						
+						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: red; background: red; color:white !important"
+							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'PA' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
+							value="Estornar Parcela" update="tableEspecial"
+							actionListener="#{contasReceberBean.estornoEspecial}" />	
+							
 						<p:commandButton value="Fechar"
-							style="height:40px;  margin: 0 auto; width:130px; "
+							style="height:40px;  margin: 0 auto; width:130px;  background-color: gray; background: gray; color:white !important"
 							onclick="PF(mostraPagamentoEspecial).hide()" />
 					</div>
 					<br />
@@ -295,10 +302,11 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
 									style="color : red" />
 							</p:column>
-							<p:column headerText="Valor"
-								style="text-align:right; font-size: large !important">
+							<p:column headerText="Valor" style="text-align:right; font-size: large !important">
 								<p:outputLabel value="R$ " />
-								<p:outputLabel value="#{d.valorBruto}" />
+								<p:outputLabel value="#{d.valorBruto}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
 							</p:column>
 						</p:dataTable>
 					</div>
@@ -310,7 +318,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 		<p:dialog widgetVar="relancarPagamento" id="relancarPagamento" closable="false"
 			modal="true" resizable="false" height="400" width="900"
 			responsive="true" dynamic="true" appendToBody="@body"
-			header="Lançamento de Pagamento">
+			header="Lançamento de Pagamentos">
 			<div class="ui-fluid">
 				<h:form id="relancarForm">
 					<div class="ui-g">
@@ -380,7 +388,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 												value="#{contasReceberBean.contasReceberModel.maisForma}">
 												<f:selectItem itemLabel="Sim" itemValue="S" />
 												<f:selectItem itemLabel="Não" itemValue="N" />
-												<p:ajax event="change" update="relancarForm" />
+												<p:ajax event="change" update="@form" />
 											</p:selectOneRadio>
 										</div>
 
@@ -456,7 +464,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 													<div class="ui-g-12 ui-lg-3 ui-sm-12">
 														<h:outputLabel value="Valor" />
-														<p:inputNumber value="#{contasReceberBean.valorUm}"
+														<p:inputNumber value="#{contasReceberBean.valorUm}" decimalPlaces="2"
 															symbol="R$">
 															<p:ajax update="valorDois" event="change"
 																listener="#{contasReceberBean.recalcularDuasFormas}" />
@@ -486,7 +494,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 													<div class="ui-g-12 ui-lg-3 ui-sm-12">
 														<h:outputLabel value="Valor" />
-														<p:inputNumber id="valorDois" disabled="true"
+														<p:inputNumber id="valorDois" disabled="true" decimalPlaces="2"
 															value="#{contasReceberBean.valorDois}" symbol="R$">
 														</p:inputNumber>
 													</div>
@@ -494,29 +502,24 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 													<div class="ui-g-12 ui-lg-2 ui-sm-12">
 														<h:outputLabel value="Vencimento" />
 														<p:calendar value="#{contasReceberBean.vencimentoDois}"
-															mindate="#{contasReceberBean.vencimentoUm}"
-															pattern="dd/MM/yyyy">
+															mindate="today" pattern="dd/MM/yyyy">
 														</p:calendar>
 													</div>
 												</div>
 											</h:panelGroup>
 										</ui:fragment>
 									</div>
-									<div class="ui-g" align="center">
-										<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g" >
 											<p:commandButton value="Lançar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
+												style="margin: 0 auto !important; height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
 												actionListener="#{contasReceberBean.editarPagamento}" />
-										</div>
-										<div class="ui-g-12 ui-lg-6">
 											<p:commandButton value="Fechar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
+												style="margin: 0 auto !important;height:40px;width:130px;  background-color: gray; background: gray; color:white !important"
 												oncomplete="PF('relancarPagamento').hide()"
 												actionListener="#{contasReceberBean.busca}" />
-										</div>
 									</div>
-								</div>
 							</div>
+						</div>
 						</div>
 					</div>
 				</h:form>
@@ -526,7 +529,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 		<p:dialog widgetVar="relancarPagamentoEditar" id="relancarPagamentoEditar"
 			modal="true" resizable="false" height="400" width="900" closable="false"
 			responsive="true" dynamic="true" appendToBody="@body"
-			header="Lançamento de Pagamento">
+			header="Editar Lançamento">
 			<div class="ui-fluid">
 				<h:form id="relancarFormEditar">
 					<div class="ui-g">
@@ -571,7 +574,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<p:inputNumber decimalPlaces="2" symbol="R$"
 												symbolPosition="p" emptyValue="0" style="font-size: large !important"
 												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
-												<p:ajax event="change" update="valorComDesconto,par"
+												<p:ajax event="change" update="valorComDesconto par @this"
 													listener="#{contasReceberBean.fazerDesconto}" />
 											</p:inputNumber>
 										</div>
@@ -594,12 +597,11 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 												value="#{contasReceberBean.contasReceberModel.maisForma}">
 												<f:selectItem itemLabel="Sim" itemValue="S" />
 												<f:selectItem itemLabel="Não" itemValue="N" />
-												<p:ajax event="change" update="relancarForm" />
+												<p:ajax event="change" update="relancarFormEditar" />
 											</p:selectOneRadio>
 										</div>
 
-										<ui:fragment
-											rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'N'}">
+										<ui:fragment rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'N'}">
 											<div class="ui-g">
 												<div class="ui-g-12 ui-lg-6 ui-sm-12">
 													<h:outputLabel value="Forma de Pagamento" />
@@ -716,13 +718,15 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											</h:panelGroup>
 										</ui:fragment>
 									</div>
-									<div class="ui-g" align="center">
-										<div class="ui-g-12 ui-lg-12">
+									<div class="ui-g" >
 											<p:commandButton value="Lançar"
-												style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
-												oncomplete="PF('relancarPagamento').hide()"
+												style="margin:0 auto !important;height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
 												actionListener="#{contasReceberBean.editarPagamento}" />
-										</div>
+										
+											<p:commandButton value="Fechar"
+												style="margin:0 auto !important;height:40px;width:130px;  background-color: gray; background: gray; color:white !important; font-size: large !important"
+												oncomplete="PF('relancarPagamentoEditar').hide()"
+												actionListener="#{contasReceberBean.busca}" />
 									</div>
 								</div>
 							</div>

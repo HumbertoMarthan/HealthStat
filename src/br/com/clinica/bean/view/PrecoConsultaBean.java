@@ -1,11 +1,13 @@
 package br.com.clinica.bean.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.hibernate.HibernateException;
 import org.primefaces.event.SelectEvent;
@@ -59,6 +61,40 @@ public class PrecoConsultaBean extends BeanManagedViewAbstract {
 
 	public void onRowSelect(SelectEvent event) {
 		precoConsultaModel = (PrecoConsulta) event.getObject();
+	}
+	
+
+	public void onRowSelectDouble(SelectEvent event) {
+		precoConsultaModel = (PrecoConsulta) event.getObject();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/clinica/cadastro/cadPrecoConsulta.jsf");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	public void inativar() {
+
+		if (precoConsultaModel.getAtivo().equals("I")) {
+			precoConsultaModel.setAtivo("A");
+		} else {
+			precoConsultaModel.setAtivo("I");
+		}
+
+		try {
+			precoConsultaController.saveOrUpdate(precoConsultaModel);
+		} catch (Exception e) {
+			System.out.println("Erro ao ativar/inativar");
+			e.printStackTrace();
+		}
+		this.precoConsultaModel = new PrecoConsulta();
+		try {
+			busca();
+		} catch (Exception e) {
+			System.out.println("Erro ao buscar atendente");
+			e.printStackTrace();
+		}
 	}
 
 	@Override

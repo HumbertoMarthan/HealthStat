@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -80,12 +80,14 @@
 .ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
     width: 100%;
     height: 35px;
+    font-size: large;
 }
 
 .ui-fluid .ui-password {
     width: 100%;
     height: 35px;
 }
+
 </style>
 }
 	</ui:define>
@@ -95,23 +97,19 @@
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<div class="card card-w-title">
-							<br />
 							<p:panel>
-								<br />
 								<div align="center">
 									<p:outputLabel value="Cadastro de Usuário" styleClass="titulo" />
 								</div>
-								<br />
-
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{loginBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN')
+										botaoNovo="#{contextoBean.possuiAcesso('ADMIN','MOV_USU')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN','MOV_USU')
 												 and loginBean.loginModel.idLogin == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN','MOV_USU') 
 												 and loginBean.loginModel.idLogin != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN','MOV_USU')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 								</div>
@@ -163,14 +161,14 @@
 											</p:password>
 									</div>
 
-									<div class="ui-g-12 ui-lg-3">
-										<p:outputLabel value="Perfis" />
-										<p:autoComplete
+									<div class="ui-g-12 ui-lg-7">
+										<h:outputLabel value="Perfil" />
+										<p:autoComplete 
 											completeMethod="#{auxController.completePerfil}"
-											forceSelection="true" converter="entityConverter" var="a"
-											itemLabel="#{a.perfilNome}" itemValue="#{a}"
-											value="#{loginBean.loginModel.perfil}" minQueryLength="2"
-											dropdown="true" maxResults="30" required="true"
+											forceSelection="true" multiple="true"  converter="entityConverter" var="a"
+											itemLabel="#{a.perfilNome}" itemValue="#{a}" unique="true" 
+											value="#{loginBean.lstSelecionada}" minQueryLength="2"
+											dropdown="true" maxResults="50" required="true"
 											requiredMessage="Informe um Perfil">
 										</p:autoComplete>
 									</div>

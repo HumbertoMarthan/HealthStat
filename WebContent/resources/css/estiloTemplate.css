@@ -5,6 +5,12 @@
 	
 }
 
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border-bottom: 0 !important;
+    top: 1px !important;
+    font-size: large !important;
+}
+
 :-moz-placeholder { /* Firefox 18- */
 	color: !important;
 	font-weight: bold;

@@ -13,7 +13,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: #2e6e9e;
 	font-weight: bold;
 }
@@ -84,11 +84,6 @@
 	border-radius: 15px;
 }
 
-.ui-fluid .ui-autocomplete-multiple-container {
-    width: 100%;
-    height: 35px;
-}
-
 ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 	width: 100%;
 	height: 35px;
@@ -102,9 +97,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
     width: 100%;
 }
 
-.ui-autocomplete-token-label {
-    display: block;
-    padding: 0em 2.1em 0em 0.5em;
+
+
+.ui-dialog-titlebar {
+    padding: .4em .4em .4em 1em;
+    position: relative;
+    border: 0px;
     font-size: large;
 }
 
@@ -115,7 +113,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 		<h:form id="form">
 			<div class="ui-fluid">
 				<div class="ui-g">
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<div class="card card-w-title">
 							<br />
 							<p:panel>
@@ -128,12 +126,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 								<div align="center">
 									<util:botoesCrud managedBeanView="#{medicoBean}"
 										camposReload=":formTemplate:msg, form"
-										botaoNovo="#{contextoBean.possuiAcesso('ADMIN')}"
-										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoNovo="#{contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN')}"
+										botaoSalvar="#{contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN') 
 												 and medicoBean.medicoModel.idMedico == null}"
-										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN') 
+										botaoAtualizar="#{contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN') 
 												 and medicoBean.medicoModel.idMedico != null}"
-										botaoRedirecionar="#{contextoBean.possuiAcesso('ADMIN')}"
+										botaoRedirecionar="#{contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN')}"
 										botaoExcluir="false">
 									</util:botoesCrud>
 
@@ -146,7 +144,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelNomeEstoquista" for="nome"
 											value="Médico:*" />
@@ -156,7 +154,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											value="#{medicoBean.medicoModel.pessoa.pessoaNome}"
 											requiredMessage="Informe o Nome do Estoquista" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelDataNascimentoEstoquista"
 											for="nascimento" value="Nascimento:*" />
 
@@ -166,7 +164,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											value="#{medicoBean.medicoModel.pessoa.pessoaDataNascimento}"
 											requiredMessage="Informe o Data de Nascimento" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelSexoEstoquista" for="sexo"
 											value="Sexo: *" />
 
@@ -178,7 +176,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<f:selectItem itemLabel=" Feminino" itemValue="F" />
 										</p:selectOneMenu>
 									</div>
-									<div class="ui-g-12 ui-lg-4">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelEmailEstoquista" for="email"
 											value="Email: *" />
 
@@ -186,14 +184,14 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											value="#{medicoBean.medicoModel.pessoa.pessoaEmail}"
 											requiredMessage="Informe o Email" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelRgEstoquista" for="rg" value="RG: *" />
 										<p:inputMask id="rg"
 											value="#{medicoBean.medicoModel.pessoa.pessoaRG}"
 											mask="99.999.999-9" required="true"
 											requiredMessage="Informe o RG" />
 									</div>
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCPFEstoquista" for="cpf"
 											value="CPF: *" />
 										<p:inputMask id="cpf"
@@ -203,7 +201,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											<p:ajax event="change" listener="#{medicoBean.verificaCPFExiste}" update="@this" />
 											</p:inputMask>
 									</div>
-									<div class="ui-g-12 ui-lg-2 ">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12 ">
 										<h:outputLabel id="labelTelefonePrimarioEstoquista"
 											for="telefonePrimario" value="Celular:*" />
 										<p:inputMask id="telefonePrimario"
@@ -212,7 +210,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											requiredMessage="Informe o Telefone de Contato" />
 
 									</div>
-									<div class="ui-g-12  ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel id="telefoneSecundarioLabel"
 											for="telefoneSecundario" value="Fixo:" />
 										<p:inputMask id="telefoneSecundario"
@@ -220,12 +218,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											mask="(999)9 9999-9999" maxlength="12" />
 									</div>
 									
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel value="CRM* :" />
 										<p:inputText required="true" requiredMessage="Informe um CRM" value="#{medicoBean.medicoModel.numeroCrm}" />
 									</div>
 									
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Grupo Preço" />
 										<div class="ui-inputgroup">
 										<p:autoComplete id="grpPreco"
@@ -261,12 +259,12 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 										</div>
 									</div>
 									
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel 
 											value="Especialidade:" />
 										<p:autoComplete id="esp"
 											completeMethod="#{medicoBean.completeEspecialidade}"
-											multiple="true"
+											multiple="true" unique="true"
 											forceSelection="true" converter="entityConverter" var="a"
 											itemLabel="#{a.nomeEspecialidade}" itemValue="#{a}"
 											value="#{medicoBean.medicoModel.especialidades}" minQueryLength="1"
@@ -275,27 +273,18 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 
 										</p:autoComplete>
 									</div>
-									<div class="ui-g-12 ui-lg-5">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelObservacaoEstoquista" for="obs"
 											value="Observação:" />
 										<p:inputTextarea id="obs" rows="1" cols="30" maxlength="315"
 											autoResize="true"
 											value="#{medicoBean.medicoModel.pessoa.pessoaObservacao}" />
 									</div>
-									<div class="ui-g-12 ui-lg-1">
-										<h:outputLabel value="Criar Login" />
-										<p:selectOneButton rows="1" cols="30" maxlength="315" required="true"
-											autoResize="true"
-											value="#{medicoBean.medicoModel.temLogin}" >
-										<f:selectItem itemLabel="Sim" itemValue="S" />
-										<f:selectItem itemLabel="Nâo" itemValue="N" />
-										</p:selectOneButton>
-									</div>
 								</div>
 								<p:separator />
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2">
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
 										<p:inputText id="campoCep" autocomplete="true"
@@ -310,7 +299,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 												hideEvent="blur" />
 										</p:inputText>
 									</div>
-									<div class="ui-g-12 ui-lg-3">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"
 											value="Cidade: *" />
 										<p:inputText id="localidade"
@@ -319,7 +308,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 											required="true" requiredMessage="Informe a Cidade">
 										</p:inputText>
 									</div>
-									<div class="ui-g-12 ui-lg-1">
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelUf" value="UF:*" />
 										<p:inputText id="uf" ondblclick="javascript:this.value=''"
 											required="true" requiredMessage="Informe uma UF"
@@ -327,7 +316,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 										</p:inputText>
 									</div>
 
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelComplemento" value="Detalhes:" />
 										<p:inputText id="complemento"
 											ondblclick="javascript:this.value=''"
@@ -335,14 +324,14 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelLogradouro" value="Endereço:*" />
 										<p:inputText id="logradouro"
 											value="#{medicoBean.medicoModel.pessoa.logradouro}"
 											ondblclick="javascript:this.value=''" required="true"
 											requiredMessage="Informe o Endereço" />
 									</div>
-									<div class="ui-g-12 ui-lg-6">
+									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelBairro" value="Bairro:*" />
 										<p:inputText ondblclick="javascript:this.value=''"
 											value="#{medicoBean.medicoModel.pessoa.bairro}" id="bairro"
@@ -359,49 +348,52 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 			</div>
 
 		</h:form>
-		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário" responsive="true" modal="true" closable="false">
+		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário"  responsive="true" modal="true" closable="false"  width="400"  >
 			<div class="ui-fluid">
 				<h:form id="formUsuario">
 					<div class="ui-g">
-						<div class="ui-g-12 ui-lg-3">
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 							<h:outputLabel value="Login:*" />
-							<p:inputText required="true"
-								value="#{medicoBean.loginModel.login}" autocomplete="true"
-								requiredMessage="Informe o Nome do Usuário">
-								<p:ajax process="@this" />
+							<p:inputText required="true" value="#{medicoBean.loginModel.login}" autocomplete="true" requiredMessage="Informe o Nome do Usuário">
+								<p:ajax process="@this" listener="#{medicoBean.verificaLogin}" update="@this" />
 							</p:inputText>
 						</div>
 
-						<div class="ui-g-12 ui-lg-3">
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 							<h:outputLabel value="Senha:*" />
-							<p:password autocomplete="true" required="true"
-								value="#{medicoBean.loginModel.senha}"
-								requiredMessage="Informe o Senha do usuário">
+							<p:password autocomplete="true" required="true" value="#{medicoBean.loginModel.senha}"	requiredMessage="Informe o Senha do usuário">
 								<p:ajax process="@this" />
 							</p:password>
 						</div>
 
-						<div class="ui-g-12 ui-lg-6">
-							<p:outputLabel value="Perfis" />
-							<p:autoComplete completeMethod="#{auxController.completePerfil}"
-								forceSelection="true" converter="entityConverter" var="a"
-								itemLabel="#{a.perfilNome}" itemValue="#{a}"
-								value="#{medicoBean.perfilModel}" minQueryLength="2"
-								dropdown="true" maxResults="30" required="false"
+					
+					</div>
+					<div class="ui-g">
+							<h:outputLabel value="Perfis" />
+							<p:autoComplete  emptyMessage="Não há perfis"
+								completeMethod="#{auxController.completePerfil}" at="left top" my="left center" itemtipAtPosition="left center" itemtipMyPosition="left center"
+								forceSelection="true" multiple="true"  converter="entityConverter" var="a"
+								itemLabel="#{a.perfilNome}" itemValue="#{a}" unique="true" 
+								value="#{medicoBean.lstSelecionada}" minQueryLength="2" 
+								dropdown="true" maxResults="50" required="true"
 								requiredMessage="Informe um Perfil">
 							</p:autoComplete>
-						</div>
 					</div>
-
+					<br/>
+					<div class="ui-g">
 					<p:commandButton id="buttonFecharDeSenha" value="Salvar"
+						style="height:40px; width: 140px; margin : 0 auto;background: green !important  ;
+										   background-color: green ;
+										   color:white !important;
+										   font-size:large;"
 						ajax="true" partialSubmit="true"
 						action="#{medicoBean.salvarLogin}" process="@this, @form"
 						immediate="false" update="formUsuario">
 					</p:commandButton>
+					</div>
 				</h:form>
 			</div>
 		</p:dialog>
-
 
 	</ui:define>
 

@@ -93,18 +93,19 @@
 			<div class="ui-fluid">
 				<p:panel header="Pesquisa de Médicos" style="text-align:center">
 					<div class="ui-g">
-						<div class="ui-g-12">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 							<h:panelGroup id="botoes">
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton value="Incluir"
 										style="height:40px; background: greenyellow !important  ;   
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{medicoBean.novo}" rendered="true" immediate="true"
+										action="#{medicoBean.novo}" rendered="#{contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN')}"
+										immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
-								<div class="ui-g-12 ui-lg-1">
+								<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoEditar" value="Editar"
 										style="height:40px; background: lightskyblue !important  ;
 										   background-color: lightskyblue ;
@@ -112,14 +113,13 @@
 										   font-size:large;"
 										immediate="true" action="#{medicoBean.editar}"
 										update="table, @form"
-										rendered="#{medicoBean.medicoModel.idMedico > 0 }"
+										rendered="#{medicoBean.medicoModel.idMedico > 0 and contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN')}"
 										icon=" fa fa-pencil" iconPos="right">
 
-										<f:setPropertyActionListener value="#{d}"
-											target="#{medicoBean.medicoModel}" />
+										<f:setPropertyActionListener value="#{d}" target="#{medicoBean.medicoModel}" />
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-2">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 									<p:commandButton id="botaoInativar" value="Ativar - Inativar"
 										style="height:40px;background: tomato !important  ;
 										   background-color: tomato ;
@@ -127,11 +127,11 @@
 										   font-size:large;"
 										immediate="true" action="#{medicoBean.inativar}"
 										update="table, @form"
-										rendered="#{medicoBean.medicoModel.idMedico > 0 }"
+										rendered="#{medicoBean.medicoModel.idMedico > 0 and contextoBean.possuiAcesso('MOV_MED', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">
 									</p:commandButton>
 								</div>
-								<div class="ui-g-12 ui-lg-3">
+								<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 									<p:selectOneRadio value="#{medicoBean.campoBuscaAtivo}">
 										<f:selectItem itemLabel="Todos" itemValue="T" />
 										<f:selectItem itemLabel="Ativo" itemValue="A" />
@@ -141,7 +141,7 @@
 									</p:selectOneRadio>
 								</div>
 							</h:panelGroup>
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 								<p:inputText value="#{medicoBean.campoBuscaNome}"
 									placeholder="Buscar pelo Nome" id="inputNome"
 									style="height:40px; ">
@@ -149,7 +149,7 @@
 								</p:inputText>
 							</div>
 
-							<div class="ui-g-12 ui-lg-2">
+							<div class="ui-g-12 ui-lg-2 ui-sm-10 ui-md-10">
 								<div class="ui-inputgroup">
 									<p:inputText value="#{medicoBean.campoBuscaCPF}"  type="number"
 										placeholder="Buscar pelo CPF" id="inputCPF"
@@ -160,7 +160,7 @@
 								</div>
 							</div>
 							
-							<div class="ui-g-12 ui-lg-1">
+							<div class="ui-g-12 ui-lg-1 ui-sm-2 ui-md-2">
 									<p:commandLink rendered="#{medicoBean.lstMedico.size() > 0}"	
 										actionListener="#{medicoBean.geraRelatorio}">
 										<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40"  />
@@ -173,13 +173,14 @@
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 							<p:dataTable value="#{medicoBean.lstMedico}" var="d"
-								emptyMessage="Não há registros disponível" reflow="true"
-								styleClass="table.gridtable" rowKey="#{d.idMedico}"
+								emptyMessage="Não há registros disponível" reflow="true" rowKey="#{d.idMedico}"
 								selectionMode="single" id="table"
 								selection="#{medicoBean.medicoModel}" rows="10" paginator="true">
 
 								<p:ajax event="rowSelect" listener="#{medicoBean.onRowSelect}"
 									update="table,:form:botoes" />
+									
+								<p:ajax event="rowDblselect" listener="#{medicoBean.onRowSelectDouble}" />
 
 								<p:column headerText="Médico" priority="1"
 									style="overflow: hidden;text-align: left; font-size: large">
@@ -206,7 +207,7 @@
 								</p:column>
 
 								<p:column headerText="Status" priority="5"
-									style="overflow: hidden;text-align: center; font-size: large; width: 8%">
+									style="overflow: hidden;text-align: center; font-size: large; width: 90px">
 									<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
 										style="color : green" />
 									<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"

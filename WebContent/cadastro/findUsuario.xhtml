@@ -11,7 +11,7 @@
 	<ui:define name="head">
 		<style>
 .ui-g label {
-	font-size: medium;
+	font-size: large;
 	color: black;
 	font-weight: bold
 }
@@ -22,7 +22,7 @@
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -48,6 +48,16 @@
 	color: black;
 }
 
+.ui-fluid .ui-password {
+    width: 100%;
+    height: 35px;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+}
+
 .ui-fluid .ui-inputtextarea {
 	width: 100%;
 	height: 35px !important;
@@ -69,13 +79,21 @@
 	text-align: center;
 }
 
+.ui-autocomplete-panel .ui-autocomplete-table th, .ui-autocomplete-panel .ui-autocomplete-table td {
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    padding: 4px 10px 4px 10px;
+    font-size: large;
+}
+
 .ui-selectoneradio label {
 	cursor: pointer;
 	display: inline-block;
 	margin: 0 16px 0 8px;
 	vertical-align: middle;
 	/*color: #2e6e9e !important;*/
-	font-size: medium;
+	font-size: large;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default,
@@ -99,7 +117,19 @@
 }
 
 .ui-panel .ui-panel-title {
-	font-size: medium;
+	font-size: large;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+    font-size: large;
+}
+
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .3em 16px .1em 0;
+    font-size: large;
 }
 </style>
 	</ui:define>
@@ -116,7 +146,10 @@
 										background-color: greenyellow; 
 										color:white !important;
 										font-size:large; "
-										action="#{loginBean.novo}" rendered="true" immediate="true"
+										action="#{loginBean.limpar}"
+										update=":formUsuario"
+										oncomplete="PF('dialogUsuario').show();"
+										 rendered="#{contextoBean.possuiAcesso('ADMIN','MOV_USU')}" immediate="true"
 										icon="fa fa-plus" iconPos="right" />
 								</div>
 								<div class="ui-g-12 ui-lg-1">
@@ -125,9 +158,11 @@
 										   background-color: lightskyblue ;
 										   color:white !important;
 										   font-size:large;"
-										immediate="true" action="#{loginBean.editar}"
-										update="table, @form"
-										rendered="#{loginBean.loginModel.idLogin > 0 }"
+										immediate="true" 
+										update=":formUsuario"
+										onclick="PF('dialogUsuario').show()"
+										
+										rendered="#{loginBean.loginModel.idLogin > 0 and contextoBean.possuiAcesso('ADMIN','MOV_USU')}"
 										icon=" fa fa-pencil" iconPos="right">
 
 										<f:setPropertyActionListener value="#{d}"
@@ -142,7 +177,7 @@
 										   font-size:large;"
 										immediate="true" action="#{loginBean.inativar}"
 										update="table, @form"
-										rendered="#{loginBean.loginModel.idLogin > 0 }"
+										rendered="#{loginBean.loginModel.idLogin > 0 and contextoBean.possuiAcesso('ADMIN','MOV_USU')}"
 										icon="fa fa-check" iconPos="right">
 
 									</p:commandButton>
@@ -163,7 +198,6 @@
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
-						<br />
 						<p:dataTable value="#{loginBean.lstLogin}" var="d"
 							emptyMessage="Não Há Registros Lançados"
 							rowKey="#{d.idLogin}"
@@ -173,34 +207,109 @@
 							<p:ajax event="rowSelect" listener="#{loginBean.onRowSelect}"
 								update="table,:form:botoes" />
 
-							<p:column headerText="Login" priority="1"
-								style="text-align: left; font-size: large">
-									<p:outputLabel value="#{d.login}"/> 
+							<p:column headerText="Login" priority="1" 
+								style="text-align: left; font-size: large; width: 15%">
+									<p:outputLabel value="#{d.login.toUpperCase()}"/> 
 							</p:column>
 
 							<p:column headerText="Nome" priority="1"
 								style="text-align: left; font-size: large">
-									<p:outputLabel value="#{d.pessoa.pessoaNome}" />
+									<p:outputLabel value="#{d.pessoa.pessoaNome.toUpperCase()}" />
 							</p:column>
 
-							<p:column headerText="Perfil" priority="1"
-								style="text-align: left; font-size: large">
-									<p:outputLabel value="#{d.perfil.perfilNome}" />
-							</p:column>
-							
 							<p:column headerText="Status" 
 								style="overflow: hidden;text-align: center; font-size: large; width: 5%">
-								<p:outputLabel value="Ativo" rendered="#{d.ativo eq 'A'}"
-									style="color : green" />
-								<p:outputLabel value="Inativo" rendered="#{d.ativo eq 'I'}"
-									style="color : red" />
+								<p:outputLabel value="Ativo" rendered="#{!d.inativo}" style="color : green" />
+								<p:outputLabel value="Inativo" rendered="#{d.inativo}" style="color : red" />
 							</p:column>
-							
 						</p:dataTable>
 					</div>
 				</p:panel>
 			</div>
 		</h:form>
+		
+		
+		<p:dialog id="dialogUsuario" widgetVar="dialogUsuario" header="Cadastro de Usuário"  responsive="true" modal="true" closable="false" height="380" width="600"  >
+			<div class="ui-fluid">
+				<h:form id="formUsuario">
+					<br/>
+					<div align="center">
+									<util:botoesCrud managedBeanView="#{loginBean}"
+										camposReload=":formTemplate:msg, formUsuario"
+										botaoNovo="false"
+										botaoSalvar="#{contextoBean.possuiAcesso('ADMIN','MOV_USU')
+												 and loginBean.loginModel.idLogin == null}"
+										botaoAtualizar="#{contextoBean.possuiAcesso('ADMIN','MOV_USU') 
+												 and loginBean.loginModel.idLogin != null}"
+										botaoRedirecionar="false"
+										botaoExcluir="false">
+									</util:botoesCrud>
+									<p:commandButton id="buttonFecharDeSenha" value="Fechar"
+									style="height:40px; width: 140px; margin : 0 auto;background: gray !important  ;
+								   background-color: gray ;
+								   color:white !important;
+								   font-size:large;"
+									oncomplete="PF('dialogUsuario').hide();"
+									action="#{loginBean.limpar}" 
+									immediate="true" >
+					</p:commandButton>
+								</div>
+					
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-12">
+										<h:outputLabel value="Pessoa" />
+										<p:autoComplete id="pessoa"
+											completeMethod="#{loginBean.completePessoa}"
+											forceSelection="true" converter="entityConverter" var="a"
+											itemLabel="#{a.pessoaNome}" itemValue="#{a}"
+											value="#{loginBean.loginModel.pessoa}" minQueryLength="2"
+											dropdown="true" maxResults="30" required="true"
+											requiredMessage="Informe uma pessoa" >
+										<p:column rendered="#{a.tipoPessoa eq 'MED'}">
+											#{a.pessoaNome} - (Médico)
+										</p:column>
+										<p:column rendered="#{a.tipoPessoa eq 'EST'}">
+											#{a.pessoaNome} - (Estoquista)
+										</p:column>
+										<p:column rendered="#{a.tipoPessoa eq 'ATE'}">
+											#{a.pessoaNome} - (Atendente)
+										</p:column>
+										</p:autoComplete>
+									</div>
+					</div>	
+						<div class="ui-g">
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
+							<h:outputLabel value="Login:*" />
+							<p:inputText required="true" value="#{loginBean.loginModel.login}" autocomplete="true" requiredMessage="Informe o Nome do Usuário">
+								<p:ajax process="@this" listener="#{loginBean.verificaLogin}" update="@this" />
+							</p:inputText>
+						</div>
+
+						<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
+							<h:outputLabel value="Senha:*" />
+							<p:password autocomplete="true" required="true" value="#{loginBean.loginModel.senha}"	requiredMessage="Informe o Senha do usuário">
+								<p:ajax process="@this" />
+							</p:password>
+						</div>
+</div>
+					
+					<div class="ui-g">
+							<h:outputLabel value="Perfis" />
+							<p:autoComplete  emptyMessage="Não há perfis"
+								completeMethod="#{auxController.completePerfil}" at="left top" my="left center" itemtipAtPosition="left center" itemtipMyPosition="left center"
+								forceSelection="true" multiple="true"  converter="entityConverter" var="a"
+								itemLabel="#{a.perfilNome}" itemValue="#{a}" unique="true" 
+								value="#{loginBean.lstSelecionada}" minQueryLength="2" 
+								dropdown="true" maxResults="50" required="true"
+								requiredMessage="Informe um Perfil">
+							</p:autoComplete>
+					</div>
+				</h:form>
+			</div>
+		</p:dialog>
+		
+		
+		
 	</ui:define>
 </ui:composition>
 

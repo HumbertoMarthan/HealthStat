@@ -113,84 +113,55 @@
 								</div>
 							</div>
 							
-							<div class="ui-g">
-							</div>
 						</p:tab>
-						<p:tab title="Medicamento">
+						<p:tab title="Receita">
 							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-10">
+								<div class="ui-g-12 ui-lg-12">
 									<p:outputLabel
-										value="Qual o medicamento/exame quer irá receitar ao Paciente?" />
-									<p:autoComplete id="medicamento"
-										completeMethod="#{auxController.completeMedicamento}"
-										forceSelection="true" converter="entityConverter" var="a"
-										itemLabel="#{a.nomeMedicamento}" itemValue="#{a}"
-										value="#{prontuarioBean.prontuarioModel.medicamento}"
-										style="text-align:center" minQueryLength="2" dropdown="true"
-										maxResults="30" required="false" size="60"
-										requiredMessage="Informe um medicamento">
-										<p:column>
-											<h:outputText value="#{a.nomeMedicamento}" />
-										</p:column>
-									</p:autoComplete>
-								</div>
-								<div class="ui-g-12 ui-lg-1">
-									<p:outputLabel value="Posologia" />
-									<p:selectOneMenu title="Posologia"
-										value="#{prontuarioBean.prontuarioModel.posologia}"
-										required="false" requiredMessage="Informe uma posologia">
-										<f:selectItem itemLabel="6/6h" itemValue="8" />
-										<f:selectItem itemLabel="8/8h" itemValue="8" />
-										<f:selectItem itemLabel="12/12h" itemValue="12" />
-										<f:selectItem itemLabel="1 vez ao dia" itemValue="1" />
-
-									</p:selectOneMenu>
+										value="Receita Médica" />
+						    	 <p:textEditor widgetVar="editor" value="#{prontuarioBean.prontuarioModel.receituario}" height="300" style="margin-bottom:10px" placeholder="Inclua seu receituário"><font></font>
+							        <f:facet name="toolbar">
+							             <span class="ql-formats">
+							                <button class="ql-bold"></button>
+							                <button class="ql-italic"></button>
+							                <button class="ql-underline"></button>
+							                <button class="ql-strike"></button>
+							            </span>
+							            <span class="ql-formats">
+							                <select class="ql-font"></select>
+							                <select class="ql-size"></select>
+							            </span>
+							        </f:facet>
+							    </p:textEditor>
+								
 								</div>
 							</div>
 						</p:tab>
-						<!--<p:tab title="Atestado">
-						 	<div class="ui-g">
-								<div class="ui-g-12 ui-lg-12">
-									<ui:include src="/prontuario/atestado.xhtml" />
-								</div>
-							</div>
-						</p:tab>
-						<p:tab title="Encaminhamento">
-							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-12">
-									<ui:include src="/prontuario/encaminhamento.xhtml" />
-								</div>
-							</div>
-						</p:tab> -->
-					</p:tabView>
-					<!-- <div align="right">
-						<h:outputText value="Data da Consulta: "
-							style="color:#2e6e9e !important; font-weight: bold" />
-						<h:outputText pattern="dd/MM/yyyy HH:mm"
-							style="color:#2e6e9e !important; font-weight: bold; text-align:right;"
-							value="#{prontuarioBean.prontuarioModel.dataConsulta}">
-							<f:convertDateTime pattern="dd/MM/yyyy"
-								timeZone="America/Sao_Paulo" locale="pt_BR" />
-						</h:outputText>
-					</div> -->
+						</p:tabView>
 				</div>
 			</div>
 			<div class="ui-g" align="center" style="padding-left: 40%;">
 					<p:commandButton value="Salvar"
-						style="  height:40px;width:130px; background-color: green; background: green; color:white !important"
+						style="  height:40px;width:130px; font-size:large; background-color: green; background: green; color:white !important"
 						rendered="#{prontuarioBean.estado eq 'C'}"
 						actionListener="#{prontuarioBean.saveNotReturn}"
 						id="buttonSalvar" immediate="false" iconPos="rigth">
 					</p:commandButton>
 					
+					<p:commandButton value="Receita" rendered="true"
+						style="height:40px;width:130px; background-color: green; font-size:large;background: green; color:white !important"
+						actionListener="#{prontuarioBean.geraReceita}"
+						 immediate="true" iconPos="rigth">
+					</p:commandButton>
+					
 					<p:commandButton value="Atestado"
-						style="height:40px;width:130px; background-color: green; background: green; color:white !important"
+						style="height:40px;width:130px; background-color: green; font-size:large; background: green; color:white !important"
 						actionListener="#{prontuarioBean.geraAtestado}"
 						 immediate="true" iconPos="rigth">
 					</p:commandButton>
 					
 					<p:commandButton value="Encaminhamento"
-						style=" height:40px;width:160px; background-color: green; background: green; color:white !important"
+						style=" height:40px;width:190px; background-color: blue; font-size:large; background: blue; color:white !important"
 						oncomplete="PF('tipoEncaminhamento').show()" update=":formTipoEncaminhamento"
 						immediate="false" iconPos="rigth">
 					</p:commandButton>

@@ -15,37 +15,35 @@
 		access-denied-page="/error/acessoNegado.jsf" use-expressions="true">
 
 		<intercept-url pattern="/resources/**"
-			access="isAuthenticated() and 
-			hasAnyRole('ADMIN') or
-			hasAnyRole('ATE') or 
-			hasAnyRole('MED') or 
-			hasAnyRole('EST')" />
+			access="isAuthenticated()" />
 
 		<intercept-url pattern="/restrito/**"
-			access="isAuthenticated() and 
-			hasAnyRole('ADMIN') or
-			hasAnyRole('ATE') or 
-			hasAnyRole('MED') or 
-			hasAnyRole('EST')" />
+			access="isAuthenticated()" />
 
 		<intercept-url pattern="/error/**"
 			access="isAnonymous() or isAuthenticated() or !isAuthenticated()" />
 
 		<intercept-url pattern="/cadastro/**"
 			access="isAuthenticated() and 
-			hasAnyRole('ADMIN') or
-			hasAnyRole('ATE') or 
-			hasAnyRole('MED') or 
-			hasAnyRole('EST')" />
+			hasAnyRole('ACE_ATE')  or
+			hasAnyRole('ACE_CON')  or 
+			hasAnyRole('ACE_ESP')  or
+			hasAnyRole('ACE_ESTPE')or 
+			hasAnyRole('ACE_EST')  or
+			hasAnyRole('ACE_FOR')  or
+			hasAnyRole('ACE_GRPP') or
+			hasAnyRole('ACE_MAT')  or
+			hasAnyRole('ACE_MED')  or 
+			hasAnyRole('ACE_MOV')  or
+			hasAnyRole('ACE_PAC')  or
+			hasAnyRole('ACE_PAG')  or
+			hasAnyRole('ACE_REC')  or
+			hasAnyRole('ACE_USU')  or
+			hasAnyRole('ADMIN')
+			 "/>
 			
 		<intercept-url pattern="/resources/componentes/**"
-			access="isAuthenticated() and 
-			hasAnyRole('ADMIN') or
-			hasAnyRole('ATE') or 
-			hasAnyRole('MED') or 
-			hasAnyRole('EST')" />
-			
-		
+			access="isAuthenticated()" />
 			
 		<intercept-url pattern="/prontuario/**"
 			access="isAuthenticated() and 
@@ -69,7 +67,7 @@
 		<session-management
 			invalid-session-url="/publico/login.jsf"
 			session-fixation-protection="migrateSession">
-			<concurrency-control max-sessions="1"
+			<concurrency-control max-sessions="5"
 				expired-url="/publico/login.jsf" error-if-maximum-exceeded="true" />
 
 		</session-management>
@@ -89,13 +87,15 @@
 										where inativo = false
 										and upper(login) = upper(?)"
 
-				authorities-by-username-query="select  login as username,
-												p.perfilSigla as authority
-												from login u
-												join perfil p
-												on u.idPerfil = p.idPerfil
-												where u.inativo = false
-												and upper(login) = upper(?)"  />
+				authorities-by-username-query="select  login as username, pe.perfilSigla as  authority
+										from login u
+										join liberacao p
+										on u.idlogin = p.idlogin
+										join perfil pe on pe.idPerfil = p.idperfil
+										where u.inativo = false
+										and upper(login) = upper(?)"  />
+												
+				
 		</authentication-provider>
 	</authentication-manager>
 
