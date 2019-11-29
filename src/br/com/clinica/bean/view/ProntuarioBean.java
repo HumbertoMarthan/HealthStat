@@ -87,6 +87,7 @@ public class ProntuarioBean extends BeanManagedViewAbstract {
 	}
 	
 	public void geraReceita(){
+		lstDadosPaciente.get(0).setReceituario(prontuarioModel.getReceituario());
 		JasperPrint relatorio =  imprimir(lstDadosPaciente, "receitaMedica.jrxml");
 		try {
 			JasperPrintManager.printReport(relatorio, true);

@@ -16,6 +16,20 @@
 	font-weight: bold;
 }
 
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
+
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .3em 16px .1em 0;
+    font-size: large;
+}
+
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     border-bottom: 0 !important;
     top: 1px !important;
@@ -192,9 +206,9 @@
 														immediate="true"
 														update="table, :formDialogHeaderContasPagar :formDialogContasPagar"
 														oncomplete="PF('editarContaPagar').show()"
-														rendered="#{contasPagarBean.contasPagarModel.status eq 'L' 
-															  or (contasPagarBean.contasPagarModel.status eq 'P') 
-															  and contasPagarBean.contasPagarModel.idContasPagar > 0 }">
+														rendered="#{contasPagarBean.contasPagarModel.idContasPagar > 0 and
+																   (contasPagarBean.contasPagarModel.status eq 'L'  or 
+															       contasPagarBean.contasPagarModel.status eq 'P' )}">
 
 													</p:commandButton>
 
@@ -202,11 +216,24 @@
 
 												<div class="ui-g-12 ui-lg-1">
 													<p:commandButton id="botaoPagar" value="Pagar"
+														style="height:40px; background: black !important  ;
+													   background-color: black ;
+													   color:white !important;
+													   font-size:large;"
+														immediate="true" action="#{contasPagarBean.pagarConta}"
+														update="table"
+														rendered="#{contasPagarBean.contasPagarModel.status eq 'L' }">
+
+													</p:commandButton>
+												</div>
+												
+												<div class="ui-g-12 ui-lg-1">
+													<p:commandButton id="botaoExcluir" value="Excluir"
 														style="height:40px; background: green !important  ;
 													   background-color: green ;
 													   color:white !important;
 													   font-size:large;"
-														immediate="true" action="#{contasPagarBean.pagarConta}"
+														immediate="true" action="#{contasPagarBean.excluir}"
 														update="table"
 														rendered="#{contasPagarBean.contasPagarModel.status eq 'L' }">
 
@@ -225,7 +252,7 @@
 												</div>
 
 											</h:panelGroup>
-											<div class="ui-g-12 ui-lg-3">
+											<div class="ui-g-12 ui-lg-2">
 												<div class="ui-inputgroup">
 													<p:inputText
 														value="#{contasPagarBean.campoBuscaFornecedor}"
@@ -281,7 +308,8 @@
 
 												<p:column headerText="Forma" priority="5" width="20%"
 													style="text-align: left; font-size: large">
-													<p:outputLabel value="#{d.formaPagamento.nomePagamento}" rendered="#{d.formaPagamento.nomePagamento != null}" />
+													<p:outputLabel value="#{d.formaPagamento.nomePagamento} Em #{d.quantidadeParcelas} Parcelas" rendered="#{d.formaPagamento.nomePagamento != null and d.formaPagamento.siglaPagamento eq 'CC'}" />
+													<p:outputLabel value="#{d.formaPagamento.nomePagamento}" rendered="#{d.formaPagamento.nomePagamento != null and d.formaPagamento.siglaPagamento ne 'CC'}" />
 													<p:outputLabel value="Não Lançado" rendered="#{d.formaPagamento.nomePagamento == null}" />
 
 												</p:column>
@@ -329,11 +357,11 @@
 									</div>
 								</p:tab>
 								<p:tab title="Pedidos">
+									<p:panel header="Pesquisa de Pedidos" style="text-align:center">
 									<div class="ui-g">
-										<div class="ui-g-2 ui-lg-6 ui-sm-12">
+										<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 											<h:panelGroup id="botoesPedido">
-
-												<div class="ui-g-12 ui-lg-8">
+												<div class="ui-g-12 ui-lg-3">
 													<p:commandButton value="Movimentar o Pedido"
 														style="height:40px; background: greenyellow !important  ;   
 														background-color: greenyellow; 
@@ -351,7 +379,7 @@
 
 												<div class="ui-g-12 ui-lg-1">
 													<p:commandButton style="height:40px;"
-														styleClass="btn btn-blue" icon="ui-icon-search"
+														icon="ui-icon-search"
 														immediate="true" action="#{contasPagarBean.buscaPedido}"
 														update=" inputNome,table,tablePedido" />
 												</div>
@@ -359,9 +387,11 @@
 											</h:panelGroup>
 										</div>
 									</div>
+									</p:panel>
 
-									<div class="ui-g">
-										<div class="ui-g-2 ui-lg-6 ui-sm-12">
+									<p:panel>
+										<div class="ui-g">
+											<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 											<p:dataTable value="#{contasPagarBean.lstPedido}" var="d"
 												emptyMessage="Não há dados" rowKey="#{d.idPedido}"
 												selectionMode="single" id="tablePedido" rows="10"
@@ -371,7 +401,7 @@
 													listener="#{contasPagarBean.onRowSelectPedido}"
 													update="tablePedido, :formDialogPedidos, :formContasPagar:tabs:botoesPedido" />
 
-												<p:column headerText="Nº Pedido"
+												<p:column headerText="Nº Pedido" width="10%"
 													style="text-align: center;font-size:large;">
 													<p:outputLabel value="#{d.numPedido}" />
 												</p:column>
@@ -386,15 +416,16 @@
 
 												<p:column headerText="Status"
 													style="text-align:center;font-size:large;">
-													<p:outputLabel value="Em Análise"
+													<p:outputLabel value="Em Análise pelo Financeiro"
 														rendered="#{d.status eq 'EM'}" style="color: gray" />
-													<p:outputLabel value="Aprovado"
+													<p:outputLabel value="Aprovado pelo Financeiro"
 														rendered="#{d.status eq 'A'}" style="color: green" />
-													<p:outputLabel value="Reprovado"
+													<p:outputLabel value="Reprovado pelo Financeiro"
 														rendered="#{d.status eq 'R'}" style="color: red" />
 												</p:column>
 												<p:column headerText="Total" style="text-align:center;font-size:large;">
-													<p:outputLabel value="R$" />
+													<p:outputLabel value="Aguardando Lançamento" rendered="#{d.total == null}" />
+													<p:outputLabel value="R$ " rendered="#{d.total != null}" style="color: green" />
 													<p:outputLabel value="#{d.total}" rendered="#{d.total != null}" style="color: green" >
 														<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 													</p:outputLabel>
@@ -403,6 +434,7 @@
 											</p:dataTable>
 										</div>
 									</div>
+									</p:panel>
 								</p:tab>
 							</p:tabView>
 						</div>
@@ -412,42 +444,9 @@
 		</h:form>
 
 		<p:dialog widgetVar="pedidosDialog" id="pedidosDialog" modal="true"
-			position="top" resizable="false" responsive="true" width="800"
-			header="Pedidos">
+			position="top" resizable="false" responsive="true" width="800" header="Finalizar Pedido conforme cotação">
 			<h:form id="formDialogPedidos">
 				<div class="ui-fluid">
-					<div class="ui-g">
-						<div class="ui-g-12">
-							<h:panelGroup id="botoesPedidoSelecionado">
-								<div class="ui-g-12 ui-lg-2">
-									<p:commandButton value="Aprovar"
-										style="height:40px; background: greenyellow !important  ;   
-											background-color: greenyellow; 
-											color:white !important;
-											font-size:large; "
-										action="#{contasPagarBean.aprovarPedido}" immediate="true"
-										update="botoesPedidoSelecionado tablePedidoSelecionado" />
-								</div>
-
-								<div class="ui-g-12 ui-lg-2">
-									<p:commandButton value="Reprovar"
-										style="height:40px; background: red !important  ;   
-												background-color: red; 
-												color:white !important;
-												font-size:large; "
-										action="#{contasPagarBean.reprovarPedido}" immediate="true"
-										update="botoesPedidoSelecionado tablePedidoSelecionado" />
-								</div>
-								<div class="ui-g-12 ui-lg-3">
-									<p:outputLabel value="Valor Total do Pedido : R$ " />
-									<p:inputNumber value="#{contasPagarBean.valorPedido}"
-										disabled="true">
-									</p:inputNumber>
-								</div>
-							</h:panelGroup>
-						</div>
-					</div>
-
 					<div class="ui-g">
 						<div class="ui-g-12 ui-lg-12">
 							<div class="ui-g">
@@ -482,22 +481,53 @@
 												update="tablePedidoSelecionado , formDialogPedidos" />
 										</p:inputNumber>
 									</p:column>
-
 								</p:dataTable>
 							</div>
 
 						</div>
 					</div>
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:panelGroup id="botoesPedidoSelecionado">
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton value="Aprovar"
+										style="height:40px; background: greenyellow !important  ;   
+											background-color: greenyellow; 
+											color:white !important;
+											font-size:large; "
+										action="#{contasPagarBean.aprovarPedido}" immediate="true"
+										update="botoesPedidoSelecionado tablePedidoSelecionado" />
+								</div>
+
+								<div class="ui-g-12 ui-lg-2">
+									<p:commandButton value="Reprovar"
+										style="height:40px; background: red !important  ;   
+												background-color: red; 
+												color:white !important;
+												font-size:large; "
+										action="#{contasPagarBean.reprovarPedido}" immediate="true"
+										update="botoesPedidoSelecionado tablePedidoSelecionado" />
+								</div>
+								<div class="ui-g-12 ui-lg-6">
+									<p:outputLabel style="color: red ; font-size:large; padding-top: 5px" value="Valor Total do Pedido : R$ " />
+									
+									<p:outputLabel style="color: red ; font-size:large; padding-top: 5px" value="R$ 0.00" rendered="#{contasPagarBean.valorPedido == null}"/>
+									
+									<p:outputLabel style="color: red; font-size:large; padding-top: 5px" value="#{contasPagarBean.valorPedido}" rendered="#{contasPagarBean.valorPedido != null}" >
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+									</p:outputLabel>
+								</div>
+							</h:panelGroup>
+						</div>
+					</div>
+					
 				</div>
 			</h:form>
 		</p:dialog>
 
 		<p:dialog widgetVar="contaFixa" id="contaFixa" modal="true"
-			resizable="false" responsive="true" width="550" header="Lançamento de Conta a Pagar">
+			resizable="false" responsive="true" width="700" header="Lançamento de Conta a Pagar">
 			<div class="ui-fluid">
-				<div class="ui-g">
-					<div class="ui-g-12">
-						<div class="ui-g-12 ui-lg-12">
 							<h:form id="formDialogFixa">
 								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-12 ui-sm-12 ">
@@ -513,7 +543,7 @@
 									</div>
 								</div>
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-6 ui-sm-12">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
 											completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
@@ -523,10 +553,25 @@
 											minQueryLength="2" dropdown="true" maxResults="30"
 											required="false"
 											requiredMessage="Informe uma uma forma de pagamento">
+											<p:ajax event="itemSelect" update="parcelass" process="@this"/>
 										</p:autoComplete>
 									</div>
+									
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
+											<p:outputPanel id="parcelass">
+										<h:outputLabel value="Parcelas" rendered="#{contasPagarBean.contasPagarModel.formaPagamento.siglaPagamento eq 'CC'}" />
+										<p:selectOneMenu id="sel" style="height: 35px"
+												value="#{contasPagarBean.contasPagarModel.quantidadeParcelas}"
+												rendered="#{contasPagarBean.contasPagarModel.formaPagamento.siglaPagamento eq 'CC'}">
+												<f:selectItem itemLabel="Selecione" itemValue="0" noSelectionOption="true" />
+												<f:selectItem itemLabel="1x" itemValue="1" />
+												<f:selectItem itemLabel="2x" itemValue="2" />
+												<f:selectItem itemLabel="3x" itemValue="3" />
+										</p:selectOneMenu>
+											</p:outputPanel>
+									</div>
 
-									<div class="ui-g-12 ui-lg-6 ui-sm-12 ">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
 										<h:outputLabel value="Vencimento" />
 										<p:calendar locale="pt_BR" autocomplete="true"
 											popupIconOnly="true" required="true"
@@ -536,22 +581,15 @@
 											value="#{contasPagarBean.contasPagarModel.dataVencimento}">
 										</p:calendar>
 									</div>
-								</div>
-								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
-										<h:outputLabel value="Parcelas" />
-										<p:inputNumber decimalPlaces="0" symbolPosition="p"
-											required="true"
-											value="#{contasPagarBean.contasPagarModel.parcelas}">
-										</p:inputNumber>
-									</div>
-
-									<div class="ui-g-12 ui-lg-4 ui-sm-12 ">
+									<div class="ui-g-12 ui-lg-3 ui-sm-12 ">
 										<h:outputLabel value="Valor Total" />
-										<p:inputNumber decimalPlaces="2" symbol="R$"
+										<div class="ui-inputgroup">
+										<p:commandButton value="R$" />
+										<p:inputNumber decimalPlaces="2" 
 											symbolPosition="p" required="true"
 											value="#{contasPagarBean.contasPagarModel.valorTotalConta}">
 										</p:inputNumber>
+										</div>
 									</div>
 								</div>
 
@@ -560,14 +598,11 @@
 										<p:commandButton value="Lançar"
 											update=":formContasPagar:tabs:table"
 											actionListener="#{contasPagarBean.editarPagamento}"
-											style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important" />
+											style="height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important;font-size:large" />
 									</div>
 								</div>
 
 							</h:form>
-						</div>
-					</div>
-				</div>
 			</div>
 		</p:dialog>
 
@@ -590,9 +625,10 @@
 								</div>
 
 								<div class="ui-g-12 ui-lg-3">
-									<p:inputNumber
-										value="#{contasPagarBean.contasPagarModel.valorTotalConta}"
-										disabled="true" style="font-size: large;color:white" />
+								<p:outputLabel value="R$ "  style="font-size: large;color:white"/>
+									<p:outputLabel value="#{contasPagarBean.contasPagarModel.valorTotalConta}"  style="font-size: large;color:white">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+									</p:outputLabel>
 								</div>
 
 							</div>
@@ -624,7 +660,7 @@
 										</p:calendar>
 									</div>
 
-									<div class="ui-g-12 ui-lg-6 ui-sm-12">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12">
 										<h:outputLabel value="Pagamento" />
 										<p:autoComplete id="pagamento"
 											completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
@@ -634,13 +670,22 @@
 											minQueryLength="2" dropdown="true" maxResults="30"
 											required="false"
 											requiredMessage="Informe uma uma forma de pagamento">
-											<p:column id="p">
-												<h:outputText value="#{a.nomePagamento.toUpperCase()}" />
-											</p:column>
-											<p:column>
-												<h:outputText value="#{a.idFormaPagamento}" />
-											</p:column>
+											<p:ajax event="itemSelect" update="parcelass" process="@this"/>
 										</p:autoComplete>
+									</div>
+									
+									<div class="ui-g-12 ui-lg-2 ui-sm-12 ">
+											<p:outputPanel id="parcelass">
+										<h:outputLabel value="Parcelas" rendered="#{contasPagarBean.contasPagarModel.formaPagamento.siglaPagamento eq 'CC'}" />
+										<p:selectOneMenu id="sel" style="height: 35px"
+												value="#{contasPagarBean.contasPagarModel.quantidadeParcelas}"
+												rendered="#{contasPagarBean.contasPagarModel.formaPagamento.siglaPagamento eq 'CC'}">
+												<f:selectItem itemLabel="Selecione" itemValue="0" noSelectionOption="true" />
+												<f:selectItem itemLabel="1x" itemValue="1" />
+												<f:selectItem itemLabel="2x" itemValue="2" />
+												<f:selectItem itemLabel="3x" itemValue="3" />
+										</p:selectOneMenu>
+											</p:outputPanel>
 									</div>
 								</div>
 

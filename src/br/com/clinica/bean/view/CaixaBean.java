@@ -201,7 +201,7 @@ public class CaixaBean extends BeanManagedViewAbstract {
 			str.append(
 					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30') - ");
 			str.append(
-					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30')) * (-1) as saldoNovembro, ");
+					"(select  COALESCE(sum(c.valorRetirado),0.0) from Caixa c where c.tipo = 'CP' and c.dataLancamento BETWEEN '2019-11-01' and '2019-11-30')) as saldoNovembro, ");
 
 			str.append(
 					"((select COALESCE(sum(c.valorInserido),0.0) from Caixa c where c.tipo = 'CR' and c.dataLancamento BETWEEN '2019-12-01' and '2019-12-31') - ");

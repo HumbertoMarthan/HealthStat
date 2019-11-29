@@ -25,13 +25,13 @@ public class Teste {
 		inicio.set(Calendar.MINUTE, 00);
 		inicio.set(Calendar.SECOND, 00);
 		
-		Date dateInicio = inicio.getTime();
+//		Date dateInicio = inicio.getTime();
 		
 		Calendar fim = Calendar.getInstance();
 		fim.set(Calendar.HOUR_OF_DAY, 16); // hora 17 da tarde
 		fim.set(Calendar.MINUTE, 59);
 		fim.set(Calendar.SECOND, 0);
-		Date dateFim = fim.getTime();
+//		Date dateFim = fim.getTime();
 		
 		System.out.println("Hora Atual > "+ c.getTime());
 		System.out.println(DatasUtils.formatDateSql(inicio.getTime())+ " 00:00:00");

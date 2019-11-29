@@ -22,10 +22,14 @@
         <h:outputScript name="scripty.js" library="javascript"	id="jsScriptSistemaTemplate" />
         <ui:insert name="head"/>
         <style>
-        	 .ui-growl-message {
-    font-size: medium !important;
-    text-align:center;
-}
+		.ui-growl-title {
+		    text-align: left;
+		    font-size: large;
+		}
+		
+		.fa-3x {
+   			 font-size: 55px;
+		}
 
         </style>
     </h:head>
@@ -43,7 +47,7 @@
             <!-- Mensagens do Sistema -->
 			<div id="msgError">
 				<p:growl id="msg" sticky="false" redisplay="true"
-					autoUpdate="true" life="10000"  />
+					autoUpdate="true" life="8000"  />
 				<p:tooltip id="toolTipFocusTemplateParadise" globalSelector="a, :input, :button"
 					showEvent="focus" hideEvent="blur" />
 			</div>

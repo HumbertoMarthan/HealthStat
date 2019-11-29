@@ -503,24 +503,25 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 					}
 				}
 			}
-
+			System.out.println("Escolher o Convenio -> ");
 			// Verifica se o Convênio é UNIMED
 			if (evento.getPaciente().getConvenio().getSigla().equals("UNI")) {
-
+				System.out.println("convenioUnimed(); ");	
 				convenioUnimed();
 			}
 			// Verifica se o Convênio é PREVER
-			if (evento.getPaciente().getConvenio().getSigla().equals("PREVER")) {
-
+			if (evento.getPaciente().getConvenio().getSigla().equals("PRE")) {
+				System.out.println("convenioPrever(); ");	
 				convenioPrever();
 			}
 			// Verifica se o Convênio é SAS
 			if (evento.getPaciente().getConvenio().getSigla().equals("SAS")) {
-
+				System.out.println("convenioSas(); ");
 				convenioSas();
 			}
 			// Verifica se o Convênio é PARTICULAR
 			if (evento.getPaciente().getConvenio().getSigla().equals("PAR")){
+				System.out.println("convenioParticular();");
 				convenioParticular();
 			}
 		}
@@ -615,6 +616,8 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 			model.deleteEvent(event);
 
 			addMsg("Agendamento Removido: " + evento.getPaciente().getPessoa().getPessoaNome());
+			
+			DialogUtils.closeDialog("eventDialog");
 			contar();
 		
 		} catch (Exception e) {
@@ -626,10 +629,10 @@ public class ScheduleBean extends BeanManagedViewAbstract {
 
 	// AO SALVAR SELEÇÃO DE UMA AGENDAMENTO
 	public void onDateSelect(SelectEvent selectEvent) {
-		//Date date = (Date) selectEvent.getObject();
-		//this.evento.setDataInicio(date);
 		this.evento = new Evento();
 		System.out.println("onDateSelect()");
+		Date date = (Date) selectEvent.getObject();
+		this.evento.setDataInicio(date);
 	}
 
 	// EVENTO DE SELEÇÃO DOS HORARIOS AGENDADOS

@@ -56,15 +56,16 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	}
 
 	public void geraPedido() {
+		pedidoModel = new Pedido();
 		DialogUtils.openDialog("fazerPedido");
 		
-		String sql = "select MAX(numPedido)+1 as num FROM Pedido";
+		String sql = "select COALESCE(MAX(numPedido)+1,0) as num FROM Pedido";
 		List<Map<Object, Object>> lst = pedidoController.getSqlListMap(sql);
 		lst.get(0).get("num");
 		System.out.println(lst.get(0).get("num"));
-		if (lst.get(0).get("num") == null) {
+		if ((Integer) lst.get(0).get("num") ==  0 || (Integer) lst.get(0).get("num") == null ) {
 			pedidoModel.setNumPedido(1);
-			System.out.println("Numero do Pedido :>" + pedidoModel);
+			System.out.println("Numero do Pedido :>" + pedidoModel.getNumPedido());
 		} else {
 			pedidoModel.setNumPedido((Integer) lst.get(0).get("num"));
 			System.out.println("Numero do Pedido :>" + pedidoModel);
@@ -113,16 +114,60 @@ public class PedidoBean extends BeanManagedViewAbstract {
 		sucesso();
 		pedidoModel = new Pedido();
 	}
-
+	
 	public void addLista() {
-		pedidoModel.setMaterial(materialModel);
-		itemPedidoModel.setMaterial(materialModel);
-		itemPedidoModel.setQuantidade(pedidoModel.getQuantidade());
-		lstItemPedidoCarrinho.add(itemPedidoModel);
-		itemPedidoModel = new ItemPedido();
-		pedidoModel = new Pedido();
-	}
+		
+		if(true) {
+			try {
+				
+				int quantidade = pedidoModel.getQuantidade();
+				
+				if(lstItemPedidoCarrinho.isEmpty()) {
+					itemPedidoModel.setMaterial(materialModel);
+					itemPedidoModel.setQuantidade(quantidade);
 
+					lstItemPedidoCarrinho.add(itemPedidoModel);
+				
+				}else {
+					System.out.println("Entrou");
+					long id_material_novo = (long) materialModel.getIdMaterial();
+					System.out.println(" MATERIAL NOVO -> " + id_material_novo);
+					boolean adiciona = true;
+					
+					for(int i=0; i<lstItemPedidoCarrinho.size(); i++) {
+						
+						ItemPedido item = lstItemPedidoCarrinho.get(i);
+						
+						long id_material_current = (long) item.getMaterial().getId();
+						System.out.println("Current " +id_material_current);
+						if(id_material_novo == id_material_current) {
+							adiciona = false;
+							
+							int qtd_anterior = item.getQuantidade();
+							item.setQuantidade(qtd_anterior + quantidade);
+							
+							lstItemPedidoCarrinho.remove(i);
+							lstItemPedidoCarrinho.add(i, item);
+						}
+					}
+					
+					if(adiciona) {
+						itemPedidoModel.setMaterial(materialModel);
+						itemPedidoModel.setQuantidade(quantidade);
+
+						lstItemPedidoCarrinho.add(itemPedidoModel);
+					}
+				}
+				
+				pedidoModel = new Pedido();
+				itemPedidoModel = new ItemPedido();
+				
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}			
+}
+	
 	public void removerLista(ItemPedido itempedido) {
 		lstItemPedidoCarrinho.remove(itempedido);
 	}
@@ -160,7 +205,7 @@ public class PedidoBean extends BeanManagedViewAbstract {
 
 	public void limparLista() {
 		lstPedido = new ArrayList<>();
-		pedidoModel = new Pedido();
+		//pedidoModel = new Pedido();
 		materialModel = null;
 
 	}
@@ -323,4 +368,48 @@ public class PedidoBean extends BeanManagedViewAbstract {
 	public void setLstItemPedidoCarrinho(List<ItemPedido> lstItemPedidoCarrinho) {
 		this.lstItemPedidoCarrinho = lstItemPedidoCarrinho;
 	}
+	
+/*	int c = 0;
+	try{
+		List<ItemPedido> aux = new ArrayList<ItemPedido>();
+
+		if(lstItemPedidoCarrinho.isEmpty()) {
+
+			pedidoModel.setMaterial(materialModel);
+			itemPedidoModel.setMaterial(materialModel);
+			itemPedidoModel.setQuantidade(pedidoModel.getQuantidade());
+			lstItemPedidoCarrinho.add(itemPedidoModel);
+			
+			pedidoModel = new Pedido();
+			itemPedidoModel = new ItemPedido();
+	
+		}	
+			pedidoModel.setMaterial(materialModel);
+			itemPedidoModel.setMaterial(materialModel);
+			itemPedidoModel.setQuantidade(pedidoModel.getQuantidade());
+		
+			
+			for (int i = 0; i < lstItemPedidoCarrinho.size(); i++) {
+				if(lstItemPedidoCarrinho.get(i).getMaterial().getIdMaterial() == itemPedidoModel.getMaterial().getIdMaterial()) {
+					lstItemPedidoCarrinho.get(i).setQuantidade(lstItemPedidoCarrinho.get(i).getQuantidade() + itemPedidoModel.getQuantidade());
+				}else {
+					c=1;
+				}
+			}
+				
+			
+			if(c == 1) {
+				System.out.println("ADD NOVO");
+				lstItemPedidoCarrinho.add(itemPedidoModel);
+			}
+			pedidoModel = new Pedido();
+			itemPedidoModel = new ItemPedido();
+
+	}catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+}*/
+	
+	
 }

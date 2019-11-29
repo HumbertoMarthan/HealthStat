@@ -74,6 +74,12 @@
 	color: red !important;
 }
 
+.ui-autocomplete-panel .ui-autocomplete-list {
+    padding: 0.4em;
+    border: 0 none;
+    font-size: large;
+}
+
 .ui-panel {
 	padding: 0.2em;
 	border-radius: 15px;
@@ -213,14 +219,12 @@
 											<p:autoComplete id="convenio"
 												completeMethod="#{auxController.completeConvenio}"
 												forceSelection="true" converter="entityConverter" var="a"
-												itemLabel="#{a.nomeConvenio}" itemValue="#{a}"
+												itemLabel="#{a.nomeConvenio.toUpperCase()}" itemValue="#{a}"
 												value="#{pacienteBean.pacienteModel.convenio}"
 												minQueryLength="1" dropdown="true" maxResults="30"
 												required="true" requiredMessage="Informe um convenio">
-												<p:column id="p">
-													<h:outputText value="#{a.nomeConvenio}" />
-												</p:column>
 											</p:autoComplete>
+											
 											<p:commandButton  icon="ui-icon-plus"
 												immediate="true" 
 												action="#{convenioBean.redirecionarFindEntidade}">
@@ -257,18 +261,18 @@
 									<div class="ui-g-12 ui-lg-2">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
-										<p:inputText id="campoCep" autocomplete="true"
+										<p:inputMask id="campoCep" autocomplete="true"
 											value="#{pacienteBean.pacienteModel.pessoa.cep}"
 											title="O endereço será pesquisado na base de dados do correio ao sair do campo cep"
-											required="true" requiredMessage="Informe o Cep Válido"
-											maxlength="8">
+											required="true" requiredMessage="Informe o Cep Válido" 
+											mask="99.999-999"  maxlength="8">
 
 											<p:ajax event="blur" execute="@this"
 												listener="#{pacienteBean.pesquisarCep}"
 												update="logradouro,bairro,uf,complemento,localidade" />
 											<p:tooltip id="toolTipFocus" for="campoCep" showEvent="focus"
 												hideEvent="blur" />
-										</p:inputText>
+										</p:inputMask>
 									</div>
 									<div class="ui-g-12 ui-lg-3">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"
@@ -282,7 +286,7 @@
 									<div class="ui-g-12 ui-lg-1">
 										<h:outputLabel id="labelUf" value="UF:*" />
 										<p:inputText id="uf" ondblclick="javascript:this.value=''"
-											value="#{pacienteBean.pacienteModel.pessoa.uf}">
+											value="#{pacienteBean.pacienteModel.pessoa.uf}" required="true" requiredMessage="Informe uma UF">
 										</p:inputText>
 									</div>
 

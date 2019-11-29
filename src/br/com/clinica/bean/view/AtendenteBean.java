@@ -36,6 +36,7 @@ import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.ValidaCPF;
+import br.com.clinica.utils.ValidaEmail;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
@@ -170,25 +171,29 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	public void saveNotReturn() {
 		if (idadeMinimaFuncionario() == true) {
 			if (ValidaCPF.isValid(atendenteModel.getPessoa().getPessoaCPF())) {
-				try {
-					atendenteModel.getPessoa().setTipoPessoa("ATE");
-					atendenteModel = atendenteController.merge(atendenteModel);
-					idPessoa = atendenteModel.getPessoa().getIdPessoa();
-					
-					List<Login> lst = new ArrayList<>();
-					lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + atendenteModel.getPessoa().getIdPessoa());
-					
-					if(lst.isEmpty()) {
-						DialogUtils.openDialog("dialogUsuario");
+				if (ValidaEmail.validarEmail(atendenteModel.getPessoa().getPessoaEmail())) {
+					try {
+						atendenteModel.getPessoa().setTipoPessoa("ATE");
+						atendenteModel = atendenteController.merge(atendenteModel);
+						idPessoa = atendenteModel.getPessoa().getIdPessoa();
+						
+						List<Login> lst = new ArrayList<>();
+						lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + atendenteModel.getPessoa().getIdPessoa());
+						
+						if(lst.isEmpty()) {
+							DialogUtils.openDialog("dialogUsuario");
+						}
+						
+						limpar();
+						sucesso();
+						
+					} catch (Exception e) {
+						System.out.println("Erro ao salvar Atendente");
+						e.printStackTrace();
 					}
-					
-					limpar();
-					sucesso();
-					
-				} catch (Exception e) {
-					System.out.println("Erro ao salvar Atendente");
-					e.printStackTrace();
-				}
+			  }else {
+				  addMsg("Email Inválido: " + atendenteModel.getPessoa().getPessoaEmail()); 
+			  }
 			} else {
 				addMsg("Cpf Inválido: " + atendenteModel.getPessoa().getPessoaCPF());
 				System.out.println("ERRO CPF INVÁLIDO");
@@ -294,7 +299,7 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 	// PESQUISA CEP
 	public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
 		try {
-			URL url = new URL("https://viacep.com.br/ws/" + atendenteModel.getPessoa().getCep() + "/json/");
+			URL url = new URL("https://viacep.com.br/ws/" + atendenteModel.getPessoa().getCep().replace(".", "").replace("-", "") + "/json/");
 			URLConnection connection = url.openConnection();
 			InputStream inputStream = connection.getInputStream(); // is
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br
@@ -326,7 +331,10 @@ public class AtendenteBean extends BeanManagedViewAbstract {
 		} catch (IOException e) {
 			// CAI AQUI SE DIGITAR MAIS NUMEROS DO QUE TEM UM CEP
 			// COLOQUEI UM LIMITADOR NO CAMPO DE DIGITOS
-			addMsg("Cep Inválido");
+			
+			System.out.println("https://viacep.com.br/ws/" + atendenteModel.getPessoa().getCep().replace(".", "").replace("-", "") + "/json/"); 
+			e.printStackTrace();
+			//addMsg("Cep Inválido");
 		}
 	}
 

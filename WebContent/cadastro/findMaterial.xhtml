@@ -16,6 +16,13 @@
 	font-weight: bold
 }
 
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
 .ui-selectoneradio label {
 	cursor: pointer;
 	display: inline-block;
@@ -142,7 +149,7 @@
 										   background-color: tomato ;
 										   color:white !important;
 										   font-size:large;"
-										immediate="true" action="#{fornecedorBean.inativar}"
+										immediate="true" action="#{materialBean.inativar}"
 										update="table, @form"
 										rendered="#{materialBean.materialModel.idMaterial > 0 and contextoBean.possuiAcesso('MOV_MAT', 'ATE', 'ADMIN')}"
 										icon="fa fa-check" iconPos="right">

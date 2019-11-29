@@ -51,6 +51,8 @@ public class ContasReceber implements EntityBase, Serializable {
 	private Login login;
 
 	private Date dataPagamento;
+	
+	private Date dataLançamento;
 
 	@Column(columnDefinition="Decimal(10,2) default '0.0'")
 	private Double valorConsulta;
@@ -59,10 +61,10 @@ public class ContasReceber implements EntityBase, Serializable {
 	private Double valorComDesconto;
 	
 	@Column(columnDefinition="Decimal(10,2) default '0.0'")
-	private Double valorDesconto;
+	private Double valorDesconto = 0.00;
 	
 	@Column(columnDefinition="Decimal(10,2) default '0.0'")
-	private Double valorEntrada;
+	private Double valorEntrada = 0.00;
 	
 	private String maisForma = "N";
 	
@@ -249,4 +251,12 @@ public class ContasReceber implements EntityBase, Serializable {
 		this.tipoPagamento = tipoPagamento;
 	}
 
+	public Date getDataLançamento() {
+		return dataLançamento;
+	}
+
+	public void setDataLançamento(Date dataLançamento) {
+		this.dataLançamento = dataLançamento;
+	}
+	
 }

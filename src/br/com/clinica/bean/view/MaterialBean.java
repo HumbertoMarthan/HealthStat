@@ -55,6 +55,27 @@ public class MaterialBean extends BeanManagedViewAbstract {
 			e.printStackTrace();
 		}
 	}
+	
+	public void inativar() {
+		try {
+			if (materialModel.getAtivo().equals("I")) {
+				materialModel.setAtivo("A");
+			} else {
+				materialModel.setAtivo("I");
+			}
+	
+			try {
+				materialController.merge(materialModel);
+			} catch (Exception e) {
+				System.out.println("Erro ao ativar/inativar");
+				e.printStackTrace();
+			}
+			limpar();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		busca();
+	}
 
 	public void onRowSelect(SelectEvent event) {
 		materialModel = (Material) event.getObject();

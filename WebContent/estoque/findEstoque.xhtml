@@ -16,9 +16,23 @@
 	font-weight: bold
 }
 
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
 .ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
-	width: 100%;
-	height: 35px;
+    width: 100%;
+    height: 35px;
+    font-size: large;
+}
+
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .3em 16px .1em 0;
+    font-size: large;
 }
 
 .ui-selectoneradio label {
@@ -338,7 +352,7 @@
 			</p:dialog>
 
 			<p:dialog widgetVar="fazerPedido" id="fazerPedido" modal="true"
-				position="top" resizable="false" height="350" width="800"
+				position="top" resizable="false" height="500" width="850"
 				responsive="true" dynamic="true" appendToBody="@body"
 				header="Fazer Novo Pedido">
 				<h:form id="forma">
@@ -375,15 +389,6 @@
 													color:white !important;
 													font-size:large;"
 											icon="fa fa-floppy-o fa" iconPos="rigth" />
-
-										<p:commandButton value="Limpar Pedido" immediate="true"
-											actionListener="#{pedidoBean.limparLista}" update="tableCarrinho"
-											style="height:40px;
-													width: 200px !important;
-													background-color: red; 
-													background: red; 
-													color:white !important;
-													font-size:large;" />
 
 									</div>
 
@@ -431,9 +436,18 @@
 												<p:outputLabel value="#{d.material.nomeMaterial}" />
 											</p:column>
 											<p:column headerText="Quantidade"
-												style="text-align:left; font-size: large" width="20%">
+												style="text-center; font-size: large" width="20%">
 												<p:outputLabel value="#{d.quantidade}"
 													style="text-align:center; font-size: large" />
+											</p:column>
+											<p:column headerText="Ação" style="text-align:left; font-size: large" width="20%">
+											<p:commandButton value="Remover" action="#{pedidoBean.removerLista(d)}" process="@this" update="tableCarrinho"
+												style="height:40px;
+													width: 120px !important;
+													background-color: red; 
+													background: red; 
+													color:white !important;
+													font-size:large; color:white !important"  />
 											</p:column>
 										</p:dataTable>
 									</div>

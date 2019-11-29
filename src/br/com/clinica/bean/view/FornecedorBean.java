@@ -85,31 +85,29 @@ public class FornecedorBean extends BeanManagedViewAbstract {
 	}
 
 	public void inativar() {
-
-		if (fornecedorModel.getAtivo().equals("I")) {
-			fornecedorModel.setAtivo("A");
-		} else {
-			fornecedorModel.setAtivo("I");
-		}
-
 		try {
-			fornecedorController.saveOrUpdate(fornecedorModel);
+			if (fornecedorModel.getAtivo().equals("I")) {
+				fornecedorModel.setAtivo("A");
+			} else {
+				fornecedorModel.setAtivo("I");
+			}
+	
+			try {
+				fornecedorController.merge(fornecedorModel);
+			} catch (Exception e) {
+				System.out.println("Erro ao ativar/inativar");
+				e.printStackTrace();
+			}
+			limpar();
 		} catch (Exception e) {
-			System.out.println("Erro ao ativar/inativar");
 			e.printStackTrace();
 		}
-		limpar();
-		try {
-			busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar atendente");
-			e.printStackTrace();
-		}
+		busca();
 	}
 
 	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
-			URL url = new URL("https://viacep.com.br/ws/" + fornecedorModel.getCep() + "/json/");
+			URL url = new URL("https://viacep.com.br/ws/" + fornecedorModel.getCep().replace(".", "").replace("-", "") + "/json/");
 			URLConnection connection = url.openConnection();
 			InputStream inputStream = connection.getInputStream(); // is
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br

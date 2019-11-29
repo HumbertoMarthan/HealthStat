@@ -40,7 +40,7 @@ public class EstoqueBean extends BeanManagedViewAbstract {
 	private String urlFind = "/estoque/findEstoque.jsf?faces-redirect=true";
 	
 	private String campoBusca = "";
-	private String campoBuscaAtivo = "A";
+	private String campoBuscaAtivo = "R";
 	
 	private String setor;
 	

@@ -78,6 +78,18 @@
 	padding: 0.2em;
 	border-radius: 15px;
 }
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+    font-size: large;
+}
+
+.ui-autocomplete-panel .ui-autocomplete-list {
+    padding: 0.4em;
+    border: 0 none;
+    font-size: large;
+}
 </style>
 }
 	</ui:define>
@@ -120,19 +132,16 @@
 
 								<br />
 								<div class="ui-g">
-									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
+									<div class="ui-g-12 ui-lg-4 ui-sm-12 ui-md-12">
 									<h:outputLabel value="Fornecedor" />
 										<p:autoComplete id="fornecedor"
 											completeMethod="#{auxController.completeFornecedor}"
 											forceSelection="true" converter="entityConverter" var="a"
-											itemLabel="#{a.nomeFornecedor}" itemValue="#{a}"
+											itemLabel="#{a.nomeFornecedor.toUpperCase()}" itemValue="#{a}"
 											value="#{materialBean.materialModel.fornecedor}" minQueryLength="2"
 											dropdown="true"  maxResults="30" required="true"
 											requiredMessage="Informe um Fornecedor"
 											style="height: 35px">
-											<p:column id="p">
-												<h:outputText value="#{a.nomeFornecedor}" />
-											</p:column>
 										</p:autoComplete>
 
 									</div>

@@ -38,6 +38,7 @@ import br.com.clinica.model.cadastro.usuario.Login;
 import br.com.clinica.model.cadastro.usuario.Perfil;
 import br.com.clinica.utils.DialogUtils;
 import br.com.clinica.utils.ValidaCPF;
+import br.com.clinica.utils.ValidaEmail;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
@@ -188,7 +189,7 @@ public class MedicoBean extends BeanManagedViewAbstract {
 
 	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
-			URL url = new URL("https://viacep.com.br/ws/" + medicoModel.getPessoa().getCep() + "/json/");
+			URL url = new URL("https://viacep.com.br/ws/" + medicoModel.getPessoa().getCep().replace(".", "").replace("-", "") + "/json/");
 			URLConnection connection = url.openConnection();
 			InputStream inputStream = connection.getInputStream(); // is
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -258,23 +259,33 @@ public class MedicoBean extends BeanManagedViewAbstract {
 	@Override
 	public void saveNotReturn() {
 		try {
+			List<Medico> aux = new ArrayList<>();
+			aux = medicoController.findListByQueryDinamica("from Medico where numeroCrm = '"+ medicoModel.getNumeroCrm() + "'");
+			
 			if (idadeMinimaFuncionario() == true) {
 				if (ValidaCPF.isValid(medicoModel.getPessoa().getPessoaCPF())) { // VALIDA CPF
-					medicoModel.getPessoa().setTipoPessoa("MED");
-					medicoModel = medicoController.merge(medicoModel);
-					idPessoa = medicoModel.getPessoa().getIdPessoa();
-					
-					List<Login> lst = new ArrayList<>();
-					lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + idPessoa);
-					
-					if(lst.isEmpty()) {
-						DialogUtils.openDialog("dialogUsuario");
+					if (ValidaEmail.validarEmail(medicoModel.getPessoa().getPessoaEmail())) {
+						if(aux.isEmpty()) {	
+								
+							medicoModel.getPessoa().setTipoPessoa("MED");
+							medicoModel = medicoController.merge(medicoModel);
+							idPessoa = medicoModel.getPessoa().getIdPessoa();
+							
+							List<Login> lst = new ArrayList<>();
+							lst = loginController.findListByQueryDinamica("from Login where pessoa.idPessoa = " + idPessoa);
+							
+							if(lst.isEmpty()) {
+								DialogUtils.openDialog("dialogUsuario");
+							}
+							
+							limpar();
+							sucesso();
+							
+							DialogUtils.openDialog("dialogUsuario");
+						}
+					}else {
+						addMsg("Email Inválido");
 					}
-					
-					limpar();
-					sucesso();
-					
-					DialogUtils.openDialog("dialogUsuario");
 				} else {
 					addMsg("Cpf Inválido: " + medicoModel.getPessoa().getPessoaCPF());
 					System.out.println("ERRO CPF INVÁLIDO");

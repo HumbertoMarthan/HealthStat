@@ -48,25 +48,25 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	private Caixa caixaModel = new Caixa();
 	private Pedido pedidoModel = new Pedido();
 	private Estoque estoqueModel = new Estoque();
-	
+
 	private String url = "/financeiro/pagar/contasPagar.jsf?faces-redirect=true";
 	private String urlFind = "/financeiro/pagar/findContasPagar.jsf?faces-redirect=true";
-	
+
 	private List<ContasPagar> lstContasPagar = new ArrayList<ContasPagar>();
-	private List<ParcelaContasPagar>  lstParcelaPagar = new ArrayList<>();
+	private List<ParcelaContasPagar> lstParcelaPagar = new ArrayList<>();
 	private List<ParcelaContasPagar> lstParcelaPagarPendentes;
 	private List<Pedido> lstPedido;
 	private List<Estoque> lstEstoque = new ArrayList<Estoque>();
 	private List<ItemPedido> lstItemPedido = new ArrayList<ItemPedido>();
 	private List<Map<Object, Object>> lstTotalPedido;
-	
+
 	private String campoBuscaFornecedor = "";
 	private String campoBuscaStatus = "P";
 	private String tipoConta = "";
-	
+
 	private Fornecedor fornecedorSelecionado;
 	private Double valorPedido = 0.0D;
-	
+
 	Long parcelas;
 	String temParcela = "N";
 
@@ -81,7 +81,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private FornecedorController fornecedorController;
-	
+
 	@Autowired
 	private ContextoBean contextoBean;
 
@@ -96,39 +96,35 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	@Autowired
 	private ItemPedidoController itemPedidoController;
-	
+
 	@PostConstruct
 	public void init() {
-		try {
 		busca();
-		} catch (Exception e) {
-			System.out.println("Erro ao buscar contas a pagar");
-			e.printStackTrace();
-		}
+		buscaPedido();
 	}
-	
-	public void geraRelatorio(){
-		JasperPrint  relatorio =  imprimir(lstContasPagar, "pagamento.jrxml");
+
+	public void geraRelatorio() {
+		JasperPrint relatorio = imprimir(lstContasPagar, "pagamento.jrxml");
 		try {
-			//JasperPrintManager.printReport(print, true);
+			// JasperPrintManager.printReport(print, true);
 			JasperPrintManager.printReport(relatorio, true);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}
 	}
 
-	
 	public void abrirPedido() {
 		try {
-			
+
 			System.out.println("Numero do pedido>>>" + pedidoModel.getNumPedido());
-			lstItemPedido = itemPedidoController.findListByQueryDinamica("from ItemPedido where numPedido = " + pedidoModel.getNumPedido());
+			lstItemPedido = itemPedidoController
+					.findListByQueryDinamica("from ItemPedido where numPedido = " + pedidoModel.getNumPedido());
 			calcularTotalPedido();
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
 		}
-		 calcularTotalPedido();
+		calcularTotalPedido();
 	}
 
 	public void calcularTotalPedido() {
@@ -152,7 +148,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 	public void alteraValorUnitario(ItemPedido itemSelecionado) {
 		try {
 			System.out.println("Valor Editado> " + itemSelecionado.getValorUnitario());
-			if (itemSelecionado.getValorUnitario() != null ) {
+			if (itemSelecionado.getValorUnitario() != null) {
 				itemSelecionado.setValorUnitario(itemSelecionado.getValorUnitario()); // quem ta nulo é o estoque
 				try {
 					itemPedidoController.merge(itemSelecionado);
@@ -170,60 +166,78 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void aprovarPedido() {
 		try {
+			  Long usuarioSessaoId = 0L;
+			  
+			  usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin(); 
+			 
 			
-			Long usuarioSessaoId = 0L;
-
-			try {
-				usuarioSessaoId = contextoBean.getEntidadeLogada().getIdLogin();
-			} catch (Exception e) {
-				System.out.println("Erro ao recuperar da sessao");
-				e.printStackTrace();
-				e.getMessage();
-			}
-			
-			List<Estoque> lstEstoque = new ArrayList<>();
 			Estoque e = new Estoque();
-			
-			lstItemPedido = itemPedidoController.findListByQueryDinamica("from ItemPedido where numPedido = " + pedidoModel.getNumPedido());
-			
-			
+			List<Estoque> pedidoAtual = new ArrayList<>();
 			for (ItemPedido itemPedido : lstItemPedido) {
 				e.setMaterial(itemPedido.getMaterial());
 				e.setQuantidade(itemPedido.getQuantidade());
-				lstEstoque.add(e);
+				pedidoAtual.add(e);
+				e = new Estoque();
 			}
-			
-			for (Estoque estoque : lstEstoque) {
-				estoque.setStatus("A");
-				estoqueController.merge(estoque);
-			}
-			
-			pedidoModel.setTotal(valorPedido); // pegar valor total do sum
-			pedidoModel.setStatus("A"); // aprova o pedido
 
-			// setar valor para contas a pagar
-			contasPagarModel.setDataLancamento(new Date());// data atual
-			contasPagarModel.setStatus("P");
-			contasPagarModel.setValorTotalConta(valorPedido);
-			contasPagarModel.setMaterial(pedidoModel.getMaterial());
-			contasPagarModel.setFornecedor(lstItemPedido.get(0).getMaterial().getFornecedor());
-			contasPagarModel.setLogin(new Login(usuarioSessaoId)); //SETEI O LOGIN ---------------------
+			for (int i = 0; i < pedidoAtual.size(); i++) {
+				List<Estoque> banco = new ArrayList<>();
+				
+				System.out.println("MATERIAL PESQUISADO NO BANCO ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+ pedidoAtual.get(i).getMaterial().getIdMaterial()  +" "+ pedidoAtual.get(i).getMaterial().getNomeMaterial());
+				banco = estoqueController.findListByQueryDinamica("from Estoque where material.idMaterial = " + pedidoAtual.get(i).getMaterial().getIdMaterial());
 
-			pedidoController.merge(pedidoModel);
-			contasPagarController.merge(contasPagarModel);
-			addMsg("Operação realizada com sucesso");
-		} catch (Exception e) {
-			try {
-				addMsg("Ocorreu um erro ao aprovar");
-			} catch (Exception e1) {
-				e1.printStackTrace();
+				if (!banco.isEmpty()) {
+					System.out.println("--------Existe no Banco");
+					Estoque materialDoPedido = pedidoAtual.get(i);
+					Estoque materialDoBanco = banco.get(0);
+					System.out.println(" MATERIAL materialDoPedido -> " + materialDoPedido.getMaterial().getIdMaterial());
+					System.out.println(" MATERIAL materialDoBanco -> " + materialDoBanco.getMaterial().getIdMaterial());
+					System.out.println(" MATERIAL materialDoPedido -> " + materialDoPedido.getMaterial().getNomeMaterial());
+					System.out.println(" MATERIAL materialDoBanco -> " + materialDoBanco.getMaterial().getNomeMaterial());
+
+					if (materialDoPedido.getMaterial().getIdMaterial() == materialDoBanco.getMaterial().getIdMaterial()) {
+						
+						materialDoBanco.setQuantidade(materialDoBanco.getQuantidade() + materialDoPedido.getQuantidade());
+						materialDoBanco.setStatus("A");
+						System.out.println("Quantidade _>_>_>_>_>__" + materialDoBanco.getQuantidade());
+						estoqueController.merge(materialDoBanco);
+					}else {
+						System.out.println("São diferentes <><><><><><><");
+					}
+				}else {
+					pedidoAtual.get(i).setStatus("A");
+					estoqueController.merge(pedidoAtual.get(i));
+				}
+				
+				pedidoModel.setStatus("A");
+				pedidoModel.setTotal(valorPedido); // pegar valor total do sum
+				pedidoModel = pedidoController.merge(pedidoModel);
+				System.out.println("PEDIDO NULL ? > "+pedidoModel.getIdPedido());
+				  
+			    contasPagarModel.setDataLancamento(new Date());
+			    contasPagarModel.setStatus("P");
+			    contasPagarModel.setValorTotalConta(valorPedido);
+			    contasPagarModel.setMaterial(pedidoModel.getMaterial());
+			   // contasPagarModel.setFornecedor(lstItemPedido.get(0).getMaterial().getFornecedor()); 
+			    contasPagarModel.setFornecedor(new Fornecedor(2)); 
+			    contasPagarModel.setLogin(new Login(usuarioSessaoId));
+			  
+			    contasPagarController.merge(contasPagarModel);
+
+				sucesso();
+				buscaPedido();
+				busca();
+				DialogUtils.updateForm(":formDialogPedidos:tablePedidoSelecionado");
+				DialogUtils.updateForm(":formDialogPedidos:tablePedido");
+				DialogUtils.closeDialog("pedidosDialog");
+
+				pedidoModel = new Pedido();
+				lstItemPedido = new ArrayList<ItemPedido>();
 			}
-			e.getMessage();
-			e.printStackTrace();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+			error();
 		}
-		buscaPedido();
-		busca();
-		DialogUtils.closeDialog("pedidosDialog");
 	}
 
 	public void reprovarPedido() {
@@ -242,10 +256,11 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		}
 		buscaPedido();
 		busca();
+		DialogUtils.updateForm(":formDialogPedidos:tablePedido");
 		DialogUtils.closeDialog("pedidosDialog");
 	}
 
-	public void busca()  {
+	public void busca() {
 		lstContasPagar = new ArrayList<ContasPagar>();
 		StringBuilder str = new StringBuilder();
 		str.append("from ContasPagar a where 1=1");
@@ -262,9 +277,11 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		buscaPedido();
 	}
 
-	public void buscaPedido()  {
+	public void buscaPedido() {
 		lstPedido = new ArrayList<Pedido>();
 		StringBuilder str = new StringBuilder();
 		str.append("from Pedido a where 1=1");
@@ -283,7 +300,7 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void editarPagamento() {
 		try {
-			
+
 			Long usuarioSessaoId = 0L;
 
 			try {
@@ -294,7 +311,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 				e.getMessage();
 			}
 
-			
 			contasPagarModel.setStatus("L");
 			contasPagarModel.setDataLancamento(new Date());
 			contasPagarModel.setLogin(new Login(usuarioSessaoId));
@@ -302,7 +318,9 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 			addMsg("Operação Realizada Com Sucesso!");
 			DialogUtils.closeDialog("contaFixa");
+			DialogUtils.closeDialog("editarContaPagar");
 			busca();
+			DialogUtils.updateForm("formContasPagar");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -354,26 +372,27 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 
 	public void pagarConta() {
 		try {
-			
+
 			contasPagarModel.setStatus("PA");
 			contasPagarModel.setDataPagamento(new Date());
 			contasPagarModel = contasPagarController.merge(contasPagarModel);
 
-			ContasPagar contaAtual = contasPagarController.findByPorId(ContasPagar.class, contasPagarModel.getIdContasPagar());
-			System.out.println("Conta Atual Valor >>"+ contaAtual.getValorConta());
-			
+			ContasPagar contaAtual = contasPagarController.findByPorId(ContasPagar.class,
+					contasPagarModel.getIdContasPagar());
+			System.out.println("Conta Atual Valor >>" + contaAtual.getValorConta());
+
 			System.out.println("Conta atual com pesquisa " + contaAtual.getIdContasPagar());
-			
-			if(contaAtual.getFornecedor() == null ) {
-				caixaModel.setFornecedor(contaAtual.getMaterial().getFornecedor());	
-			}else {
+
+			if (contaAtual.getFornecedor() == null) {
+				caixaModel.setFornecedor(contaAtual.getMaterial().getFornecedor());
+			} else {
 				caixaModel.setFornecedor(contaAtual.getFornecedor());
 			}
 			caixaModel.setDataLancamento(new Date());
 			caixaModel.setContasPagar(new ContasPagar(contaAtual.getIdContasPagar()));
 			caixaModel.setValorRetirado(contaAtual.getValorTotalConta());
 			caixaModel.setTipo("CP");
-			
+
 			limpar();
 		} catch (Exception e1) {
 			System.out.println("Erro ao busca conta para adicionar ao caixa");
@@ -706,7 +725,6 @@ public class ContasPagarBean extends BeanManagedViewAbstract {
 		this.contextoBean = contextoBean;
 	}
 }
-
 
 /*
  * public void onCellEdit(CellEditEvent event) { try { Object oldValue =

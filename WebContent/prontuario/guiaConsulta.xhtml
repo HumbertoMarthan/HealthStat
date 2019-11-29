@@ -98,7 +98,7 @@
 									<p:inputTextarea title="Relato do paciente" autoResize="true"
 										rows="7" cols="50" maxlength="2000"
 										value="#{prontuarioBean.prontuarioModel.problemaPaciente}"
-										required="false"
+										required="true"
 										requiredMessage="Informe o problema relatado pelo paciente" />
 								</div>
 								
@@ -109,7 +109,7 @@
 									<p:inputTextarea title="Diagnóstico" autoResize="true"
 										rows="6" maxlength="2000" cols="50"
 										value="#{prontuarioBean.prontuarioModel.diagnostico}"
-										required="false" requiredMessage="Informe um dignóstico" />
+										required="true" requiredMessage="Informe um dignóstico" />
 								</div>
 							</div>
 							
@@ -119,7 +119,7 @@
 								<div class="ui-g-12 ui-lg-12">
 									<p:outputLabel
 										value="Receita Médica" />
-						    	 <p:textEditor widgetVar="editor" value="#{prontuarioBean.prontuarioModel.receituario}" height="300" style="margin-bottom:10px" placeholder="Inclua seu receituário"><font></font>
+						    	 <p:textEditor widgetVar="editor" required="true" requiredMessage="Informe uma receita"  value="#{prontuarioBean.prontuarioModel.receituario}" height="300" style="margin-bottom:10px" placeholder="Inclua seu receituário"><font></font>
 							        <f:facet name="toolbar">
 							             <span class="ql-formats">
 							                <button class="ql-bold"></button>
@@ -132,6 +132,7 @@
 							                <select class="ql-size"></select>
 							            </span>
 							        </f:facet>
+							        <p:ajax event="change"  />
 							    </p:textEditor>
 								
 								</div>
@@ -148,7 +149,7 @@
 						id="buttonSalvar" immediate="false" iconPos="rigth">
 					</p:commandButton>
 					
-					<p:commandButton value="Receita" rendered="true"
+					<p:commandButton value="Receita"  id="receituarioBotao"
 						style="height:40px;width:130px; background-color: green; font-size:large;background: green; color:white !important"
 						actionListener="#{prontuarioBean.geraReceita}"
 						 immediate="true" iconPos="rigth">

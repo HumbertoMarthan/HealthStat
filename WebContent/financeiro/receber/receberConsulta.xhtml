@@ -11,6 +11,16 @@
 	<ui:define name="head">
 
 		<style type="text/css">
+
+.ui-autocomplete-panel .ui-autocomplete-list-item {
+    border: 0px none;
+    font-weight: normal;
+    margin: 1px 0;
+    padding: 3px 5px;
+    text-align: left;
+    font-size: large;
+}		
+		
 .ui-panel .ui-panel-title {
 	font-size: large;
 }		
@@ -138,6 +148,33 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
     font-weight: bold;
 
 }
+
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .3em 16px .1em 0;
+    font-size: large;
+}
+
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+    padding-right: 2.4em;
+    /* width: 100% !important; */
+    font-size: large;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-list-item {
+    border: 0px none;
+    margin: 1px 0;
+    padding: 3px 5px;
+    text-align: left;
+    white-space: nowrap;
+    font-size: large;
+}
+
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+    width: 100%;
+    font-size: large;
+    text-align: center;
+}
 </style>
 
 	</ui:define>
@@ -155,20 +192,73 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 		<p:dialog widgetVar="mostraParcelas" id="mostraParcelas" modal="true"
 			resizable="false"  width="800" dynamic="true"
 			responsive="true" onHide="atualizarAoSair()" appendToBody="@body"
-			header="Parcelas" style="font-size: large;	" 
- >
+			header="Parcelas do Crédiario" style="font-size: large;	">
 			<h:form id="formulario">
 				<p:remoteCommand name="atualizarAoSair" update="@form"
 					actionListener="#{contasReceberBean.busca}" />
-				<br />
+				
+					<br />
+					<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+					<p:dataTable value="#{contasReceberBean.lstParcelaPagarPendentes}"
+						var="d" rowKey="#{d.idParcela}" selectionMode="single"
+						id="tableParcelas" reflow="true"
+						selection="#{contasReceberBean.parcelaPagarModel}">
 
+						<p:ajax event="rowSelect"
+							listener="#{contasReceberBean.onRowSelectParcelas}"
+							update="tableParcelas :formulario" />
+						
+						<f:facet name="header">
+									<p:outputLabel value="Parcelas" style="color: white !important ;font-size: large" />
+						</f:facet>
+						
+						
+						<p:column headerText="Nº Parcela" priority="1"
+							style="width:10%; text-align:center;font-size: large !important; ">
+							<p:outputLabel value="#{d.numeroParcela}" />
+						</p:column>
+						<p:column headerText="Usuário" priority="1" style="width:10%; text-align:center;font-size: large !important; ">
+							<p:outputLabel value="#{d.login.login.toUpperCase()}" rendered="#{d.login.login != null}" />
+							<p:outputLabel value=" - " rendered="#{d.login.login == null}" />
+						</p:column>	
+						<p:column headerText="Vencimento" priority="1" style="text-align:center; width: 20% ; font-size: large !important">
+							<p:outputLabel value="#{d.dataVencimento}">
+								<f:convertDateTime timeZone="America/Sao_Paulo" />
+							</p:outputLabel>
+						</p:column>
+						<p:column headerText="Pagamento" priority="1" style="text-align:center; width: 20% ; font-size: large !important">
+							<p:outputLabel value=" - " rendered="#{d.dataPagamento == null}"  />
+							<p:outputLabel value="#{d.dataPagamento}" rendered="#{d.dataPagamento != null}"  >
+								<f:convertDateTime timeZone="America/Sao_Paulo" />
+							</p:outputLabel>
+						</p:column>
+						<p:column headerText="Situação" priority="1"
+							style="width: 20%; text-align:center; font-size: large !important">
+							<p:outputLabel value="Pendente" rendered="#{d.situacao eq 'P'}"
+								style="color : green" />
+							<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
+								style="color : red" />
+						</p:column>
+
+						<p:column headerText="Valor" priority="1"
+							style="text-align:right; width: 15%; font-size: large !important">
+							<p:outputLabel value="R$ " />
+							<p:outputLabel value="#{d.valorBruto}" >
+								<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+							</p:outputLabel>
+						</p:column>
+					</p:dataTable>
+					</div>
+				</div>
+				
 				<div class="ui-g">
+					
 					<p:commandButton
 						style="height:40px;width:200px; background-color: green; margin: 0 auto ;
 							background: green; color:white !important"
-						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'P' and
-					contasReceberBean.parcelaPagarModel.idParcela > 0}"
-						value="Pagar Parcela" update="tableParcelas"
+						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'P' and contasReceberBean.parcelaPagarModel.idParcela > 0}"
+						value="Pagar Parcela" update="@form"
 						actionListener="#{contasReceberBean.pagarParcela}" />
 
 					<p:commandButton
@@ -176,7 +266,7 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							background: red; color:white !important"
 						rendered="#{contasReceberBean.parcelaPagarModel.situacao eq 'PA' and
 								(contasReceberBean.parcelaPagarModel.idParcela > 0) and contextoBean.possuiAcesso('ADMIN','ATE','MOV_REC')}" 
-						value="Estornar Parcela (ATE)" update="tableParcelas"
+						value="Estornar Parcela" update="tableParcelas"
 						actionListener="#{contasReceberBean.estornarParcelas}" />
 
 				<!-- 	<p:commandButton
@@ -190,22 +280,44 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 						actionListener="#{contasReceberBean.estornarParcelasPagas}" />
  -->
 					<p:commandButton value="Fechar" onclick="PF(mostraParcelas).hide()"
-						style="height:40px;  margin: 0 auto; width:130px; " />
+						style="height:40px; background-color: gray; margin: 0 auto ;font-size:large;
+							background: gray; color:white !important; width:130px; " />
+							
 				</div>
-				<br />
-				<div class="ui-g">
+				<br/>
+				<br/>
+
+			</h:form>
+		</p:dialog>
+		
+		<!-- DIALOG -->
+		<p:dialog widgetVar="mostraParcelaVisualizacao" id="mostraParcelaVisualizacao" modal="true"
+			resizable="false"  width="800" dynamic="true" closable="false"
+			responsive="true" onHide="atualizarAoSair()" appendToBody="@body"
+			header="Parcela do Crediário" style="font-size: large;	">
+			<h:form id="formularioVisualizacao">
+				<p:remoteCommand name="atualizarAoSair" update="@form"
+					actionListener="#{contasReceberBean.busca}" />
+				<br/>
+
+					<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 					<p:dataTable value="#{contasReceberBean.lstParcelaPagarPendentes}"
 						var="d" rowKey="#{d.idParcela}" selectionMode="single"
-						id="tableParcelas"
+						id="tableParcelas" reflow="true"
 						selection="#{contasReceberBean.parcelaPagarModel}">
 
 						<p:ajax event="rowSelect"
 							listener="#{contasReceberBean.onRowSelectParcelas}"
-							update="tableParcelas :formulario" />
-
+							update="tableParcelas :formularioVisualizacao" />
+						
+						<f:facet name="header">
+									<p:outputLabel value="Parcelas" style="color: white !important ;font-size: large" />
+						</f:facet>
+						
 						<p:column headerText="Nº Parcela" priority="1"
 							style="width:10%; text-align:center;font-size: large !important; ">
-							<p:outputLabel value="#{d.numeroParcela}" />
+							<p:outputLabel value="#{d.numeroParcela}"  />
 						</p:column>
 						<p:column headerText="Usuário" priority="1" style="width:10%; text-align:center;font-size: large !important; ">
 							<p:outputLabel value="#{d.login.login}" rendered="#{d.login.login != null}" />
@@ -238,36 +350,270 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							</p:outputLabel>
 						</p:column>
 					</p:dataTable>
+					</div>
 				</div>
-
+				
+				<div class="ui-g">
+					<p:commandButton value="Fechar" onclick="PF(mostraParcelas).hide()"
+						style="height:40px; background-color: gray; margin: 0 auto ; font-size:large;
+							background: gray; color:white !important; width:130px;" />
+				</div>
+				
+				<br/>
 			</h:form>
+		</p:dialog>
+		
+		<p:dialog widgetVar="relancarPagamento" id="relancarPagamento" closable="false"
+			modal="true" resizable="false" height="400" width="900"
+			responsive="true" dynamic="true" appendToBody="@body"
+			header="Lançamento de Pagamentos">
+			<div class="ui-fluid">
+				<h:form id="relancarForm">
+					<div class="ui-g">
+						<p:outputPanel styleClass="painelPaciente">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-lg-5">
+									<h:outputLabel value="Paciente"
+										style="font-size: large !important;color:white" />
+									<br />
+									<h:outputLabel style="font-size: large !important; color:white;"
+										value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
+								</div>
+
+								<div class="ui-g-12 ui-lg-3">
+									<h:outputLabel value="Consulta"
+										style="font-size: large !important;color:white" />
+									<br />
+									<p:outputLabel required="true"
+										style="font-size: large !important; color:white"
+										value="R$ #{contasReceberBean.contasReceberModel.valorConsulta}" />
+								</div>
+
+								<div class="ui-g-12 ui-lg-4">
+									<h:outputLabel value="Total Desconto/Entrada"
+										style="font-size: large !important; color:white" />
+									<br />
+									<p:outputLabel 
+										style="font-size: large !important; color:white"
+										value="R$ "/>
+									
+									<p:outputLabel id="valorComDesconto"
+										style="font-size: large !important; color:white"
+										value="#{contasReceberBean.contasReceberModel.valorComDesconto}">
+										<f:convertNumber maxFractionDigits="2" minFractionDigits="2" locale="pt_BR" />
+									</p:outputLabel>
+								</div>
+							</div>
+						</p:outputPanel>
+						<div class="ui-g-12">
+							<div class="card card-w-title">
+								<div class="ui-g-12 ui-lg-12">
+									<div class="ui-g">
+										<div class="ui-g-12 ui-lg-3">
+											<p:outputPanel id="descontos">
+												<h:outputLabel value="Desconto" />
+												<br />
+													<div class="ui-inputgroup">
+												<p:commandButton value="R$" />
+												<p:inputNumber decimalPlaces="2" 
+													symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
+													value="#{contasReceberBean.contasReceberModel.valorDesconto}">
+													<p:ajax event="change" update="valorComDesconto par descontos"
+														listener="#{contasReceberBean.fazerDesconto}" />
+												</p:inputNumber>
+												</div>
+											</p:outputPanel>
+										</div>
+
+										<div class="ui-g-12 ui-lg-3">
+											<h:outputLabel value="Entrada" />
+											<br />
+											<div class="ui-inputgroup">
+												<p:commandButton value="R$" />
+												<p:inputNumber decimalPlaces="2" 
+													symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
+													value="#{contasReceberBean.contasReceberModel.valorEntrada}">
+													<p:ajax event="change" update="valorComDesconto,par, @this"
+														listener="#{contasReceberBean.fazerDesconto}" />
+												</p:inputNumber>
+											</div>
+										</div>
+
+										<div class="ui-g-12 ui-lg-6 ui-sm-12">
+											<h:outputLabel value="Duas Formas de Pagamento?" />
+											<p:selectOneRadio value="#{contasReceberBean.contasReceberModel.maisForma}">
+												<f:selectItem itemLabel="Sim" itemValue="S" />
+												<f:selectItem itemLabel="Não" itemValue="N" />
+												<p:ajax event="change" update="@form" />
+											</p:selectOneRadio>
+										</div>
+
+										<ui:fragment rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'N'}">
+											<div class="ui-g">
+												<div class="ui-g-12 ui-lg-3 ui-sm-12">
+													<h:outputLabel value="Forma de Pagamento" />
+													<br />
+													<p:autoComplete id="pagamento"
+														completeMethod="#{auxController.completeFormaPagamento}"
+														forceSelection="true" converter="entityConverter" var="a"
+														itemLabel="#{a.nomePagamento}" itemValue="#{a}"
+														value="#{contasReceberBean.contasReceberModel.formaPagamento}"
+														minQueryLength="2" dropdown="true" maxResults="30"
+														required="false"
+														requiredMessage="Informe uma uma forma de pagamento">
+														<p:ajax event="itemSelect" update="parcelass ,par" listener="#{contasReceberBean.fazerValorAvista}" />
+													</p:autoComplete>
+												</div>
+												<div class="ui-g-12 ui-lg-2">
+													<p:outputPanel id="parcelass">
+														<h:outputLabel value="Parcela(s)"
+															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CRE'}" />
+
+															<h:outputLabel value="Parcela"
+															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CC' }" />
+														<br />
+
+														<p:selectOneMenu style="height: 35px"
+															value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
+															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CRE'}">
+															<f:selectItem itemLabel="Selecione" itemValue="0" noSelectionOption="true" />
+															<f:selectItem itemLabel="1x" itemValue="1" />
+															<f:selectItem itemLabel="2x" itemValue="2" />
+															<f:selectItem itemLabel="3x" itemValue="3" />
+															<p:ajax event="change" update="par"
+																listener="#{contasReceberBean.fazerParcelas(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
+														</p:selectOneMenu>
+													
+														<p:selectOneMenu style="height: 35px"
+															value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
+															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CC' }">
+															<f:selectItem itemLabel="Selecione" itemValue="0" noSelectionOption="true" />
+															<f:selectItem itemLabel="1x" itemValue="1" />
+															<f:selectItem itemLabel="2x" itemValue="2" />
+															<f:selectItem itemLabel="3x" itemValue="3" />
+															<p:ajax event="change" update="par" listener="#{contasReceberBean.simularParcelasCartao(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
+														</p:selectOneMenu>
+													</p:outputPanel>
+													
+													
+												</div>
+												<div class="ui-g-12 ui-lg-2">
+													<h:outputLabel value="Vencimento" />
+													<p:calendar
+														value="#{contasReceberBean.contasReceberModel.dataVencimentoContasReceber}"
+														mindate="today" />
+												</div>
+												<div class="ui-g-12 ui-lg-3">
+													<h:outputLabel value="Valor" />
+													<div class="ui-inputgroup">
+													<p:commandButton value="R$" />
+													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
+														 symbolPosition="p"
+														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
+														style="font-size: large !important;" />
+												</div>
+												</div>
+											</div>
+										</ui:fragment>
+										<ui:fragment
+											rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'S'}">
+											<h:panelGroup id="group">
+												<div class="ui-g">
+													<div class="ui-g-12 ui-lg-4 ui-sm-12">
+														<h:outputLabel value="Forma de Pagamento" />
+														<p:autoComplete
+															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
+															forceSelection="true" converter="entityConverter" var="a"
+															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
+															value="#{contasReceberBean.formaUm}" minQueryLength="2"
+															dropdown="true" maxResults="30" required="true"
+															requiredMessage="Informe uma uma forma de pagamento">
+														</p:autoComplete>
+													</div>
+
+													<div class="ui-g-12 ui-lg-3 ui-sm-12">
+														<h:outputLabel value="Valor" />
+														<div class="ui-inputgroup">
+														<p:commandButton value="R$" />
+														<p:inputNumber value="#{contasReceberBean.valorUm}" decimalPlaces="2">
+															<p:ajax update="valorDois" event="blur" process="@this"
+																listener="#{contasReceberBean.recalcularDuasFormas}" />
+														</p:inputNumber>
+														</div>
+													</div>
+
+													<div class="ui-g-12 ui-lg-2 ui-sm-12">
+														<h:outputLabel value="Vencimento" />
+														<p:calendar value="#{contasReceberBean.vencimentoUm}"
+															mindate="today" pattern="dd/MM/yyyy">
+															<p:ajax event="change"  />
+															<p:ajax event="dateSelect" />
+														</p:calendar>
+													</div>
+												</div>
+												<div class="ui-g">
+													<div class="ui-g-12 ui-lg-4 ui-sm-12">
+														<h:outputLabel value="Forma de Pagamento" />
+														<p:autoComplete
+															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
+															forceSelection="true" converter="entityConverter" var="a"
+															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
+															value="#{contasReceberBean.formaDois}" minQueryLength="2"
+															dropdown="true" maxResults="30" required="true"
+															requiredMessage="Informe uma uma forma de pagamento">
+														</p:autoComplete>
+													</div>
+
+													<div class="ui-g-12 ui-lg-3 ui-sm-12">
+														<h:outputLabel value="Valor" />
+														<div class="ui-inputgroup">
+														<p:commandButton value="R$" />
+														<p:inputNumber id="valorDois" disabled="true" decimalPlaces="2"
+															value="#{contasReceberBean.valorDois}" symbol="R$">
+														</p:inputNumber>
+														</div>
+													</div>
+
+													<div class="ui-g-12 ui-lg-2 ui-sm-12">
+														<h:outputLabel value="Vencimento" />
+														<p:calendar value="#{contasReceberBean.vencimentoDois}"
+															mindate="#{contasReceberBean.vencimentoUm}" pattern="dd/MM/yyyy">
+														<p:ajax event="change" listener="#{contasReceberBean.calculaVencimento}" update="@this"  process="@this"/>
+															<p:ajax event="dateSelect" listener="#{contasReceberBean.calculaVencimento}" update="@this"  process="@this" />
+														</p:calendar>
+													</div>
+												</div>
+											</h:panelGroup>
+										</ui:fragment>
+									</div>
+									<br/>
+									<div class="ui-g" >
+											<p:commandButton value="Lançar"
+												style="margin: 0 auto !important; height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
+												actionListener="#{contasReceberBean.editarPagamento}" />
+											<p:commandButton value="Fechar"
+												style="margin: 0 auto !important;height:40px;width:130px; font-size: large !important; background-color: gray; background: gray; color:white !important"
+												oncomplete="PF('relancarPagamento').hide()"
+												actionListener="#{contasReceberBean.busca}" />
+									</div>
+							</div>
+						</div>
+						</div>
+					</div>
+				</h:form>
+			</div>
 		</p:dialog>
 
 		<p:dialog widgetVar="mostraPagamentoEspecial"
 			id="mostraPagamentoEspecial" modal="true" resizable="false"
-			height="200" width="800" responsive="true" dynamic="true"
+			height="250" width="800" responsive="true" dynamic="true"
 			appendToBody="@body" header="Pagamento Especial">
 			<div class="ui-fluid">
 
 				<h:form id="pagamentoEspecial">
 					<br />
 					<div class="ui-g">
-						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: green; background: green; color:white !important"
-							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'P' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
-							value="Pagar Parcela" update="tableEspecial"
-							actionListener="#{contasReceberBean.pagarEspecial}" />
-						
-						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: red; background: red; color:white !important"
-							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'PA' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
-							value="Estornar Parcela" update="tableEspecial"
-							actionListener="#{contasReceberBean.estornoEspecial}" />	
-							
-						<p:commandButton value="Fechar"
-							style="height:40px;  margin: 0 auto; width:130px;  background-color: gray; background: gray; color:white !important"
-							onclick="PF(mostraPagamentoEspecial).hide()" />
-					</div>
-					<br />
-					<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<p:dataTable
 							value="#{contasReceberBean.lstEspecialPagarPendentes}" var="d"
 							rowKey="#{d.idPagamentoEspecial}" selectionMode="single"
@@ -276,6 +622,91 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							<p:ajax event="rowSelect"
 								listener="#{contasReceberBean.onRowSelectEspecial}"
 								update="pagamentoEspecial" />
+
+							<f:facet name="header">
+									<p:outputLabel value="Parcelas"
+										style="color: white !important ;font-size: large" />
+
+								</f:facet>
+
+							<p:column headerText="Lancamento"
+								style="text-align:center;font-size: large !important">
+								<p:outputLabel value="#{d.dataLancamento}">
+									<f:convertDateTime pattern="dd/MM/yyyy"
+										timeZone="America/Sao_Paulo" locale="pt_BR" />
+								</p:outputLabel>
+							</p:column>
+							<p:column headerText="Vencimento"
+								style="text-align:center;font-size: large !important">
+								<p:outputLabel value="#{d.dataVencimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy"
+										timeZone="America/Sao_Paulo" locale="pt_BR" />
+								</p:outputLabel>
+							</p:column>
+							<p:column headerText="Forma" style="text-align:center;font-size:large !important">
+								<p:outputLabel value="Entrada" rendered="#{d.formaPagamento.nomePagamento == null}" />
+								<p:outputLabel value="#{d.formaPagamento.nomePagamento}" rendered="#{d.formaPagamento.nomePagamento != null}"/>
+							</p:column>
+							<p:column headerText="Situacao"
+								style="text-align:center;font-size: large !important">
+								<p:outputLabel value="Pendente" rendered="#{d.situacao eq 'P'}"
+									style="color : green" />
+								<p:outputLabel value="Paga" rendered="#{d.situacao eq 'PA'}"
+									style="color : red" />
+							</p:column>
+							<p:column headerText="Valor" style="text-align:right; font-size: large !important">
+								<p:outputLabel value="R$ " />
+								<p:outputLabel value="#{d.valorBruto}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+						</p:dataTable>
+					</div>
+					</div>
+					
+					<br />
+					<div class="ui-g">
+						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: green; background: green; color:white !important; font-size:large"
+							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'P' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
+							value="Pagar Parcela" update="@form"
+							actionListener="#{contasReceberBean.pagarEspecial}" />
+						
+						<p:commandButton style=" margin: 0 auto;height:40px;width:200px; background-color: red; background: red; color:white !important; font-size:large"
+							rendered="#{contasReceberBean.pagamentoEspecialModel.situacao eq 'PA' and contasReceberBean.pagamentoEspecialModel.idPagamentoEspecial > 0}"
+							value="Estornar Parcela" update="@form"
+							actionListener="#{contasReceberBean.estornoEspecial}" />	
+							
+						<p:commandButton value="Fechar"
+							style="height:40px;  margin: 0 auto; width:130px;  background-color: gray; background: gray; color:white !important; font-size:large"
+							onclick="PF(mostraPagamentoEspecial).hide()" />
+					</div>
+
+				</h:form>
+			</div>
+		</p:dialog>
+		
+		<p:dialog widgetVar="mostraPagamentoEspecialVisualizacao"
+			id="mostraPagamentoEspecialVisualizacao" modal="true" resizable="false"
+			height="200" width="800" responsive="true" dynamic="true"
+			appendToBody="@body" header="Pagamento Especial">
+			<div class="ui-fluid">
+
+				<h:form id="pagamentoEspecialVisualizacao">
+					<br />
+					<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+						<p:dataTable
+							value="#{contasReceberBean.lstEspecialPagarPendentes}" var="d"
+							rowKey="#{d.idPagamentoEspecial}" selectionMode="single"
+							id="tableEspecial" reflow="true"
+							selection="#{contasReceberBean.pagamentoEspecialModel}">
+							<p:ajax event="rowSelect"
+								listener="#{contasReceberBean.onRowSelectEspecial}"
+								update="pagamentoEspecial" />
+								
+								<f:facet name="header">
+									<p:outputLabel value="Parcelas" style="color: white !important ;font-size: large" />
+							</f:facet>	
 
 							<p:column headerText="Lancamento"
 								style="text-align:center;font-size: large !important">
@@ -310,430 +741,199 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 							</p:column>
 						</p:dataTable>
 					</div>
-
-				</h:form>
-			</div>
-		</p:dialog>
-
-		<p:dialog widgetVar="relancarPagamento" id="relancarPagamento" closable="false"
-			modal="true" resizable="false" height="400" width="900"
-			responsive="true" dynamic="true" appendToBody="@body"
-			header="Lançamento de Pagamentos">
-			<div class="ui-fluid">
-				<h:form id="relancarForm">
-					<div class="ui-g">
-						<p:outputPanel styleClass="painelPaciente">
-							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-5">
-									<h:outputLabel value="Paciente"
-										style="font-size: large !important;color:white" />
-									<br />
-									<h:outputLabel style="font-size: large !important; color:white;"
-										value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
-								</div>
-
-								<div class="ui-g-12 ui-lg-3">
-									<h:outputLabel value="Consulta"
-										style="font-size: large !important;color:white" />
-									<br />
-									<p:outputLabel required="true"
-										style="font-size: large !important; color:white"
-										value="R$ #{contasReceberBean.contasReceberModel.valorConsulta}" />
-								</div>
-
-								<div class="ui-g-12 ui-lg-4">
-									<h:outputLabel value="Total Desconto/Entrada"
-										style="font-size: large !important; color:white" />
-									<br />
-									<p:outputLabel id="valorComDesconto"
-										style="font-size: large !important; color:white"
-										value="R$ #{contasReceberBean.contasReceberModel.valorComDesconto}">
-
-									</p:outputLabel>
-								</div>
-							</div>
-						</p:outputPanel>
-						<div class="ui-g-12">
-							<div class="card card-w-title">
-								<div class="ui-g-12 ui-lg-12">
-									<div class="ui-g">
-										<div class="ui-g-12 ui-lg-2">
-											<p:outputPanel id="descontos">
-											<h:outputLabel value="Desconto" />
-											<br />
-											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
-												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
-												<p:ajax event="change" update="valorComDesconto par descontos"
-													listener="#{contasReceberBean.fazerDesconto}" />
-											</p:inputNumber>
-											</p:outputPanel>
-										</div>
-
-										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Entrada" />
-											<br />
-											<p:inputNumber decimalPlaces="2" symbol="R$" 
-												symbolPosition="p" emptyValue="0.00" style="font-size: large !important"
-												value="#{contasReceberBean.contasReceberModel.valorEntrada}">
-												<p:ajax event="change" update="valorComDesconto,par"
-													listener="#{contasReceberBean.fazerDesconto}" />
-
-											</p:inputNumber>
-										</div>
-
-										<div class="ui-g-12 ui-lg-6 ui-sm-12">
-											<h:outputLabel value="Duas Formas de Pagamento?" />
-											<p:selectOneRadio
-												value="#{contasReceberBean.contasReceberModel.maisForma}">
-												<f:selectItem itemLabel="Sim" itemValue="S" />
-												<f:selectItem itemLabel="Não" itemValue="N" />
-												<p:ajax event="change" update="@form" />
-											</p:selectOneRadio>
-										</div>
-
-										<ui:fragment
-											rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'N'}">
-											<div class="ui-g">
-												<div class="ui-g-12 ui-lg-6 ui-sm-12">
-													<h:outputLabel value="Forma de Pagamento" />
-													<br />
-													<p:autoComplete id="pagamento"
-														completeMethod="#{auxController.completeFormaPagamento}"
-														forceSelection="true" converter="entityConverter" var="a"
-														itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-														value="#{contasReceberBean.contasReceberModel.formaPagamento}"
-														minQueryLength="2" dropdown="true" maxResults="30"
-														required="false"
-														requiredMessage="Informe uma uma forma de pagamento">
-														<p:column id="p">
-															<h:outputText value="#{a.nomePagamento.toUpperCase()}" />
-														</p:column>
-														<p:ajax event="itemSelect" update="parcelass ,par"
-															listener="#{contasReceberBean.fazerValorAvista}" />
-													</p:autoComplete>
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<p:outputPanel id="parcelass">
-														<h:outputLabel value="Parcela(s)"
-															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}" />
-														<br />
-														<p:selectOneMenu style="height: 35px"
-															value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
-															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}">
-															<f:selectItem itemLabel="Selecione"
-																noSelectionOption="true" />
-															<f:selectItem itemLabel="1x" itemValue="1" />
-															<f:selectItem itemLabel="2x" itemValue="2" />
-															<f:selectItem itemLabel="3x" itemValue="3" />
-															<p:ajax event="change" update="par"
-																listener="#{contasReceberBean.fazerParcelas(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
-														</p:selectOneMenu>
-													</p:outputPanel>
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<h:outputLabel value="Vencimento" />
-													<p:calendar
-														value="#{contasReceberBean.contasReceberModel.dataVencimentoContasReceber}"
-														mindate="today" />
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<h:outputLabel value="Valor" />
-													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
-														symbol="R$" symbolPosition="p"
-														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
-														style="font-size: large !important;" />
-												</div>
-											</div>
-										</ui:fragment>
-										<ui:fragment
-											rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'S'}">
-											<h:panelGroup id="group">
-												<div class="ui-g">
-													<div class="ui-g-12 ui-lg-4 ui-sm-12">
-														<h:outputLabel value="Forma de Pagamento" />
-														<p:autoComplete
-															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
-															forceSelection="true" converter="entityConverter" var="a"
-															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-															value="#{contasReceberBean.formaUm}" minQueryLength="2"
-															dropdown="true" maxResults="30" required="false"
-															requiredMessage="Informe uma uma forma de pagamento">
-														</p:autoComplete>
-													</div>
-
-													<div class="ui-g-12 ui-lg-3 ui-sm-12">
-														<h:outputLabel value="Valor" />
-														<p:inputNumber value="#{contasReceberBean.valorUm}" decimalPlaces="2"
-															symbol="R$">
-															<p:ajax update="valorDois" event="change"
-																listener="#{contasReceberBean.recalcularDuasFormas}" />
-														</p:inputNumber>
-													</div>
-
-													<div class="ui-g-12 ui-lg-2 ui-sm-12">
-														<h:outputLabel value="Vencimento" />
-														<p:calendar value="#{contasReceberBean.vencimentoUm}"
-															mindate="today" pattern="dd/MM/yyyy">
-															<p:ajax event="change" listener="#{calculaVencimento}" />
-														</p:calendar>
-													</div>
-												</div>
-												<div class="ui-g">
-													<div class="ui-g-12 ui-lg-4 ui-sm-12">
-														<h:outputLabel value="Forma de Pagamento" />
-														<p:autoComplete
-															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
-															forceSelection="true" converter="entityConverter" var="a"
-															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-															value="#{contasReceberBean.formaDois}" minQueryLength="2"
-															dropdown="true" maxResults="30" required="false"
-															requiredMessage="Informe uma uma forma de pagamento">
-														</p:autoComplete>
-													</div>
-
-													<div class="ui-g-12 ui-lg-3 ui-sm-12">
-														<h:outputLabel value="Valor" />
-														<p:inputNumber id="valorDois" disabled="true" decimalPlaces="2"
-															value="#{contasReceberBean.valorDois}" symbol="R$">
-														</p:inputNumber>
-													</div>
-
-													<div class="ui-g-12 ui-lg-2 ui-sm-12">
-														<h:outputLabel value="Vencimento" />
-														<p:calendar value="#{contasReceberBean.vencimentoDois}"
-															mindate="today" pattern="dd/MM/yyyy">
-														</p:calendar>
-													</div>
-												</div>
-											</h:panelGroup>
-										</ui:fragment>
-									</div>
-									<div class="ui-g" >
-											<p:commandButton value="Lançar"
-												style="margin: 0 auto !important; height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
-												actionListener="#{contasReceberBean.editarPagamento}" />
-											<p:commandButton value="Fechar"
-												style="margin: 0 auto !important;height:40px;width:130px;  background-color: gray; background: gray; color:white !important"
-												oncomplete="PF('relancarPagamento').hide()"
-												actionListener="#{contasReceberBean.busca}" />
-									</div>
-							</div>
-						</div>
-						</div>
 					</div>
+					<div class="ui-g">
+						<p:commandButton value="Fechar"
+							style="height:40px; background-color: gray; margin: 0 auto ;font-size:large;
+							background: gray; color:white !important; width:130px;"
+							onclick="PF('mostraPagamentoEspecialVisualizacao').hide()" />
+					</div>
+
 				</h:form>
 			</div>
 		</p:dialog>
 		
-		<p:dialog widgetVar="relancarPagamentoEditar" id="relancarPagamentoEditar"
-			modal="true" resizable="false" height="400" width="900" closable="false"
-			responsive="true" dynamic="true" appendToBody="@body"
-			header="Editar Lançamento">
+		<p:dialog widgetVar="mostrarCreditoVisualizacao"
+			id="mostrarCreditoVisualizacao" modal="true" resizable="false"
+			height="200" width="800" responsive="true" dynamic="true"
+			appendToBody="@body" header="Resumo Crédito">
 			<div class="ui-fluid">
-				<h:form id="relancarFormEditar">
+
+				<h:form id="creditoVisualizacao">
+					<br />
 					<div class="ui-g">
-						<p:outputPanel styleClass="painelPaciente">
-							<div class="ui-g">
-								<div class="ui-g-12 ui-lg-5">
-									<h:outputLabel value="Paciente"
-										style="font-size: large !important;color:white" />
-									<br />
-									<h:outputLabel style="font-size: large !important; color:white;"
-										value="#{contasReceberBean.contasReceberModel.paciente.pessoa.pessoaNome}" />
-								</div>
-
-								<div class="ui-g-12 ui-lg-3">
-									<h:outputLabel value="Consulta"
-										style="font-size: large !important;color:white" />
-									<br />
-									<p:outputLabel required="true"
-										style="font-size: large !important; color:white"
-										value="R$ #{contasReceberBean.contasReceberModel.valorConsulta}" />
-								</div>
-
-								<div class="ui-g-12 ui-lg-4">
-									<h:outputLabel value="Total Desconto/Entrada"
-										style="font-size: large !important; color:white" />
-									<br />
-									<p:outputLabel id="valorComDesconto"
-										style="font-size: large !important; color:white"
-										value="R$ #{contasReceberBean.contasReceberModel.valorComDesconto}">
-
-									</p:outputLabel>
-								</div>
-							</div>
-						</p:outputPanel>
-						<div class="ui-g-12">
-							<div class="card card-w-title">
-								<div class="ui-g-12 ui-lg-12">
-									<div class="ui-g">
-										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Desconto" />
-											<br />
-											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: large !important"
-												value="#{contasReceberBean.contasReceberModel.valorDesconto}">
-												<p:ajax event="change" update="valorComDesconto par @this"
-													listener="#{contasReceberBean.fazerDesconto}" />
-											</p:inputNumber>
-										</div>
-
-										<div class="ui-g-12 ui-lg-2">
-											<h:outputLabel value="Entrada" />
-											<br />
-											<p:inputNumber decimalPlaces="2" symbol="R$"
-												symbolPosition="p" emptyValue="0" style="font-size: large !important"
-												value="#{contasReceberBean.contasReceberModel.valorEntrada}">
-												<p:ajax event="change" update="valorComDesconto,par"
-													listener="#{contasReceberBean.fazerDesconto}" />
-
-											</p:inputNumber>
-										</div>
-
-										<div class="ui-g-12 ui-lg-6 ui-sm-12">
-											<h:outputLabel value="Duas Formas de Pagamento?" />
-											<p:selectOneRadio
-												value="#{contasReceberBean.contasReceberModel.maisForma}">
-												<f:selectItem itemLabel="Sim" itemValue="S" />
-												<f:selectItem itemLabel="Não" itemValue="N" />
-												<p:ajax event="change" update="relancarFormEditar" />
-											</p:selectOneRadio>
-										</div>
-
-										<ui:fragment rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'N'}">
-											<div class="ui-g">
-												<div class="ui-g-12 ui-lg-6 ui-sm-12">
-													<h:outputLabel value="Forma de Pagamento" />
-													<br />
-													<p:autoComplete id="pagamento"
-														completeMethod="#{auxController.completeFormaPagamento}"
-														forceSelection="true" converter="entityConverter" var="a"
-														itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-														value="#{contasReceberBean.contasReceberModel.formaPagamento}"
-														minQueryLength="2" dropdown="true" maxResults="30"
-														required="false"
-														requiredMessage="Informe uma uma forma de pagamento">
-														<p:column id="p">
-															<h:outputText value="#{a.nomePagamento.toUpperCase()}" />
-														</p:column>
-														<p:ajax event="itemSelect" update="parcelass ,par"
-															listener="#{contasReceberBean.fazerValorAvista}" />
-													</p:autoComplete>
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<p:outputPanel id="parcelass">
-														<h:outputLabel value="Parcela(s)"
-															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}" />
-														<br />
-														<p:selectOneMenu style="height: 35px"
-															value="#{contasReceberBean.contasReceberModel.quantidadeParcelas}"
-															rendered="#{contasReceberBean.contasReceberModel.formaPagamento.idFormaPagamento eq '1'}">
-															<f:selectItem itemLabel="Selecione"
-																noSelectionOption="true" />
-															<f:selectItem itemLabel="1x" itemValue="1" />
-															<f:selectItem itemLabel="2x" itemValue="2" />
-															<f:selectItem itemLabel="3x" itemValue="3" />
-															<p:ajax event="change" update="par"
-																listener="#{contasReceberBean.fazerParcelas(contasReceberBean.contasReceberModel.quantidadeParcelas)}" />
-														</p:selectOneMenu>
-													</p:outputPanel>
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<h:outputLabel value="Vencimento" />
-													<p:calendar
-														value="#{contasReceberBean.contasReceberModel.dataVencimentoContasReceber}"
-														mindate="today" />
-												</div>
-												<div class="ui-g-12 ui-lg-2">
-													<h:outputLabel value="Valor" />
-													<p:inputNumber id="par" disabled="true" decimalPlaces="2"
-														symbol="R$" symbolPosition="p"
-														value="#{contasReceberBean.contasReceberModel.valorParcelado}"
-														style="font-size: large !important;" />
-												</div>
-											</div>
-										</ui:fragment>
-										<ui:fragment
-											rendered="#{contasReceberBean.contasReceberModel.maisForma eq 'S'}">
-											<h:panelGroup id="group">
-												<div class="ui-g">
-													<div class="ui-g-12 ui-lg-4 ui-sm-12">
-														<h:outputLabel value="Forma de Pagamento" />
-														<p:autoComplete
-															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
-															forceSelection="true" converter="entityConverter" var="a"
-															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-															value="#{contasReceberBean.formaUm}" minQueryLength="2"
-															dropdown="true" maxResults="30" required="false"
-															requiredMessage="Informe uma uma forma de pagamento">
-														</p:autoComplete>
-													</div>
-
-													<div class="ui-g-12 ui-lg-3 ui-sm-12">
-														<h:outputLabel value="Valor" />
-														<p:inputNumber value="#{contasReceberBean.valorUm}"
-															symbol="R$">
-															<p:ajax update="valorDois" event="change"
-																listener="#{contasReceberBean.recalcularDuasFormas}" />
-														</p:inputNumber>
-													</div>
-
-													<div class="ui-g-12 ui-lg-2 ui-sm-12">
-														<h:outputLabel value="Vencimento" />
-														<p:calendar value="#{contasReceberBean.vencimentoUm}"
-															mindate="today" pattern="dd/MM/yyyy">
-															<p:ajax event="change" listener="#{calculaVencimento}" />
-														</p:calendar>
-													</div>
-												</div>
-												<div class="ui-g">
-													<div class="ui-g-12 ui-lg-4 ui-sm-12">
-														<h:outputLabel value="Forma de Pagamento" />
-														<p:autoComplete
-															completeMethod="#{auxController.completeFormaPagamentoSemCrediario}"
-															forceSelection="true" converter="entityConverter" var="a"
-															itemLabel="#{a.nomePagamento}" itemValue="#{a}"
-															value="#{contasReceberBean.formaDois}" minQueryLength="2"
-															dropdown="true" maxResults="30" required="false"
-															requiredMessage="Informe uma uma forma de pagamento">
-														</p:autoComplete>
-													</div>
-
-													<div class="ui-g-12 ui-lg-3 ui-sm-12">
-														<h:outputLabel value="Valor" />
-														<p:inputNumber id="valorDois" disabled="true"
-															value="#{contasReceberBean.valorDois}" symbol="R$">
-														</p:inputNumber>
-													</div>
-
-													<div class="ui-g-12 ui-lg-2 ui-sm-12">
-														<h:outputLabel value="Vencimento" />
-														<p:calendar value="#{contasReceberBean.vencimentoDois}"
-															mindate="#{contasReceberBean.vencimentoUm}"
-															pattern="dd/MM/yyyy">
-														</p:calendar>
-													</div>
-												</div>
-											</h:panelGroup>
-										</ui:fragment>
-									</div>
-									<div class="ui-g" >
-											<p:commandButton value="Lançar"
-												style="margin:0 auto !important;height:40px;width:130px; background-color: seagreen; background: seagreen; color:white !important; font-size: large !important"
-												actionListener="#{contasReceberBean.editarPagamento}" />
-										
-											<p:commandButton value="Fechar"
-												style="margin:0 auto !important;height:40px;width:130px;  background-color: gray; background: gray; color:white !important; font-size: large !important"
-												oncomplete="PF('relancarPagamentoEditar').hide()"
-												actionListener="#{contasReceberBean.busca}" />
-									</div>
-								</div>
-							</div>
-						</div>
+						<p:commandButton value="Fechar"
+							style="height:40px;  margin: 0 auto; width:130px;  background-color: gray; background: gray; color:white !important"
+							onclick="PF(mostrarCreditoVisualizacao).hide()" />
 					</div>
+					<br />
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+						<p:dataTable value="#{contasReceberBean.lstCredito}" var="d"
+							emptyMessage="Não Há Registros" reflow="true"
+							rowKey="#{d.idContasReceber}" selectionMode="single" id="table"
+							paginator="true" rows="8" 
+							selection="#{contasReceberBean.contasReceberModel}">
+
+							<p:ajax event="rowSelect"
+								listener="#{contasReceberBean.onRowSelect}"
+								update="table, formPai:botoes" />
+
+							<p:column headerText="Status" priority="1" style="overflow: hidden;text-align: center; font-size: large;width: 10%">
+								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+									style="color : red" />
+								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
+									style="color : blue" />
+								<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
+									style="color : green" />
+							</p:column>
+
+							<p:column headerText="Usuário" priority="5"
+								style="overflow: hidden;text-align: center; font-size: large;"
+								width="8%">
+								<p:outputLabel value="#{d.login.login.toUpperCase()}" />
+							</p:column>
+
+							<p:column headerText="Paciente" priority="1"
+								style="text-align: left; font-size: large" width="25%">
+								<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
+								<p:outputLabel value=" | #{d.paciente.convenio.nomeConvenio}" />
+							</p:column>
+							
+							<p:column headerText="Forma" style="text-align: center; font-size: large" priority="5">
+								<p:outputLabel value="Parcelado em #{d.quantidadeParcelas}x"
+									rendered="#{d.tipoPagamento eq 'CC'}">
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Dt.Pagamento" priority="5"
+								style="text-align: center; font-size: large" width="15%">
+								<p:outputLabel value="#{d.dataPagamento}"
+									rendered="#{d.dataPagamento != null}">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="America/Sao_Paulo" />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Entrada" priority="5"
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorEntrada != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorEntrada}" rendered="#{d.valorEntrada != null}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Desconto" priority="5"
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorDesconto != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorDesconto}" >
+								<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Valor" priority="1"
+								style="text-align: center	; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorConsulta != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorConsulta}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							</p:dataTable>
+							</div></div>
 				</h:form>
 			</div>
 		</p:dialog>
+		
+		<p:dialog widgetVar="mostrarDebitoVisualizacao"
+			id="mostrarDebitoVisualizacao" modal="true" resizable="false"
+			height="200" width="800" responsive="true" dynamic="true"
+			appendToBody="@body" header="Resumo Débito">
+			<div class="ui-fluid">
+
+				<h:form id="debitoVisualizacao">
+					<br />
+					<div class="ui-g">
+						<p:commandButton value="Fechar"
+							style="height:40px;  margin: 0 auto; width:130px;  background-color: gray; background: gray; color:white !important"
+							onclick="PF(mostraPagamentoEspecial).hide()" />
+					</div>
+					<br />
+					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+						<p:dataTable value="#{contasReceberBean.lstDebito}" var="d"
+							emptyMessage="Não Há Registros" reflow="true"
+							rowKey="#{d.idContasReceber}" selectionMode="single" id="table"
+							paginator="true" rows="8" 
+							selection="#{contasReceberBean.contasReceberModel}">
+
+							<p:ajax event="rowSelect"
+								listener="#{contasReceberBean.onRowSelect}"
+								update="table, formPai:botoes" />
+
+							<p:column headerText="Status" priority="1" style="overflow: hidden;text-align: center; font-size: large;width: 10%">
+								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
+									style="color : red" />
+								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
+									style="color : blue" />
+								<p:outputLabel value="Pago" rendered="#{d.status eq 'PA'}"
+									style="color : green" />
+							</p:column>
+
+							<p:column headerText="Usuário" priority="5"
+								style="overflow: hidden;text-align: center; font-size: large;"
+								width="8%">
+								<p:outputLabel value="#{d.login.login.toUpperCase()}" />
+							</p:column>
+
+							<p:column headerText="Paciente" priority="1"
+								style="text-align: left; font-size: large" width="25%">
+								<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
+								<p:outputLabel value=" | #{d.paciente.convenio.nomeConvenio}" />
+							</p:column>
+							
+							<p:column headerText="Forma" style="text-align: center; font-size: large" priority="5">
+								<p:outputLabel value="Parcelado em #{d.quantidadeParcelas}x"
+									rendered="#{d.tipoPagamento eq 'CC'}">
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Dt.Pagamento" priority="5"
+								style="text-align: center; font-size: large" width="15%">
+								<p:outputLabel value="#{d.dataPagamento}"
+									rendered="#{d.dataPagamento != null}">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="America/Sao_Paulo" />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Entrada" priority="5"
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorEntrada != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorEntrada}" rendered="#{d.valorEntrada != null}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Desconto" priority="5"
+								style="text-align: center; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorDesconto != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorDesconto}" >
+								<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Valor" priority="1"
+								style="text-align: center	; font-size: large" width="8%">
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorConsulta != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorConsulta}" >
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
+							</p:dataTable>
+							</div></div>
+				</h:form>
+			</div>
+		</p:dialog>
+		
 	</ui:define>
 </ui:composition>

@@ -53,6 +53,14 @@ public class CustomScheduleEvent implements ScheduleEvent, Serializable {
 		this.data = data;
 		this.description = description;
 	}
+	
+	public CustomScheduleEvent(String title, String styleClass,
+			String description, Object data) {
+		this.title = title;
+		this.styleClass = styleClass;
+		this.data = data;
+		this.description = description;
+	}
 
 	public CustomScheduleEvent(String title, Date start, Date end, String styleClass, boolean allDay,
 			String description, Medico medico, Paciente paciente, Object data) {

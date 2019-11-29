@@ -18,6 +18,19 @@
 	font-weight: bold;
 }
 
+.ui-fluid .ui-inputfield {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 35px;
+}
+
+.ui-autocomplete-panel .ui-autocomplete-list {
+    padding: 0.4em;
+    border: 0 none;
+    font-size: large;
+}
+
 .ui-fluid .ui-password {
     width: 100%;
     height: 35px;
@@ -48,7 +61,7 @@
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield {
 	padding: 0 22px 0 0;
 	border: 0;
-	height: 35px !important;
+	/*height: 35px !important;*/
 }
 
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
@@ -95,8 +108,20 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 .ui-fluid .ui-autocomplete-input {
   	height : 35px !important;
     width: 100%;
+     font-size: large;
 }
 
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+    height: 35px;
+    font-size: large;
+}
+
+.ui-autocomplete-panel .ui-autocomplete-list {
+    padding: 0.4em;
+    border: 0 none;
+    font-size: large;
+}
 
 
 .ui-dialog-titlebar {
@@ -229,13 +254,10 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 										<p:autoComplete id="grpPreco"
 											completeMethod="#{auxController.completePrecoConsulta}"
 											forceSelection="true" converter="entityConverter" var="a"
-											itemLabel="#{a.categoria}" itemValue="#{a}"
+											itemLabel="#{a.categoria}  R$ #{a.valor}" itemValue="#{a}"
 											value="#{medicoBean.medicoModel.precoConsulta}" minQueryLength="1"
 											dropdown="true" maxResults="30" required="true"
 											requiredMessage="Informe um Grupo de preço">
-											<p:column>
-												<p:outputLabel value=" #{a.categoria} | R$ #{a.valor}" style="font-size: large" />
-											</p:column>
 										</p:autoComplete>
 										<p:commandButton  icon="ui-icon-plus"
 												immediate="true" 
@@ -287,17 +309,17 @@ ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
 									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
-										<p:inputText id="campoCep" autocomplete="true"
+										<p:inputMask id="campoCep" autocomplete="true"
 											value="#{medicoBean.medicoModel.pessoa.cep}"
 											title="O endereço será pesquisado na base de dados do correio ao sair do campo cep"
-											required="true" requiredMessage="Informe o Cep Válido"
-											maxlength="8">
+											required="true" requiredMessage="Informe o Cep Válido" 
+											mask="99.999-999"  maxlength="8">
 											<p:ajax event="blur" execute="@this"
 												listener="#{medicoBean.pesquisarCep}"
 												update="logradouro,bairro,uf,complemento,localidade" />
 											<p:tooltip id="toolTipFocus" for="campoCep" showEvent="focus"
 												hideEvent="blur" />
-										</p:inputText>
+										</p:inputMask>
 									</div>
 									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"

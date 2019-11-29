@@ -122,13 +122,13 @@
 									</div>
 									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Valor:*" />
-										<p:inputNumber decimalPlaces="2"  required="true" maxlength="150" 
+										<p:inputNumber decimalPlaces="2"  required="true" requiredMessage="Informe um Valor" maxlength="150" 
 											value="#{precoConsultaBean.precoConsultaModel.valor}" />
 									</div>
 
 									<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Observação:*" />
-										<p:inputTextarea required="true" maxlength="150"
+										<p:inputTextarea required="false" maxlength="150"
 											value="#{precoConsultaBean.precoConsultaModel.observacao}" />
 									</div>
 								</div>

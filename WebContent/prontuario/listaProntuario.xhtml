@@ -16,6 +16,14 @@
 	font-weight: bold
 }
 
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
+
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     border-bottom: 0 !important;
     top: 1px !important;
@@ -213,8 +221,7 @@
 									<p:column headerText="Data da Agendada" priority="1"
 										style="text-align: center; font-size: large; width: 15%">
 										<p:outputLabel value="#{d.dataConsulta}" style="color:green">
-											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
-												timeZone="America/Sao_Paulo" />
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt_BR" timeZone="America/Sao_Paulo" />
 										</p:outputLabel>
 									</p:column>
 

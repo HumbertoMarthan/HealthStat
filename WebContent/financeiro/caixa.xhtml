@@ -18,6 +18,14 @@
 	font-weight: bold;
 }
 
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
+
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     border-bottom: 0 !important;
     top: 1px !important;
@@ -163,7 +171,7 @@
 										</div>
 									</div>
 									<div class="ui-g-12 ui-lg-1">
-										<p:commandLink id="impressao"	rendered="#{caixaBean.lstCaixa.size() > 0}"
+										<p:commandLink id="impressao"	rendered="false"
 											actionListener="#{caixaBean.geraRelatorio}">
 											<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
 										</p:commandLink>
@@ -223,7 +231,7 @@
 									
 									<div class="ui-g dashboard">
 									
-									<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Despesas</h2></div>
+									<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Receitas</h2></div>
 									<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
 								
 									<p:repeat var="d" value="#{caixaBean.lstFinanceiroMap}">
@@ -235,7 +243,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> 
 													<span class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.janeiror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.janeiror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel>
 													</span>
@@ -250,7 +258,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> 
 													<span class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.fevereiror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.fevereiror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel>
 													</span>
@@ -265,7 +273,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> 
 													<span class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.marcor}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.marcor}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel>
 													</span>
@@ -280,7 +288,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.abrilr}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.abrilr}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 													</p:outputLabel>
 													</span>		
@@ -295,7 +303,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> 
 													<span class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.maior}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.maior}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel>
 													</span>
@@ -309,7 +317,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.junhor}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.junhor}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -323,7 +331,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count"> 
 														R$ 
-														<p:outputLabel value="#{d.julhor}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.julhor}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -337,7 +345,7 @@
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">
 														R$ 
-														<p:outputLabel value="#{d.agostor}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.agostor}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -350,7 +358,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.setembror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.setembror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -363,7 +371,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.outubror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.outubror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -376,7 +384,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.novembror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.novembror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -389,7 +397,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.dezembror}" style="color: red; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.dezembror}" style="color: green; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -397,7 +405,7 @@
 										</div>
 										
 										<div class="ui-g">
-										<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Receita</h2></div>
+										<div class="ui-g-12 ui-md-12 ui-lg-12"><h2 style="font-weight:bold; font-size:30px" >Despesas</h2></div>
 										<div class="ui-g-12 ui-md-12 ui-lg-12"><hr/></div>
 										
 										<div class="ui-g-12 ui-md-6 ui-lg-3">
@@ -407,7 +415,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.janeirop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.janeirop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -420,7 +428,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.fevereirop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.fevereirop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -433,7 +441,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.marcop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.marcop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -446,7 +454,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.abrilp}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.abrilp}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -459,7 +467,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.maiop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.maiop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel>
 														</span>
@@ -473,7 +481,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.junhop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.junhop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -486,7 +494,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.julhop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.julhop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -499,7 +507,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.agostop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.agostop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -512,7 +520,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.setembrop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.setembrop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -525,7 +533,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.outubrop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.outubrop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -538,7 +546,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.novembrop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.novembrop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>
@@ -551,7 +559,7 @@
 													<span class="overview-box-details-count"></span><br />
 													<i class="fa fa-money  overview-box-details-icon" /> <span
 														class="overview-box-details-count">R$ 
-														<p:outputLabel value="#{d.dezembrop}" style="color: green; font-size: 24px !important;" >
+														<p:outputLabel value="#{d.dezembrop}" style="color: red ; font-size: 24px !important;" >
 															<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 														</p:outputLabel></span>
 												</div>

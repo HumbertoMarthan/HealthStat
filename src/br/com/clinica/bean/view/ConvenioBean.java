@@ -100,7 +100,7 @@ public class ConvenioBean extends BeanManagedViewAbstract {
 	// PESQUISA CEP
 		public void pesquisarCep(AjaxBehaviorEvent event) throws Exception {
 			try {
-				URL url = new URL("https://viacep.com.br/ws/" + convenioModel.getCep() + "/json/");
+				URL url = new URL("https://viacep.com.br/ws/" + convenioModel.getCep().replace(".", "").replace("-", "") + "/json/");
 				URLConnection connection = url.openConnection();
 				InputStream inputStream = connection.getInputStream(); // is
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br

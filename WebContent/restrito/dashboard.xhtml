@@ -15,6 +15,24 @@
 	font-size: large !important;
 }
 
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .3em 16px .1em 0;
+    font-size: large;
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: .3em 1em;
+    font-size: large;
+}
+
+active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #79b7e7;
+    background: lightgreen;
+    font-weight: bold;
+    color: #e17009;
+}
+
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     border-bottom: 0 !important;
     top: 1px !important;
@@ -280,7 +298,7 @@ buttonset {
 										style="color: white; background: green; font-weight: bold; width : 100% !important; text-align:center; opacity: 100" />
 								</div>
 								<div class="ui-g-12 ui-md-6 ui-lg-4">
-									<p:button value="Confirmação" disabled="true"
+									<p:button value="Confirmadas" disabled="true"
 										style="color: white; background: blue; font-weight: bold; width : 100% !important; text-align:center; opacity: 100" />
 								</div>
 							</div>
@@ -365,14 +383,14 @@ buttonset {
 									<p:column headerText="Data Inicio" priority="1"
 										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.dataInicio}">
-											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" locale="pt_BR" />
 										</p:outputLabel>
 									</p:column>
 
-									<p:column headerText="Data Inicio" priority="1"
+									<p:column headerText="Data Fim" priority="1"
 										style="overflow: hidden;text-align: left; font-size: large !important">
 										<p:outputLabel value="#{d.dataFim}">
-											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" locale="pt_BR" />
 										</p:outputLabel>
 									</p:column>
 
@@ -593,12 +611,13 @@ buttonset {
 								<p:outputLabel value="Tipo de Agendamento" />
 								<br /> <br />
 								<p:selectOneButton value="#{scheduleBean.evento.tipoEvento}"
-									styleClass="inputAgenda" required="true" style="width : 100%"
+									styleClass="inputAgenda" required="true" style="width : 100%;"
 									requiredMessage="Informe um tipo de agendamento">
 									<f:selectItems value="#{scheduleBean.tiposEventos}"
 										var="tipoEvento" itemLabel="#{tipoEvento.descricao}" />
 								</p:selectOneButton>
 							</div>
+							<br/>
 
 							<div class="ui-g">
 								<div class="ui-g-12 ui-lg-6">
@@ -612,8 +631,8 @@ buttonset {
 										timeZone="GMT-3" minHour="8" showTodayButton="false"  mode="popup"
 										value="#{scheduleBean.evento.dataInicio}">
 										
-										<p:ajax event="blur" listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />
-										<!--  <p:ajax event="change"	listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" />--> 
+										<!-- <p:ajax event="blur" listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" /> -->
+										 <p:ajax event="change"	listener="#{scheduleBean.atualizaValorDataFim}" update="dtf" /> 
 									</p:calendar>
 								</div>
 								<div class="ui-g-12 ui-lg-6">

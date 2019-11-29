@@ -95,9 +95,7 @@ public class Especialidade implements EntityBase, Serializable {
 
 	@Override
 	public String toString() {
-		
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+ nomeEspecialidade);
-		return nomeEspecialidade;
+		return nomeEspecialidade.replace("[", "").replace("]", "");
 	}
 
 }

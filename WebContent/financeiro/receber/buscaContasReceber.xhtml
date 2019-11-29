@@ -30,63 +30,78 @@
 			<div class="ui-fluid">
 				<p:panel header="Consultas" style="text-align:center">
 					<div class="ui-g">
-						<h:panelGroup id="botoes">
-							<!-- Botão Pagamento -->
-							<p:commandButton value="Pagamento"
-								actionListener="#{contasReceberBean.setarVariaveisNulas}"
-								rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and 	contasReceberBean.contasReceberModel.idContasReceber > 0 and contextoBean.possuiAcesso('ADMIN','MOV_REC')}"
-								style="height:40px;width:170px; 
-								background-color: darkcyan; background: darkcyan; color:white !important"
-								ajax="true" immediate="true" id="buttonPagamento"
-								icon="fa fa-info-circle" iconPos="right"
-								oncomplete="PF('relancarPagamento').show()" update=":formulario">
-								<f:setPropertyActionListener value="#{d}"
-									target="#{contasReceberBean.contasReceberModel}" />
-							</p:commandButton>
-
-							<p:commandButton
-								style="height:40px;width:170px; 
-								background-color: blue; background: blue; color:white !important"
-								value="Editar Pagamento" update=":relancarFormEditar"
-								rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and contasReceberBean.contasReceberModel.idContasReceber > 0 and contextoBean.possuiAcesso('ADMIN','MOV_REC')}"	
-											onclick="PF('relancarPagamentoEditar').show()">
-							</p:commandButton>
-						</h:panelGroup>
-						<div class="ui-g-12 ui-lg-3">
-							<p:selectOneRadio
-								value="#{contasReceberBean.campoBuscaTipoConta}">
-								<f:selectItem itemLabel="Pendente" itemValue="P" />
-								<f:selectItem itemLabel="Lançado" itemValue="L" />
-								<f:selectItem itemLabel="Pago" itemValue="PA" />
-								<p:ajax event="change" update="@form"
-									listener="#{contasReceberBean.busca}" />
-							</p:selectOneRadio>
-						</div>
-						<div class="ui-g-12 ui-lg-3">
-							<div class="ui-inputgroup">
-								<p:inputText
-									value="#{contasReceberBean.campoBuscaContasReceber}"
-									placeholder="Buscar pelo Nome do Paciente" id="inputNome"
-									style="height:40px; font-size: large !important; font-weight: bold; " />
-								<p:commandButton style="height:40px; " styleClass="btn btn-blue"
-									icon="ui-icon-search" id="btnBuscatxt"
-									actionListener="#{contasReceberBean.busca}"
-									update=" inputNome,table,formPai:botoes" />
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
+							<h:panelGroup id="botoes">
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
+									<p:commandButton value="Pagamento"
+										actionListener="#{contasReceberBean.setarVariaveisNulas}"
+										rendered="#{contasReceberBean.contasReceberModel.status eq 'P' and 	contasReceberBean.contasReceberModel.idContasReceber > 0 and contextoBean.possuiAcesso('ADMIN','MOV_REC')}"
+										style="height: 40px;font-size:large;background-color: darkcyan; background: darkcyan; color:white !important"
+										ajax="true" immediate="true" id="buttonPagamento"
+										icon="fa fa-check" iconPos="right"
+										oncomplete="PF('relancarPagamento').show()" update=":formulario">
+										<f:setPropertyActionListener value="#{d}"
+											target="#{contasReceberBean.contasReceberModel}" />
+									</p:commandButton>
+								</div>
+								<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
+									<p:commandButton style="height:40px; background-color: blue; background: blue; color:white !important; font-size: large"
+										value="Editar Pagamento" update=":formulario"
+										rendered="#{contasReceberBean.contasReceberModel.status eq 'L'  and 
+													contextoBean.possuiAcesso('ADMIN','ATE','MOV_REC') and	
+													 (contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'AV' or contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CD'
+													 or contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CRE' or contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CC')}"	 
+										onclick="PF('relancarPagamento').show()">
+									</p:commandButton>
+								</div>
+									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
+									<p:commandButton style="height:40px; background-color: yellow; background: yellow; color:white !important; font-size: large"
+									action="#{contasReceberBean.selecionarResumo(contasReceberBean.contasReceberModel)}"
+										value="Resumo" update=":formularioVisualizacao :pagamentoEspecialVisualizacao :creditoVisualizacao :debitoVisualizacao"
+										rendered="#{contasReceberBean.contasReceberModel.status eq 'PA'  and 
+												    contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'CRE' or
+													contasReceberBean.contasReceberModel.formaPagamento.siglaPagamento eq 'ESP' and 
+													contextoBean.possuiAcesso('ADMIN','ATE','MOV_REC')}"	> 
+									</p:commandButton>
+								</div>
+							</h:panelGroup>
+							<div class="ui-g-12 ui-lg-3">
+								<p:selectOneRadio
+									value="#{contasReceberBean.campoBuscaTipoConta}">
+									<f:selectItem itemLabel="Pendente" itemValue="P" />
+									<f:selectItem itemLabel="Lançado" itemValue="L" />
+									<f:selectItem itemLabel="Pago" itemValue="PA" />
+									<p:ajax event="change" update="@form"
+										listener="#{contasReceberBean.busca}" />
+								</p:selectOneRadio>
 							</div>
-						</div>
-						<div class="ui-g-12 ui-lg-1">
-							<p:commandLink id="impressao"	rendered="#{contasReceberBean.lstContasReceber.size() > 0}"
-								actionListener="#{contasReceberBean.geraRelatorio}">
-								<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
-							</p:commandLink>
+							<div class="ui-g-12 ui-lg-3">
+								<div class="ui-inputgroup">
+									<p:inputText
+										value="#{contasReceberBean.campoBuscaContasReceber}"
+										placeholder="Buscar pelo Nome do Paciente" id="inputNome"
+										style="height:40px; font-size: large !important; font-weight: bold; " />
+									<p:commandButton style="height:40px; " styleClass="btn btn-blue"
+										icon="ui-icon-search" id="btnBuscatxt"
+										actionListener="#{contasReceberBean.busca}"
+										update=" inputNome,table,formPai:botoes" />
+								</div>
+							</div>
+							<div class="ui-g-12 ui-lg-1">
+								<p:commandLink id="impressao"	rendered="#{contasReceberBean.lstContasReceber.size() > 0}"
+									actionListener="#{contasReceberBean.geraRelatorio}">
+									<h:graphicImage	library="img" name="pdf-icon.png" height="40" width="40" />
+								</p:commandLink>
+							</div>
 						</div>
 
 					</div>
 				</p:panel>
 				<p:panel>
 					<div class="ui-g">
+						<div class="ui-g-12 ui-lg-12 ui-sm-12 ui-md-12">
 						<p:dataTable value="#{contasReceberBean.lstContasReceber}" var="d"
-							emptyMessage="Não Há Registros" styleClass="table.gridtable"
+							emptyMessage="Não Há Registros" reflow="true"
 							rowKey="#{d.idContasReceber}" selectionMode="single" id="table"
 							paginator="true" rows="8" 
 							selection="#{contasReceberBean.contasReceberModel}">
@@ -95,7 +110,7 @@
 								listener="#{contasReceberBean.onRowSelect}"
 								update="table, formPai:botoes" />
 
-							<p:column headerText="Status" priority="1" style="overflow: hidden;text-align: center; font-size: large;width: 8%">
+							<p:column headerText="Status" priority="1" style="overflow: hidden;text-align: center; font-size: large;width: 10%">
 								<p:outputLabel value="Pendente" rendered="#{d.status eq 'P'}"
 									style="color : red" />
 								<p:outputLabel value="Lançada" rendered="#{d.status eq 'L'}"
@@ -104,30 +119,48 @@
 									style="color : green" />
 							</p:column>
 
-							<p:column headerText="Usuário"
+							<p:column headerText="Usuário" priority="5"
 								style="overflow: hidden;text-align: center; font-size: large;"
-								width="10%">
+								width="8%">
 								<p:outputLabel value="#{d.login.login.toUpperCase()}" />
 							</p:column>
 
-							<p:column headerText="Paciente"
-								style="text-align: left; font-size: large" width="30%">
+							<p:column headerText="Paciente" priority="1"
+								style="text-align: left; font-size: large" width="25%">
 								<p:outputLabel value="#{d.paciente.pessoa.pessoaNome}" />
 								<p:outputLabel value=" | #{d.paciente.convenio.nomeConvenio}" />
 							</p:column>
-							<p:column headerText="Pagamento"
+							
+							<p:column headerText="Forma"  style="text-align: center; font-size: large" priority="5" width="15%">
+									<p:outputLabel value="#{d.formaPagamento.nomePagamento}"
+									rendered="#{d.formaPagamento != null and d.tipoPagamento ne 'ESP'}" style="color:blue" />
+									
+									<p:outputLabel value="Duas Formas"
+									rendered="#{d.tipoPagamento eq 'ESP'}" style="color:blue" />
+									
+									<!-- <p:outputLabel value="Nâo Lançado"
+									rendered="#{d.formaPagamento == null}" style="color:red" /> -->
+								
+								<br/>	
+								<p:outputLabel value="Parcelado em #{d.quantidadeParcelas}x"
+									rendered="#{d.tipoPagamento eq 'CC'}">
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Dt.Pagamento" priority="5"
 								style="text-align: center; font-size: large" width="10%">
 								<p:outputLabel value="#{d.dataPagamento}"
 									rendered="#{d.dataPagamento != null}">
-									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt_BR"
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
 										timeZone="America/Sao_Paulo" />
 								</p:outputLabel>
-
+								
 								<p:outputLabel value="Consulta não quitada"
 									rendered="#{d.dataPagamento == null}" style="color:red" />
+							
 							</p:column>
 							
-							<p:column headerText="Entrada"
+							<p:column headerText="Entrada" priority="5"
 								style="text-align: center; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorEntrada == null}"/>
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorEntrada != null}"/>
@@ -136,7 +169,7 @@
 								</p:outputLabel>
 							</p:column>
 							
-							<p:column headerText="Desconto"
+							<p:column headerText="Desconto" priority="5"
 								style="text-align: center; font-size: large" width="8%">
 								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorDesconto == null}"/>
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorDesconto != null}"/>
@@ -145,15 +178,23 @@
 								</p:outputLabel>
 							</p:column>
 							
-							<p:column headerText="Valor"
-								style="text-align: center	; font-size: large" width="8%">
+								<p:column headerText="Consulta" priority="1" style="text-align: center	; font-size: large" width="10%">
 								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorConsulta != null}"/>
 								<p:outputLabel style="color: red" value="#{d.valorConsulta}" >
 									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
 								</p:outputLabel>
 							</p:column>
+							
+							<p:column headerText="Total Final" priority="1" style="text-align: center	; font-size: large" width="10%">
+								<p:outputLabel style="color: red" value="Não Lançado" rendered="#{d.valorComDesconto == null}"/>
+								
+								<p:outputLabel style="color: red" value="R$ " rendered="#{d.valorComDesconto != null}"/>
+								<p:outputLabel style="color: red" value="#{d.valorComDesconto}" rendered="#{d.valorComDesconto != null}">
+									<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2"  />
+								</p:outputLabel>
+							</p:column>
 
-							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta eq 'L'}">
+							<p:column headerText="Ações" width="10%" rendered="#{contasReceberBean.campoBuscaTipoConta eq 'L'}" priority="1">
 								<p:commandButton
 									rendered="#{d.tipoPagamento eq 'PAR' or (d.tipoPagamento eq 'ESP')}"
 									action="#{contasReceberBean.selecionarBusca(contasReceberBean.contasReceberModel)}"
@@ -167,7 +208,7 @@
 
 
 								<p:commandButton
-									rendered="#{d.tipoPagamento eq 'AV' or (!d.tipoPagamento eq 'CC') or (!d.tipoPagamento eq 'CD')}" 
+									rendered="#{d.tipoPagamento eq 'AV' or (d.tipoPagamento eq 'CC') or (d.tipoPagamento eq 'CD')}" 
 									action="#{contasReceberBean.pagamentoUnico}"
 									update=":formulario:tableParcelas,:pagamentoEspecial:tableEspecial"
 									ajax="true" value="Pagar" immediate="true" icon="fa fa-usd"
@@ -188,6 +229,7 @@
 								</p:confirmDialog>
 							</p:column>
 						</p:dataTable>
+						</div>
 					</div>
 				</p:panel>
 			</div>

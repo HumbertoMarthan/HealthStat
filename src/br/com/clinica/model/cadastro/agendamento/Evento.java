@@ -47,7 +47,7 @@ public class Evento implements EntityBase, Serializable {
 	}
 
 	private String titulo;
-
+	
 	private Date dataInicio;
 	private Date dataFim;
 	private boolean diaInteiro;

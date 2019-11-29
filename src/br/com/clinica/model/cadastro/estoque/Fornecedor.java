@@ -78,6 +78,13 @@ public class Fornecedor  implements EntityBase,Serializable {
 	@Column(name="localidade")
 	private String localidade;
 	
+	public Fornecedor() {
+		
+	}
+	
+	public Fornecedor(long cod) {
+		this.idFornecedor = cod;
+	}
 	
 	//GETTERS E SETTERS-------------------------
 	public Long getIdFornecedor() {

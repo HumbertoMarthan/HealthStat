@@ -161,7 +161,7 @@
 
 										<p:calendar id="nascimento" required="true" maxlength="10"
 											pattern="dd/MM/yyyy" mask="true" navigator="true"
-											maxdate="today" mindate="01/01/1930" pagedate="1/1/80"
+											maxdate="today" mindate="01/01/1930" pagedate="01/01/80"
 											value="#{atendenteBean.atendenteModel.pessoa.pessoaDataNascimento}"
 											requiredMessage="Informe o Data de Nascimento" />
 									</div>
@@ -233,18 +233,18 @@
 									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
-										<p:inputText id="campoCep" autocomplete="true"
+										<p:inputMask id="campoCep" autocomplete="true"
 											value="#{atendenteBean.atendenteModel.pessoa.cep}"
 											title="O endereço será pesquisado na base de dados do correio ao sair do campo cep"
-											required="true" requiredMessage="Informe o Cep Válido"
-											maxlength="8">
+											required="true" requiredMessage="Informe o Cep Válido" 
+											mask="99.999-999"  maxlength="8" >
 
 											<p:ajax event="blur" execute="@this"
 												listener="#{atendenteBean.pesquisarCep}"
 												update="logradouro,bairro,uf,complemento,localidade" />
 											<p:tooltip id="toolTipFocus" for="campoCep" showEvent="focus"
 												hideEvent="blur" />
-										</p:inputText>
+										</p:inputMask>
 									</div>
 									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"

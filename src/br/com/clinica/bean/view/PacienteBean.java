@@ -31,6 +31,7 @@ import br.com.clinica.model.cadastro.pessoa.Acompanhante;
 import br.com.clinica.model.cadastro.pessoa.Paciente;
 import br.com.clinica.model.cadastro.pessoa.Pessoa;
 import br.com.clinica.utils.ValidaCPF;
+import br.com.clinica.utils.ValidaEmail;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
@@ -205,7 +206,7 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	// PESQUISA CEP
 	public void pesquisarCep(AjaxBehaviorEvent event) {
 		try {
-			URL url = new URL("https://viacep.com.br/ws/" + pacienteModel.getPessoa().getCep() + "/json/");
+			URL url = new URL("https://viacep.com.br/ws/" + pacienteModel.getPessoa().getCep().replace(".", "").replace("-", "")  + "/json/");
 			URLConnection connection = url.openConnection();
 			InputStream inputStream = connection.getInputStream(); // is
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); // br
@@ -259,16 +260,21 @@ public class PacienteBean extends BeanManagedViewAbstract {
 	public void saveNotReturn() {
 		try {
 			//idadeMinimaPaciente();
-			if (ValidaCPF.isValid(pacienteModel.getPessoa().getPessoaCPF())) {
-				System.out.println("CPF Válido");
-				pacienteModel.getPessoa().setTipoPessoa("PAC");
-				pacienteModel = pacienteController.merge(pacienteModel);
-				limpar();
-				sucesso();
-			} else {
-				addMsg("Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF());
-				System.out.println("ERRO CPF INVÁLIDO");
-			}
+			if (ValidaEmail.validarEmail(pacienteModel.getPessoa().getPessoaEmail())) {
+				if (ValidaCPF.isValid(pacienteModel.getPessoa().getPessoaCPF())) {
+						
+						System.out.println("CPF Válido");
+						pacienteModel.getPessoa().setTipoPessoa("PAC");
+						pacienteModel = pacienteController.merge(pacienteModel);
+						limpar();
+						sucesso();
+					} else {
+						addMsg("Cpf Inválido: " + pacienteModel.getPessoa().getPessoaCPF());
+						System.out.println("ERRO CPF INVÁLIDO");
+					}
+				} else {
+					addMsg("Email Inválido");
+				}
 		}catch (Exception e) {
 			System.out.println("Erro ao salvar Paciente");
 			e.printStackTrace();

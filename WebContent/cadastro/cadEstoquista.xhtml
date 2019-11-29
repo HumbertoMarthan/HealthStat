@@ -215,18 +215,18 @@
 									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 
 										<h:outputLabel id="labelCEP" value="CEP:*" />
-										<p:inputText id="campoCep" autocomplete="true"
+										<p:inputMask id="campoCep" autocomplete="true"
 											value="#{estoquistaBean.estoquistaModel.pessoa.cep}"
 											title="O endereço será pesquisado na base de dados do correio ao sair do campo cep"
-											required="true" requiredMessage="Informe o Cep Válido"
-											maxlength="8">
+											required="true" requiredMessage="Informe o Cep Válido" 
+											mask="99.999-999"  maxlength="8">
 
 											<p:ajax event="blur" execute="@this"
 												listener="#{estoquistaBean.pesquisarCep}"
 												update="logradouro,bairro,uf,complemento,localidade" />
 											<p:tooltip id="toolTipFocus" for="campoCep" showEvent="focus"
 												hideEvent="blur" />
-										</p:inputText>
+										</p:inputMask>
 									</div>
 									<div class="ui-g-12 ui-lg-3 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelCidadeEstoquista" for="localidade"
@@ -240,7 +240,7 @@
 									<div class="ui-g-12 ui-lg-1 ui-sm-12 ui-md-12">
 										<h:outputLabel id="labelUf" value="UF:*" />
 										<p:inputText id="uf" ondblclick="javascript:this.value=''"
-											value="#{estoquistaBean.estoquistaModel.pessoa.uf}">
+											value="#{estoquistaBean.estoquistaModel.pessoa.uf}" required="true" requiredMessage="Informe uma UF">
 										</p:inputText>
 									</div>
 

@@ -163,14 +163,14 @@
 								<div class="ui-g">
 									<div class="ui-g-12 ui-lg-2 ui-sm-12 ui-md-12">
 										<h:outputLabel value="Cep:*" />
-										<p:inputText required="true"
-											value="#{fornecedorBean.fornecedorModel.cep}" >
+										<p:inputMask required="true"
+											value="#{fornecedorBean.fornecedorModel.cep}" mask="99.999-999" >
 										
 										<p:ajax event="blur" execute="@this"
 												listener="#{fornecedorBean.pesquisarCep}"
 												update="logradouro,bairro,uf,complemento,localidade" />
 											
-										</p:inputText>
+										</p:inputMask>
 									</div>
 
 									<div class="ui-g-12 ui-lg-5 ui-sm-12 ui-md-12">

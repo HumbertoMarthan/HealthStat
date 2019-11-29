@@ -66,7 +66,8 @@
                     </div>
                     <div class="ui-g-12 chkbox-container" align="center">
                         <div class="ui-g-12 ui-md-12"  align="center" >
-                            <a href="#{facesContext.externalContext.requestContextPath}/publico/recuperacao.jsf?faces-redirect=true" >Esqueci Minha Senha?</a>
+                        	<p:commandLink  value="Esqueci minha senha?"  onclick="PF('dialogRecupera').show()" />
+                        	   <!--  <a  href="#{facesContext.externalContext.requestContextPath}/publico/recuperacao.jsf?faces-redirect=true" >Esqueci Minha Senha?</a> -->
                         </div>
                       <!--   <div class="ui-g-6 rememberme-container">
                             <p:outputLabel for="remember-me" value="Remember Me"/>
@@ -122,7 +123,66 @@
 				</h:panelGroup>
 			</div>
 		</div>
-        
-    </h:body>
+		
+		
+		<p:dialog id="dialogRecupera" style="font-size:large" widgetVar="dialogRecupera" header="Recuperação de Senha"  responsive="true" modal="true" closable="false" height="350" width="600"  >
+			<div class="ui-fluid">
+				<h:form id="formUsuario">
+					<br />
 
+								<div align="center">
+									<p:commandButton value="Enviar Email"
+										style="height:40px;
+										width:180px; 
+										background-color: green; 
+										background: green; 
+										color:white !important;
+										font-size:large;"
+										actionListener="#{loginBean.forgetSenha}" ajax="true"
+										partialSubmit="true" process="@this, @form" immediate="false"
+										update="@form" icon="fa fa-floppy-o fa" iconPos="rigth">
+									</p:commandButton>
+									
+									<p:commandButton value="Fechar"
+										style="height:40px;
+										width:180px; 
+										background-color: gray; 
+										background: gray; 
+										color:white !important;
+										font-size:large;"
+										onclick="PF('dialogRecupera').hide()"  immediate="true"
+										update="@form"   >
+									</p:commandButton>
+								</div>
+
+								<br />
+								<p:outputLabel value="Campos Obrigatórios()"
+									styleClass="obrigatorio" />
+								<p:separator />
+
+								<br />
+								<div class="ui-g">
+										<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
+											<h:outputLabel value="Login:*" />
+											<p:inputText required="true"
+												style="height:35px; font-size:large;text-align:center"
+												value="#{loginBean.login}" autocomplete="true"
+												requiredMessage="Informe o Nome do Usuário">
+											</p:inputText>
+										</div>
+									
+										<div class="ui-g-12 ui-lg-6 ui-sm-12 ui-md-12">
+											<h:outputLabel value="CPF: *" />
+											<p:inputMask value="#{loginBean.cpf}"
+											style="height:35px; font-size:large;text-align:center"
+												mask="999.999.999-99" required="true"
+												requiredMessage="Informe o Cpf">
+											</p:inputMask>
+										</div>
+								</div>
+				</h:form>
+			</div>
+		</p:dialog>	
+    </h:body>
+	
 </html>
