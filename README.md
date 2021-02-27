@@ -1,7 +1,5 @@
 
-
-
-
+Projeto Feito para meu trabalho de Conclusão de Curso da Faculdade de Apucarana - FAP
 
 •	Login em BD com persistência de dados, gerenciamento de permissões de login
 •	Cadastro dos Médicos, Consulta, Alteração Cadastral, Apagar registros.
