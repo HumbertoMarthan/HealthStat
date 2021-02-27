@@ -1,31 +1,30 @@
+
+
+
+
+
+‚Ä¢	Login em BD com persist√™ncia de dados, gerenciamento de permiss√µes de login
+‚Ä¢	Cadastro dos M√©dicos, Consulta, Altera√ß√£o Cadastral, Apagar registros.
+‚Ä¢	Sistema de Gerenciamento de Agendamentos (Agendamento/Cancelamento/Reagendamento de consultas).
+‚Ä¢	Gerenciamento dos medicos, suprimentos, estoquista, fornecedores  
+‚Ä¢	Gerenciamento do paciente e seu prontu√°rio. 
+‚Ä¢	Gerenciamento de Conv√™nios
+‚Ä¢	Gerenciamento do prontu√°rio do paciente
+	  Registro da evolu√ß√£o e prescri√ß√£o m√©dica
+	  Registro dos resultados dos exames realizados no paciente.
+‚Ä¢	Gerenciamento financeiro
+	  Contas a receber, contas a pagar, controle banc√°rio, atualiza√ß√£o de tabelas (valores de servi√ßos ter uma view com valores de pre√ßos)
+
+‚Ä¢	Relat√≥rios de m√©dicos/pacientes/atendentes/materiais/agendamentos/financeiro
+
 Requisitos:
-
-ï	Postgres Vers„o 9.1
-ï	IDE: Eclipse 2018-12  Vers„o  (4.10.0)
-ï	Hibernate3
-ï	Jpa Vers„o 2.0
-ï	Spring Vers„o 3.0.5
-ï	Spring Security Vers„o 3.1.22
-ï	PrimeFaces  Vers„o 6.2
-ï	JSF Vers„o 2.2.7
-ï	TomCat Vers„o 7.0
-ï	Jasper Report Vers„o 5.6.0
-
-
-ï	Login em BD com persistÍncia de dados, gerenciamento de permissıes de login
-
-
-ï	Cadastro dos MÈdicos, Consulta, AlteraÁ„o Cadastral, Apagar registros.
-ï	Sistema de Gerenciamento de Agendamentos (Agendamento/Cancelamento/Reagendamento de consultas).
-ï	Gerenciamento dos medicos, suprimentos, estoquista, fornecedores  
-ï	Gerenciamento do paciente e seu prontu·rio. 
-ï	Gerenciamento de ConvÍnios
-ï	Gerenciamento do prontu·rio do paciente
-		Registro da evoluÁ„o e prescriÁ„o mÈdica
-		Registro dos resultados dos exames realizados no paciente.
-ï	Gerenciamento financeiro
-		Contas a receber, contas a pagar, controle banc·rio, atualizaÁ„o de tabelas (valores de serviÁos ter uma view com valores de preÁos)
-ï
-
-ï	RelatÛrios de mÈdicos/pacientes/atendentes/materiais/agendamentos/financeiro
-
+‚Ä¢	Postgres Vers√£o 9.1
+‚Ä¢	IDE: Eclipse 2018-12  Vers√£o  (4.10.0)
+‚Ä¢	Hibernate3
+‚Ä¢	Jpa Vers√£o 2.0
+‚Ä¢	Spring Vers√£o 3.0.5
+‚Ä¢	Spring Security Vers√£o 3.1.22
+‚Ä¢	PrimeFaces  Vers√£o 6.2
+‚Ä¢	JSF Vers√£o 2.2.7
+‚Ä¢	TomCat Vers√£o 7.0
+‚Ä¢	Jasper Report Vers√£o 5.6.0
